@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+<f:view>
+
+
+
+
+    <h:head><title>bitServer Settings</title></h:head>
+    <f:view beforePhase="#{settingsBean.loadConfig}"/>
+    <h:body>
+
+        <h:form>
+            <p:button value="Домой" action="home" />
+
+            <p/>
+
+            <p:menubar>
+                <p:menuitem value="Сохранить" action="#{settingsBean.saveConfig}"
+                            update="growlMessageId"/>
+                <p:menuitem value="Перезагрузить сервер" action="#{settingsBean.resetServer}"
+                            update="growlMessageId"/>
+                <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"
+                            update="growlMessageId"/>
+            </p:menubar>
+
+     <!--       <h5 class="p-mt-0">Basic</h5>
+            <p:selectBooleanCheckbox value="#{settingsBean.value1}" itemLabel="Basic"/>
+      -->
+
+            <p:panel header="Основные настройки">
+                <p class="p-m-0">
+                    <h:outputLabel for="mname">Имя сервера: </h:outputLabel>
+                    <h:inputText id="mname" value="#{settingsBean.serverName}" ></h:inputText>
+                    <br />
+                    <br />
+                </p>
+            </p:panel>
+
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+        </h:form>
+    </h:body>
+</f:view>
+</html>
