@@ -10,15 +10,16 @@
 
 <f:view>
 
-
-
+    <f:metadata>
+        <f:viewAction action="#{settingsBean.loadConfig}" />
+    </f:metadata>
 
     <h:head><title>bitServer Settings</title></h:head>
-    <f:view beforePhase="#{settingsBean.loadConfig}"/>
+
     <h:body>
 
         <h:form>
-            <p:button value="Домой" action="home" />
+            <p:link outcome="home" value="Домой"/>
 
             <p/>
 
@@ -27,8 +28,7 @@
                             update="growlMessageId"/>
                 <p:menuitem value="Перезагрузить сервер" action="#{settingsBean.resetServer}"
                             update="growlMessageId"/>
-                <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"
-                            update="growlMessageId"/>
+                <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"/>
             </p:menubar>
 
      <!--       <h5 class="p-mt-0">Basic</h5>
@@ -43,7 +43,6 @@
                     <br />
                 </p>
             </p:panel>
-
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
         </h:form>
     </h:body>

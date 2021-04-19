@@ -1,5 +1,6 @@
 package ru.CustomOrthancWebMorda.beans;
 
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -33,25 +34,15 @@ public class SettingsBean {
         this.value1 = value1;
     }
 
+
+
     public void print(){
         System.out.println("print");
     }
 
-    public void loadConfig(PhaseEvent evt){
-        try {
-            if (PhaseId.APPLY_REQUEST_VALUES.equals(evt.getPhaseId())) {
-                System.out.println("Phase is " + PhaseId.APPLY_REQUEST_VALUES);
-            }
-            if (PhaseId.INVOKE_APPLICATION.equals(evt.getPhaseId())) {
-                System.out.println("Phase is " + PhaseId.INVOKE_APPLICATION);
-            }
-            if (PhaseId.RENDER_RESPONSE.equals(evt.getPhaseId())) {
-                System.out.println("Phase is " + PhaseId.RENDER_RESPONSE);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        if(!firstload) {
+    public void loadConfig(){
+
+        if(true) {
             firstload = true;
             StringBuilder sb = new StringBuilder();
             StringBuilder sbforbackup = new StringBuilder();
@@ -88,4 +79,10 @@ public class SettingsBean {
         message.setSeverity(FacesMessage.SEVERITY_INFO); //как выглядит окошко с сообщением
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
+
+    @PreDestroy
+    public void destroy() {
+        firstload = false;
+    }
+
 }
