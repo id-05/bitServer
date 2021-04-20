@@ -7,7 +7,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-
 <f:view>
 
     <f:metadata>
@@ -19,6 +18,7 @@
     <h:body>
 
         <h:form>
+            <p:growl id="growlMessageId" />
             <p:link outcome="home" value="Домой"/>
 
             <p/>
@@ -31,19 +31,217 @@
                 <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"/>
             </p:menubar>
 
-     <!--       <h5 class="p-mt-0">Basic</h5>
-            <p:selectBooleanCheckbox value="#{settingsBean.value1}" itemLabel="Basic"/>
-      -->
+            <p:accordionPanel widgetVar="Настройки сервера">
+            <p:tab title="Основные настройки">
+                <p:outputPanel>
 
-            <p:panel header="Основные настройки">
-                <p class="p-m-0">
-                    <h:outputLabel for="mname">Имя сервера: </h:outputLabel>
-                    <h:inputText id="mname" value="#{settingsBean.serverName}" ></h:inputText>
-                    <br />
-                    <br />
-                </p>
-            </p:panel>
-            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+                    <p:panel header="Имя сервера" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.serverName}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
+                    </p:panel>
+
+                    <p:panel header="Каталог хранения" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.storageDirectory}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
+                    </p:panel>
+
+                    <p:panel header="Каталог указателей" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.indexDirectory}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
+                    </p:panel>
+
+                    <p:panel header="Сжатие хранилища" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storageCompression}"/>
+                        </p>
+                        <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
+                    </p:panel>
+
+                    <p:panel header="Максимальный размер хранилища" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.maximumStorageSize}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
+                    </p:panel>
+
+                    <p:panel header="Максимальное количество пациентов" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.maximumPatientCount}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
+                    </p:panel>
+
+                    <p:panel header="Одновременные задания" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.concurrentJobs}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
+                    </p:panel>
+
+                </p:outputPanel>
+
+            </p:tab>
+            <p:tab title="Конфигурация HTTP сервера">
+                <p:outputPanel>
+
+                    <p:panel header="HTTP сервер" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpServerEnabled}"/>
+                        </p>
+                        <div class="p-text-capitalize">Если этот параметр выключен, Orthanc действует как чистый DICOM-сервер. REST API и Orthanc Explorer не доступны. Так же Orthac Manager, тоже не сможет получить доступ к серверу, так как использует REST API</div>
+                    </p:panel>
+
+                    <p:panel header="HTTP порт" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.httpPort}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">HTTP порт для службы REST и графического интерфейса</div>
+                    </p:panel>
+
+                    <p:panel header="HTTP описание ошибок" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpDescribeErrors}"/>
+                        </p>
+                        <div class="p-text-capitalize">Если включено, и при вызове REST API возникает ошибка, в HTTP ответ, добавляется сообщение JSON с описанием ошибки. Эту функцию можно отключить, если HTTP-клиент неправильно обрабатывает такие ответы</div>
+                    </p:panel>
+
+                    <p:panel header="HTTP сжатие" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpCompressionEnabled}"/>
+                        </p>
+                        <div class="p-text-capitalize">Сжатие HTTP улучшает использование полосы пропускания сети, за счет большего количества вычислений на сервере. Orthanc поддерживает HTTP-кодировки «gzip» и «deflate»</div>
+                    </p:panel>
+
+                </p:outputPanel>
+            </p:tab>
+
+            <p:tab title="Конфигурация DICOM сервера">
+                <p:outputPanel>
+
+                    <p:panel header="DICOM сервер" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpServerEnabled}"/>
+                        </p>
+                        <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
+                    </p:panel>
+
+                    <p:panel header="DICOM AET" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.dicomAet}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
+                    </p:panel>
+
+                    <p:panel header="DICOM проверка AET" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomCheckCalledAet}"/>
+                        </p>
+                        <div class="p-text-capitalize">Проверка соответствия AET, во время входящего запроса SCU DICOM</div>
+                    </p:panel>
+
+                    <p:panel header="DICOM порт" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.dicomPort}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
+                    </p:panel>
+
+                    <p:panel header="Кодировка по умолачнию" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.defaultEncoding}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
+                    </p:panel>
+
+                    <p:panel header="Синтаксис передачи" >
+                        <p class="p-m-0">
+                            <p:selectBooleanCheckbox value="#{settingsBean.deflatedTransferSyntaxAccepted}" itemLabel="Deflated Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.jpegTransferSyntaxAccepted}" itemLabel="Jpeg Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.jpeg2000TransferSyntaxAccepted}" itemLabel="Jpeg2000 Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.jpegLosslessTransferSyntaxAccepted}" itemLabel="Jpeg Lossless Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.jpipTransferSyntaxAccepted}" itemLabel="Jpip Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.mpeg2TransferSyntaxAccepted}" itemLabel="Mpeg2 Transfer"/>
+                            <br/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.rleTransferSyntaxAccepted}" itemLabel="Rle Transfer"/>
+                        </p>
+                        <div class="p-text-capitalize">Синтаксисы передачи принятые в Orthanc C-Store SCP</div>
+                    </p:panel>
+
+                    <p:panel header="Разрешить принимать данные из неизвестных источников" >
+                        <p class="p-m-0">
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.unknownSopClassAccepted}"/>
+                        </p>
+                        <div class="p-text-capitalize">Принимать или нет, роль S-Store SCP для неизвестных источников («Неразборчивый режим»)</div>
+                    </p:panel>
+
+                    <p:panel header="DICOM SCP Timeout" >
+                        <p class="p-m-0">
+                            <h:inputText  value="#{settingsBean.dicomScpTimeout}" > </h:inputText>
+                        </p>
+                        <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc закроет соединение, если больше нет DIMSE-команд от SCU (клиента)</div>
+                    </p:panel>
+
+                </p:outputPanel>
+            </p:tab>
+
+                <p:tab title="Параметры безопасности HTTP-сервера">
+                    <p:outputPanel>
+
+                        <p:panel header="Разрешение удаленного доступа" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.remoteAccessAllowed}"/>
+                            </p>
+                            <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу)</div>
+                        </p:panel>
+
+                        <p:panel header="SSL protocol" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.sslEnabled}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включение протокола SSL</div>
+                        </p:panel>
+
+                        <p:panel header="SSL Certificate" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.sslCertificate}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Путь к SSL-сертификату в формате PEM (значимый только в том случае, если включен SSL)</div>
+                        </p:panel>
+
+                        <p:panel header="Включение аутентификации" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.authenticationEnabled}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
+                        </p:panel>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Топология сети">
+                    <p:outputPanel>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Дополнительные параметры">
+                    <p:outputPanel>
+
+                    </p:outputPanel>
+                </p:tab>
+
+            </p:accordionPanel>
         </h:form>
     </h:body>
 </f:view>
