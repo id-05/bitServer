@@ -17,19 +17,60 @@
 
     <h:body>
 
-        <h:form>
-            <p:growl id="growlMessageId" />
+        <h:form id="form">
+            <p:growl id="growlMessageId" showDetail="true" styleClass="p-mr-2" style="width: 10rem"/>
+
+            <p class="p-m-0">
+                <br/>
+            </p>
+
+            <p:toolbar>
+
+                <p:toolbarGroup>
+                    <p:commandButton value="New" actionListener="#{settingsBean.openNew}"
+                                     update=":form:manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                        <p:resetInput target=":form:manage-user-content"/>
+                    </p:commandButton>
+
+                    <p:dialog header="Product Details" showEffect="fade" modal="true"
+                              widgetVar="manageUserDialog" responsive="true">
+                        <p:outputPanel id="manage-user-content" class="ui-fluid">
+
+
+                        </p:outputPanel>
+
+                        <f:facet name="footer">
+
+                        </f:facet>
+                    </p:dialog>
+                </p:toolbarGroup>
+            </p:toolbar>
+
+
+
+            <p class="p-m-0">
+                <br/>
+            </p>
+
             <p:link outcome="home" value="Домой"/>
 
-            <p/>
+
+
+
 
             <p:menubar>
                 <p:menuitem value="Сохранить" action="#{settingsBean.saveConfig}"
                             update="growlMessageId"/>
                 <p:menuitem value="Перезагрузить сервер" action="#{settingsBean.resetServer}"
                             update="growlMessageId"/>
-                <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"/>
+                <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"
+                            update="growlMessageId"/>
             </p:menubar>
+
+            <p class="p-m-0">
+            <br/>
+            </p>
 
             <p:accordionPanel widgetVar="Настройки сервера">
             <p:tab title="Основные настройки">
@@ -126,7 +167,7 @@
 
                     <p:panel header="DICOM сервер" >
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpServerEnabled}"/>
+                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomServerEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
                     </p:panel>
@@ -226,17 +267,250 @@
                             <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
                         </p:panel>
 
+                        <p:panel header="Регистрация пользователей" >
+                            <p class="p-m-0">
+
+
+
+                            </p>
+                            <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
+                        </p:panel>
+
                     </p:outputPanel>
                 </p:tab>
 
                 <p:tab title="Топология сети">
                     <p:outputPanel>
 
+                        <p:panel header="DICOM Модальности" >
+                            <p class="p-m-0">
+
+                            </p>
+                            <div class="p-text-capitalize">Список клиентов рабочей группы</div>
+                        </p:panel>
+
+                        <p:panel header="Хранить DICOM модальности в базе данных" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomModalitiesInDb}"/>
+                            </p>
+                            <div class="p-text-capitalize">Выбор хранения DICOM модальностей в базе данных Orthanc, а не в этом конфигурационном файле (с версии Orthanc 1.5.0)</div>
+                        </p:panel>
+
+                        <p:panel header="Всегда отвечать на специфичные для DICOM протокола Эхо запросы" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomAlwaysAllowEcho}"/>
+                            </p>
+                            <div class="p-text-capitalize">Разерешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
+                        </p:panel>
+
+                        <p:panel header="Всегда принимать DICOM данные для хранения" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomAlwaysStore}"/>
+                            </p>
+                            <div class="p-text-capitalize">Разрешение для Orthanc всегда принимать входящие C-Store запросы , даже от модальностей которых нет в списке "DICOM Модальности"</div>
+                        </p:panel>
+
+                        <p:panel header="Проверять DICOM Модальности при подключении" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.checkModalityHost}"/>
+                            </p>
+                            <div class="p-text-capitalize">Определяет, проверяет ли Orthanc IP адрес и имя удаленного хоста, инициирующего соединение DICOM (как указано в списке "DICOM Модальности"). Если для этой опции установлено значение "false", Orthanc проверяет только AET</div>
+                        </p:panel>
+
+                        <p:panel header="DICOM SCU Timeout" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.dicomScuTimeout}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc считает DICOM соединение закрытым, если удаленный SCP DICOM (сервер) не отвечает</div>
+                        </p:panel>
+
+                        <p:panel header="Orthanc peers" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.dicomScuTimeout}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Список одноранговых серверов, в качестве реквизитов доступа используется URL, логин и пароль, как при доступе по HTTP</div>
+                        </p:panel>
+
+                        <p:panel header="Хранить информацию об одноранговых узлах (peer) в базе данных" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.orthancPeerInDb}"/>
+                            </p>
+                            <div class="p-text-capitalize">Определяет хранение информации об одноранговых узлах (peer) в базе данных Orthanc, а не в этом файле конфигурации (с версии Orthanc 1.5.0)</div>
+                        </p:panel>
+
+                        <p:panel header="HTTP Proxy" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.httpProxy}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Параметры прокси-сервера HTTP, используемого Orthanc. Если установлена пустая строка, HTTP-прокси не используется. Например: «HttpProxy»: «192.168.0.1:3128» «HttpProxy»: «proxyUser:proxyPassword@192.168.0.1:3128»</div>
+                        </p:panel>
+
+                        <p:panel header="HTTP Verbose" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpVerbose}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включение означает, что отладочные сообщения из "libcurl", будут выдаваться всякий раз, когда Orthanc делает исходящий HTTP-запрос. Это особенно полезно для отладки проблем, связанных с HTTPS</div>
+                        </p:panel>
+
+                        <p:panel header="HTTP Timeout" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.httpTimeout}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Установка времени ожидания для HTTP запросов, сделанных Orthanc (в секундах)</div>
+                        </p:panel>
+
+                        <p:panel header="HTTPS Проверка одноранговых узлов (Verify Peers)" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpsVerifyPeers}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включиние проверки одноранговых узлов во время HTTPS-запросов. Выключено, если используются самозаверяющие сертификаты. Обратите внимание, что включение этого параметра приводит к угрозам безопасности! Ссылка: http://curl.haxx.se/docs/sslcerts.html</div>
+                        </p:panel>
+
+                        <p:panel header="HTTPS CA Certificates" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.httpsCACertificates}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Путь к сертификатам CA (certification authority) для проверки одноранговых узлов в HTTPS-запросах. Из документации curl (опция "—cacert"): предлагает использовать указанный файл сертификата для проверки одноранговых узлов. Этот файл может содержать несколько сертификатов CA. Сертификат(ы) должен быть в формате PEM. В системах на базе Debian этот параметр может быть установлен в значение: /etc / ssl/certs/ca-certificates.crt</div>
+                        </p:panel>
+
                     </p:outputPanel>
                 </p:tab>
 
                 <p:tab title="Дополнительные параметры">
                     <p:outputPanel>
+
+                        <p:panel header="Stable Age" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.stableAge}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Количество секунд без получения какого-либо экземпляра, до того как пациент, исследование или серия считаются стабильными</div>
+                        </p:panel>
+
+                        <p:panel header="Сравнение AET с учетом регистра" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.strictAetComparison}"/>
+                            </p>
+                            <div class="p-text-capitalize">По умолчанию Orthanc сравнивает AET без учета регистра. Включение этого параметра, предполагает дальнейшее сопоставление с учетом регистра</div>
+                        </p:panel>
+
+                        <p:panel header="Хранить MD5 сумму для полученных данных" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storeMD5ForAttachments}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если включено, суммы MD5 файлов DICOM будут вычислены и сохранены в базе данных Orthanc. Эта информация может использоваться для обнаружения повреждения диска за счет небольших затрат на производительность</div>
+                        </p:panel>
+
+                        <p:panel header="Limit Find Results" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.limitFindResults}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне пациента, исследования или серии. Установка этого параметра в "0" означает отсутствие ограничения</div>
+                        </p:panel>
+
+                        <p:panel header="Limit Find Instances" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.limitFindInstances}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне экземпляра. Установка этого параметра в "0" означает отсутствие ограничения</div>
+                        </p:panel>
+
+                        <p:panel header="Limit Jobs" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.limitJobs}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное число активных заданий в планировщике Orthanc. При достижении этого предела, добавление новых заданий блокируется до завершения выполнения текущих задач</div>
+                        </p:panel>
+
+                        <p:panel header="Log Exported Resources" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.logExportedResources}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если включено (поведение по умолчанию до Orthanc 1.3.2), Orthanc регистрирует ресурсы, экспортируемые в другие DICOM модальности или одноранговые узлы, внутри URI "/export". Выключение этого параметра, позволяет предотвратить бесконечный рост индекса в задачах автоматической маршрутизации (это поведение по умолчанию с Orthanc 1.4.0)</div>
+                        </p:panel>
+
+                        <p:panel header="Keep Alive" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.keepAlive}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включить или отключить режим HTTP Keep Alive "Остаться в живых". Рекомендуется включать только в случае высоких нагрузок HTTP</div>
+                        </p:panel>
+
+                        <p:panel header="Store DICOM" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storeDicom}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если выключено, Orthanc будет работать в режиме хранения только индекса. Файлы DICOM не будут храниться на диске. Обратите внимание, что этот параметр может препятствовать обновлению до более новых версий Orthanc</div>
+                        </p:panel>
+
+                        <p:panel header="DICOM Association Close Delay" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.dicomAssociationCloseDelay}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">DICOM соединения, инициированные сценариями Lua, остаются открытыми до тех пор, пока выдаются новые команды DICOM. Этот параметр задает время ожидания в секундах перед автоматическим закрытием DICOM соединения, инициифрованного Lua. Если установлено значение 0, соединение немедленно закрывается</div>
+                        </p:panel>
+
+                        <p:panel header="Query Retrieve Size" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.queryRetrieveSize}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное число DICOM запросов, поддерживаемых сервером. Редко используемые запросы удаляются по мере выдачи новых запросов</div>
+                        </p:panel>
+
+                        <p:panel header="Case Sensitive PN" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.caseSensitivePN}"/>
+                            </p>
+                            <div class="p-text-capitalize">Включение этого параметра означает выполнение поисковых запросов с учетом регистра для представленого значения PN (например, RapidName). По умолчанию поиск выполняется без учета регистра, что не соответствует стандарту DICOM</div>
+                        </p:panel>
+
+                        <p:panel header="Allow Find Sop Classes In Study" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.allowFindSopClassesInStudy}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если включено, сервер будет обрабатывать "классы SOP в исследовании" (0008, 0062) в запросах к серверу, даже если метаданные "SOP Class UID" недоступны в базе данных (что имеет место, если база данных ранее использовалась Orthanc младше 1.1.0). Этот параметр отключен по умолчанию, так как для него требуется интенсивный доступ к жесткому диску</div>
+                        </p:panel>
+
+                        <p:panel header="Load Private Dictionary" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.loadPrivateDictionary}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если включено, сервер не загружает словарь частных тегов по умолчанию. Это может потребоваться, если невозможно импортировать DICOM-файл, закодированный с помощью синтаксиса передачи неявного VR Endian и содержащий частные теги: Такая ошибка импорта может быть вызвана неправильным словарем. Вы можете перечислить ваши частные теги, в опции конфигурации "Словарь" ниже</div>
+                        </p:panel>
+
+                        <p:panel header="Locale" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.locale}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Язык, используемый Orthanc. В настоящее время используется только при сравнении строк без учета регистра. Рекомендуется не указывать это значение</div>
+                        </p:panel>
+
+                        <p:panel header="Synchronous C Move" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.synchronousCMove}"/>
+                            </p>
+                            <div class="p-text-capitalize">Если включено (по умолчанию), каждый входящий запрос C-Move приводит к созданию нового фонового задания. До Orthanc 1.3.2 неявным поведением было использование синхронного C-Move. Между Orthanc 1.4.0 и 1.4.2 поведение по умолчанию было установлено как асинхронное C-Move. Начиная с Orthanc 1.5.0, поведение по умолчанию - синхронное C-Move (обратная совместимость с Orthanc младше 1.3.2)</div>
+                        </p:panel>
+
+                        <p:panel header="Jobs History Size" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.jobsHistorySize}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное число завершенных заданий, хранящихся в памяти. Задание обработки считается выполненным, если оно помечено как "Успешное" или "Неуспешное". Начиная с Orthanc 1.5.0, значение "0" означает, что задания удаляются из истории сразу после их завершения</div>
+                        </p:panel>
+
+                        <p:panel header="Overwrite Instances" >
+                            <p class="p-m-0">
+                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.overwriteInstances}"/>
+                            </p>
+                            <div class="p-text-capitalize">Определяет, как сервер реагирует, когда  получает DICOM-данные, уже сохраненные ранее. Если включено, новый экземпляр заменяет старый. Если выключено, новый экземпляр отбрасывается, а старый сохраняется. До Orthanc 1.4.1 данный параметр по умолчанию был выключен</div>
+                        </p:panel>
+
+                        <p:panel header="Media Archive Size" >
+                            <p class="p-m-0">
+                                <h:inputText  value="#{settingsBean.mediaArchiveSize}" > </h:inputText>
+                            </p>
+                            <div class="p-text-capitalize">Максимальное количество ZIP/медиаархивов, поддерживаемых сервером. Недавно использованные архивы удаляются по мере создания новых архивов. Эта опция была введена в Orthanc 1.5.0, и не оказывает влияния на синхронное формирование архивов</div>
+                        </p:panel>
 
                     </p:outputPanel>
                 </p:tab>

@@ -2,16 +2,13 @@ package ru.CustomOrthancWebMorda.beans;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseEvent;
-import javax.faces.event.PhaseId;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @ManagedBean(name = "settingsBean")
 @SessionScoped
@@ -59,6 +56,7 @@ public class SettingsBean {
     public int HttpTimeout;
     public boolean HttpsVerifyPeers;
     public String HttpsCACertificates;
+    public String locale;
     public int StableAge;
     public boolean StrictAetComparison;
     public boolean StoreMD5ForAttachments;
@@ -89,6 +87,15 @@ public class SettingsBean {
     public boolean saveJobs;
     public boolean metricsEnabled;
     public boolean AllowFindSopClassesInStudy;
+    FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
+    FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
+    FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
+
+    private List<OrthancWebUser> webUsers;
+
+    private OrthancWebUser selectedUser;
+
+    private List<OrthancWebUser> selectedUsers;
 
 
     public void loadConfig(){
@@ -129,7 +136,6 @@ public class SettingsBean {
             HttpServerEnabled = json.HttpServerEnabled;
             HttpPort = json.HttpPort;
             HttpDescribeErrors = json.HttpDescribeErrors;
-
             HttpCompressionEnabled = json.HttpCompressionEnabled;
             DicomServerEnabled = json.DicomServerEnabled;
             DicomAet = json.DicomAet;
@@ -145,7 +151,6 @@ public class SettingsBean {
             RleTransferSyntaxAccepted = json.RleTransferSyntaxAccepted;
             UnknownSopClassAccepted = json.UnknownSopClassAccepted;
             DicomScpTimeout = json.DicomScpTimeout;
-
             RemoteAccessAllowed = json.RemoteAccessAllowed;
             SslEnabled = json.SslEnabled ;
             SslCertificate = json.SslCertificate;
@@ -157,12 +162,23 @@ public class SettingsBean {
             HttpsCACertificates = json.HttpsCACertificates;
             StableAge = json.StableAge;
             StrictAetComparison = json.StrictAetComparison;
-
-            System.out.println("HttpServerEnabled "+HttpServerEnabled);
-            System.out.println("DicomServerEnabled "+DicomServerEnabled);
-            System.out.println("value1 "+value1);
-
-
+            dicomModalitiesInDb = json.dicomModalitiesInDb;
+            orthancPeerInDb = json.orthancPeerInDb;
+            overwriteInstances = json.overwriteInstances;
+            mediaArchiveSize = json.mediaArchiveSize;
+            storageAccessOnFind = json.storageAccessOnFind;
+            httpVerbose = json.httpVerbose;
+            tcpNoDelay = json.tcpNoDelay;
+            httpThreadsCount = json.httpThreadsCount;
+            saveJobs = json.saveJobs;
+            metricsEnabled = json.metricsEnabled;
+            AllowFindSopClassesInStudy = json.AllowFindSopClassesInStudy;
+            dicomAlwaysAllowEcho = json.dicomAlwaysAllowEcho;
+            DicomAlwaysStore = json.DicomAlwaysStore;
+            CheckModalityHost = json.CheckModalityHost;
+            SynchronousCMove = json.SynchronousCMove;
+            JobsHistorySize = json.JobsHistorySize;
+            locale = json.locale;
         }else{
             FacesMessage message = new FacesMessage("Внимание", "Ошибка при чтении файла orthanc.json");
             message.setSeverity(FacesMessage.SEVERITY_INFO); //как выглядит окошко с сообщением
@@ -171,24 +187,20 @@ public class SettingsBean {
     }
 
     public void saveConfig(){
-        System.out.println("save");
-
-        value1 = !value1;
-
-        System.out.println(value1);
+        showMessage("Сообщение","Изменения сохранены!", info);
     }
 
     public void resetServer(){
-        System.out.println("reset");
+        showMessage("Сообщение","Сервис перезагружен!", info);
     }
 
     public void restoreBackup(){
-        System.out.println("restore");
+        showMessage("Сообщение","Сервис перезагружен!", info);
     }
 
-    public void showMessage2() {
-        FacesMessage message = new FacesMessage("SettingsBean", "Всплывающее сообщение");
-        message.setSeverity(FacesMessage.SEVERITY_INFO); //как выглядит окошко с сообщением
+    public void showMessage(String title, String note, FacesMessage.Severity type) {
+        FacesMessage message = new FacesMessage(title, note);
+        message.setSeverity(type); //как выглядит окошко с сообщением
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
@@ -225,20 +237,16 @@ public class SettingsBean {
         return troubleSimbol;
     }
 
+    public void openNew() {
+        this.selectedUser = new OrthancWebUser();
+    }
+
     public String getServerName() {
         return ServerName;
     }
 
     public void setServerName(String serverName) {
         ServerName = serverName;
-    }
-
-    public boolean getValue1() {
-        return value1;
-    }
-
-    public void setValue1(boolean value1) {
-        SettingsBean.value1 = value1;
     }
 
     public String getStorageDirectory() {
@@ -737,5 +745,32 @@ public class SettingsBean {
         AllowFindSopClassesInStudy = allowFindSopClassesInStudy;
     }
 
+    public String getLocale() {
+        return locale;
+    }
 
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+
+    public Object getWebUsers() {
+        return webUsers;
+    }
+
+    public List<OrthancWebUser> getSelectedUsers() {
+        return selectedUsers;
+    }
+
+    public void setSelectedUsers(List<OrthancWebUser> selectedUsers) {
+        this.selectedUsers = selectedUsers;
+    }
+
+    public OrthancWebUser getSelectedProduct() {
+        return selectedUser;
+    }
+
+    public void setSelectedProduct(OrthancWebUser selectedUser) {
+        this.selectedUser = selectedUser;
+    }
 }

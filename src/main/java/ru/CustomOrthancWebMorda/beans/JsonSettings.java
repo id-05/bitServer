@@ -48,6 +48,7 @@ public class JsonSettings {
     int HttpTimeout;
     boolean HttpsVerifyPeers;
     String HttpsCACertificates;
+    String locale;
     int StableAge;
     boolean StrictAetComparison;
     boolean StoreMD5ForAttachments;
@@ -147,6 +148,7 @@ public class JsonSettings {
         if (orthancJson.has("OverwriteInstances")) overwriteInstances=orthancJson.get("OverwriteInstances").getAsBoolean();
         if (orthancJson.has("MediaArchiveSize")) mediaArchiveSize=orthancJson.get("MediaArchiveSize").getAsInt();
         if (orthancJson.has("StorageAccessOnFind")) storageAccessOnFind=orthancJson.get("StorageAccessOnFind").getAsString();
+        if (orthancJson.has("Locale")) locale=orthancJson.get("Locale").getAsString();
         if (orthancJson.has("HttpVerbose")) httpVerbose=orthancJson.get("HttpVerbose").getAsBoolean();
         if (orthancJson.has("TcpNoDelay")) tcpNoDelay=orthancJson.get("TcpNoDelay").getAsBoolean();
         if (orthancJson.has("HttpThreadsCount")) httpThreadsCount=orthancJson.get("HttpThreadsCount").getAsInt();
