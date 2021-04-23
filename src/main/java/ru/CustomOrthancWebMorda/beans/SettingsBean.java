@@ -2,12 +2,16 @@ package ru.CustomOrthancWebMorda.beans;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean(name = "settingsBean")
@@ -91,12 +95,34 @@ public class SettingsBean {
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
-    private List<OrthancWebUser> webUsers;
+    public List<OrthancWebUser> webUsers;
 
-    private OrthancWebUser selectedUser;
+    public OrthancWebUser getSelectedUser() {
+        return selectedUser;
+    }
 
-    private List<OrthancWebUser> selectedUsers;
+    public void setSelectedUser(OrthancWebUser selectedUser) {
+        this.selectedUser = selectedUser;
+    }
 
+    public OrthancWebUser selectedUser;
+
+    public List<OrthancWebUser> selectedUsers;
+
+
+
+    @PostConstruct
+    public void init() {
+        List<OrthancWebUser> webUsers;
+        webUsers = new ArrayList<>();
+        webUsers.add(new OrthancWebUser("1","1"));
+        webUsers.add(new OrthancWebUser("2","2"));
+        webUsers.add(new OrthancWebUser("3","3"));
+        webUsers.add(new OrthancWebUser("4","4"));
+        this.webUsers = webUsers;
+
+        selectedUser = new OrthancWebUser("5","5");
+    }
 
     public void loadConfig(){
     value1 = true;
@@ -766,11 +792,20 @@ public class SettingsBean {
         this.selectedUsers = selectedUsers;
     }
 
-    public OrthancWebUser getSelectedProduct() {
-        return selectedUser;
+    public void saveUser() {
+        System.out.println("сохранить");
+//        if (this.selectedProduct.getCode() == null) {
+//            this.selectedProduct.setCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 9));
+//            this.products.add(this.selectedProduct);
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Added"));
+//        }
+//        else {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Updated"));
+//        }
+//
+//        PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
+//        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
     }
 
-    public void setSelectedProduct(OrthancWebUser selectedUser) {
-        this.selectedUser = selectedUser;
-    }
+
 }

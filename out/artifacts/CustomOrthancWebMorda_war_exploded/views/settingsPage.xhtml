@@ -23,29 +23,56 @@
             <p class="p-m-0">
                 <br/>
             </p>
-
-            <p:toolbar>
-
-                <p:toolbarGroup>
-                    <p:commandButton value="New" actionListener="#{settingsBean.openNew}"
-                                     update=":form:manage-user-content" oncomplete="PF('manageUserDialog').show()"
-                                     styleClass="ui-button-success" style="margin-right: .5rem">
-                        <p:resetInput target=":form:manage-user-content"/>
-                    </p:commandButton>
-
-                    <p:dialog header="Product Details" showEffect="fade" modal="true"
-                              widgetVar="manageUserDialog" responsive="true">
-                        <p:outputPanel id="manage-user-content" class="ui-fluid">
+        <p:outputPanel>
+            <p:commandButton value="Добавить" actionListener="#{settingsBean.openNew}"
+                             update="manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                             styleClass="ui-button-success" style="margin-right: .5rem">
+                <p:resetInput target="manage-user-content"/>
+            </p:commandButton>
+            <p:commandButton value="Удалить" actionListener="#{settingsBean.openNew}"
+                             update="manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                             styleClass="ui-button-success" style="margin-right: .5rem">
+                <p:resetInput target="manage-user-content"/>
+            </p:commandButton>
 
 
-                        </p:outputPanel>
 
-                        <f:facet name="footer">
+            <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
+                      widgetVar="manageUserDialog" responsive="true">
+                <p:outputPanel id="manage-user-content" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="login" style="margin-right: .5rem">Логин   </p:outputLabel>
+                        <p:inputText id="login" value=" " style=" margin-bottom: .5rem; margin-right: .5rem"/>
+                    </div>
 
-                        </f:facet>
-                    </p:dialog>
-                </p:toolbarGroup>
-            </p:toolbar>
+                    <div class="p-field">
+                        <p:outputLabel for="password" style="margin-right: .5rem">Пароль </p:outputLabel>
+                        <p:inputText id="password" value=" " style=" margin-bottom: .5rem; margin-right: .5rem" />
+                    </div>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.saveUser}"
+                                     update="manage-user-content" process="manage-user-content @this"/>
+                    <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageProductDialog').close()"
+                                     class="ui-button-secondary"/>
+                </f:facet>
+            </p:dialog>
+
+        </p:outputPanel>
+
+        <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
+                     reflow="true" styleClass="users-table"
+                     selection="#{settingsBean.selectedUsers}" rowKey="#{orthancWebUser.getlogin}"
+                     rows="10" rowSelectMode="add" >
+
+            <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" >
+                <h:outputText value="#{orthancWebUser.login}" style="align-self: center"/>
+            </p:column>
+            <p:column headerText="Пароль" sortBy="#{orthancWebUser.password}"> <!--filterBy="#{orthancWebUser.password}"-->
+                <h:outputText value="#{orthancWebUser.password}"/>
+            </p:column>
+        </p:dataTable>
 
 
 
