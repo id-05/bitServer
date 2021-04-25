@@ -27,13 +27,6 @@
                              styleClass="ui-button-success" style="margin-right: .5rem">
                 <p:resetInput target="manage-user-content"/>
             </p:commandButton>
-            <p:commandButton value="Удалить" actionListener="#{settingsBean.openNew}"
-                             update="manage-user-content" oncomplete="PF('manageUserDialog').show()"
-                             styleClass="ui-button-success" style="margin-right: .5rem">
-                <p:resetInput target="manage-user-content"/>
-            </p:commandButton>
-
-
 
             <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
                       widgetVar="manageUserDialog" responsive="true">
@@ -52,11 +45,19 @@
                 </f:facet>
             </p:dialog>
 
+            <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                      message="Удалить пользователя?" header="Confirm" severity="warn">
+                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.deleteWebUser}"
+                                 process="@this" oncomplete="PF('deleteUserDialog').hide()"/>
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteUserDialog').hide()"/>
+            </p:dialog>
+
         </p:outputPanel>
 
         <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
                      reflow="true" styleClass="users-table"
-                     selection="#{settingsBean.selectedUsers}" rowKey="#{orthancWebUser.login}"
+                     selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
                      rows="10" rowSelectMode="add" >
             <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
                 <h:outputText value="#{orthancWebUser.login}" />
@@ -64,7 +65,21 @@
             <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
                 <h:outputText value="#{orthancWebUser.pass}"/>
             </p:column>
+            <p:column exportable="false">
+                <p:commandButton icon="pi pi-pencil" update=":form:manage-user-content"
+                                 oncomplete="PF('manageUserDialog').show()"
+                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                    <p:resetInput target=":form:manage-user-content"/>
+                </p:commandButton>
+                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                 oncomplete="PF('deleteUserDialog').show()">
+                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                </p:commandButton>
+            </p:column>
         </p:dataTable>
+
+
 
 
 

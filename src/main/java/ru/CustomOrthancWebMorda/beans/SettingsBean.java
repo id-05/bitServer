@@ -101,6 +101,8 @@ public class SettingsBean {
 
     public List<OrthancWebUser> webUsers;
 
+    public List<OrthancWebUser> selectedWebUsers;
+
     public OrthancWebUser selectedUser;
 
     public OrthancWebUser getSelectedUser() {
@@ -111,7 +113,13 @@ public class SettingsBean {
         this.selectedUser = selectedUser;
     }
 
-    public List<OrthancWebUser> selectedUsers;
+    public List<OrthancWebUser> getSelectedWebUsers() {
+        return selectedWebUsers;
+    }
+
+    public void setSelectedWebUsers(List<OrthancWebUser> selectedWebUsers) {
+        this.selectedWebUsers = selectedWebUsers;
+    }
 
     @PostConstruct
     public void init() {
@@ -278,8 +286,12 @@ public class SettingsBean {
         return bufUsers;
     }
 
-    public void setWebUserToJson(){
-
+    public JsonObject setWebUserToJson(){
+        JsonObject jsonObj = new JsonObject();
+        for(int i=0; i<=webUsers.size()-1; i++){
+            jsonObj.addProperty(webUsers.get(i).getLogin(), webUsers.get(i).getPass());
+        }
+        return  jsonObj;
     }
 
     public void AddNewWebUser(){
@@ -290,6 +302,14 @@ public class SettingsBean {
             PrimeFaces.current().ajax().update("form:dt-users");
         }
     }
+
+    public void deleteWebUser() {
+        this.webUsers.remove(this.selectedUser);
+        selectedUser = new OrthancWebUser("","");
+        //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
+        PrimeFaces.current().ajax().update("form:dt-users");
+    }
+
 
     public void openNew() {
         System.out.println("open new");
@@ -812,14 +832,5 @@ public class SettingsBean {
     public Object getWebUsers() {
         return webUsers;
     }
-
-    public List<OrthancWebUser> getSelectedUsers() {
-        return selectedUsers;
-    }
-
-    public void setSelectedUsers(List<OrthancWebUser> selectedUsers) {
-        this.selectedUsers = selectedUsers;
-    }
-
 
 }
