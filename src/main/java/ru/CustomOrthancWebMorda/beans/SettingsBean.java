@@ -2,6 +2,7 @@ package ru.CustomOrthancWebMorda.beans;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @ManagedBean(name = "settingsBean")
 @SessionScoped
@@ -111,17 +113,17 @@ public class SettingsBean {
 
 
 
+
     @PostConstruct
     public void init() {
+        loadConfig();
+
         List<OrthancWebUser> webUsers;
         webUsers = new ArrayList<>();
-        webUsers.add(new OrthancWebUser("1","1"));
-        webUsers.add(new OrthancWebUser("2","2"));
-        webUsers.add(new OrthancWebUser("3","3"));
-        webUsers.add(new OrthancWebUser("4","4"));
+        webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
 
-        selectedUser = new OrthancWebUser("5","5");
+        //selectedUser = new OrthancWebUser("5","5");
     }
 
     public void loadConfig(){
@@ -130,7 +132,7 @@ public class SettingsBean {
         System.out.println("loadconfig");
         StringBuilder stringBuilder = new StringBuilder();
             boolean resultOpenFile =false;
-            try (FileInputStream fin = new FileInputStream("E://orthanc.json")) {
+            try (FileInputStream fin = new FileInputStream("D://orthanc.json")) {
                 int i = -1;
                 while ((i = fin.read()) != -1) {
                     stringBuilder.append((char) i);
@@ -152,6 +154,9 @@ public class SettingsBean {
                     }
                 }
             JsonSettings json = new JsonSettings(stringBuilderBuf.toString());
+
+
+            users = json.users;
             ServerName = json.orthancName;
             storageDirectory = json.storageDirectory;
             indexDirectory = json.indexDirectory;
@@ -261,6 +266,29 @@ public class SettingsBean {
             }
         }
         return troubleSimbol;
+    }
+
+    public List<OrthancWebUser> getWebUserFromJson(String jsonStr){
+        List<OrthancWebUser> bufUsers;
+        bufUsers = new ArrayList<>();
+        JsonParser parser = new JsonParser();
+        JsonObject orthancJson;
+        orthancJson = parser.parse(jsonStr).getAsJsonObject();
+        Set<String> keys = orthancJson.keySet();
+        Object[] jsonkeys = keys.toArray();
+        for(int i=0; i<=jsonkeys.length-1; i++){
+            bufUsers.add(new OrthancWebUser(jsonkeys[i].toString(),orthancJson.get(jsonkeys[i].toString()).getAsString()));
+        }
+        return bufUsers;
+    }
+
+    public void setWebUserToJson(){
+
+    }
+
+    public void AddNewWebUser(){
+        //FacesContext.getCurrentInstance()
+       // PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
     }
 
     public void openNew() {
