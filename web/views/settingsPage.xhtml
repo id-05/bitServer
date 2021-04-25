@@ -38,16 +38,16 @@
             <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
                       widgetVar="manageUserDialog" responsive="true">
                 <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
-                        <p:outputLabel for="login" style="margin-right: .5rem">Логин   </p:outputLabel>
-                        <p:inputText id="login" value=" "/>
-                        <p:outputLabel for="password" style="margin-right: .5rem">Пароль </p:outputLabel>
-                        <p:inputText id="password" value=" "/>
+                        <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                        <p:inputText id="login" value="#{settingsBean.selectedUser.login}" required="true"/>
+                        <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                        <p:inputText id="pass" value="#{settingsBean.selectedUser.pass}" required="true"/>
                 </p:panelGrid>
 
                 <f:facet name="footer">
-                    <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.saveUser}"
-                                     update="manage-user-content" process="manage-user-content @this"/>
-                    <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                    <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewWebUser}"
+                                     update="manage-user-content" />
+                    <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
                                      class="ui-button-secondary"/>
                 </f:facet>
             </p:dialog>
@@ -56,13 +56,13 @@
 
         <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
                      reflow="true" styleClass="users-table"
-                     selection="#{settingsBean.selectedUsers}" rowKey="#{orthancWebUser.getlogin}"
+                     selection="#{settingsBean.selectedUsers}" rowKey="#{orthancWebUser.login}"
                      rows="10" rowSelectMode="add" >
             <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
                 <h:outputText value="#{orthancWebUser.login}" />
             </p:column>
-            <p:column headerText="Пароль" sortBy="#{orthancWebUser.password}" style="text-align: center"> <!--filterBy="#{orthancWebUser.password}"-->
-                <h:outputText value="#{orthancWebUser.password}"/>
+            <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
+                <h:outputText value="#{orthancWebUser.pass}"/>
             </p:column>
         </p:dataTable>
 

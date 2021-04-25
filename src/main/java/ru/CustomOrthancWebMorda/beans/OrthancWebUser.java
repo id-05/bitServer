@@ -4,39 +4,37 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 
-@ManagedBean(name = "orthancWebUser")
+@ManagedBean
 @ViewScoped
 public class OrthancWebUser implements Serializable {
 
-    public String login;
+    private String login;
 
-    private String password;
+    private String pass;
 
-    public OrthancWebUser() {}
-
-    public OrthancWebUser(String login, String password) {
+    public OrthancWebUser(String login, String pass) {
         this.login = login;
-        this.password = password;
+        this.pass = pass;
     }
 
     public OrthancWebUser clone() {
-        return new OrthancWebUser(getlogin(), getpassword());
+        return new OrthancWebUser(getLogin(), getPass());
     }
 
-    public String getlogin() {
+    public String getLogin() {
         return login;
     }
 
-    public void setlogin(String login) {
+    public void setLogin(String login) {
         this.login = login;
     }
 
-    public String getpassword() {
-        return password;
+    public String getPass() {
+        return pass;
     }
 
-    public void setName(String password) {
-        this.password = password;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
     @Override

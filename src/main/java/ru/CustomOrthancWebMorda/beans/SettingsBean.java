@@ -3,11 +3,13 @@ package ru.CustomOrthancWebMorda.beans;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.primefaces.PrimeFaces;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionListener;
 import java.io.FileInputStream;
@@ -16,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@ManagedBean(name = "settingsBean")
-@SessionScoped
+@ManagedBean
+@ViewScoped
 public class SettingsBean {
 
     public String ServerName;
@@ -99,6 +101,8 @@ public class SettingsBean {
 
     public List<OrthancWebUser> webUsers;
 
+    public OrthancWebUser selectedUser;
+
     public OrthancWebUser getSelectedUser() {
         return selectedUser;
     }
@@ -107,28 +111,20 @@ public class SettingsBean {
         this.selectedUser = selectedUser;
     }
 
-    public OrthancWebUser selectedUser;
-
     public List<OrthancWebUser> selectedUsers;
-
-
-
 
     @PostConstruct
     public void init() {
         loadConfig();
-
         List<OrthancWebUser> webUsers;
         webUsers = new ArrayList<>();
         webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
-
-        //selectedUser = new OrthancWebUser("5","5");
     }
 
     public void loadConfig(){
+        openNew();
     value1 = true;
-
         System.out.println("loadconfig");
         StringBuilder stringBuilder = new StringBuilder();
             boolean resultOpenFile =false;
@@ -287,12 +283,17 @@ public class SettingsBean {
     }
 
     public void AddNewWebUser(){
-        //FacesContext.getCurrentInstance()
-       // PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
+        if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
+            System.out.println("addnewwebuser");
+            webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
+            PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
+            PrimeFaces.current().ajax().update("form:dt-users");
+        }
     }
 
     public void openNew() {
-        this.selectedUser = new OrthancWebUser();
+        System.out.println("open new");
+        selectedUser = new OrthancWebUser("","");
     }
 
     public String getServerName() {
@@ -818,21 +819,6 @@ public class SettingsBean {
 
     public void setSelectedUsers(List<OrthancWebUser> selectedUsers) {
         this.selectedUsers = selectedUsers;
-    }
-
-    public void saveUser() {
-        System.out.println("сохранить");
-//        if (this.selectedProduct.getCode() == null) {
-//            this.selectedProduct.setCode(UUID.randomUUID().toString().replaceAll("-", "").substring(0, 9));
-//            this.products.add(this.selectedProduct);
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Added"));
-//        }
-//        else {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Product Updated"));
-//        }
-//
-//        PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
-//        PrimeFaces.current().ajax().update("form:messages", "form:dt-products");
     }
 
 
