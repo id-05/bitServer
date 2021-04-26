@@ -21,12 +21,20 @@
 
             <p:menubar>
 
-                <p:menuitem value="Сохранить" actionListener="#{settingsBean.saveConfig}"/>
+                <p:menuitem value="Сохранить" oncomplete="PF('saveDialog').show()"/>
                 <p:menuitem value="Перезагрузить сервер" action="#{settingsBean.resetServer}"
                             />
                 <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"
                            />
             </p:menubar>
+
+            <p:dialog widgetVar="saveDialog" showEffect="fade" width="300"
+                      message="Сохранить изменения?" header="Сохранить изменения?" severity="warn">
+                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.saveConfig}"
+                                 process="@this" oncomplete="PF('saveDialog').hide()"/>
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('saveDialog').hide()"/>
+            </p:dialog>
 
             <p class="p-m-0">
             <br/>
