@@ -121,8 +121,11 @@ public class SettingsBean {
         this.selectedWebUsers = selectedWebUsers;
     }
 
+    public JsonSettings json;
+
     @PostConstruct
     public void init() {
+        selectedUser = new OrthancWebUser("","");
         loadConfig();
         List<OrthancWebUser> webUsers;
         webUsers = new ArrayList<>();
@@ -157,63 +160,61 @@ public class SettingsBean {
                       stringBuilderBuf.append(word);
                     }
                 }
-            JsonSettings json = new JsonSettings(stringBuilderBuf.toString());
-
-
-            users = json.users;
-            ServerName = json.orthancName;
-            storageDirectory = json.storageDirectory;
-            indexDirectory = json.indexDirectory;
-            StorageCompression = json.StorageCompression;
-            MaximumStorageSize = json.MaximumStorageSize;
-            MaximumPatientCount = json.MaximumPatientCount;
-            ConcurrentJobs = json.ConcurrentJobs;
-            HttpServerEnabled = json.HttpServerEnabled;
-            HttpPort = json.HttpPort;
-            HttpDescribeErrors = json.HttpDescribeErrors;
-            HttpCompressionEnabled = json.HttpCompressionEnabled;
-            DicomServerEnabled = json.DicomServerEnabled;
-            DicomAet = json.DicomAet;
-            DicomCheckCalledAet = json.DicomCheckCalledAet;
-            DicomPort = json.DicomPort;
-            DefaultEncoding = json.DefaultEncoding;
-            DeflatedTransferSyntaxAccepted = json.DeflatedTransferSyntaxAccepted;
-            JpegTransferSyntaxAccepted = json.JpegTransferSyntaxAccepted;
-            Jpeg2000TransferSyntaxAccepted = json.Jpeg2000TransferSyntaxAccepted;
-            JpegLosslessTransferSyntaxAccepted = json.JpegLosslessTransferSyntaxAccepted;
-            JpipTransferSyntaxAccepted = json.JpipTransferSyntaxAccepted;
-            Mpeg2TransferSyntaxAccepted = json.Mpeg2TransferSyntaxAccepted;
-            RleTransferSyntaxAccepted = json.RleTransferSyntaxAccepted;
-            UnknownSopClassAccepted = json.UnknownSopClassAccepted;
-            DicomScpTimeout = json.DicomScpTimeout;
-            RemoteAccessAllowed = json.RemoteAccessAllowed;
-            SslEnabled = json.SslEnabled ;
-            SslCertificate = json.SslCertificate;
-            AuthenticationEnabled = json.AuthenticationEnabled;
-            DicomScuTimeout = json.DicomScuTimeout;
-            HttpProxy = json.HttpProxy;
-            HttpTimeout = json.HttpTimeout;
-            HttpsVerifyPeers = json.HttpsVerifyPeers;
-            HttpsCACertificates = json.HttpsCACertificates;
-            StableAge = json.StableAge;
-            StrictAetComparison = json.StrictAetComparison;
-            dicomModalitiesInDb = json.dicomModalitiesInDb;
-            orthancPeerInDb = json.orthancPeerInDb;
-            overwriteInstances = json.overwriteInstances;
-            mediaArchiveSize = json.mediaArchiveSize;
-            storageAccessOnFind = json.storageAccessOnFind;
-            httpVerbose = json.httpVerbose;
-            tcpNoDelay = json.tcpNoDelay;
-            httpThreadsCount = json.httpThreadsCount;
-            saveJobs = json.saveJobs;
-            metricsEnabled = json.metricsEnabled;
-            AllowFindSopClassesInStudy = json.AllowFindSopClassesInStudy;
-            dicomAlwaysAllowEcho = json.dicomAlwaysAllowEcho;
-            DicomAlwaysStore = json.DicomAlwaysStore;
-            CheckModalityHost = json.CheckModalityHost;
-            SynchronousCMove = json.SynchronousCMove;
-            JobsHistorySize = json.JobsHistorySize;
-            locale = json.locale;
+                json= new JsonSettings(stringBuilderBuf.toString());
+                users = json.users;
+                ServerName = json.orthancName;
+                storageDirectory = json.storageDirectory;
+                indexDirectory = json.indexDirectory;
+                StorageCompression = json.StorageCompression;
+                MaximumStorageSize = json.MaximumStorageSize;
+                MaximumPatientCount = json.MaximumPatientCount;
+                ConcurrentJobs = json.ConcurrentJobs;
+                HttpServerEnabled = json.HttpServerEnabled;
+                HttpPort = json.HttpPort;
+                HttpDescribeErrors = json.HttpDescribeErrors;
+                HttpCompressionEnabled = json.HttpCompressionEnabled;
+                DicomServerEnabled = json.DicomServerEnabled;
+                DicomAet = json.DicomAet;
+                DicomCheckCalledAet = json.DicomCheckCalledAet;
+                DicomPort = json.DicomPort;
+                DefaultEncoding = json.DefaultEncoding;
+                DeflatedTransferSyntaxAccepted = json.DeflatedTransferSyntaxAccepted;
+                JpegTransferSyntaxAccepted = json.JpegTransferSyntaxAccepted;
+                Jpeg2000TransferSyntaxAccepted = json.Jpeg2000TransferSyntaxAccepted;
+                JpegLosslessTransferSyntaxAccepted = json.JpegLosslessTransferSyntaxAccepted;
+                JpipTransferSyntaxAccepted = json.JpipTransferSyntaxAccepted;
+                Mpeg2TransferSyntaxAccepted = json.Mpeg2TransferSyntaxAccepted;
+                RleTransferSyntaxAccepted = json.RleTransferSyntaxAccepted;
+                UnknownSopClassAccepted = json.UnknownSopClassAccepted;
+                DicomScpTimeout = json.DicomScpTimeout;
+                RemoteAccessAllowed = json.RemoteAccessAllowed;
+                SslEnabled = json.SslEnabled ;
+                SslCertificate = json.SslCertificate;
+                AuthenticationEnabled = json.AuthenticationEnabled;
+                DicomScuTimeout = json.DicomScuTimeout;
+                HttpProxy = json.HttpProxy;
+                HttpTimeout = json.HttpTimeout;
+                HttpsVerifyPeers = json.HttpsVerifyPeers;
+                HttpsCACertificates = json.HttpsCACertificates;
+                StableAge = json.StableAge;
+                StrictAetComparison = json.StrictAetComparison;
+                dicomModalitiesInDb = json.dicomModalitiesInDb;
+                orthancPeerInDb = json.orthancPeerInDb;
+                overwriteInstances = json.overwriteInstances;
+                mediaArchiveSize = json.mediaArchiveSize;
+                storageAccessOnFind = json.storageAccessOnFind;
+                httpVerbose = json.httpVerbose;
+                tcpNoDelay = json.tcpNoDelay;
+                httpThreadsCount = json.httpThreadsCount;
+                saveJobs = json.saveJobs;
+                metricsEnabled = json.metricsEnabled;
+                AllowFindSopClassesInStudy = json.AllowFindSopClassesInStudy;
+                dicomAlwaysAllowEcho = json.dicomAlwaysAllowEcho;
+                DicomAlwaysStore = json.DicomAlwaysStore;
+                CheckModalityHost = json.CheckModalityHost;
+                SynchronousCMove = json.SynchronousCMove;
+                JobsHistorySize = json.JobsHistorySize;
+                locale = json.locale;
         }else{
             FacesMessage message = new FacesMessage("Внимание", "Ошибка при чтении файла orthanc.json");
             message.setSeverity(FacesMessage.SEVERITY_INFO); //как выглядит окошко с сообщением
@@ -222,7 +223,84 @@ public class SettingsBean {
     }
 
     public void saveConfig(){
-        showMessage("Сообщение","Изменения сохранены!", info);
+        System.out.println("save compleat");
+        //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Message Content"));
+        JsonObject jsonOb = new JsonObject();
+        jsonOb.addProperty("Name", ServerName);
+        jsonOb.addProperty("StorageDirectory", storageDirectory);
+        jsonOb.addProperty("IndexDirectory", indexDirectory);
+        jsonOb.addProperty("StorageCompression", StorageCompression);
+        jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
+        jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
+        jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
+        jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
+        jsonOb.addProperty("HttpPort", HttpPort);
+        jsonOb.addProperty("HttpDescribeErrors", HttpDescribeErrors);
+        jsonOb.addProperty("HttpCompressionEnabled", HttpCompressionEnabled);
+        jsonOb.addProperty("DicomServerEnabled", DicomServerEnabled);
+        jsonOb.addProperty("DicomAet", DicomAet);
+        jsonOb.addProperty("DicomCheckCalledAet", DicomCheckCalledAet);
+        jsonOb.addProperty("DicomPort", DicomPort);
+        jsonOb.addProperty("DefaultEncoding", DefaultEncoding);
+        jsonOb.addProperty("DeflatedTransferSyntaxAccepted",DeflatedTransferSyntaxAccepted);
+        jsonOb.addProperty("JpegTransferSyntaxAccepted",JpegTransferSyntaxAccepted);
+        jsonOb.addProperty("Jpeg2000TransferSyntaxAccepted",Jpeg2000TransferSyntaxAccepted);
+        jsonOb.addProperty("JpegLosslessTransferSyntaxAccepted",JpegLosslessTransferSyntaxAccepted);
+        jsonOb.addProperty("JpipTransferSyntaxAccepted",JpipTransferSyntaxAccepted);
+        jsonOb.addProperty("Mpeg2TransferSyntaxAccepted",Mpeg2TransferSyntaxAccepted);
+        jsonOb.addProperty("RleTransferSyntaxAccepted",RleTransferSyntaxAccepted);
+        jsonOb.addProperty("UnknownSopClassAccepted", UnknownSopClassAccepted);
+        jsonOb.addProperty("DicomScpTimeout", DicomScpTimeout);
+        jsonOb.addProperty("RemoteAccessAllowed", RemoteAccessAllowed);
+        jsonOb.addProperty("SslEnabled", SslEnabled);
+        jsonOb.addProperty("SslCertificate", SslCertificate);
+        jsonOb.addProperty("AuthenticationEnabled", AuthenticationEnabled);
+
+//        orthancJson = parser.parse(prefs.getString("HttpUserJson", "")).getAsJsonObject();
+//        jsonOb.add("RegisteredUsers",orthancJson);
+//        orthancJson = parser.parse(prefs.getString("DicomModalities", "")).getAsJsonObject();
+//        jsonOb.add("DicomModalities",orthancJson);
+        jsonOb.addProperty("DicomModalitiesInDatabase", dicomModalitiesInDb);
+        jsonOb.addProperty("DicomAlwaysAllowEcho", dicomAlwaysAllowEcho);
+        jsonOb.addProperty("DicomAlwaysAllowStore", DicomAlwaysStore);
+        jsonOb.addProperty("DicomCheckModalityHost", CheckModalityHost);
+        jsonOb.addProperty("DicomScuTimeout", DicomScuTimeout);
+        //orthancJson = parser.parse(prefs.getString("OrthancPeers", "")).getAsJsonObject();
+        //jsonOb.add("OrthancPeers",orthancJson);
+        jsonOb.addProperty("OrthancPeersInDatabase", orthancPeerInDb);
+        jsonOb.addProperty("HttpProxy", HttpProxy);
+        jsonOb.addProperty("HttpVerbose", httpVerbose);
+        jsonOb.addProperty("HttpTimeout", HttpTimeout);
+        jsonOb.addProperty("HttpsVerifyPeers", HttpsVerifyPeers);
+        jsonOb.addProperty("HttpsCACertificates", HttpsCACertificates);
+//        orthancJson = parser.parse(prefs.getString("UserMetadata", "")).getAsJsonObject();
+//        jsonOb.add("UserMetadata", orthancJson);
+//        orthancJson = parser.parse(prefs.getString("UserContentType", "")).getAsJsonObject();
+//        jsonOb.add("UserContentType", orthancJson);
+        jsonOb.addProperty("StableAge", StableAge);
+        jsonOb.addProperty("StrictAetComparison", StrictAetComparison);
+        jsonOb.addProperty("StoreMD5ForAttachments", StoreMD5ForAttachments);
+        jsonOb.addProperty("LimitFindResults", LimitFindResults);
+        jsonOb.addProperty("LimitFindInstances", LimitFindInstances);
+        jsonOb.addProperty("LimitJobs", LimitJobs);
+        jsonOb.addProperty("LogExportedResources", LogExportedResources);
+        jsonOb.addProperty("KeepAlive", KeepAlive);
+        jsonOb.addProperty("StoreDicom", StoreDicom);
+        jsonOb.addProperty("DicomAssociationCloseDelay", DicomAssociationCloseDelay);
+        jsonOb.addProperty("QueryRetrieveSize", QueryRetrieveSize);
+        jsonOb.addProperty("CaseSensitivePN", CaseSensitivePN);
+        jsonOb.addProperty("AllowFindSopClassesInStudy", AllowFindSopClassesInStudy);
+        jsonOb.addProperty("LoadPrivateDictionary", LoadPrivateDictionary);
+//        orthancJson = parser.parse(prefs.getString("Dictionary", "")).getAsJsonObject();
+//        jsonOb.add("Dictionary", orthancJson);
+        jsonOb.addProperty("SynchronousCMove", SynchronousCMove);
+        jsonOb.addProperty("JobsHistorySize", JobsHistorySize);
+        jsonOb.addProperty("OverwriteInstances", overwriteInstances);
+        jsonOb.addProperty("MediaArchiveSize", mediaArchiveSize);
+
+
+
+        String modifyStr = ModifyStr(jsonOb.toString());
     }
 
     public void resetServer(){
@@ -272,6 +350,18 @@ public class SettingsBean {
         return troubleSimbol;
     }
 
+    public String ModifyStr(String str){
+        String result;
+        String buf0;
+        String buf;
+        String buf2;
+        buf0 = str.replace("\\","\\\\");
+        buf = buf0.replace("/","\\/");
+        buf2 = buf.replace("\"","\\\"");
+        result = buf2.replace(",",",\\n");
+        return result;
+    }
+
     public List<OrthancWebUser> getWebUserFromJson(String jsonStr){
         List<OrthancWebUser> bufUsers;
         bufUsers = new ArrayList<>();
@@ -299,7 +389,7 @@ public class SettingsBean {
             System.out.println("addnewwebuser");
             webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-            PrimeFaces.current().ajax().update("form:dt-users");
+            PrimeFaces.current().ajax().update(":form:accordion:dt-users");
         }
     }
 
@@ -307,9 +397,8 @@ public class SettingsBean {
         this.webUsers.remove(this.selectedUser);
         selectedUser = new OrthancWebUser("","");
         //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
-        PrimeFaces.current().ajax().update("form:dt-users");
+        PrimeFaces.current().ajax().update(":form:accordion:dt-users");
     }
-
 
     public void openNew() {
         System.out.println("open new");

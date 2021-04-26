@@ -9,232 +9,165 @@
 
 <f:view>
 
-
-
     <h:head><title>bitServer Settings</title></h:head>
 
     <h:body>
 
         <h:form id="form">
-            <p:growl id="growlMessageId" showDetail="true" styleClass="p-mr-2" style="width: 10rem"/>
 
-            <p class="p-m-0">
-                <br/>
-            </p>
-        <p:outputPanel>
-            <p:commandButton value="Добавить" actionListener="#{settingsBean.openNew}"
-                             update="manage-user-content" oncomplete="PF('manageUserDialog').show()"
-                             styleClass="ui-button-success" style="margin-right: .5rem">
-                <p:resetInput target="manage-user-content"/>
-            </p:commandButton>
-
-            <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
-                      widgetVar="manageUserDialog" responsive="true">
-                <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
-                        <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
-                        <p:inputText id="login" value="#{settingsBean.selectedUser.login}" required="true"/>
-                        <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
-                        <p:inputText id="pass" value="#{settingsBean.selectedUser.pass}" required="true"/>
-                </p:panelGrid>
-
-                <f:facet name="footer">
-                    <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewWebUser}"
-                                     update="manage-user-content" />
-                    <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
-                                     class="ui-button-secondary"/>
-                </f:facet>
-            </p:dialog>
-
-            <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
-                      message="Удалить пользователя?" header="Confirm" severity="warn">
-                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.deleteWebUser}"
-                                 process="@this" oncomplete="PF('deleteUserDialog').hide()"/>
-                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                 onclick="PF('deleteUserDialog').hide()"/>
-            </p:dialog>
-
-        </p:outputPanel>
-
-        <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
-                     reflow="true" styleClass="users-table"
-                     selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
-                     rows="10" rowSelectMode="add" >
-            <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
-                <h:outputText value="#{orthancWebUser.login}" />
-            </p:column>
-            <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
-                <h:outputText value="#{orthancWebUser.pass}"/>
-            </p:column>
-            <p:column exportable="false">
-                <p:commandButton icon="pi pi-pencil" update=":form:manage-user-content"
-                                 oncomplete="PF('manageUserDialog').show()"
-                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
-                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
-                    <p:resetInput target=":form:manage-user-content"/>
-                </p:commandButton>
-                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                 oncomplete="PF('deleteUserDialog').show()">
-                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
-                </p:commandButton>
-            </p:column>
-        </p:dataTable>
-
-
-
-
-
-            <p class="p-m-0">
-                <br/>
-            </p>
 
             <p:link outcome="home" value="Домой"/>
 
 
-
-
-
             <p:menubar>
-                <p:menuitem value="Сохранить" action="#{settingsBean.saveConfig}"
-                            update="growlMessageId"/>
+
+                <p:menuitem value="Сохранить" actionListener="#{settingsBean.saveConfig}"/>
                 <p:menuitem value="Перезагрузить сервер" action="#{settingsBean.resetServer}"
-                            update="growlMessageId"/>
+                            />
                 <p:menuitem value="Отменить изменения" action="#{settingsBean.restoreBackup}"
-                            update="growlMessageId"/>
+                           />
             </p:menubar>
 
             <p class="p-m-0">
             <br/>
             </p>
 
-            <p:accordionPanel widgetVar="Настройки сервера">
+            <p:accordionPanel widgetVar="Настройки сервера" id="accordion">
             <p:tab title="Основные настройки">
-                <p:outputPanel>
-
-                    <p:panel header="Имя сервера" >
+                    <p:divider align="left" type="dashed">
+                        <b>Имя сервера</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.serverName}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
-                    </p:panel>
 
-                    <p:panel header="Каталог хранения" >
+                    <p:divider align="left" type="dashed">
+                        <b>Каталог хранения</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.storageDirectory}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
-                    </p:panel>
 
-                    <p:panel header="Каталог указателей" >
+                    <p:divider align="left" type="dashed">
+                        <b>Каталог указателей</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.indexDirectory}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
-                    </p:panel>
 
-                    <p:panel header="Сжатие хранилища" >
+                    <p:divider align="left" type="dashed">
+                        <b>Сжатие хранилища</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storageCompression}"/>
                         </p>
                         <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
-                    </p:panel>
 
-                    <p:panel header="Максимальный размер хранилища" >
+                    <p:divider align="left" type="dashed">
+                        <b>Максимальный размер хранилища</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.maximumStorageSize}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
-                    </p:panel>
 
-                    <p:panel header="Максимальное количество пациентов" >
+                    <p:divider align="left" type="dashed">
+                        <b>Максимальное количество пациентов</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.maximumPatientCount}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
-                    </p:panel>
 
-                    <p:panel header="Одновременные задания" >
+                    <p:divider align="left" type="dashed">
+                        <b>Одновременные задания</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.concurrentJobs}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
-                    </p:panel>
-
-                </p:outputPanel>
-
             </p:tab>
             <p:tab title="Конфигурация HTTP сервера">
-                <p:outputPanel>
-
-                    <p:panel header="HTTP сервер" >
+                    <p:divider align="left" type="dashed">
+                        <b>HTTP сервер</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpServerEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Если этот параметр выключен, Orthanc действует как чистый DICOM-сервер. REST API и Orthanc Explorer не доступны. Так же Orthac Manager, тоже не сможет получить доступ к серверу, так как использует REST API</div>
-                    </p:panel>
 
-                    <p:panel header="HTTP порт" >
+                    <p:divider align="left" type="dashed">
+                        <b>HTTP порт</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.httpPort}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">HTTP порт для службы REST и графического интерфейса</div>
-                    </p:panel>
 
-                    <p:panel header="HTTP описание ошибок" >
+                    <p:divider align="left" type="dashed">
+                        <b>HTTP описание ошибок</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpDescribeErrors}"/>
                         </p>
                         <div class="p-text-capitalize">Если включено, и при вызове REST API возникает ошибка, в HTTP ответ, добавляется сообщение JSON с описанием ошибки. Эту функцию можно отключить, если HTTP-клиент неправильно обрабатывает такие ответы</div>
-                    </p:panel>
 
-                    <p:panel header="HTTP сжатие" >
+                    <p:divider align="left" type="dashed">
+                        <b>HTTP сжатие</b>
+                    </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpCompressionEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Сжатие HTTP улучшает использование полосы пропускания сети, за счет большего количества вычислений на сервере. Orthanc поддерживает HTTP-кодировки «gzip» и «deflate»</div>
-                    </p:panel>
-
-                </p:outputPanel>
             </p:tab>
 
             <p:tab title="Конфигурация DICOM сервера">
-                <p:outputPanel>
-
-                    <p:panel header="DICOM сервер" >
+                <p:divider align="left" type="dashed">
+                    <b>DICOM сервер</b>
+                </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomServerEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
-                    </p:panel>
 
-                    <p:panel header="DICOM AET" >
+                <p:divider align="left" type="dashed">
+                    <b>DICOM AET</b>
+                </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.dicomAet}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
-                    </p:panel>
 
-                    <p:panel header="DICOM проверка AET" >
+                <p:divider align="left" type="dashed">
+                    <b>DICOM проверка AET</b>
+                </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomCheckCalledAet}"/>
                         </p>
                         <div class="p-text-capitalize">Проверка соответствия AET, во время входящего запроса SCU DICOM</div>
-                    </p:panel>
 
-                    <p:panel header="DICOM порт" >
+                <p:divider align="left" type="dashed">
+                    <b>DICOM порт</b>
+                </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.dicomPort}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
-                    </p:panel>
 
-                    <p:panel header="Кодировка по умолачнию" >
+                <p:divider align="left" type="dashed">
+                    <b>Кодировка по умолачнию</b>
+                </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.defaultEncoding}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
-                    </p:panel>
 
-                    <p:panel header="Синтаксис передачи" >
+                <p:divider align="left" type="dashed">
+                    <b>Синтаксис передачи</b>
+                </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanCheckbox value="#{settingsBean.deflatedTransferSyntaxAccepted}" itemLabel="Deflated Transfer"/>
                             <br/>
@@ -251,66 +184,120 @@
                             <p:selectBooleanCheckbox value="#{settingsBean.rleTransferSyntaxAccepted}" itemLabel="Rle Transfer"/>
                         </p>
                         <div class="p-text-capitalize">Синтаксисы передачи принятые в Orthanc C-Store SCP</div>
-                    </p:panel>
 
-                    <p:panel header="Разрешить принимать данные из неизвестных источников" >
+                <p:divider align="left" type="dashed">
+                    <b>Разрешить принимать данные из неизвестных источников</b>
+                </p:divider>
                         <p class="p-m-0">
                             <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.unknownSopClassAccepted}"/>
                         </p>
                         <div class="p-text-capitalize">Принимать или нет, роль S-Store SCP для неизвестных источников («Неразборчивый режим»)</div>
-                    </p:panel>
 
-                    <p:panel header="DICOM SCP Timeout" >
+                <p:divider align="left" type="dashed">
+                    <b>DICOM SCP Timeout</b>
+                </p:divider>
                         <p class="p-m-0">
                             <h:inputText  value="#{settingsBean.dicomScpTimeout}" > </h:inputText>
                         </p>
                         <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc закроет соединение, если больше нет DIMSE-команд от SCU (клиента)</div>
-                    </p:panel>
-
-                </p:outputPanel>
             </p:tab>
 
-                <p:tab title="Параметры безопасности HTTP-сервера">
-                    <p:outputPanel>
+                <p:tab title="Параметры безопасности HTTP-сервера" id="tab1">
 
-                        <p:panel header="Разрешение удаленного доступа" >
+                    <p:divider align="left" type="dashed">
+                        <b>Разрешение удаленного доступа</b>
+                    </p:divider>
                             <p class="p-m-0">
                                 <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.remoteAccessAllowed}"/>
                             </p>
                             <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу)</div>
-                        </p:panel>
 
-                        <p:panel header="SSL protocol" >
+                    <p:divider align="left" type="dashed">
+                        <b>SSL protocol</b>
+                    </p:divider>
                             <p class="p-m-0">
                                 <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.sslEnabled}"/>
                             </p>
                             <div class="p-text-capitalize">Включение протокола SSL</div>
-                        </p:panel>
 
-                        <p:panel header="SSL Certificate" >
+                    <p:divider align="left" type="dashed">
+                        <b>SSL Certificate</b>
+                    </p:divider>
                             <p class="p-m-0">
                                 <h:inputText  value="#{settingsBean.sslCertificate}" > </h:inputText>
                             </p>
                             <div class="p-text-capitalize">Путь к SSL-сертификату в формате PEM (значимый только в том случае, если включен SSL)</div>
-                        </p:panel>
 
-                        <p:panel header="Включение аутентификации" >
+                    <p:divider align="left" type="dashed">
+                        <b>Включение аутентификации</b>
+                    </p:divider>
                             <p class="p-m-0">
                                 <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.authenticationEnabled}"/>
                             </p>
                             <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
-                        </p:panel>
 
-                        <p:panel header="Регистрация пользователей" >
-                            <p class="p-m-0">
+                    <p:divider align="left" type="dashed">
+                        <b>Регистрация пользователей</b>
+                    </p:divider>
+                    <p:outputPanel>
+                        <p:commandButton value="Добавить" actionListener="#{settingsBean.openNew}"
+                                         update=":form:accordion:manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target=":form:accordion:manage-user-content"/>
+                        </p:commandButton>
 
+                        <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
+                                  widgetVar="manageUserDialog" responsive="true">
+                            <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                                <p:inputText id="login" value="#{settingsBean.selectedUser.login}" required="true"/>
+                                <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                                <p:inputText id="pass" value="#{settingsBean.selectedUser.pass}" required="true"/>
+                            </p:panelGrid>
 
+                            <f:facet name="footer">
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewWebUser}"
+                                                 update=":form:accordion:manage-user-content" />
+                                <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
+                                                 class="ui-button-secondary"/>
+                            </f:facet>
+                        </p:dialog>
 
-                            </p>
-                            <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
-                        </p:panel>
+                        <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                                  message="Удалить пользователя?" header="Confirm" severity="warn">
+                            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.deleteWebUser}"
+                                             process="@this" oncomplete="PF('deleteUserDialog').hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteUserDialog').hide()"/>
+                        </p:dialog>
 
                     </p:outputPanel>
+
+                    <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
+                                 reflow="true" styleClass="users-table"
+                                 selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
+                                 rows="10" rowSelectMode="add" >
+                        <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
+                            <h:outputText value="#{orthancWebUser.login}" />
+                        </p:column>
+                        <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
+                            <h:outputText value="#{orthancWebUser.pass}"/>
+                        </p:column>
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
+                                             oncomplete="PF('manageUserDialog').show()"
+                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                                <p:resetInput target=":form:accordion:manage-user-content"/>
+                            </p:commandButton>
+                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                             oncomplete="PF('deleteUserDialog').show()">
+                                <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                            <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
                 </p:tab>
 
                 <p:tab title="Топология сети">
