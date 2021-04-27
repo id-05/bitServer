@@ -160,11 +160,13 @@ public class SettingsBean {
         selectedDicomModality = new DicomModaliti("","","","","");
         loadConfig();
 
-        List<OrthancWebUser> webUsers = new ArrayList<>();
+        List<OrthancWebUser> webUsers;
+        webUsers = new ArrayList<>();
         webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
 
-        List<DicomModaliti> dicomModalities = new ArrayList<>();;
+        List<DicomModaliti> dicomModalities;
+        dicomModalities = new ArrayList<>();;
         dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         this.dicomModalities = dicomModalities;
     }
@@ -455,6 +457,7 @@ public class SettingsBean {
     }
 
     public void AddNewWebUser(){
+        System.out.println("selectedUser.getLogin() = "+selectedUser.getLogin()+"  "+"selectedUser.getPass() = "+selectedUser.getPass());
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
             System.out.println("addnewwebuser");
             webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));

@@ -22,8 +22,8 @@
 
                 <f:facet name="options">
                     <div class="ui-input-icon-left p-mr-2">
-                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                        <div align="right">Комплексные решения в области рентгеноогии</div>
+                        <div align="right" class="p-text-bold">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right" class="p-text-bold">Комплексные решения в области рентгенологии</div>
                     </div>
                 </f:facet>
             </p:menubar>
@@ -245,6 +245,7 @@
                     <p:divider align="left" type="dashed">
                         <b>Регистрация пользователей</b>
                     </p:divider>
+                    <div>
                     <p:outputPanel>
                         <p:toolbar>
                         <p:toolbarGroup>
@@ -255,6 +256,7 @@
                         </p:commandButton>
                         </p:toolbarGroup>
                         </p:toolbar>
+
                         <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
                                   widgetVar="manageUserDialog" responsive="true">
                             <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
@@ -266,7 +268,7 @@
 
                             <f:facet name="footer">
                                 <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewWebUser}"
-                                                 update=":form:accordion:manage-user-content" process="@this"/>
+                                                 update=":form:accordion:manage-user-content"/>
                                 <span style="padding: 20px;">&nbsp;</span>
                                 <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
                                                  class="ui-button-secondary"/>
@@ -307,13 +309,12 @@
                             </p:commandButton>
                         </p:column>
                     </p:dataTable>
-
+                    </div>
                             <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
                 </p:tab>
 
                 <p:tab title="Топология сети">
-                    <p:outputPanel>
-
+                    <div>
                         <p:divider align="left" type="dashed">
                             <b>DICOM Модальности</b>
                         </p:divider>
@@ -407,6 +408,7 @@
                                 </p:commandButton>
                             </p:column>
                         </p:dataTable>
+                    </div>
                             <div class="p-text-capitalize">Список клиентов рабочей группы</div>
 
                         <p:divider align="left" type="dashed">
@@ -505,7 +507,7 @@
                             </p>
                             <div class="p-text-capitalize">Путь к сертификатам CA (certification authority) для проверки одноранговых узлов в HTTPS-запросах. Из документации curl (опция "—cacert"): предлагает использовать указанный файл сертификата для проверки одноранговых узлов. Этот файл может содержать несколько сертификатов CA. Сертификат(ы) должен быть в формате PEM. В системах на базе Debian этот параметр может быть установлен в значение: /etc / ssl/certs/ca-certificates.crt</div>
 
-                    </p:outputPanel>
+
                 </p:tab>
 
                 <p:tab title="Дополнительные параметры">
