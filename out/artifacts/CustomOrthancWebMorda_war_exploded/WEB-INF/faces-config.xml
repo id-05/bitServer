@@ -3,6 +3,24 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
     http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+    <managed-bean>
+        <managed-bean-name>searchBean</managed-bean-name>
+        <managed-bean-class>ru.CustomOrthancWebMorda.beans.SearchBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>settingsBean</managed-bean-name>
+        <managed-bean-class>ru.CustomOrthancWebMorda.beans.SettingsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+    <managed-bean>
+        <managed-bean-name>mainBean</managed-bean-name>
+        <managed-bean-class>ru.CustomOrthancWebMorda.beans.MainBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
     <navigation-rule>
         <from-view-id>*</from-view-id>
 
@@ -12,8 +30,8 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>seachPage</from-outcome>
-            <to-view-id>/views/seachPage.xhtml</to-view-id>
+            <from-outcome>searchPage</from-outcome>
+            <to-view-id>/views/searchPage.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>

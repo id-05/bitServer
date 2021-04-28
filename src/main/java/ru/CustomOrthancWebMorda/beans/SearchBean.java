@@ -1,14 +1,16 @@
 package ru.CustomOrthancWebMorda.beans;
 
+import jdk.nashorn.internal.objects.annotations.Constructor;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
-@ManagedBean
+@ManagedBean(name = "searchBean", eager = true)
 @ViewScoped
-public class SeachBean {
+public class SearchBean {
 
     public String getValue1() {
         return value1;
@@ -24,9 +26,6 @@ public class SeachBean {
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
-   // private Organization viewOrganization;
-
-    public SeachBean(String myArg){}
 
     @PostConstruct
     public void init() {
