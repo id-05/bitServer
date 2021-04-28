@@ -54,6 +54,10 @@ public class DicomModaliti implements Serializable {
         this.dicomproperty = dicomproperty;
     }
 
+    public DicomModaliti () {
+
+    }
+
     public DicomModaliti (String title, String name, String ip, String port, String property) {
         this.dicomtitle = title;
         this.dicomname = name;

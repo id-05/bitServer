@@ -5,7 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
 
@@ -15,7 +15,7 @@
         <h:form id="form">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
-                <p:menuitem value="Назад" outcome="home" icon="pi pi-backward"/>
+                <p:menuitem value="Назад" outcome="homePage" icon="pi pi-backward"/>
                 <p:menuitem value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
                 <p:menuitem value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{settingsBean.resetServer()}" process="@this" update="growl"/>
                 <p:menuitem value="Отменить изменения" icon="pi pi-replay" actionListener="#{settingsBean.restoreBackup()}" process="@this" update="form, growl"/>
@@ -30,11 +30,19 @@
 
             <p:dialog widgetVar="saveDialog" showEffect="fade" width="300"
                       message="Сохранить изменения?" header="Сохранить изменения?" severity="warn">
-                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.saveConfig}"
+
+
+
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.saveConfig}"
                                  process="@this" oncomplete="PF('saveDialog').hide()" update="growl"/>
+
                     <span style="padding: 20px;">&nbsp;</span>
-                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+
+
+
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                  onclick="PF('saveDialog').hide()"/>
+
             </p:dialog>
 
             <p:accordionPanel widgetVar="serverSettings" id="accordion">
@@ -245,33 +253,69 @@
                     <p:divider align="left" type="dashed">
                         <b>Регистрация пользователей</b>
                     </p:divider>
-                    <div>
+
                     <p:outputPanel>
                         <p:toolbar>
                         <p:toolbarGroup>
-                        <p:commandButton value="Новый" icon="pi pi-plus" actionListener="#{settingsBean.openNew}"
-                                         update=":form:accordion:manage-user-content" oncomplete="PF('manageUserDialog').show()"
+                            <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingsBean.openNew}"
+                                         update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
                                          styleClass="ui-button-success" style="margin-right: .5rem">
-                            <p:resetInput target=":form:accordion:manage-user-content"/>
+                            <p:resetInput target="dialogNewUser"/>
+
                         </p:commandButton>
                         </p:toolbarGroup>
                         </p:toolbar>
 
-                        <p:dialog header="Новый пользователь" showEffect="fade" modal="true"
+                        <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
+                                     reflow="true" styleClass="users-table"
+                                     selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
+                                     rows="10" rowSelectMode="add" >
+
+                            <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
+                                <h:outputText value="#{orthancWebUser.login}" />
+                            </p:column>
+
+                            <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
+                                <h:outputText value="#{orthancWebUser.pass}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
+                                                 oncomplete="PF('manageUserDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                                    <p:resetInput target=":form:accordion:manage-user-content"/>
+                                </p:commandButton>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUserDialog').show()">
+                                    <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dialog id="dialogNewUser" header="Новый пользователь" showEffect="fade" modal="true"
                                   widgetVar="manageUserDialog" responsive="true">
                             <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
                                 <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
-                                <p:inputText id="login" value="#{settingsBean.selectedUser.login}" required="true"/>
+                                <p:inputText id="login" value="#{settingsBean.selectedUser.login}" />
                                 <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
-                                <p:inputText id="pass" value="#{settingsBean.selectedUser.pass}" required="true"/>
+                                <p:inputText id="pass" value="#{settingsBean.selectedUser.pass}" />
                             </p:panelGrid>
 
                             <f:facet name="footer">
-                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewWebUser}"
-                                                 update=":form:accordion:manage-user-content"/>
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" onclick="" actionListener="#{settingsBean.AddNewWebUser}"
+                                                 update="dialogNewUser">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+
                                 <span style="padding: 20px;">&nbsp;</span>
-                                <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageUserDialog').hide()"
-                                                 class="ui-button-secondary"/>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewUser">
+                                <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+
                             </f:facet>
                         </p:dialog>
 
@@ -286,30 +330,6 @@
 
                     </p:outputPanel>
 
-                    <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
-                                 reflow="true" styleClass="users-table"
-                                 selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
-                                 rows="10" rowSelectMode="add" >
-                        <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
-                            <h:outputText value="#{orthancWebUser.login}" />
-                        </p:column>
-                        <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
-                            <h:outputText value="#{orthancWebUser.pass}"/>
-                        </p:column>
-                        <p:column exportable="false">
-                            <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
-                                             oncomplete="PF('manageUserDialog').show()"
-                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
-                                <p:resetInput target=":form:accordion:manage-user-content"/>
-                            </p:commandButton>
-                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                             oncomplete="PF('deleteUserDialog').show()">
-                                <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
-                            </p:commandButton>
-                        </p:column>
-                    </p:dataTable>
-                    </div>
                             <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
                 </p:tab>
 
@@ -322,41 +342,87 @@
                         <p:outputPanel>
                             <p:toolbar>
                                 <p:toolbarGroup>
-                                    <p:commandButton value="Новая модальность" icon="pi pi-plus" actionListener="#{settingsBean.openNewModaliti}"
-                                                     update=":form:accordion:manage-modaliti-content" oncomplete="PF('manageModalitiDialog').show()"
+                                    <p:commandButton value="Новая модальность" immediate="true" icon="pi pi-plus" actionListener="#{settingsBean.openNewModaliti}"
+                                                     update="dialogNewModaliti" oncomplete="PF('manageModalitiDialog').show()"
                                                      styleClass="ui-button-success" style="margin-right: .5rem">
-                                        <p:resetInput target=":form:accordion:manage-modaliti-content"/>
+                                        <p:resetInput target="dialogNewModaliti"/>
                                     </p:commandButton>
                                 </p:toolbarGroup>
                             </p:toolbar>
-                            <p:dialog header="Новая модальность" showEffect="fade" modal="true"
+
+                            <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{settingsBean.dicomModalities}"
+                                         reflow="true" styleClass="users-table"
+                                         selection="#{settingsBean.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
+                                         rows="10" rowSelectMode="add" >
+
+                                <p:column headerText="Title" sortBy="#{dicomModaliti.dicomtitle}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomtitle}" />
+                                </p:column>
+
+                                <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomname}"/>
+                                </p:column>
+
+                                <p:column headerText="IP" sortBy="#{dicomModaliti.ip}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.ip}"/>
+                                </p:column>
+
+                                <p:column headerText="Port" sortBy="#{dicomModaliti.dicomport}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomport}"/>
+                                </p:column>
+
+                                <p:column headerText="Property" sortBy="#{dicomModaliti.dicomproperty}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomproperty}"/>
+                                </p:column>
+
+                                <p:column exportable="false">
+                                    <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-modaliti-content"
+                                                     oncomplete="PF('manageModalitiDialog').show()"
+                                                     styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                        <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
+                                        <p:resetInput target=":form:accordion:manage-modaliti-content"/>
+                                    </p:commandButton>
+                                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                     oncomplete="PF('deleteModalitiDialog').show()">
+                                        <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+
+                            <p:dialog id="dialogNewModaliti" header="Новая модальность" showEffect="fade" modal="true"
                                       widgetVar="manageModalitiDialog" responsive="true">
                                 <p:panelGrid id="manage-modaliti-content" class="ui-fluid" columns="2">
 
                                     <p:outputLabel for="dicomtitle" style="margin-right: .5rem">Title</p:outputLabel>
-                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomtitle}" required="true"/>
+                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomtitle}" />
 
                                     <p:outputLabel for="dicomname" style="margin-right: .5rem">Name</p:outputLabel>
-                                    <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomname}" required="true"/>
+                                    <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomname}" />
 
                                     <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
-                                    <p:inputText id="ip" value="#{settingsBean.selectedDicomModality.ip}" required="true"/>
+                                    <p:inputText id="ip" value="#{settingsBean.selectedDicomModality.ip}" />
 
                                     <p:outputLabel for="dicomport" style="margin-right: .5rem">Port</p:outputLabel>
-                                    <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomport}" required="true"/>
+                                    <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomport}" />
 
                                     <p:outputLabel for="dicomproperty" style="margin-right: .5rem">Property</p:outputLabel>
-                                    <p:inputText id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomproperty}" required="true"/>
+                                    <p:inputText id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomproperty}" />
 
                                 </p:panelGrid>
 
                                 <f:facet name="footer" >
                                     <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewModaliti}"
-                                                     update=":form:accordion:manage-modaliti-content" />
+                                                     update="dialogNewModaliti">
+                                    <p:resetInput target="dialogNewModaliti"/>
+
+                                    </p:commandButton>
                                     <span style="padding: 20px;">&nbsp;</span>
-                                    <p:commandButton value="Отмена" icon="pi pi-times" onclick="PF('manageModalitiDialog').hide()"
-                                                     class="ui-button-secondary"/>
+                                    <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageModalitiDialog').hide()"
+                                                     class="ui-button-secondary" update="dialogNewModaliti">
+                                        <p:resetInput target="dialogNewModaliti"/>
+                                    </p:commandButton>
                                 </f:facet>
+
                             </p:dialog>
 
                             <p:dialog widgetVar="deleteModalitiDialog" showEffect="fade" width="300"
@@ -370,44 +436,6 @@
 
                         </p:outputPanel>
 
-                        <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{settingsBean.dicomModalities}"
-                                     reflow="true" styleClass="users-table"
-                                     selection="#{settingsBean.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
-                                     rows="10" rowSelectMode="add" >
-
-                            <p:column headerText="Title" sortBy="#{dicomModaliti.dicomtitle}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomtitle}" />
-                            </p:column>
-
-                            <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomname}"/>
-                            </p:column>
-
-                            <p:column headerText="IP" sortBy="#{dicomModaliti.ip}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.ip}"/>
-                            </p:column>
-
-                            <p:column headerText="Port" sortBy="#{dicomModaliti.dicomport}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomport}"/>
-                            </p:column>
-
-                            <p:column headerText="Property" sortBy="#{dicomModaliti.dicomproperty}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomproperty}"/>
-                            </p:column>
-
-                            <p:column exportable="false">
-                                <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-modaliti-content"
-                                                 oncomplete="PF('manageModalitiDialog').show()"
-                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
-                                    <p:resetInput target=":form:accordion:manage-modaliti-content"/>
-                                </p:commandButton>
-                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                                 oncomplete="PF('deleteModalitiDialog').show()">
-                                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable>
                     </div>
                             <div class="p-text-capitalize">Список клиентов рабочей группы</div>
 

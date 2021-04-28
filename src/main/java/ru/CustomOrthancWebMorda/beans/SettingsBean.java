@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.beans.NamedArg;
 import org.primefaces.PrimeFaces;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -22,9 +21,8 @@ import java.util.Set;
 @ManagedBean(name = "settingsBean", eager = true)
 @ViewScoped
 public class SettingsBean {
-
+    String fileSettingPath = "D://orthanc.json";
     public String ServerName;
-    public static boolean value1;
     public JsonObject dicomNode=new JsonObject();
     public JsonObject orthancPeer=new JsonObject();
     public JsonObject contentType=new JsonObject();
@@ -118,8 +116,6 @@ public class SettingsBean {
 
     public List<DicomModaliti> selectedDicomModalities;
 
-    public DicomModaliti selectedDicomModality;
-
     public DicomModaliti getSelectedDicomModality() {
         return selectedDicomModality;
     }
@@ -127,6 +123,8 @@ public class SettingsBean {
     public void setSelectedDicomModality(DicomModaliti selectedDicomModality) {
         this.selectedDicomModality = selectedDicomModality;
     }
+
+    public DicomModaliti selectedDicomModality;
 
     public List<DicomModaliti> getDicomModalities() {
         return dicomModalities;
@@ -156,28 +154,22 @@ public class SettingsBean {
 
     @PostConstruct
     public void init() {
+        System.out.println("settings");
         selectedUser = new OrthancWebUser("","");
         selectedDicomModality = new DicomModaliti("","","","","");
         loadConfig();
-
-        List<OrthancWebUser> webUsers;
-        webUsers = new ArrayList<>();
+        List<OrthancWebUser> webUsers = new ArrayList<>();
         webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
-
-        List<DicomModaliti> dicomModalities;
-        dicomModalities = new ArrayList<>();;
+        List<DicomModaliti> dicomModalities = new ArrayList<>();;
         dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         this.dicomModalities = dicomModalities;
     }
 
     public void loadConfig(){
-        openNew();
-    value1 = true;
-        System.out.println("loadconfig");
         StringBuilder stringBuilder = new StringBuilder();
             boolean resultOpenFile =false;
-            try (FileInputStream fin = new FileInputStream("D://orthanc.json")) {
+            try (FileInputStream fin = new FileInputStream(fileSettingPath)) {
                 int i = -1;
                 while ((i = fin.read()) != -1) {
                     stringBuilder.append((char) i);
@@ -262,8 +254,6 @@ public class SettingsBean {
     }
 
     public void saveConfig() throws IOException {
-        System.out.println("save compleat");
-        //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Message Content"));
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("Name", ServerName);
         jsonOb.addProperty("StorageDirectory", storageDirectory);
@@ -296,15 +286,23 @@ public class SettingsBean {
         jsonOb.addProperty("AuthenticationEnabled", AuthenticationEnabled);
 
         JsonObject jsonObj = new JsonObject();
-        //jsonObj = setWebUserToJson();
         for(int i=0; i<=webUsers.size()-1; i++){
             jsonObj.addProperty(webUsers.get(i).getLogin(), webUsers.get(i).getPass());
         }
         jsonOb.add("RegisteredUsers",jsonObj);
 
-//        orthancJson = parser.parse(prefs.getString("DicomModalities", "")).getAsJsonObject();
-//        jsonOb.add("DicomModalities",orthancJson);
+        jsonObj = new JsonObject();
+        for(int i=0; i<=dicomModalities.size()-1; i++){
+            JsonArray arrayJSON = new JsonArray();
+            DicomModaliti node = dicomModalities.get(i);
+            arrayJSON.add(node.getDicomtitle());
+            arrayJSON.add(node.getIp());
+            arrayJSON.add(node.getDicomport());
+            arrayJSON.add(node.getDicomproperty());
+            jsonObj.add(node.getDicomname(), arrayJSON);
+        }
 
+        jsonOb.add("DicomModalities",jsonObj);
         jsonOb.addProperty("DicomModalitiesInDatabase", dicomModalitiesInDb);
         jsonOb.addProperty("DicomAlwaysAllowEcho", dicomAlwaysAllowEcho);
         jsonOb.addProperty("DicomAlwaysAllowStore", DicomAlwaysStore);
@@ -343,14 +341,12 @@ public class SettingsBean {
         jsonOb.addProperty("OverwriteInstances", overwriteInstances);
         jsonOb.addProperty("MediaArchiveSize", mediaArchiveSize);
 
-        System.out.println(jsonOb.toString());
-        File file = new File("D://orthanc.json");
+        File file = new File(fileSettingPath);
         FileOutputStream fileOutputStream = new FileOutputStream(file, false); // true to append
         String bufStr =jsonOb.toString().replaceAll(",",",\n");
         byte[] myBytes = jsonOb.toString().getBytes();
         fileOutputStream.write(myBytes);
         fileOutputStream.close();
-
         showMessage("Сообщение","Изменения сохранены!", info);
     }
 
@@ -459,7 +455,7 @@ public class SettingsBean {
     public void AddNewWebUser(){
         System.out.println("selectedUser.getLogin() = "+selectedUser.getLogin()+"  "+"selectedUser.getPass() = "+selectedUser.getPass());
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
-            System.out.println("addnewwebuser");
+            System.out.println("add new webuser");
             webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accordion:dt-users");
@@ -472,7 +468,7 @@ public class SettingsBean {
         if((!selectedDicomModality.getDicomtitle().equals(""))&(!selectedDicomModality.getDicomname().equals(""))
                 &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
                 &(!selectedDicomModality.getDicomproperty().equals(""))) {
-            System.out.println("addnewmodaliti");
+            System.out.println("add new modaliti");
             dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
                     selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
             PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
@@ -497,12 +493,12 @@ public class SettingsBean {
     }
 
     public void openNew() {
-        System.out.println("open new");
+        System.out.println("open new user");
         selectedUser = new OrthancWebUser("","");
     }
 
     public void openNewModaliti() {
-        System.out.println("openNewModaliti");
+        System.out.println("open new modaliti");
         selectedDicomModality = new DicomModaliti("","","","","");
     }
 

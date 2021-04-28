@@ -38,9 +38,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:10.0.0-RC2" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx:11" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.11" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.15" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.faces:jsf-impl:2.2.15" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces.themes:all-themes:1.0.10" level="project" />
+    <orderEntry type="library" name="Maven: javax.enterprise:cdi-api:1.2" level="project" />
+    <orderEntry type="library" name="Maven: javax.el:javax.el-api:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.interceptor:javax.interceptor-api:1.2" level="project" />
+    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.5" level="project" />
   </component>
 </module>
