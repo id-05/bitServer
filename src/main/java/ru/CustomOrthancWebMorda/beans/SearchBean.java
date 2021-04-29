@@ -25,7 +25,6 @@ public class SearchBean {
 
     public static String authentication;
     public static String fulladdress ="http://185.59.139.156:8142";
-
     public String searchId;
     public String searchName;
     public String searchDate;
@@ -33,6 +32,14 @@ public class SearchBean {
     private ArrayList<Patient> patients = new ArrayList<>();
     private JsonParser parserJson = new JsonParser();
     private SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
+
+    public ArrayList<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(ArrayList<Patient> patients) {
+        this.patients = patients;
+    }
 
     public int getSearchType() {
         return searchType;
@@ -97,16 +104,7 @@ public class SearchBean {
             String output;
             while ((output = br.readLine()) != null) {
                 int i = output.indexOf("}");
-                if(i!= -1){
-                    if ((i == (output.length()-1)&(i!=0))) {
-                        sb.append(output).append(",");
-                    }else
-                    {
-                        sb.append(output);
-                    }
-                }else {
                     sb.append(output);
-                }
             }
             conn.disconnect();
             conn.getResponseMessage();
@@ -140,19 +138,13 @@ public class SearchBean {
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
         patients.clear();
+        int i=0;
 
         while (studiesIterator.hasNext()) {
-            JsonObject studyData=(JsonObject) studiesIterator.next();
+            JsonObject studyData = (JsonObject) studiesIterator.next();
             JsonObject  parentPatientDetails = null;
-            System.out.println("studyData = "+studyData);
-            System.out.println("________________________________________________________\n");
             if(studyData.has("PatientMainDicomTags")) {parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject(); }
-
-            System.out.println("parentPatientDetails = "+parentPatientDetails);
-            System.out.println("________________________________________________________\n");
             String parentPatientID=studyData.get("ParentPatient").getAsString();
-            System.out.println("parentPatientID "+parentPatientID);
-            System.out.println("________________________________________________________\n");
             String studyId=studyData.get("ID").getAsString();
             JsonObject studyDetails=studyData.get("MainDicomTags").getAsJsonObject();
             String patientBirthDate="N/A";
@@ -175,7 +167,10 @@ public class SearchBean {
             }
 
             if(parentPatientDetails.has("PatientSex")) { patientSex=parentPatientDetails.get("PatientSex").getAsString(); }
-            if(parentPatientDetails.has("PatientName")) { patientName=parentPatientDetails.get("PatientName").getAsString(); }
+            if(parentPatientDetails.has("PatientName"))
+                { patientName=parentPatientDetails.get("PatientName").getAsString();
+                    System.out.println(patientName);
+                }
             if(parentPatientDetails.has("PatientID")) { patientId=parentPatientDetails.get("PatientID").getAsString(); }
             String accessionNumber="N/A";
             if(studyDetails.has("AccessionNumber")) {accessionNumber=studyDetails.get("AccessionNumber").getAsString();}
@@ -195,24 +190,15 @@ public class SearchBean {
             String studyDescription="N/A";
             if(studyDetails.has("StudyDescription")){ studyDescription=studyDetails.get("StudyDescription").getAsString(); }
             Study studyObj=new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
-         //   SeachFragment.editor.commit();
             if(!patientMap.containsKey(parentPatientID)) {
-                Patient patient=new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
+                Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
-//                if(seachMode.equals("Patient ID")){
-                    patients.add(patient);
-//                }
-//                if(seachMode.equals("Patient name")){
-//                    if(patient.name.toUpperCase().contains(seachpatientName.toUpperCase())){
-//                        patients.add(patient);
-//                    }
-//                }
-
+                patients.add(patient);
             }
-        }
-       // adapter.notifyDataSetChanged();
-      //  System.out.println("size = "+patients.size());
+
+       }
+
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {
