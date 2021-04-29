@@ -38,8 +38,6 @@
 
                     <span style="padding: 20px;">&nbsp;</span>
 
-
-
                     <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                  onclick="PF('saveDialog').hide()"/>
 
@@ -51,7 +49,7 @@
                         <b>Имя сервера</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.serverName}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.serverName}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
 
@@ -59,7 +57,7 @@
                         <b>Каталог хранения</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.storageDirectory}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.storageDirectory}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
 
@@ -67,7 +65,7 @@
                         <b>Каталог указателей</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.indexDirectory}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.indexDirectory}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
 
@@ -84,7 +82,7 @@
                         <b>Максимальный размер хранилища</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.maximumStorageSize}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.maximumStorageSize}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
 
@@ -92,7 +90,7 @@
                         <b>Максимальное количество пациентов</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.maximumPatientCount}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.maximumPatientCount}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
 
@@ -100,7 +98,7 @@
                         <b>Одновременные задания</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.concurrentJobs}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.concurrentJobs}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
             </p:tab>
@@ -117,7 +115,7 @@
                         <b>HTTP порт</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.httpPort}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.httpPort}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">HTTP порт для службы REST и графического интерфейса</div>
 
@@ -151,7 +149,7 @@
                     <b>DICOM AET</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.dicomAet}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.dicomAet}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
 
@@ -167,15 +165,14 @@
                     <b>DICOM порт</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.dicomPort}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.dicomPort}" > </p:inputText>
                         </p>
-                        <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
 
                 <p:divider align="left" type="dashed">
                     <b>Кодировка по умолачнию</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.defaultEncoding}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.defaultEncoding}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
 
@@ -211,7 +208,7 @@
                     <b>DICOM SCP Timeout</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <h:inputText  value="#{settingsBean.dicomScpTimeout}" > </h:inputText>
+                            <p:inputText  value="#{settingsBean.dicomScpTimeout}" > </p:inputText>
                         </p>
                         <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc закроет соединение, если больше нет DIMSE-команд от SCU (клиента)</div>
             </p:tab>
@@ -238,7 +235,7 @@
                         <b>SSL Certificate</b>
                     </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.sslCertificate}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.sslCertificate}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Путь к SSL-сертификату в формате PEM (значимый только в том случае, если включен SSL)</div>
 
@@ -475,7 +472,7 @@
                             <b>DICOM SCU Timeout</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.dicomScuTimeout}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.dicomScuTimeout}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc считает DICOM соединение закрытым, если удаленный SCP DICOM (сервер) не отвечает</div>
 
@@ -483,7 +480,7 @@
                             <b>Orthanc peers</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.dicomScuTimeout}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.dicomScuTimeout}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Список одноранговых серверов, в качестве реквизитов доступа используется URL, логин и пароль, как при доступе по HTTP</div>
 
@@ -499,7 +496,7 @@
                             <b>HTTP Proxy</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.httpProxy}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.httpProxy}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Параметры прокси-сервера HTTP, используемого Orthanc. Если установлена пустая строка, HTTP-прокси не используется. Например: «HttpProxy»: «192.168.0.1:3128» «HttpProxy»: «proxyUser:proxyPassword@192.168.0.1:3128»</div>
 
@@ -515,7 +512,7 @@
                             <b>HTTP Timeout</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.httpTimeout}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.httpTimeout}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Установка времени ожидания для HTTP запросов, сделанных Orthanc (в секундах)</div>
 
@@ -531,7 +528,7 @@
                             <b>HTTPS CA Certificates</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.httpsCACertificates}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.httpsCACertificates}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Путь к сертификатам CA (certification authority) для проверки одноранговых узлов в HTTPS-запросах. Из документации curl (опция "—cacert"): предлагает использовать указанный файл сертификата для проверки одноранговых узлов. Этот файл может содержать несколько сертификатов CA. Сертификат(ы) должен быть в формате PEM. В системах на базе Debian этот параметр может быть установлен в значение: /etc / ssl/certs/ca-certificates.crt</div>
 
@@ -545,7 +542,7 @@
                             <b>Stable Age</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.stableAge}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.stableAge}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Количество секунд без получения какого-либо экземпляра, до того как пациент, исследование или серия считаются стабильными</div>
 
@@ -569,7 +566,7 @@
                             <b>Limit Find Results</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.limitFindResults}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.limitFindResults}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне пациента, исследования или серии. Установка этого параметра в "0" означает отсутствие ограничения</div>
 
@@ -577,7 +574,7 @@
                             <b>Limit Find Instances</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.limitFindInstances}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.limitFindInstances}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне экземпляра. Установка этого параметра в "0" означает отсутствие ограничения</div>
 
@@ -585,7 +582,7 @@
                             <b>Limit Jobs</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.limitJobs}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.limitJobs}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное число активных заданий в планировщике Orthanc. При достижении этого предела, добавление новых заданий блокируется до завершения выполнения текущих задач</div>
 
@@ -617,7 +614,7 @@
                             <b>DICOM Association Close Delay</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.dicomAssociationCloseDelay}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.dicomAssociationCloseDelay}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">DICOM соединения, инициированные сценариями Lua, остаются открытыми до тех пор, пока выдаются новые команды DICOM. Этот параметр задает время ожидания в секундах перед автоматическим закрытием DICOM соединения, инициифрованного Lua. Если установлено значение 0, соединение немедленно закрывается</div>
 
@@ -625,7 +622,7 @@
                             <b>Query Retrieve Size</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.queryRetrieveSize}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.queryRetrieveSize}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное число DICOM запросов, поддерживаемых сервером. Редко используемые запросы удаляются по мере выдачи новых запросов</div>
 
@@ -657,7 +654,7 @@
                             <b>Locale</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.locale}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.locale}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Язык, используемый Orthanc. В настоящее время используется только при сравнении строк без учета регистра. Рекомендуется не указывать это значение</div>
 
@@ -673,7 +670,7 @@
                             <b>Jobs History Size</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.jobsHistorySize}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.jobsHistorySize}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное число завершенных заданий, хранящихся в памяти. Задание обработки считается выполненным, если оно помечено как "Успешное" или "Неуспешное". Начиная с Orthanc 1.5.0, значение "0" означает, что задания удаляются из истории сразу после их завершения</div>
 
@@ -689,7 +686,7 @@
                             <b>Media Archive Size</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <h:inputText  value="#{settingsBean.mediaArchiveSize}" > </h:inputText>
+                                <p:inputText  value="#{settingsBean.mediaArchiveSize}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное количество ZIP/медиаархивов, поддерживаемых сервером. Недавно использованные архивы удаляются по мере создания новых архивов. Эта опция была введена в Orthanc 1.5.0, и не оказывает влияния на синхронное формирование архивов</div>
 

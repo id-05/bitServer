@@ -9,11 +9,86 @@
 
 <f:view>
 
-    <h:head><title>bitServer Seach</title></h:head>
+    <h:head><title>bitServer Seach</title>
+    </h:head>
 
     <h:body>
-        <h:form id="form">
-            <p:growl id="growl" showDetail="true" />
+        <script type="text/javascript">
+                PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                    dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                    dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                    weekHeader: 'Semana',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Sólo hora',
+                    timeText: 'Tiempo',
+                    hourText: 'Hora',
+                    minuteText: 'Minuto',
+                    secondText: 'Segundo',
+                    currentText: 'Fecha actual',
+                    ampm: false,
+                    month: 'Mes',
+                    week: 'Semana',
+                    day: 'Día',
+                    allDayText: 'Todo el día',
+                    today: 'Hoy',
+                    clear: 'Claro'
+                };
+                PrimeFaces.locales ['de'] = {
+                    closeText: 'Schließen',
+                    prevText: 'Zurück',
+                    nextText: 'Weiter',
+                    monthNames: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+                    monthNamesShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                    dayNames: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+                    dayNamesShort: ['Son', 'Mon', 'Die', 'Mit', 'Don', 'Fre', 'Sam'],
+                    dayNamesMin: ['S', 'M', 'D', 'M ', 'D', 'F ', 'S'],
+                    weekHeader: 'Woche',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Nur Zeit',
+                    timeText: 'Zeit',
+                    hourText: 'Stunde',
+                    minuteText: 'Minute',
+                    secondText: 'Sekunde',
+                    currentText: 'Aktuelles Datum',
+                    ampm: false,
+                    month: 'Monat',
+                    week: 'Woche',
+                    day: 'Tag',
+                    allDayText: 'Ganzer Tag',
+                    today: 'Heute',
+                    clear: 'Löschen'
+                };
+            </script>
+
+            <script type="text/javascript">
+                //<![CDATA[
+                function dateTemplateFunc(date) {
+                    return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+                }
+
+                //]]>
+            </script>
+
+            <style type="text/css">
+                .value {
+                    font-weight: bold;
+                }
+            </style>
+
+        <h:form id="seachform">
+            <p:growl id="searchgrowl" showDetail="true" />
             <p:menubar>
                 <p:menuitem value="Назад" outcome="homePage" icon="pi pi-backward"/>
 
@@ -25,24 +100,67 @@
                 </f:facet>
             </p:menubar>
 
-            <p:dialog widgetVar="saveDialog" showEffect="fade" width="300"
-                      message="Сохранить изменения?" header="Сохранить изменения?" severity="warn">
+            <p class="p-m-0">
 
+            </p>
 
+            <p:outputPanel>
+                <div style="text-align: center; font-size: xx-large">bit-Server (либо вывести сюда логотип продукта)</div>
+            </p:outputPanel>
 
-                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.saveConfig}"
-                                 process="@this" oncomplete="PF('saveDialog').hide()" update="growl"/>
+            <p class="p-m-0">
 
-                <span style="padding: 20px;">&nbsp;</span>
+            </p>
 
+            <p:panel id="panel1" header="Поиск" footer="Здесь можно написать что-то ещё, например количество результатов поиска">
+                <div style="align-content: center">
+                    <p:panelGrid columns="2">
 
+                            <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
+                                <f:selectItem itemLabel="ID пациента:" itemValue="0"/>
+                                <f:selectItem itemLabel="Имя пациента:" itemValue="1"/>
+                            </p:selectOneMenu>
 
-                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                 onclick="PF('saveDialog').hide()"/>
+                        <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
 
-            </p:dialog>
+                    </p:panelGrid>
 
+                    <p class="p-m-0">
+
+                    </p>
+
+                    <p:panelGrid columns="3">
+
+                        <p:outputLabel style="font-size: large" value="Дата исследования:"/>
+                        <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}">
+                            <f:selectItem itemLabel="Сегодня" itemValue="today"/>
+                            <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
+                            <f:selectItem itemLabel="Последняя неделя" itemValue="lastweek"/>
+                        </p:selectOneButton>
+                        <p:datePicker id="dateSeach" value="#{calendarView.date7}" showIcon="true" />
+
+                    </p:panelGrid>
+
+                    <p class="p-m-0">
+
+                    </p>
+
+                    <p:commandButton value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
+                                     update="seachform"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                    <p:resetInput target="panel1"/>
+                    </p:commandButton>
+                </div>
+            </p:panel>
+
+            <p:dataScroller  var="product" chunkSize="10">
+                <f:facet name="header">
+                    Результаты поиска
+                </f:facet>
+
+            </p:dataScroller>
         </h:form>
     </h:body>
 </f:view>
+
 </html>

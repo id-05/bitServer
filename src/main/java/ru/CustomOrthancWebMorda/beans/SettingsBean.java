@@ -3,22 +3,21 @@ package ru.CustomOrthancWebMorda.beans;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import javafx.beans.NamedArg;
 import org.primefaces.PrimeFaces;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionListener;
-import javax.faces.event.NamedEvent;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@ManagedBean(name = "settingsBean", eager = true)
+//eager -  Если данный параметр равен “true“, то MB созадётся до первого запроса данного бина.
+// С другой стороны, если “eager = false“, то происходит, так называемая,
+// “ленивая” инициализация, при которой бин создаётся только после запроса.
+@ManagedBean(name = "settingsBean", eager = false)
 @ViewScoped
 public class SettingsBean {
     String fileSettingPath = "D://orthanc.json";
