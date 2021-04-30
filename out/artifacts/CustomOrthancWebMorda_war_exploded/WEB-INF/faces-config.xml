@@ -10,11 +10,7 @@
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
-    <managed-bean>
-        <managed-bean-name>patientinfoPanel</managed-bean-name>
-        <managed-bean-class>ru.CustomOrthancWebMorda.beans.PatientInfoPanel</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+
 
 
     <navigation-rule>

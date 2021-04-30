@@ -11,9 +11,7 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class PatientInfoPanel {
 
-    public String param1;
-
-    public String patientId;
+    public static String patientId;
 
     public String getPatientId() {
         return patientId;
@@ -23,25 +21,18 @@ public class PatientInfoPanel {
         this.patientId = patientId;
     }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("postconstruct");
-//        System.out.println("patient info panel");
-//        String param1 = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("parentPatientID");
-//        System.out.println(param1);
-//        patientId = param1;
-    }
+
 
     public void clickOpenPatient(){
         System.out.println("click open patient");
-        param1 = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("parentPatientID");
-        System.out.println(param1);
-        patientId = param1;
+        patientId = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("parentPatientID");
+        System.out.println(patientId);
         PrimeFaces.current().ajax().update("patientinfo");
     }
 
     public void printParam(){
-        System.out.println(param1);
+        patientId = "987654321";
+        System.out.println(patientId);
     }
 
 }

@@ -26,17 +26,19 @@
 
                     </div>
                 </f:facet>
+
             </p:menubar>
 
-            <div>
-                <p class="p-m-0">
-                    <p:inputText  id="text1" value="#{patientInfoPanel.patientId}" > </p:inputText>
-                </p>
-            </div>
 
-            <p:commandButton value="Вывести" icon="pi pi-check" onclick="" actionListener="#{patientInfoPanel.printParam}">
-
-            </p:commandButton>
+                <p:panel>
+                    <div>
+                    <h:outputLabel value="test--------------------------------------"/>
+                    </div>
+                    <div>
+                    <h:outputLabel value="#{patientInfoPanel.patientId}"/>
+                    </div>
+                    <p:commandButton value="Вывести"  icon="pi pi-check" actionListener="#{patientInfoPanel.printParam}" update="patientinfo"/>
+                </p:panel>
 
         </h:form>
     </h:body>

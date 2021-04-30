@@ -107,14 +107,6 @@ public class SearchBean {
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
     }
 
-    public void clickOpenPatient(){
-       // String param1 = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("parentPatientID");
-      //  System.out.println("clickopenpatient");
-      //  System.out.println(param1);
-        //PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-        //return ("index.xhtml");
-    }
-
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
         StringBuilder sb =null;
         try {
