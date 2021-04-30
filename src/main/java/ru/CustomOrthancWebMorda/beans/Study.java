@@ -23,10 +23,10 @@ public class Study {
         this.StudyOrthancId = StudyOrthancId;
         this.patientName = patientName;
         this.patientID = patientID;
-        this.birthDate=birthDate;
-        this.sex=sex;
-        this.studyInstanceUID=studyInstanceUID;
-        this.patientOrthancId=patientOrthancId;
+        this.birthDate = birthDate;
+        this.sex = sex;
+        this.studyInstanceUID = studyInstanceUID;
+        this.patientOrthancId = patientOrthancId;
     }
 
     public Study(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {

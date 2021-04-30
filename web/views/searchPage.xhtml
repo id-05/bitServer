@@ -87,7 +87,11 @@
                 }
             </style>
 
+
         <h:form id="seachform">
+
+            <p:remoteCommand name="rc" action="#{patientInfoPanel.clickOpenPatient}"/>
+
             <p:growl id="searchgrowl" showDetail="true" />
             <p:menubar>
                 <p:menuitem value="Назад" outcome="homePage" icon="pi pi-backward"/>
@@ -103,22 +107,22 @@
             <p class="p-m-0">
 
             </p>
-
+<!--
             <p:outputPanel>
                 <div style="text-align: center; font-size: xx-large">bit-Server (либо вывести сюда логотип продукта)</div>
             </p:outputPanel>
-
+-->
             <p class="p-m-0">
 
             </p>
 
-            <p:panel id="panel1" header="Поиск" footer="Здесь можно написать что-то ещё, например количество результатов поиска">
+            <p:panel id="panel1" header="Поиск" footer="Результатов поиска: #{searchBean.seachCount}">
                 <div style="align-content: center">
                     <p:panelGrid columns="2">
 
                             <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
-                                <f:selectItem itemLabel="ID пациента:" itemValue="0"/>
-                                <f:selectItem itemLabel="Имя пациента:" itemValue="1"/>
+                                <f:selectItem itemLabel="ID пациента" itemValue="0"/>
+                                <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
                             </p:selectOneMenu>
 
                         <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
@@ -135,7 +139,7 @@
                         <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}">
                             <f:selectItem itemLabel="Сегодня" itemValue="today"/>
                             <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
-                            <f:selectItem itemLabel="Последняя неделя" itemValue="lastweek"/>
+                            <f:selectItem itemLabel="Точная дата" itemValue="lastweek"/>
                         </p:selectOneButton>
                         <p:datePicker id="dateSeach" value="#{calendarView.date7}" showIcon="true" />
 
@@ -153,10 +157,50 @@
                 </div>
             </p:panel>
 
-            <p:dataScroller  var="product" chunkSize="10">
+            <p:dataScroller  id="dt-patients" value="#{searchBean.patients}" var="patient" chunkSize="10">
                 <f:facet name="header">
                     Результаты поиска
                 </f:facet>
+
+                <p:accordionPanel activeIndex="-1">
+                    <p:tab title="#{patient.name}">
+                       <p:panel>
+
+                           <p:panelGrid columns="4" layout="grid">
+
+                               <p:panelGrid columns="2" >
+
+                                   <p:outputLabel  value="ФИО:"/>
+                                   <p:outputLabel  value="#{patient.name}"/>
+
+                                   <p:outputLabel  value="ID:"/>
+                                   <p:outputLabel  value="#{patient.patientId}"/>
+
+                                   <p:outputLabel  value="ПОЛ:"/>
+                                   <p:outputLabel  value="#{patient.patientSex}"/>
+
+                                   <p:outputLabel  value="Дата рождения:"/>
+                                   <p:outputLabel  value="#{patient.patientBirthDate}"/>
+
+                               </p:panelGrid>
+
+                               <p:button value="Анамнез" />
+
+                               <p:button value="Отрпавить в воронеж" />
+
+                               <p:commandButton type="button" value="Открыть"
+                                                onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+
+                               <h:link value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+
+
+                           </p:panelGrid>
+
+                       </p:panel>
+                    </p:tab>
+                </p:accordionPanel>
+
+
 
             </p:dataScroller>
         </h:form>

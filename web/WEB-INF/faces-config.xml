@@ -10,6 +10,12 @@
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
+    <managed-bean>
+        <managed-bean-name>patientinfoPanel</managed-bean-name>
+        <managed-bean-class>ru.CustomOrthancWebMorda.beans.PatientInfoPanel</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
 
     <navigation-rule>
         <from-view-id>*</from-view-id>
@@ -22,6 +28,11 @@
         <navigation-case>
             <from-outcome>searchPage</from-outcome>
             <to-view-id>/views/searchPage.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>patientPage</from-outcome>
+            <to-view-id>/views/patientinfoPage.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>

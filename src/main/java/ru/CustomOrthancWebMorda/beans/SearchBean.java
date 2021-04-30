@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.primefaces.PrimeFaces;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,9 +31,18 @@ public class SearchBean {
     public String searchName;
     public String searchDate;
     public int searchType;
-    private ArrayList<Patient> patients = new ArrayList<>();
+    public ArrayList<Patient> patients = new ArrayList<>();
+    public int seachCount;
     private JsonParser parserJson = new JsonParser();
     private SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
+
+    public int getSeachCount() {
+        return seachCount;
+    }
+
+    public void setSeachCount(int seachCount) {
+        this.seachCount = seachCount;
+    }
 
     public ArrayList<Patient> getPatients() {
         return patients;
@@ -87,11 +98,21 @@ public class SearchBean {
     public void seach() throws IOException {
         System.out.println("seach start");
         String param = "{\"Level\":\"Studies\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
-        StringBuilder sb=makePostConnectionAndStringBuilder("/tools/find",param );
+        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",param );
         System.out.println(sb);
         assert sb != null;
         String buf = sb.toString();
         getPatientsFromJson(buf);
+        seachCount = patients.size();
+        PrimeFaces.current().ajax().update(":seachform:dt-patients");
+    }
+
+    public void clickOpenPatient(){
+       // String param1 = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("parentPatientID");
+      //  System.out.println("clickopenpatient");
+      //  System.out.println(param1);
+        //PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
+        //return ("index.xhtml");
     }
 
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
@@ -138,31 +159,31 @@ public class SearchBean {
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
         patients.clear();
-        int i=0;
+        int i = 0;
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
             JsonObject  parentPatientDetails = null;
             if(studyData.has("PatientMainDicomTags")) {parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject(); }
-            String parentPatientID=studyData.get("ParentPatient").getAsString();
+            String parentPatientID = studyData.get("ParentPatient").getAsString();
             String studyId=studyData.get("ID").getAsString();
-            JsonObject studyDetails=studyData.get("MainDicomTags").getAsJsonObject();
-            String patientBirthDate="N/A";
-            String patientSex="N/A";
-            String patientName="N/A";
-            String patientId="N/A";
-            String patientDobString=null;
-            Date patientDob=null;
+            JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
+            String patientBirthDate = "N/A";
+            String patientSex = "N/A";
+            String patientName = "N/A";
+            String patientId = "N/A";
+            String patientDobString = null;
+            Date patientDob = null;
 
-            assert parentPatientDetails != null;
             if(parentPatientDetails.has("PatientBirthDate"))
-                { patientDobString=parentPatientDetails.get("PatientBirthDate").getAsString(); }
+                { patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString(); }
 
             try {
-                patientDob = format.parse("19000101");
-                assert patientDobString != null;
-                patientDob=format.parse(patientDobString);
+                patientDob = format.parse(patientDobString);
+                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
+                patientBirthDate = dateString;
             } catch (Exception e) {
+
                // MainActivity.print("Errot to transfer date");
             }
 

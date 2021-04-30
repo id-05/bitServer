@@ -12,11 +12,11 @@ public class Patient {
     private HashMap<String, Study> childStudies;
 
     public Patient(String name, String patientId, String birthDate, String sex, String orthancID) {
-        this.name=name;
-        this.patientId=patientId;
-        this.orthancID=orthancID;
-        this.birthDate=birthDate;
-        this.sex=sex;
+        this.name = name;
+        this.patientId = patientId;
+        this.orthancID = orthancID;
+        this.birthDate = birthDate;
+        this.sex = sex;
     }
 
     public String getName() {
