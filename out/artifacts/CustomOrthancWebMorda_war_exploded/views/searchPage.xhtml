@@ -188,12 +188,17 @@
 
                                <p:button value="Отрпавить в воронеж" />
 
-                               <p:commandButton type="button" value="Открыть"
-                                                onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+                               <p:linkButton outcome = "patientPage" value="linkbutton" >
+                                   <f:param name="patientId" value="#{patient.patientOrthancId}" />
+                               </p:linkButton>
+                               <!--
+                               <h:commandButton type="button" value="Открыть">
+                                   <f:param name="action" value="delete" />
+                               </h:commandButton>
 
                                <h:link value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
 
-
+-->
                            </p:panelGrid>
 
                        </p:panel>
