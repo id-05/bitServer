@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.*;
 public class SearchBean {
 
     public static String authentication;
-    public static String fulladdress ="http://185.59.139.156:8142";
+    public static String fulladdress ="http://127.0.0.1:8042";//"http://185.59.139.156:8142";
     public String searchId;
     public String searchName;
     public String searchDate;
@@ -97,7 +98,7 @@ public class SearchBean {
 
     public void seach() throws IOException {
         System.out.println("seach start");
-        String param = "{\"Level\":\"Studies\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20200101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",param );
         System.out.println(sb);
         assert sb != null;
@@ -105,6 +106,11 @@ public class SearchBean {
         getPatientsFromJson(buf);
         seachCount = patients.size();
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
+    }
+
+    public void redirect(String str) throws IOException {
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        externalContext.redirect(str);
     }
 
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {

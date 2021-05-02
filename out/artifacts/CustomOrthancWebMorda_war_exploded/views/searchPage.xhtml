@@ -167,44 +167,45 @@
                 <p:accordionPanel activeIndex="-1">
                     <p:tab title="#{patient.name}">
 
-                        <div class="p-grid p-jc-start; p-grid p-ai-center vertical-container">
-                            <div class="p-col-4">
-                                <div class="p-field p-grid">
-                                    <label for="numberid" class="p-col-fixed" style="width:100px">ФИО:</label>
-                                    <div class="p-col; p-text-bold">
-                                        <p:outputLabel id="numberid" type="text" value="#{patient.name}" />
-                                    </div>
-                                </div>
+                        <div class="p-d-flex">
+                            <div class="p-col-1; p-mb-2 p-mr-2">
+                                <p:card style="width: 25rem; margin-bottom: 2em">
+                                    <f:facet name="title">
+                                        <p:outputLabel type="text" value="#{patient.name}" />
+                                    </f:facet>
 
-                                <div class="p-field p-grid">
-                                    <label for="lastname" class="p-col-fixed" style="width:100px">ID:</label>
-                                    <div class="p-col; p-text-bold">
-                                        <p:outputLabel id="lastname" type="text" value="#{patient.patientId}"/>
-                                    </div>
-                                </div>
-
-                                <div class="p-field p-grid">
-                                    <label for="male" class="p-col-fixed" style="width:100px">ПОЛ:</label>
-                                    <div class="p-col; p-text-bold">
-                                        <p:outputLabel id="male" type="text" value="#{patient.patientSex}"/>
-                                    </div>
-                                </div>
-
-                                <div class="p-field p-grid">
-                                    <label for="birthday" class="p-col-fixed" style="width:100px">День рождения:</label>
-                                    <div class="p-col; p-text-bold">
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
                                         <p:outputLabel id="birthday" type="text" value="#{patient.patientBirthDate}"/>
+                                        <p:tooltip for="birthday" value="Дата рождения" showEffect="clip" hideEffect="clip" />
                                     </div>
-                                </div>
+
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
+                                        <p:outputLabel id="lastname" type="text" value="#{patient.patientId}"/>
+                                        <p:tooltip for="lastname" value="ID Пациента" showEffect="clip" hideEffect="clip" />
+                                    </div>
+
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
+                                        <p:outputLabel id="male" type="text" value="#{patient.patientSex}"/>
+                                        <p:tooltip for="male" value="Пол" showEffect="clip" hideEffect="clip" />
+                                    </div>
+
+                                </p:card>
                             </div>
 
-                            <div class="p-col-1">
-                                <p:card style="width: 25rem; margin-bottom: 2em">
-                                    <p:outputLabel type="text" value="Study/Исследования"/>
 
+                            <div class="p-col-1; p-mb-2 p-mr-2">
+                                <p:card style="width: 25rem; margin-bottom: 2em">
+                                    <f:facet name="title">
+                                        Study/Исследования
+                                    </f:facet>
                                     <p:linkButton value = "Study" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
                                 </p:card>
                             </div>
+
+                            <div class="card">
+                                <h:commandLink value="Go to this site!" action="#{searchBean.redirect('http://127.0.0.1:8042/osimis-viewer/app/index.html?series=b5a1d353-e15fcd19-863a0bd7-b17d909f-91c436af')}" />
+                            </div>
+
                         </div>
                     </p:tab>
                 </p:accordionPanel>
