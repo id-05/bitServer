@@ -10,9 +10,15 @@
 <f:view>
 
     <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
     </h:head>
 
     <h:body>
+
+
         <script type="text/javascript">
                 PrimeFaces.locales['es'] = {
                     closeText: 'Cerrar',
@@ -164,10 +170,19 @@
 
                 <p:accordionPanel activeIndex="-1">
                     <p:tab title="#{patient.name}">
-                       <p:panel>
 
-                           <p:panelGrid columns="4" layout="grid">
+                        <div class="p-d-flex p-flex-column p-flex-md-row">
+                            <div class="p-mb-2 p-mr-2">Item 1</div>
+                            <div class="p-mb-2 p-mr-2">Item 2</div>
+                            <div class="p-mb-2 p-mr-2">Item 3</div>
+                        </div>
 
+                        <div class="p-grid p-jc-start">
+
+
+
+                        <div class="p-col-1">
+                            <div class="box">
                                <p:panelGrid columns="2" >
 
                                    <p:outputLabel  value="ФИО:"/>
@@ -183,14 +198,31 @@
                                    <p:outputLabel  value="#{patient.patientBirthDate}"/>
 
                                </p:panelGrid>
+                            </div>
+                        </div>
 
-                               <p:button value="Анамнез" />
+                        <div class="p-col-1">
+                            <div class="box">
+                                   <p:button value="Анамнез" />
+                            </div>
+                        </div>
 
-                               <p:button value="Отрпавить в воронеж" />
+                        <div class="p-col-1">
+                                   <p:button value="Отрпавить в воронеж" />
+                        </div>
 
-                               <p:linkButton outcome = "patientPage" value="linkbutton" >
-                                   <f:param name="patientId" value="#{patient.patientOrthancId}" />
-                               </p:linkButton>
+                        <div class="p-col-1">
+                                   <p:commandButton type="button" value="Открыть"
+                                                    onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+                        </div>
+
+                        <div class="p-col-1">
+                                   <p:linkButton value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+                        </div>
+
+
+                        </div>
+
                                <!--
                                <h:commandButton type="button" value="Открыть">
                                    <f:param name="action" value="delete" />
@@ -199,9 +231,8 @@
                                <h:link value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
 
 -->
-                           </p:panelGrid>
 
-                       </p:panel>
+
                     </p:tab>
                 </p:accordionPanel>
 

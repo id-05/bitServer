@@ -32,12 +32,13 @@
 
                 <p:panel>
                     <div>
-                    <h:outputLabel value="test--------------------------------------"/>
+                    <h:outputLabel value="test--------------------------------------#{patientInfoPanel.patientId}"/>
                     </div>
                     <div>
 
                     </div>
                     <p:commandButton value="Вывести"  icon="pi pi-check" actionListener="#{patientInfoPanel.printParam}" update="patientinfo"/>
+
                 </p:panel>
 
         </h:form>

@@ -11,8 +11,6 @@
     </managed-bean>
 
 
-
-
     <navigation-rule>
         <from-view-id>*</from-view-id>
 
