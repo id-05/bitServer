@@ -124,42 +124,38 @@
 
             <p:panel id="panel1" header="Поиск" footer="Результатов поиска: #{searchBean.seachCount}">
                 <div style="align-content: center">
-                    <p:panelGrid columns="2">
+                    <div class="p-m-2">
+                        <p:panelGrid columns="2">
 
                             <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
                                 <f:selectItem itemLabel="ID пациента" itemValue="0"/>
                                 <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
                             </p:selectOneMenu>
+                            <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
+                        </p:panelGrid>
+                    </div>
 
-                        <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
-
-                    </p:panelGrid>
-
-                    <p class="p-m-0">
-
-                    </p>
-
-                    <p:panelGrid columns="3">
+                    <div class="p-m-2">
+                        <p:panelGrid columns="3">
 
                         <p:outputLabel style="font-size: large" value="Дата исследования:"/>
-                        <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}">
-                            <f:selectItem itemLabel="Сегодня" itemValue="today"/>
-                            <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
-                            <f:selectItem itemLabel="Точная дата" itemValue="lastweek"/>
-                        </p:selectOneButton>
-                        <p:datePicker id="dateSeach" value="#{calendarView.date7}" showIcon="true" />
+                            <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}">
+                                <f:selectItem itemLabel="Сегодня" itemValue="today"/>
+                                <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
+                                <f:selectItem itemLabel="Точная дата" itemValue="lastweek"/>
+                            </p:selectOneButton>
+                            <p:datePicker id="dateSeach" value="#{calendarView.date7}" showIcon="true" />
 
-                    </p:panelGrid>
+                        </p:panelGrid>
+                    </div>
 
-                    <p class="p-m-0">
-
-                    </p>
-
-                    <p:commandButton value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
+                    <div class="p-m-2">
+                        <p:commandButton class="p-mb-2" value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
                                      update="seachform"
                                      styleClass="ui-button-success" style="margin-right: .5rem">
-                    <p:resetInput target="panel1"/>
-                    </p:commandButton>
+                            <p:resetInput target="panel1"/>
+                        </p:commandButton>
+                    </div>
                 </div>
             </p:panel>
 
@@ -171,68 +167,45 @@
                 <p:accordionPanel activeIndex="-1">
                     <p:tab title="#{patient.name}">
 
-                        <div class="p-d-flex p-flex-column p-flex-md-row">
-                            <div class="p-mb-2 p-mr-2">Item 1</div>
-                            <div class="p-mb-2 p-mr-2">Item 2</div>
-                            <div class="p-mb-2 p-mr-2">Item 3</div>
-                        </div>
+                        <div class="p-grid p-jc-start; p-grid p-ai-center vertical-container">
+                            <div class="p-col-4">
+                                <div class="p-field p-grid">
+                                    <label for="numberid" class="p-col-fixed" style="width:100px">ФИО:</label>
+                                    <div class="p-col; p-text-bold">
+                                        <p:outputLabel id="numberid" type="text" value="#{patient.name}" />
+                                    </div>
+                                </div>
 
-                        <div class="p-grid p-jc-start">
+                                <div class="p-field p-grid">
+                                    <label for="lastname" class="p-col-fixed" style="width:100px">ID:</label>
+                                    <div class="p-col; p-text-bold">
+                                        <p:outputLabel id="lastname" type="text" value="#{patient.patientId}"/>
+                                    </div>
+                                </div>
 
+                                <div class="p-field p-grid">
+                                    <label for="male" class="p-col-fixed" style="width:100px">ПОЛ:</label>
+                                    <div class="p-col; p-text-bold">
+                                        <p:outputLabel id="male" type="text" value="#{patient.patientSex}"/>
+                                    </div>
+                                </div>
 
+                                <div class="p-field p-grid">
+                                    <label for="birthday" class="p-col-fixed" style="width:100px">День рождения:</label>
+                                    <div class="p-col; p-text-bold">
+                                        <p:outputLabel id="birthday" type="text" value="#{patient.patientBirthDate}"/>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="p-col-1">
-                            <div class="box">
-                               <p:panelGrid columns="2" >
+                            <div class="p-col-1">
+                                <p:card style="width: 25rem; margin-bottom: 2em">
+                                    <p:outputLabel type="text" value="Study/Исследования"/>
 
-                                   <p:outputLabel  value="ФИО:"/>
-                                   <p:outputLabel  value="#{patient.name}"/>
-
-                                   <p:outputLabel  value="ID:"/>
-                                   <p:outputLabel  value="#{patient.patientId}"/>
-
-                                   <p:outputLabel  value="ПОЛ:"/>
-                                   <p:outputLabel  value="#{patient.patientSex}"/>
-
-                                   <p:outputLabel  value="Дата рождения:"/>
-                                   <p:outputLabel  value="#{patient.patientBirthDate}"/>
-
-                               </p:panelGrid>
+                                    <p:linkButton value = "Study" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+                                </p:card>
                             </div>
                         </div>
-
-                        <div class="p-col-1">
-                            <div class="box">
-                                   <p:button value="Анамнез" />
-                            </div>
-                        </div>
-
-                        <div class="p-col-1">
-                                   <p:button value="Отрпавить в воронеж" />
-                        </div>
-
-                        <div class="p-col-1">
-                                   <p:commandButton type="button" value="Открыть"
-                                                    onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
-                        </div>
-
-                        <div class="p-col-1">
-                                   <p:linkButton value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
-                        </div>
-
-
-                        </div>
-
-                               <!--
-                               <h:commandButton type="button" value="Открыть">
-                                   <f:param name="action" value="delete" />
-                               </h:commandButton>
-
-                               <h:link value = "Кликай сюда!" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
-
--->
-
-
                     </p:tab>
                 </p:accordionPanel>
 

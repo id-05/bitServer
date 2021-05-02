@@ -73,8 +73,7 @@
                         <b>Сжатие хранилища</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No"
-                                                   onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" value="#{settingsBean.storageCompression}"/>
+                            <p:toggleSwitch value="#{settingsBean.storageCompression}"/>
                         </p>
                         <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
 
