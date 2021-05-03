@@ -31,7 +31,7 @@ public class SearchBean {
     public String searchId;
     public String searchName;
     public String searchDate;
-    public int searchType;
+    public int searchType = 1;//имя пациента
     public ArrayList<Patient> patients = new ArrayList<>();
     public int seachCount;
     private JsonParser parserJson = new JsonParser();
@@ -98,8 +98,42 @@ public class SearchBean {
 
     public void seach() throws IOException {
         System.out.println("seach start");
-        //String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20200101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
-        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"*\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+       // String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"*\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+
+        JsonObject query=new JsonObject();
+        query.addProperty("Level", "Studies");
+        query.addProperty("CaseSensitive", false);
+        query.addProperty("Expand", true);
+        query.addProperty("Limit", 0);
+        JsonObject queryDetails=new JsonObject();
+        System.out.println("calednar   " + CalendarView.date7);
+ //       String date = format.format(calendarFromDate.getTime())+"-"+format.format(calendarToDate.getTime());
+ //       queryDetails.addProperty("StudyDate", date);
+
+        switch (searchType){
+            case 0: queryDetails.addProperty("PatientID", searchId);
+                break;
+            case 1: queryDetails.addProperty("PatientID", "*");
+                break;
+            default:break;
+        }
+
+
+        StringBuilder modalities=new StringBuilder();
+//        if (cr.isChecked()) modalities.append("CR\\");
+//        if (ct.isChecked()) modalities.append("CT\\");
+//        if (mr.isChecked()) modalities.append("MR\\");
+//        if (nm.isChecked()) modalities.append("NM\\");
+//        if (pt.isChecked()) modalities.append("PT\\");
+//        if (us.isChecked()) modalities.append("US\\");
+//        if (xa.isChecked()) modalities.append("XA\\");
+//        if (mg.isChecked()) modalities.append("MG\\");
+//        if (dx.isChecked()) modalities.append("DX\\");
+//        modalities.append(customModalities.getText());
+//        String modality =  modalities.toString();
+//        queryDetails.addProperty("Modality", modality);
+//        query.add("Query", queryDetails);
 
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",param );
         System.out.println(sb);
@@ -210,10 +244,20 @@ public class SearchBean {
             String studyDescription = "N/A";
             if(studyDetails.has("StudyDescription")){ studyDescription=studyDetails.get("StudyDescription").getAsString(); }
             Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
+//                if(seachMode.equals("Patient ID")){
+//                    patients.add(patient);
+//                }
+//                if(seachMode.equals("Patient name")){
+//                    if(patient.name.toUpperCase().contains(seachpatientName.toUpperCase())){
+//                        patients.add(patient);
+//                    }
+//                }
+
                 patients.add(patient);
             }
        }

@@ -114,8 +114,8 @@
                         <p:panelGrid columns="2">
 
                             <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
-                                <f:selectItem itemLabel="ID пациента" itemValue="0"/>
                                 <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
+                                <f:selectItem itemLabel="ID пациента" itemValue="0"/>
                             </p:selectOneMenu>
                             <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
                         </p:panelGrid>
@@ -139,7 +139,6 @@
                         <p:commandButton class="p-mb-2" value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
                                      update="seachform"
                                      styleClass="ui-button-success" style="margin-right: .5rem">
-                            <p:resetInput target="panel1"/>
                         </p:commandButton>
                     </div>
                 </div>

@@ -24,7 +24,7 @@ public class CalendarView implements Serializable {
     private Date date4;
     private Date date5;
     private Date date6;
-    private Date date7;
+    public static Date date7;
     private Date date8;
     private Date date9;
     private Date dateDe;
