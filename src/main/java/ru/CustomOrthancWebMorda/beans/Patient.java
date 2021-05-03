@@ -11,6 +11,14 @@ public class Patient {
     private String sex;
     private HashMap<String, Study> childStudies;
 
+    public HashMap<String, Study> getChildStudies() {
+        return childStudies;
+    }
+
+    public void setChildStudies(HashMap<String, Study> childStudies) {
+        this.childStudies = childStudies;
+    }
+
     public Patient(String name, String patientId, String birthDate, String sex, String orthancID) {
         this.name = name;
         this.patientId = patientId;

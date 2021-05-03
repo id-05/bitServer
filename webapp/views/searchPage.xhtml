@@ -8,7 +8,6 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
-
     <h:head><title>bitServer Seach</title>
         <f:facet name="last">
             <link rel="stylesheet" type="text/css"
@@ -17,7 +16,6 @@
     </h:head>
 
     <h:body>
-
 
         <script type="text/javascript">
                 PrimeFaces.locales['es'] = {
@@ -110,18 +108,6 @@
                 </f:facet>
             </p:menubar>
 
-            <p class="p-m-0">
-
-            </p>
-<!--
-            <p:outputPanel>
-                <div style="text-align: center; font-size: xx-large">bit-Server (либо вывести сюда логотип продукта)</div>
-            </p:outputPanel>
--->
-            <p class="p-m-0">
-
-            </p>
-
             <p:panel id="panel1" header="Поиск" footer="Результатов поиска: #{searchBean.seachCount}">
                 <div style="align-content: center">
                     <div class="p-m-2">
@@ -171,7 +157,7 @@
                             <div class="p-col-1; p-mb-2 p-mr-2">
                                 <p:card style="width: 25rem; margin-bottom: 2em">
                                     <f:facet name="title">
-                                        <p:outputLabel type="text" value="#{patient.name}" />
+                                        <i class="pi pi-user"> </i>
                                     </f:facet>
 
                                     <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
@@ -181,7 +167,7 @@
 
                                     <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
                                         <p:outputLabel id="lastname" type="text" value="#{patient.patientId}"/>
-                                        <p:tooltip for="lastname" value="ID Пациента" showEffect="clip" hideEffect="clip" />
+                                        <p:tooltip for="lastname" value="ID Исследования" showEffect="clip" hideEffect="clip" />
                                     </div>
 
                                     <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
@@ -196,15 +182,15 @@
                             <div class="p-col-1; p-mb-2 p-mr-2">
                                 <p:card style="width: 25rem; margin-bottom: 2em">
                                     <f:facet name="title">
-                                        Study/Исследования
+                                        <p:outputLabel type="text" value="#{patient.childStudies[1].studyDescription}" />
                                     </f:facet>
                                     <p:linkButton value = "Study" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
                                 </p:card>
                             </div>
 
-                            <div class="card">
+                            <p:card style="width: 25rem; margin-bottom: 2em">
                                 <h:commandLink value="Go to this site!" action="#{searchBean.redirect('http://127.0.0.1:8042/osimis-viewer/app/index.html?series=b5a1d353-e15fcd19-863a0bd7-b17d909f-91c436af')}" />
-                            </div>
+                            </p:card>
 
                         </div>
                     </p:tab>

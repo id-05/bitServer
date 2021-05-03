@@ -1,30 +1,154 @@
 package ru.CustomOrthancWebMorda.beans;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.primefaces.event.CloseEvent;
+import org.primefaces.event.DashboardReorderEvent;
+import org.primefaces.event.ToggleEvent;
+import org.primefaces.model.DashboardColumn;
+import org.primefaces.model.DashboardModel;
+import org.primefaces.model.DefaultDashboardColumn;
+import org.primefaces.model.DefaultDashboardModel;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Named;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Base64;
 
-@ManagedBean(name = "mainBean", eager = true)
-@ViewScoped
+@ManagedBean(name = "mainBean", eager = false)
+@SessionScoped
 public class MainBean {
 
-    FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
-    FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
-    FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
+    public static OrthancServer mainServer;
+    public String totalStudy;
+    public String totalPatient;
+    public String totalSize;
+    private DashboardModel model;
+    public static String authentication;
+
+    public String getTotalStudy() {
+        return totalStudy;
+    }
+
+    public void setTotalStudy(String totalStudy) {
+        this.totalStudy = totalStudy;
+    }
+
+    public String getTotalPatient() {
+        return totalPatient;
+    }
+
+    public void setTotalPatient(String totalPatient) {
+        this.totalPatient = totalPatient;
+    }
+
+    public String getTotalSize() {
+        return totalSize;
+    }
+
+    public void setTotalSize(String totalSize) {
+        this.totalSize = totalSize;
+    }
 
     @PostConstruct
     public void init() {
-        System.out.println("main");
+        System.out.println("init main");
+        mainServer = new OrthancServer();
+        mainServer.setIpaddress("185.59.139.156");
+        mainServer.setPort("8142");
+        mainServer.setLogin("doctor");
+        mainServer.setPassword("doctor");
+
+        StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
+        JsonParser parser = new JsonParser();
+        JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
+        mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
+        mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
+        mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
+        mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
+        mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
+
+        totalStudy = String.valueOf(mainServer.getCountStudies());
+        totalPatient = String.valueOf(mainServer.getCountPatients());
+        totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
+
+        model = new DefaultDashboardModel();
+        DashboardColumn column1 = new DefaultDashboardColumn();
+        DashboardColumn column2 = new DefaultDashboardColumn();
+        DashboardColumn column3 = new DefaultDashboardColumn();
+
+        column1.addWidget("sports");
+
+        model.addColumn(column1);
+        model.addColumn(column2);
+        model.addColumn(column3);
     }
 
-    public void showMessage(String title, String note, FacesMessage.Severity type) {
-        FacesMessage message = new FacesMessage(title, note);
-        message.setSeverity(type);
+    public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
+        StringBuilder sb = null ;
+        try {
+            sb = new StringBuilder();
+            HttpURLConnection conn = makeGetConnection(apiUrl);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sb;
+    }
+
+    private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
+        HttpURLConnection conn=null;
+        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
+        URL url = new URL(fulladdress+apiUrl);
+        authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("GET");
+        if(authentication != null){
+            conn.setRequestProperty("Authorization", "Basic " + authentication);
+        }
+        conn.getResponseMessage();
+        return conn;
+    }
+
+    public void handleReorder(DashboardReorderEvent event) {
+        FacesMessage message = new FacesMessage();
+        message.setSeverity(FacesMessage.SEVERITY_INFO);
+        message.setSummary("Reordered: " + event.getWidgetId());
+        message.setDetail("Item index: " + event.getItemIndex() + ", Column index: " + event.getColumnIndex() + ", Sender index: " + event.getSenderColumnIndex());
+        addMessage(message);
+    }
+
+    public void handleClose(CloseEvent event) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Panel Closed", "Closed panel id:'" + event.getComponent().getId() + "'");
+        addMessage(message);
+    }
+
+    public void handleToggle(ToggleEvent event) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, event.getComponent().getId() + " toggled", "Status:" + event.getVisibility().name());
+        addMessage(message);
+    }
+
+    private void addMessage(FacesMessage message) {
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public DashboardModel getModel() {
+        return model;
     }
 }

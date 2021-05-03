@@ -5,13 +5,26 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
    <h:head>
       <title>bitServer</title>
+      <f:facet name="last">
+         <link rel="stylesheet" type="text/css"
+               href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+      </f:facet>
    </h:head>
+   <style type="text/css">
+      .ui-panel, div.ui-state-hover {
+         margin: 10px;
+         width: 200px;
+      }
 
+      .ui-dashboard-column {
+         width: 220px;
+      }
+   </style>
 
 
    <h:body>
@@ -27,11 +40,46 @@
                      <div align="right">Комплексные решения в области рентгенологии</div>
                   </div>
                </f:facet>
-
             </p:menubar>
          </div>
 
       </h:form>
+
+      <div class="card">
+         <h:form>
+            <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+            <p:dashboard id="board" model="#{mainBean.model}">
+               <p:panel id="sports" header="Статистика сервера" style="width:270px">
+                  <div class="card">
+
+                     <div class="p-field p-grid">
+                        <label for="studyCount" class="p-col-fixed" style="width:170px">Всего иследований:</label>
+                        <div class="p-col">
+                           <label id="studyCount">#{mainBean.totalStudy}</label>
+                        </div>
+                     </div>
+
+                     <div class="p-field p-grid">
+                        <label for="patientCount" class="p-col-fixed" style="width:170px">Всего пациентов:</label>
+                        <div class="p-col">
+                           <label id="patientCount">#{mainBean.totalPatient}</label>
+                        </div>
+                     </div>
+
+                     <div class="p-field p-grid">
+                        <label for="totalSize" class="p-col-fixed" style="width:170px">Занимает на диске:</label>
+                        <div class="p-col">
+                           <label id="totalSize">#{mainBean.totalSize} Gb</label>
+                        </div>
+                     </div>
+
+                  </div>
+               </p:panel>
+            </p:dashboard>
+            <div style="clear:both"></div>
+         </h:form>
+      </div>
+
    </h:body>
 </f:view>
 

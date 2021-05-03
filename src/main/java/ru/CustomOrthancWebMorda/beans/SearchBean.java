@@ -27,7 +27,7 @@ import java.util.*;
 public class SearchBean {
 
     public static String authentication;
-    public static String fulladdress ="http://127.0.0.1:8042";//"http://185.59.139.156:8142";
+    public static String fulladdress = "http://185.59.139.156:8142";
     public String searchId;
     public String searchName;
     public String searchDate;
@@ -98,7 +98,9 @@ public class SearchBean {
 
     public void seach() throws IOException {
         System.out.println("seach start");
-        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20200101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+        //String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20200101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"*\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",param );
         System.out.println(sb);
         assert sb != null;
@@ -157,7 +159,7 @@ public class SearchBean {
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
         patients.clear();
-        int i = 0;
+        //int i = 0;
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
@@ -181,43 +183,40 @@ public class SearchBean {
                 String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
                 patientBirthDate = dateString;
             } catch (Exception e) {
-
-               // MainActivity.print("Errot to transfer date");
+               //print("Errot to transfer date");
             }
 
-            if(parentPatientDetails.has("PatientSex")) { patientSex=parentPatientDetails.get("PatientSex").getAsString(); }
+            if(parentPatientDetails.has("PatientSex")) { patientSex = parentPatientDetails.get("PatientSex").getAsString(); }
             if(parentPatientDetails.has("PatientName"))
                 { patientName=parentPatientDetails.get("PatientName").getAsString();
-                    System.out.println(patientName);
+                   // System.out.println(patientName);
                 }
-            if(parentPatientDetails.has("PatientID")) { patientId=parentPatientDetails.get("PatientID").getAsString(); }
+            if(parentPatientDetails.has("PatientID")) { patientId = parentPatientDetails.get("PatientID").getAsString(); }
             String accessionNumber="N/A";
-            if(studyDetails.has("AccessionNumber")) {accessionNumber=studyDetails.get("AccessionNumber").getAsString();}
-            String studyInstanceUid=studyDetails.get("StudyInstanceUID").getAsString();
-            String studyDate=null;
-            Date studyDateObject=null;
-            if(studyDetails.has("StudyDate")) { studyDate=studyDetails.get("StudyDate").getAsString(); }
+            if(studyDetails.has("AccessionNumber")) {accessionNumber = studyDetails.get("AccessionNumber").getAsString();}
+            String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
+            String studyDate = null;
+            Date studyDateObject = null;
+            if(studyDetails.has("StudyDate")) { studyDate = studyDetails.get("StudyDate").getAsString(); }
 
             try {
-                studyDateObject=format.parse("19000101");
+                studyDateObject = format.parse("19000101");
                 assert studyDate != null;
                 studyDateObject=format.parse(studyDate);
             } catch (Exception e) {
               //  MainActivity.print("Errot to transfer date");
             }
 
-            String studyDescription="N/A";
+            String studyDescription = "N/A";
             if(studyDetails.has("StudyDescription")){ studyDescription=studyDetails.get("StudyDescription").getAsString(); }
-            Study studyObj=new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
                 patients.add(patient);
             }
-
        }
-
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {

@@ -10,7 +10,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +23,9 @@ import java.util.Set;
 @ManagedBean(name = "settingsBean", eager = false)
 @ViewScoped
 public class SettingsBean {
-    String fileSettingPath = "D://orthanc.json";
+    String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
+    public static String fulladdress ="http://127.0.0.1:8042";//"http://185.59.139.156:8142";
+    public static String authentication;
     public String ServerName;
     public JsonObject dicomNode=new JsonObject();
     public JsonObject orthancPeer=new JsonObject();
@@ -350,8 +355,49 @@ public class SettingsBean {
     }
 
     public void resetServer(){
-
+        //"/tools/reset"
+        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/reset","" );
+        System.out.println(sb);
+        String buf = sb.toString();
         showMessage("Сообщение","Сервис перезагружен!", info);
+    }
+
+    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
+        StringBuilder sb =null;
+        try {
+            sb=new StringBuilder();
+            HttpURLConnection conn = makePostConnection(apiUrl, post);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                int i = output.indexOf("}");
+                sb.append(output);
+            }
+            conn.disconnect();
+            conn.getResponseMessage();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sb;
+    }
+
+    public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
+        HttpURLConnection conn = null ;
+        URL url = new URL(fulladdress+apiUrl);
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());
+        if(authentication != null){
+            conn.setRequestProperty("Authorization", "Basic " + authentication);
+        }
+        OutputStream os = conn.getOutputStream();
+        os.write(post.getBytes());
+        os.flush();
+        conn.getResponseMessage();
+        return conn;
     }
 
     public void restoreBackup(){

@@ -106,7 +106,7 @@
                         <b>HTTP сервер</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpServerEnabled}"/>
+                            <p:toggleSwitch value="#{settingsBean.httpServerEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Если этот параметр выключен, Orthanc действует как чистый DICOM-сервер. REST API и Orthanc Explorer не доступны. Так же Orthac Manager, тоже не сможет получить доступ к серверу, так как использует REST API</div>
 
@@ -122,7 +122,7 @@
                         <b>HTTP описание ошибок</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpDescribeErrors}"/>
+                            <p:toggleSwitch value="#{settingsBean.httpDescribeErrors}"/>
                         </p>
                         <div class="p-text-capitalize">Если включено, и при вызове REST API возникает ошибка, в HTTP ответ, добавляется сообщение JSON с описанием ошибки. Эту функцию можно отключить, если HTTP-клиент неправильно обрабатывает такие ответы</div>
 
@@ -130,7 +130,7 @@
                         <b>HTTP сжатие</b>
                     </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpCompressionEnabled}"/>
+                            <p:toggleSwitch value="#{settingsBean.httpCompressionEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Сжатие HTTP улучшает использование полосы пропускания сети, за счет большего количества вычислений на сервере. Orthanc поддерживает HTTP-кодировки «gzip» и «deflate»</div>
             </p:tab>
@@ -140,7 +140,7 @@
                     <b>DICOM сервер</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomServerEnabled}"/>
+                            <p:toggleSwitch value="#{settingsBean.dicomServerEnabled}"/>
                         </p>
                         <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
 
@@ -156,7 +156,7 @@
                     <b>DICOM проверка AET</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomCheckCalledAet}"/>
+                            <p:toggleSwitch value="#{settingsBean.dicomCheckCalledAet}"/>
                         </p>
                         <div class="p-text-capitalize">Проверка соответствия AET, во время входящего запроса SCU DICOM</div>
 
@@ -179,7 +179,7 @@
                     <b>Синтаксис передачи</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanCheckbox value="#{settingsBean.deflatedTransferSyntaxAccepted}" itemLabel="Deflated Transfer"/>
+                            <p:selectBooleanCheckbox value="#{settingsBean.deflatedTransferSyntaxAccepted}"  itemLabel="Deflated Transfer"/>
                             <br/>
                             <p:selectBooleanCheckbox value="#{settingsBean.jpegTransferSyntaxAccepted}" itemLabel="Jpeg Transfer"/>
                             <br/>
@@ -199,7 +199,7 @@
                     <b>Разрешить принимать данные из неизвестных источников</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.unknownSopClassAccepted}"/>
+                            <p:toggleSwitch value="#{settingsBean.unknownSopClassAccepted}"/>
                         </p>
                         <div class="p-text-capitalize">Принимать или нет, роль S-Store SCP для неизвестных источников («Неразборчивый режим»)</div>
 
@@ -218,15 +218,15 @@
                         <b>Разрешение удаленного доступа</b>
                     </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.remoteAccessAllowed}"/>
+                                <p:toggleSwitch value="#{settingsBean.remoteAccessAllowed}"/>
                             </p>
-                            <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу)</div>
+                            <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу</div>
 
                     <p:divider align="left" type="dashed">
                         <b>SSL protocol</b>
                     </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.sslEnabled}"/>
+                                <p:toggleSwitch value="#{settingsBean.sslEnabled}"/>
                             </p>
                             <div class="p-text-capitalize">Включение протокола SSL</div>
 
@@ -242,7 +242,7 @@
                         <b>Включение аутентификации</b>
                     </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.authenticationEnabled}"/>
+                                <p:toggleSwitch value="#{settingsBean.authenticationEnabled}"/>
                             </p>
                             <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
 
@@ -439,7 +439,7 @@
                             <b>Хранить DICOM модальности в базе данных</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomModalitiesInDb}"/>
+                                <p:toggleSwitch value="#{settingsBean.dicomModalitiesInDb}"/>
                             </p>
                             <div class="p-text-capitalize">Выбор хранения DICOM модальностей в базе данных Orthanc, а не в этом конфигурационном файле (с версии Orthanc 1.5.0)</div>
 
@@ -447,7 +447,7 @@
                             <b>Всегда отвечать на специфичные для DICOM протокола Эхо запросы</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomAlwaysAllowEcho}"/>
+                                <p:toggleSwitch value="#{settingsBean.dicomAlwaysAllowEcho}"/>
                             </p>
                             <div class="p-text-capitalize">Разерешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
 
@@ -455,7 +455,7 @@
                             <b>Всегда принимать DICOM данные для хранения</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.dicomAlwaysStore}"/>
+                                <p:toggleSwitch value="#{settingsBean.dicomAlwaysStore}"/>
                             </p>
                             <div class="p-text-capitalize">Разрешение для Orthanc всегда принимать входящие C-Store запросы , даже от модальностей которых нет в списке "DICOM Модальности"</div>
 
@@ -463,7 +463,7 @@
                             <b>Проверять DICOM Модальности при подключении</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.checkModalityHost}"/>
+                                <p:toggleSwitch value="#{settingsBean.checkModalityHost}"/>
                             </p>
                             <div class="p-text-capitalize">Определяет, проверяет ли Orthanc IP адрес и имя удаленного хоста, инициирующего соединение DICOM (как указано в списке "DICOM Модальности"). Если для этой опции установлено значение "false", Orthanc проверяет только AET</div>
 
@@ -487,7 +487,7 @@
                             <b>Хранить информацию об одноранговых узлах (peer) в базе данных</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.orthancPeerInDb}"/>
+                                <p:toggleSwitch value="#{settingsBean.orthancPeerInDb}"/>
                             </p>
                             <div class="p-text-capitalize">Определяет хранение информации об одноранговых узлах (peer) в базе данных Orthanc, а не в этом файле конфигурации (с версии Orthanc 1.5.0)</div>
 
@@ -503,7 +503,7 @@
                             <b>HTTP Verbose</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpVerbose}"/>
+                                <p:toggleSwitch value="#{settingsBean.httpVerbose}"/>
                             </p>
                             <div class="p-text-capitalize">Включение означает, что отладочные сообщения из "libcurl", будут выдаваться всякий раз, когда Orthanc делает исходящий HTTP-запрос. Это особенно полезно для отладки проблем, связанных с HTTPS</div>
 
@@ -519,7 +519,7 @@
                             <b>HTTPS Проверка одноранговых узлов (Verify Peers)</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.httpsVerifyPeers}"/>
+                                <p:toggleSwitch value="#{settingsBean.httpsVerifyPeers}"/>
                             </p>
                             <div class="p-text-capitalize">Включиние проверки одноранговых узлов во время HTTPS-запросов. Выключено, если используются самозаверяющие сертификаты. Обратите внимание, что включение этого параметра приводит к угрозам безопасности! Ссылка: http://curl.haxx.se/docs/sslcerts.html</div>
 
@@ -549,7 +549,7 @@
                             <b>Сравнение AET с учетом регистра</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.strictAetComparison}"/>
+                                <p:toggleSwitch value="#{settingsBean.strictAetComparison}"/>
                             </p>
                             <div class="p-text-capitalize">По умолчанию Orthanc сравнивает AET без учета регистра. Включение этого параметра, предполагает дальнейшее сопоставление с учетом регистра</div>
 
@@ -557,7 +557,7 @@
                             <b>Хранить MD5 сумму для полученных данных</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storeMD5ForAttachments}"/>
+                                <p:toggleSwitch value="#{settingsBean.storeMD5ForAttachments}"/>
                             </p>
                             <div class="p-text-capitalize">Если включено, суммы MD5 файлов DICOM будут вычислены и сохранены в базе данных Orthanc. Эта информация может использоваться для обнаружения повреждения диска за счет небольших затрат на производительность</div>
 
@@ -589,7 +589,7 @@
                             <b>Log Exported Resources</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.logExportedResources}"/>
+                                <p:toggleSwitch value="#{settingsBean.logExportedResources}"/>
                             </p>
                             <div class="p-text-capitalize">Если включено (поведение по умолчанию до Orthanc 1.3.2), Orthanc регистрирует ресурсы, экспортируемые в другие DICOM модальности или одноранговые узлы, внутри URI "/export". Выключение этого параметра, позволяет предотвратить бесконечный рост индекса в задачах автоматической маршрутизации (это поведение по умолчанию с Orthanc 1.4.0)</div>
 
@@ -597,7 +597,7 @@
                             <b>Keep Alive</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.keepAlive}"/>
+                                <p:toggleSwitch value="#{settingsBean.keepAlive}"/>
                             </p>
                             <div class="p-text-capitalize">Включить или отключить режим HTTP Keep Alive "Остаться в живых". Рекомендуется включать только в случае высоких нагрузок HTTP</div>
 
@@ -605,7 +605,7 @@
                             <b>Store DICOM</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.storeDicom}"/>
+                                <p:toggleSwitch value="#{settingsBean.storeDicom}"/>
                             </p>
                             <div class="p-text-capitalize">Если выключено, Orthanc будет работать в режиме хранения только индекса. Файлы DICOM не будут храниться на диске. Обратите внимание, что этот параметр может препятствовать обновлению до более новых версий Orthanc</div>
 
@@ -629,7 +629,7 @@
                             <b>Case Sensitive PN</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.caseSensitivePN}"/>
+                                <p:toggleSwitch value="#{settingsBean.caseSensitivePN}"/>
                             </p>
                             <div class="p-text-capitalize">Включение этого параметра означает выполнение поисковых запросов с учетом регистра для представленого значения PN (например, RapidName). По умолчанию поиск выполняется без учета регистра, что не соответствует стандарту DICOM</div>
 
@@ -637,7 +637,7 @@
                             <b>Allow Find Sop Classes In Study</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.allowFindSopClassesInStudy}"/>
+                                <p:toggleSwitch value="#{settingsBean.allowFindSopClassesInStudy}"/>
                             </p>
                             <div class="p-text-capitalize">Если включено, сервер будет обрабатывать "классы SOP в исследовании" (0008, 0062) в запросах к серверу, даже если метаданные "SOP Class UID" недоступны в базе данных (что имеет место, если база данных ранее использовалась Orthanc младше 1.1.0). Этот параметр отключен по умолчанию, так как для него требуется интенсивный доступ к жесткому диску</div>
 
@@ -645,7 +645,7 @@
                             <b>Load Private Dictionary</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.loadPrivateDictionary}"/>
+                                <p:toggleSwitch value="#{settingsBean.loadPrivateDictionary}"/>
                             </p>
                             <div class="p-text-capitalize">Если включено, сервер не загружает словарь частных тегов по умолчанию. Это может потребоваться, если невозможно импортировать DICOM-файл, закодированный с помощью синтаксиса передачи неявного VR Endian и содержащий частные теги: Такая ошибка импорта может быть вызвана неправильным словарем. Вы можете перечислить ваши частные теги, в опции конфигурации "Словарь" ниже</div>
 
@@ -661,7 +661,7 @@
                             <b>Synchronous C Move</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.synchronousCMove}"/>
+                                <p:toggleSwitch value="#{settingsBean.synchronousCMove}"/>
                             </p>
                             <div class="p-text-capitalize">Если включено (по умолчанию), каждый входящий запрос C-Move приводит к созданию нового фонового задания. До Orthanc 1.3.2 неявным поведением было использование синхронного C-Move. Между Orthanc 1.4.0 и 1.4.2 поведение по умолчанию было установлено как асинхронное C-Move. Начиная с Orthanc 1.5.0, поведение по умолчанию - синхронное C-Move (обратная совместимость с Orthanc младше 1.3.2)</div>
 
@@ -677,7 +677,7 @@
                             <b>Overwrite Instances</b>
                         </p:divider>
                             <p class="p-m-0">
-                                <p:selectBooleanButton onLabel="Yes" offLabel="No" style="width:6rem" value="#{settingsBean.overwriteInstances}"/>
+                                <p:toggleSwitch value="#{settingsBean.overwriteInstances}"/>
                             </p>
                             <div class="p-text-capitalize">Определяет, как сервер реагирует, когда  получает DICOM-данные, уже сохраненные ранее. Если включено, новый экземпляр заменяет старый. Если выключено, новый экземпляр отбрасывается, а старый сохраняется. До Orthanc 1.4.1 данный параметр по умолчанию был выключен</div>
 
