@@ -110,37 +110,61 @@
 
             <p:panel id="panel1" header="Поиск" footer="Результатов поиска: #{searchBean.seachCount}">
                 <div style="align-content: center">
-                    <div class="p-m-2">
-                        <p:panelGrid columns="2">
+                    <p:card style="margin-bottom: 2em">
 
-                            <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
-                                <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
-                                <f:selectItem itemLabel="ID пациента" itemValue="0"/>
-                            </p:selectOneMenu>
-                            <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}"/>
-                        </p:panelGrid>
-                    </div>
+                        <div class="p-grid">
+                            <p:panelGrid columns="2" layout="grid">
+                                <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
+                                    <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
+                                    <f:selectItem itemLabel="ID пациента" itemValue="0"/>
+                                    <p:ajax event="change" listener="#{searchBean.onTypeSearchSelect}"/>
+                                </p:selectOneMenu>
+                                <p:inputText id="searchId" style="alignment: left; width: 200px" value="#{searchBean.searchId}">
+                                    <p:ajax event="change"/>
+                                </p:inputText>
+                            </p:panelGrid>
+                        </div>
 
-                    <div class="p-m-2">
-                        <p:panelGrid columns="3">
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
+                                <p:outputLabel style="font-size: large" value="Дата исследования:"/>
+                                <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}" style="margin-left: 1em; margin-right: 1em">
+                                    <f:selectItem itemLabel="Сегодня" itemValue="today" />
+                                    <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
+                                    <f:selectItem itemLabel="Точная дата" itemValue="targetdate"/>
+                                    <f:selectItem itemLabel="Диапазон" itemValue="range"/>
+                                    <p:ajax event="change" />
+                                </p:selectOneButton>
+                                <p:datePicker id="firstDate" value="#{searchBean.firstdate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                    <p:ajax event="dateSelect"/>
+                                </p:datePicker>
+                                <p:datePicker id="secondDate" value="#{searchBean.seconddate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                    <p:ajax event="dateSelect"/>
+                                </p:datePicker>
+                        </div>
 
-                        <p:outputLabel style="font-size: large" value="Дата исследования:"/>
-                            <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}">
-                                <f:selectItem itemLabel="Сегодня" itemValue="today"/>
-                                <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
-                                <f:selectItem itemLabel="Точная дата" itemValue="lastweek"/>
-                            </p:selectOneButton>
-                            <p:datePicker id="dateSeach" value="#{calendarView.date7}" showIcon="true" />
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
+                            <p:selectManyButton value="#{searchBean.selectedModaliti}">
+                                <f:selectItem itemLabel="CR" itemValue="CR"/>
+                                <f:selectItem itemLabel="CT" itemValue="CT"/>
+                                <f:selectItem itemLabel="MR" itemValue="MR"/>
+                                <f:selectItem itemLabel="NM" itemValue="NM"/>
+                                <f:selectItem itemLabel="PT" itemValue="PT"/>
+                                <f:selectItem itemLabel="US" itemValue="US"/>
+                                <f:selectItem itemLabel="XA" itemValue="XA"/>
+                                <f:selectItem itemLabel="MG" itemValue="MG"/>
+                                <f:selectItem itemLabel="DX" itemValue="DX"/>
+                                <p:ajax event="change"/>
+                            </p:selectManyButton>
+                        </div>
 
-                        </p:panelGrid>
-                    </div>
+                        <div class="p-m-2">
+                            <p:commandButton class="p-mb-2" value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
+                                             update="@(form)"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                            </p:commandButton>
+                        </div>
+                    </p:card>
 
-                    <div class="p-m-2">
-                        <p:commandButton class="p-mb-2" value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
-                                     update="seachform"
-                                     styleClass="ui-button-success" style="margin-right: .5rem">
-                        </p:commandButton>
-                    </div>
                 </div>
             </p:panel>
 
@@ -181,21 +205,19 @@
                             <div class="p-col-1; p-mb-2 p-mr-2">
                                 <p:card style="width: 25rem; margin-bottom: 2em">
                                     <f:facet name="title">
-                                        <p:outputLabel type="text" value="#{patient.childStudies[1].studyDescription}" />
+                                        <p:outputLabel type="text" value="#{patient.childStudies}" />
                                     </f:facet>
                                     <p:linkButton value = "Study" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
                                 </p:card>
                             </div>
 
                             <p:card style="width: 25rem; margin-bottom: 2em">
-                                <h:commandLink value="Go to this site!" action="#{searchBean.redirect('http://127.0.0.1:8042/osimis-viewer/app/index.html?series=b5a1d353-e15fcd19-863a0bd7-b17d909f-91c436af')}" />
+                                <h:commandLink value="Go to this site!" action="#{searchBean.redirect('http://127.0.0.1:8042/osimis-viewer/app/index.html?series=+b5a1d353-e15fcd19-863a0bd7-b17d909f-91c436af')}" />
                             </p:card>
 
                         </div>
                     </p:tab>
                 </p:accordionPanel>
-
-
 
             </p:dataScroller>
         </h:form>

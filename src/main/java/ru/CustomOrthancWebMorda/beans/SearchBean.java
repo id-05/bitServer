@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -18,8 +19,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @ManagedBean(name = "searchBean", eager = true)
@@ -30,12 +32,39 @@ public class SearchBean {
     public static String fulladdress = "http://185.59.139.156:8142";
     public String searchId;
     public String searchName;
-    public String searchDate;
+    private static String searchDate;
     public int searchType = 1;//имя пациента
     public ArrayList<Patient> patients = new ArrayList<>();
     public int seachCount;
-    private JsonParser parserJson = new JsonParser();
+    private final JsonParser parserJson = new JsonParser();
     private SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
+    public Date firstdate;
+    public Date seconddate;
+    private List<String> selectedModaliti = new ArrayList<>();
+
+    public List<String> getSelectedModaliti() {
+        return selectedModaliti;
+    }
+
+    public void setSelectedModaliti(List<String> selectedModaliti) {
+        this.selectedModaliti = selectedModaliti;
+    }
+
+    public Date getFirstdate() {
+        return firstdate;
+    }
+
+    public void setFirstdate(Date firstdate) {
+        this.firstdate = firstdate;
+    }
+
+    public Date getSeconddate() {
+        return seconddate;
+    }
+
+    public void setSeconddate(Date seconddate) {
+        this.seconddate = seconddate;
+    }
 
     public int getSeachCount() {
         return seachCount;
@@ -93,55 +122,104 @@ public class SearchBean {
 
     @PostConstruct
     public void init() {
+        searchDate = "today";
         System.out.println("seach");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        firstdate = new Date();
+        seconddate = new Date();
+        selectedModaliti.clear();
+        selectedModaliti.add("CR");
+        selectedModaliti.add("CT");
+        selectedModaliti.add("MR");
+        selectedModaliti.add("NM");
+        selectedModaliti.add("PT");
+        selectedModaliti.add("US");
+        selectedModaliti.add("XA");
+        selectedModaliti.add("CR");
+        selectedModaliti.add("MG");
+        selectedModaliti.add("DX");
     }
 
     public void seach() throws IOException {
         System.out.println("seach start");
-        String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
+       // String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
        // String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"*\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
-
         JsonObject query=new JsonObject();
         query.addProperty("Level", "Studies");
         query.addProperty("CaseSensitive", false);
         query.addProperty("Expand", true);
         query.addProperty("Limit", 0);
         JsonObject queryDetails=new JsonObject();
-        System.out.println("calednar   " + CalendarView.date7);
- //       String date = format.format(calendarFromDate.getTime())+"-"+format.format(calendarToDate.getTime());
- //       queryDetails.addProperty("StudyDate", date);
+        String dateStr;
+        switch (searchDate){
+            case "today":
+                Date bufDate = new Date();
+                dateStr = format.format(bufDate)+"-"+format.format(bufDate);
+                queryDetails.addProperty("StudyDate", dateStr);
+                break;
+            case "yesterday":
+                Instant now = Instant.now();
+                Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+                Date myDate = Date.from(yesterday);
+                dateStr = format.format(myDate )+"-"+format.format(myDate);
+                queryDetails.addProperty("StudyDate", dateStr);
+                break;
+            case "targetdate":
+                dateStr = format.format(firstdate)+"-"+format.format(firstdate);
+                queryDetails.addProperty("StudyDate", dateStr);
+                break;
+            case "range":
+                dateStr = format.format(firstdate)+"-"+format.format(seconddate);
+                queryDetails.addProperty("StudyDate", dateStr);
+                break;
+            default:
+                dateStr = "*";
+                queryDetails.addProperty("StudyDate", dateStr);
+                break;
+        }
 
         switch (searchType){
-            case 0: queryDetails.addProperty("PatientID", searchId);
+            case 0:
+                if(searchId!=null){
+                    queryDetails.addProperty("PatientID", searchId);
+                }else{
+                    queryDetails.addProperty("PatientID", "*");
+                }
                 break;
             case 1: queryDetails.addProperty("PatientID", "*");
                 break;
             default:break;
         }
 
-
         StringBuilder modalities=new StringBuilder();
-//        if (cr.isChecked()) modalities.append("CR\\");
-//        if (ct.isChecked()) modalities.append("CT\\");
-//        if (mr.isChecked()) modalities.append("MR\\");
-//        if (nm.isChecked()) modalities.append("NM\\");
-//        if (pt.isChecked()) modalities.append("PT\\");
-//        if (us.isChecked()) modalities.append("US\\");
-//        if (xa.isChecked()) modalities.append("XA\\");
-//        if (mg.isChecked()) modalities.append("MG\\");
-//        if (dx.isChecked()) modalities.append("DX\\");
-//        modalities.append(customModalities.getText());
-//        String modality =  modalities.toString();
-//        queryDetails.addProperty("Modality", modality);
-//        query.add("Query", queryDetails);
+        for(String buf:selectedModaliti){
+            modalities.append(buf).append("\\");
+        }
+        queryDetails.addProperty("Modality", modalities.toString());
 
-        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",param );
+        query.add("Query", queryDetails);
+        System.out.println(query.toString());
+        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
         System.out.println(sb);
         assert sb != null;
         String buf = sb.toString();
         getPatientsFromJson(buf);
+        patients.sort(Comparator.comparing(Patient::getName));
         seachCount = patients.size();
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
+
+        for(Patient bufP:patients){
+            System.out.println(bufP.getName());
+            HashMap<String,Study> bufhashmap = bufP.getChildStudies();
+            for(String key : bufP.getChildStudies().keySet()){
+                System.out.println("study Key: " + key);
+            }
+        }
+    }
+
+    public void onTypeSearchSelect(){
+        searchId = null;
+        PrimeFaces.current().ajax().update(":seachform");
     }
 
     public void redirect(String str) throws IOException {
@@ -193,7 +271,6 @@ public class SearchBean {
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
         patients.clear();
-        //int i = 0;
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
@@ -220,18 +297,27 @@ public class SearchBean {
                //print("Errot to transfer date");
             }
 
-            if(parentPatientDetails.has("PatientSex")) { patientSex = parentPatientDetails.get("PatientSex").getAsString(); }
-            if(parentPatientDetails.has("PatientName"))
-                { patientName=parentPatientDetails.get("PatientName").getAsString();
-                   // System.out.println(patientName);
-                }
-            if(parentPatientDetails.has("PatientID")) { patientId = parentPatientDetails.get("PatientID").getAsString(); }
-            String accessionNumber="N/A";
-            if(studyDetails.has("AccessionNumber")) {accessionNumber = studyDetails.get("AccessionNumber").getAsString();}
+            if(parentPatientDetails.has("PatientSex")) {
+                patientSex = parentPatientDetails.get("PatientSex").getAsString();
+            }
+
+            if(parentPatientDetails.has("PatientName")) {
+                patientName=parentPatientDetails.get("PatientName").getAsString();
+            }
+
+            if(parentPatientDetails.has("PatientID")) {
+                patientId = parentPatientDetails.get("PatientID").getAsString();
+            }
+            String accessionNumber = "N/A";
+            if(studyDetails.has("AccessionNumber")) {
+                accessionNumber = studyDetails.get("AccessionNumber").getAsString();
+            }
             String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
             String studyDate = null;
             Date studyDateObject = null;
-            if(studyDetails.has("StudyDate")) { studyDate = studyDetails.get("StudyDate").getAsString(); }
+            if(studyDetails.has("StudyDate")) {
+                studyDate = studyDetails.get("StudyDate").getAsString();
+            }
 
             try {
                 studyDateObject = format.parse("19000101");
@@ -242,23 +328,34 @@ public class SearchBean {
             }
 
             String studyDescription = "N/A";
-            if(studyDetails.has("StudyDescription")){ studyDescription=studyDetails.get("StudyDescription").getAsString(); }
+            if(studyDetails.has("StudyDescription")){
+                studyDescription=studyDetails.get("StudyDescription").getAsString();
+            }
             Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
-//                if(seachMode.equals("Patient ID")){
-//                    patients.add(patient);
-//                }
-//                if(seachMode.equals("Patient name")){
-//                    if(patient.name.toUpperCase().contains(seachpatientName.toUpperCase())){
-//                        patients.add(patient);
-//                    }
-//                }
-
-                patients.add(patient);
+                switch (searchType){
+                    case 0: //поиск по id
+                        patients.add(patient);
+                        break;
+                    case 1: // поиск по фамилии
+                        if(searchId!=null){
+                            if(patient.name.toUpperCase().contains(searchId.toUpperCase())){
+                                patients.add(patient);
+                            }
+                        }else
+                        {
+                            patients.add(patient);
+                        }
+                        break;
+                    default:break;
+                }
+            }else {
+                Patient patient = patientMap.get(parentPatientID);
+                patient.addStudy(studyObj);
             }
        }
     }
