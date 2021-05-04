@@ -205,15 +205,11 @@
                             <div class="p-col-1; p-mb-2 p-mr-2">
                                 <p:card style="width: 25rem; margin-bottom: 2em">
                                     <f:facet name="title">
-                                        <p:outputLabel type="text" value="#{patient.childStudies}" />
+                                        <p:outputLabel type="text" value="Всего иcследований:  #{patient.patientOrthancId}" />
                                     </f:facet>
-                                    <p:linkButton value = "Study" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
+                                    <p:linkButton value = "Открыть" outcome = "patientPage" onclick="rc([{name: 'parentPatientID', value: '#{patient.patientOrthancId}'}])"/>
                                 </p:card>
                             </div>
-
-                            <p:card style="width: 25rem; margin-bottom: 2em">
-                                <h:commandLink value="Go to this site!" action="#{searchBean.redirect('http://127.0.0.1:8042/osimis-viewer/app/index.html?series=+b5a1d353-e15fcd19-863a0bd7-b17d909f-91c436af')}" />
-                            </p:card>
 
                         </div>
                     </p:tab>

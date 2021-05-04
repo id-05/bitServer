@@ -18,10 +18,8 @@ public class PatientInfoPanel {
     }
 
     public void setPatientId(String patientId) {
-        this.patientId = patientId;
+        PatientInfoPanel.patientId = patientId;
     }
-
-
 
     public void clickOpenPatient(){
         System.out.println("click open patient");
@@ -30,8 +28,12 @@ public class PatientInfoPanel {
         PrimeFaces.current().ajax().update("patientinfo");
     }
 
+    public void clicktwo(String id2){
+        patientId = id2;
+        System.out.println(id2);
+    }
+
     public void printParam(){
-        //patientId = "987654321";
         System.out.println(patientId);
     }
 

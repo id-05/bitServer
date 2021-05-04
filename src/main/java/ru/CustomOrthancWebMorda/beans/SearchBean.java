@@ -198,7 +198,7 @@ public class SearchBean {
         queryDetails.addProperty("Modality", modalities.toString());
 
         query.add("Query", queryDetails);
-        System.out.println(query.toString());
+        //System.out.println(query.toString());
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
         System.out.println(sb);
         assert sb != null;
@@ -208,13 +208,13 @@ public class SearchBean {
         seachCount = patients.size();
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
 
-        for(Patient bufP:patients){
-            System.out.println(bufP.getName());
-            HashMap<String,Study> bufhashmap = bufP.getChildStudies();
-            for(String key : bufP.getChildStudies().keySet()){
-                System.out.println("study Key: " + key);
-            }
-        }
+//        for(Patient bufP:patients){
+//            System.out.println(bufP.getName());
+//            HashMap<String,Study> bufhashmap = bufP.getChildStudies();
+//            for(String key : bufP.getChildStudies().keySet()){
+//                System.out.println("study Key: " + key);
+//            }
+//        }
     }
 
     public void onTypeSearchSelect(){
@@ -334,7 +334,7 @@ public class SearchBean {
             Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
-                Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID);
+                Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
                 switch (searchType){
@@ -356,6 +356,8 @@ public class SearchBean {
             }else {
                 Patient patient = patientMap.get(parentPatientID);
                 patient.addStudy(studyObj);
+                int buf = patient.getStudyCount();
+                patient.setStudyCount(buf+1);
             }
        }
     }
