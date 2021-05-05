@@ -33,21 +33,21 @@ public class SearchBean {
     public String searchId;
     public String searchName;
     private static String searchDate;
-    public int searchType = 1;//имя пациента
-    public ArrayList<Patient> patients = new ArrayList<>();
-    public int seachCount;
+    public static int searchType = 1;//имя пациента
+    public static ArrayList<Patient> patients = new ArrayList<>();
+    public static int seachCount;
     private final JsonParser parserJson = new JsonParser();
-    private SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
-    public Date firstdate;
-    public Date seconddate;
-    private List<String> selectedModaliti = new ArrayList<>();
+    private final SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
+    public static Date firstdate;
+    public static Date seconddate;
+    private static List<String> selectedModaliti = new ArrayList<>();
 
     public List<String> getSelectedModaliti() {
         return selectedModaliti;
     }
 
     public void setSelectedModaliti(List<String> selectedModaliti) {
-        this.selectedModaliti = selectedModaliti;
+        SearchBean.selectedModaliti = selectedModaliti;
     }
 
     public Date getFirstdate() {
@@ -55,7 +55,7 @@ public class SearchBean {
     }
 
     public void setFirstdate(Date firstdate) {
-        this.firstdate = firstdate;
+        SearchBean.firstdate = firstdate;
     }
 
     public Date getSeconddate() {
@@ -200,7 +200,7 @@ public class SearchBean {
         query.add("Query", queryDetails);
         //System.out.println(query.toString());
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
-        System.out.println(sb);
+        //System.out.println(sb);
         assert sb != null;
         String buf = sb.toString();
         getPatientsFromJson(buf);
@@ -215,6 +215,22 @@ public class SearchBean {
 //                System.out.println("study Key: " + key);
 //            }
 //        }
+    }
+
+    public void redirectPatientPanel(String patientID) throws IOException {
+        //PrimeFaces.current().ajax().update(":seachform:dt-patients");
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientID);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfoPage.xhtml");
+    }
+
+    public void firstDateSelect(){
+        searchDate = "targetdate";
+        PrimeFaces.current().ajax().update(":seachform");
+    }
+
+    public void secondDateSelect(){
+        searchDate = "range";
+        PrimeFaces.current().ajax().update(":seachform");
     }
 
     public void onTypeSearchSelect(){
@@ -322,7 +338,8 @@ public class SearchBean {
             try {
                 studyDateObject = format.parse("19000101");
                 assert studyDate != null;
-                studyDateObject=format.parse(studyDate);
+                SimpleDateFormat formatStudy =new SimpleDateFormat("yyyyMMdd");
+                studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
               //  MainActivity.print("Errot to transfer date");
             }
