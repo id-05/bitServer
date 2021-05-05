@@ -7,12 +7,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean(name = "patientInfoBean", eager = true)
-@SessionScoped
+@ViewScoped
 public class PatientInfoBean {
 
     public static String patientId;
@@ -86,8 +87,11 @@ public class PatientInfoBean {
         }
     }
 
-    public void click(SelectEvent<Study> event){
-        System.out.println("==  "+event.getObject().getOrthancId());
+    public void click(SelectEvent<Study> event) throws IOException {
+        String buf = event.getObject().getOrthancId();
+        System.out.println(buf);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("serieID", buf);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("seriePage.xhtml");
     }
 
 }

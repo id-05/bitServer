@@ -79,42 +79,24 @@
                                 <f:facet name="title">
                                     <i class="pi pi-list"> </i>
                                 </f:facet>
+                                <p:dataTable var="study" value="#{patientInfoBean.studyList}"
+                                             selectionMode="single"
+                                             selection="#{patientInfoBean.bufStudy}"
+                                             rowKey="#{study.studyDescription}"
+                                             id="customerTable">
+                                    <p:ajax event="rowSelect" listener="#{patientInfoBean.click}"/>
 
-                                <p:dataScroller  id="dt-studys" value="#{patientInfoBean.studyList}" var="study" chunkSize="10">
-                                    <p:panel header="#{study.studyDateToStr}">
-                                        <p:outputLabel value="#{study.studyDescription}"/>
+                                    <p:column headerText="Исследование"  style="text-align: center">
+                                        <h:outputText value="#{study.studyDescription}" />
+                                    </p:column>
 
-                                    </p:panel>
-                                </p:dataScroller>
+                                    <p:column headerText="Дата"  style="text-align: center">
+                                        <h:outputText value="#{study.studyDateToStr}"/>
+                                    </p:column>
+                                </p:dataTable>
                             </p:card>
                         </div>
                     </div>
-
-            <div class="p-col">
-                <p:card style="margin-bottom: 2em">
-                    <f:facet name="title">
-                        <i class="pi pi-list"> </i>
-                    </f:facet>
-
-
-                            <p:dataTable var="study" value="#{patientInfoBean.studyList}"
-                                         selectionMode="single"
-                                         selection="#{patientInfoBean.bufStudy}"
-                                         rowKey="#{study.studyDescription}"
-                                         id="customerTable">
-                                <p:ajax event="rowSelect" listener="#{patientInfoBean.click}"/>
-
-                                <p:column headerText="Исследование"  style="text-align: center">
-                                    <h:outputText value="#{study.studyDescription}" />
-                                </p:column>
-
-                                <p:column headerText="Дата"  style="text-align: center">
-                                    <h:outputText value="#{study.studyDateToStr}"/>
-                                </p:column>
-                            </p:dataTable>
-                </p:card>
-            </div>
-
         </h:form>
     </h:body>
 </f:view>

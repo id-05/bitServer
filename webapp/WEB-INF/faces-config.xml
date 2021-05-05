@@ -26,6 +26,11 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>seriePage</from-outcome>
+            <to-view-id>/views/seriePage.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>settingsPage</from-outcome>
             <to-view-id>/views/settingsPage.xhtml</to-view-id>
         </navigation-case>

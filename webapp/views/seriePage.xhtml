@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="patientinfo">
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="patientPage" icon="pi pi-backward"/>
+                <p:menuitem value="Удалить пациента из базы" disabled="true" outcome="searchPage" icon="pi pi-trash"/>
+                <p:menuitem value="Скачать" outcome="searchPage" disabled="true" icon="pi pi-download"/>
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+
+
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>
