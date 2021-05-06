@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.Base64;
 
 @ManagedBean(name = "mainBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class MainBean {
 
     public static OrthancServer mainServer;
@@ -62,34 +62,38 @@ public class MainBean {
     public void init() {
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("185.59.139.156");
-        mainServer.setPort("8142");
+        mainServer.setIpaddress("192.168.1.71");//setIpaddress("185.59.139.156");
+        mainServer.setPort("8042");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
+        try {
+            StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
+            JsonParser parser = new JsonParser();
+            JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
+            mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
+            mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
+            mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
+            mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
+            mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
 
-        StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
-        JsonParser parser = new JsonParser();
-        JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
-        mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
-        mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
-        mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
-        mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
-        mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
+            totalStudy = String.valueOf(mainServer.getCountStudies());
+            totalPatient = String.valueOf(mainServer.getCountPatients());
+            totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
 
-        totalStudy = String.valueOf(mainServer.getCountStudies());
-        totalPatient = String.valueOf(mainServer.getCountPatients());
-        totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
+            model = new DefaultDashboardModel();
+            DashboardColumn column1 = new DefaultDashboardColumn();
+            DashboardColumn column2 = new DefaultDashboardColumn();
+            DashboardColumn column3 = new DefaultDashboardColumn();
 
-        model = new DefaultDashboardModel();
-        DashboardColumn column1 = new DefaultDashboardColumn();
-        DashboardColumn column2 = new DefaultDashboardColumn();
-        DashboardColumn column3 = new DefaultDashboardColumn();
+            column1.addWidget("sports");
 
-        column1.addWidget("sports");
+            model.addColumn(column1);
+            model.addColumn(column2);
+            model.addColumn(column3);
+        }catch (Exception e){
+            System.out.println(e.getMessage().toString());
+        }
 
-        model.addColumn(column1);
-        model.addColumn(column2);
-        model.addColumn(column3);
     }
 
     public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
@@ -115,7 +119,7 @@ public class MainBean {
         HttpURLConnection conn=null;
         String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
         URL url = new URL(fulladdress+apiUrl);
-        authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
         conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("GET");
@@ -124,28 +128,6 @@ public class MainBean {
         }
         conn.getResponseMessage();
         return conn;
-    }
-
-    public void handleReorder(DashboardReorderEvent event) {
-        FacesMessage message = new FacesMessage();
-        message.setSeverity(FacesMessage.SEVERITY_INFO);
-        message.setSummary("Reordered: " + event.getWidgetId());
-        message.setDetail("Item index: " + event.getItemIndex() + ", Column index: " + event.getColumnIndex() + ", Sender index: " + event.getSenderColumnIndex());
-        addMessage(message);
-    }
-
-    public void handleClose(CloseEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Panel Closed", "Closed panel id:'" + event.getComponent().getId() + "'");
-        addMessage(message);
-    }
-
-    public void handleToggle(ToggleEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, event.getComponent().getId() + " toggled", "Status:" + event.getVisibility().name());
-        addMessage(message);
-    }
-
-    private void addMessage(FacesMessage message) {
-        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public DashboardModel getModel() {

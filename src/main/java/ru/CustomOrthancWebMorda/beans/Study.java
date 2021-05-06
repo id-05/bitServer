@@ -11,12 +11,6 @@ public class Study {
     private Date   date;
     private String accession;
     private String StudyOrthancId;
-    private String patientName;
-    private String patientID;
-    private Date   birthDate;
-    private String sex;
-    private String patientOrthancId;
-    private String studyInstanceUID;
     private String studyDateToStr;
     private List<Serie> Series;
 
@@ -46,12 +40,6 @@ public class Study {
         this.date = date;
         this.accession = accession;
         this.StudyOrthancId = StudyOrthancId;
-        this.patientName = patientName;
-        this.patientID = patientID;
-        this.birthDate = birthDate;
-        this.sex = sex;
-        this.studyInstanceUID = studyInstanceUID;
-        this.patientOrthancId = patientOrthancId;
         SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
         this.studyDateToStr = format.format(date);
         this.Series = new ArrayList<>();

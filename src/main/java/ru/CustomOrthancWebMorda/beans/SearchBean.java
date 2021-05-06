@@ -24,12 +24,15 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
+
 @ManagedBean(name = "searchBean", eager = true)
 @ViewScoped
 public class SearchBean {
 
     public static String authentication;
-    public static String fulladdress = "http://185.59.139.156:8142";
+    //public static String fulladdress = "http://127.0.0.1:8042";////"http://185.59.139.156:8142";//"http://"+mainServer.getIpaddress()+":"+ mainServer.getPort();//"
+    //public static String fulladdress = "http://"+MainBean.mainServer.getIpaddress()+":"+MainBean.mainServer.getPort();
     public String searchId;
     public String searchName;
     private static String searchDate;
@@ -223,9 +226,10 @@ public class SearchBean {
         FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfoPage.xhtml");
     }
 
-    public void firstDateSelect(){
+    public Boolean firstDateSelect(){
         searchDate = "targetdate";
         PrimeFaces.current().ajax().update(":seachform");
+        return true;
     }
 
     public void secondDateSelect(){
@@ -265,12 +269,14 @@ public class SearchBean {
     }
 
     public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
+        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
         HttpURLConnection conn = null ;
         URL url = new URL(fulladdress+apiUrl);
         conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
-        authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
+        //authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());//(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }

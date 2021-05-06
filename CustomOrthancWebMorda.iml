@@ -36,7 +36,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="primeflex-2.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:10.0.0-RC2" level="project" />
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.15" level="project" />

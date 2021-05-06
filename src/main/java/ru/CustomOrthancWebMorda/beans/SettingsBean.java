@@ -1,5 +1,7 @@
 package ru.CustomOrthancWebMorda.beans;
 
+import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,7 +26,7 @@ import java.util.Set;
 @ViewScoped
 public class SettingsBean {
     String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
-    public static String fulladdress ="http://127.0.0.1:8042";//"http://185.59.139.156:8142";
+    //public static String fulladdress = "http://127.0.0.1:8042";//"http://"+MainBean.mainServer.getIpaddress()+":"+MainBean.mainServer.getPort();//
     public static String authentication;
     public String ServerName;
     public JsonObject dicomNode=new JsonObject();
@@ -358,7 +360,6 @@ public class SettingsBean {
         //"/tools/reset"
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/reset","" );
         System.out.println(sb);
-        String buf = sb.toString();
         showMessage("Сообщение","Сервис перезагружен!", info);
     }
 
@@ -384,12 +385,14 @@ public class SettingsBean {
     }
 
     public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
+        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
         HttpURLConnection conn = null ;
         URL url = new URL(fulladdress+apiUrl);
         conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
-        authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
+        //authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());//(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }
@@ -442,18 +445,6 @@ public class SettingsBean {
             }
         }
         return troubleSimbol;
-    }
-
-    public String ModifyStr(String str){
-        String result;
-        String buf0;
-        String buf;
-        String buf2;
-        buf0 = str.replace("\\","\\\\");
-        buf = buf0.replace("/","\\/");
-        buf2 = buf.replace("\"","\\\"");
-        result = buf2.replace(",",",\\n");
-        return result;
     }
 
     public List<DicomModaliti> getDicomModalitisFromJson(String jsonStr){

@@ -79,12 +79,13 @@
                                 <f:facet name="title">
                                     <i class="pi pi-list"> </i>
                                 </f:facet>
+
                                 <p:dataTable var="study" value="#{patientInfoBean.studyList}"
                                              selectionMode="single"
                                              selection="#{patientInfoBean.bufStudy}"
                                              rowKey="#{study.studyDescription}"
                                              id="customerTable">
-                                    <p:ajax event="rowSelect" listener="#{patientInfoBean.click}"/>
+                                    <p:ajax event="rowSelect" listener="#{patientInfoBean.redirectToSeries}"/>
 
                                     <p:column headerText="Исследование"  style="text-align: center">
                                         <h:outputText value="#{study.studyDescription}" />
@@ -94,8 +95,10 @@
                                         <h:outputText value="#{study.studyDateToStr}"/>
                                     </p:column>
                                 </p:dataTable>
+
                             </p:card>
                         </div>
+
                     </div>
         </h:form>
     </h:body>

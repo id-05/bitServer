@@ -9,23 +9,14 @@ public class Serie {
     private String id;
     private String seriesNumber;
     private JsonArray instances;
+    private int instancesCount;
 
-    public Serie(String seriesDescription, String seriesNumber, String serieId) {
-        this.serieDescription = seriesDescription;
-        this.id = serieId;
-        this.seriesNumber=seriesNumber;
+    public int getInstancesCount() {
+        return instancesCount;
     }
 
     public JsonArray getInstances() {
         return instances;
-    }
-
-    public Serie(String seriesDescription, String seriesNumber, JsonArray instances, int size, String serieId) {
-        this.serieDescription = seriesDescription;
-        this.instances = instances;
-        this.nbInstances = size;
-        this.id = serieId;
-        this.seriesNumber=seriesNumber;
     }
 
     public String getSerieDescription(){
@@ -44,4 +35,23 @@ public class Serie {
         return this.seriesNumber;
     }
 
-}
+    public Serie(){
+
+    }
+
+    public Serie(String seriesDescription, String seriesNumber, String serieId) {
+        this.serieDescription = seriesDescription;
+        this.id = serieId;
+        this.seriesNumber=seriesNumber;
+    }
+
+    public Serie(String seriesDescription, String seriesNumber, JsonArray instances, int size, String serieId) {
+        this.serieDescription = seriesDescription;
+        this.instances = instances;
+        this.nbInstances = size;
+        this.id = serieId;
+        this.seriesNumber = seriesNumber;
+        this.instancesCount = instances.size();
+
+    }
+    }

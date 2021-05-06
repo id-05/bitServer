@@ -19,7 +19,7 @@
     <h:body>
         <h:form id="patientinfo">
             <p:menubar>
-                <p:menuitem value="Назад" outcome="patientPage" icon="pi pi-backward"/>
+                <p:menuitem value="Назад" action="#{serieBean.backpressed}" icon="pi pi-backward"/>
                 <p:menuitem value="Удалить пациента из базы" disabled="true" outcome="searchPage" icon="pi pi-trash"/>
                 <p:menuitem value="Скачать" outcome="searchPage" disabled="true" icon="pi pi-download"/>
                 <f:facet name="options">
@@ -30,8 +30,82 @@
                 </f:facet>
             </p:menubar>
 
+            <div class="p-d-flex">
+                <div class="p-col-1; p-mb-2 p-mr-2">
+                    <p:card style="width: 35rem; margin-bottom: 2em">
+                        <f:facet name="title">
+                            <i class="pi pi-id-card"> </i>
+                        </f:facet>
 
+                        <div class="p-field p-grid">
+                            <label for="fio" class="p-col-fixed" style="width:150px">ФИО: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="fio" type="text" value="#{serieBean.currentPatient.name}"/>
+                            </div>
+                        </div>
 
+                        <div class="p-field p-grid">
+                            <label for="bd" class="p-col-fixed" style="width:150px">Дата рождения: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="bd" type="text" value="#{serieBean.currentPatient.patientBirthDate}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="pid" class="p-col-fixed" style="width:150px">ID: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="pid" type="text" value="#{serieBean.currentPatient.patientId}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="sex" class="p-col-fixed" style="width:150px">ПОЛ: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="sex" type="text" value="#{serieBean.currentPatient.patientSex}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="studyName" class="p-col-fixed" style="width:150px">Название исследования: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="studyName" type="text" value="#{serieBean.currentStudy.studyDescription}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="studyDate" class="p-col-fixed" style="width:150px">Дата исследования: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="studyDate" type="text" value="#{serieBean.currentStudy.studyDateToStr}"/>
+                            </div>
+                        </div>
+                    </p:card>
+                </div>
+
+                <div class="p-col">
+                    <p:card style="margin-bottom: 2em">
+                        <f:facet name="title">
+                            <i class="pi pi-list"> </i>
+                        </f:facet>
+
+                        <p:dataTable var="serie" value="#{serieBean.serieList}"
+                                     selectionMode="single"
+                                     selection="#{serieBean.bufSerie}"
+                                     rowKey="#{serie.serieDescription}"
+                                     id="customerTable">
+                        <p:ajax event="rowSelect" listener="#{serieBean.redirectToOsimis}"/>
+
+                        <p:column headerText="Название серии"  style="text-align: center">
+                            <h:outputText value="#{serie.serieDescription}" />
+                        </p:column>
+
+                        <p:column headerText="Число снимков"  style="text-align: center">
+                            <h:outputText value="#{serie.instancesCount}"/>
+                        </p:column>
+                        </p:dataTable>
+                    </p:card>
+                </div>
+
+            </div>
 
         </h:form>
     </h:body>

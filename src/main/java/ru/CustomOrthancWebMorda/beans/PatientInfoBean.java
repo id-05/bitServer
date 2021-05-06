@@ -1,7 +1,6 @@
 package ru.CustomOrthancWebMorda.beans;
 
 import org.primefaces.event.SelectEvent;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -20,6 +19,7 @@ public class PatientInfoBean {
     public static Patient currentPatient;
     public static List<Study> studyList = new ArrayList<>();
     public List<Study> selectstudyList = new ArrayList<>();
+    public Study bufStudy = new Study("1","1","1");
 
     public Study getBufStudy() {
         return bufStudy;
@@ -28,8 +28,6 @@ public class PatientInfoBean {
     public void setBufStudy(Study bufStudy) {
         this.bufStudy = bufStudy;
     }
-
-    public Study bufStudy = new Study("1","1","1");
 
     public List<Study> getSelectstudyList() {
         return selectstudyList;
@@ -83,14 +81,14 @@ public class PatientInfoBean {
                 buflist.add(serie);
             }
             buf.setSeries(buflist);
-            System.out.println(buf.getDate()+"    "+buf.getStudyDescription());
         }
     }
 
-    public void click(SelectEvent<Study> event) throws IOException {
+    public void redirectToSeries(SelectEvent<Study> event) throws IOException {
         String buf = event.getObject().getOrthancId();
-        System.out.println(buf);
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("serieID", buf);
+        System.out.println("study id for redirect "+buf);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientId);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("studyID", buf);
         FacesContext.getCurrentInstance().getExternalContext().redirect("seriePage.xhtml");
     }
 
