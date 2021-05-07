@@ -44,6 +44,16 @@ public class SearchBean {
     public static Date firstdate;
     public static Date seconddate;
     private static List<String> selectedModaliti = new ArrayList<>();
+    public String bufferRequest;
+
+    public String getBufferRequest() {
+        return bufferRequest;
+    }
+
+    public void setBufferRequest(String bufferRequest) {
+        this.bufferRequest = bufferRequest;
+    }
+
 
     public List<String> getSelectedModaliti() {
         return selectedModaliti;
@@ -201,10 +211,13 @@ public class SearchBean {
         queryDetails.addProperty("Modality", modalities.toString());
 
         query.add("Query", queryDetails);
-        //System.out.println(query.toString());
+        System.out.println(query.toString());
+        //PrimeFaces.current().executeScript("alert('"+query.toString()+"');");
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
-        //System.out.println(sb);
         assert sb != null;
+        //PrimeFaces.current().executeScript("alert('"+sb.toString()+"');");
+        System.out.println(sb.toString());
+        //System.out.println(sb);
         String buf = sb.toString();
         getPatientsFromJson(buf);
         patients.sort(Comparator.comparing(Patient::getName));
@@ -240,11 +253,6 @@ public class SearchBean {
     public void onTypeSearchSelect(){
         searchId = null;
         PrimeFaces.current().ajax().update(":seachform");
-    }
-
-    public void redirect(String str) throws IOException {
-        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        externalContext.redirect(str);
     }
 
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {

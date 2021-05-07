@@ -33,6 +33,15 @@ public class MainBean {
     public String totalSize;
     private DashboardModel model;
     public static String authentication;
+    public String buffer;
+
+    public String getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(String buffer) {
+        this.buffer = buffer;
+    }
 
     public String getTotalStudy() {
         return totalStudy;
@@ -60,9 +69,11 @@ public class MainBean {
 
     @PostConstruct
     public void init() {
+        buffer ="test";
+
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("192.168.1.71");//setIpaddress("185.59.139.156");
+        mainServer.setIpaddress("192.168.1.58");//setIpaddress("185.59.139.156");
         mainServer.setPort("8042");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
