@@ -129,7 +129,7 @@ public class SerieBean {
 //        String myJavaScriptCode = 'alert(Hello World);';
 //        erks.addScript(fctx, myJavaScriptCode );
 //        System.out.println(erks.toString());
-        PrimeFaces.current().executeScript("window.open('http://192.168.1.71:8042/osimis-viewer/app/index.html?series="+buf+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('http://192.168.0.5:8042/osimis-viewer/app/index.html?series="+buf+"','_blank')");
         //FacesContext.getCurrentInstance().getExternalContext().redirect("http://192.168.1.71:8042/osimis-viewer/app/index.html?series="+buf);
         //this.target="_blank";
         //FacesContext.getCurrentInstance().get
