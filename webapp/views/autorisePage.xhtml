@@ -98,11 +98,17 @@
 
                 <div class="p-field p-grid">
                     <span class="ui-float-label">
-                        <p:inputText id="float-input2" value="#{autoriseBean.inputPassword}" onkeyup="PF('float-input2').filter(); return !(Event.which === 13 || Wvent.keyCode === 13);" >
-                            <f:ajax event="keyup" listener="#{autoriseBean.enterPressed}"/>
+                        <p:inputText id="float-input2" value="#{autoriseBean.inputPassword}" >
+
                         </p:inputText>
                         <p:outputLabel for="@previous" value="Password"/>
                     </span>
+                </div>
+
+                <div class="p-field p-grid">
+                        <span class="ui-float-label" style="align-self: center; align-items: center">
+                            <p:button icon="pi pi-sign-in" styleClass="rounded-button" />
+                        </span>
                 </div>
 
         </h:form>

@@ -39,7 +39,7 @@ public class SearchBean {
     public static int searchType = 1;//имя пациента
     public static ArrayList<Patient> patients = new ArrayList<>();
     public static int seachCount;
-    private final JsonParser parserJson = new JsonParser();
+    //private final JsonParser parserJson = new JsonParser();
     private final SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
     public static Date firstdate;
     public static Date seconddate;
@@ -155,8 +155,6 @@ public class SearchBean {
 
     public void seach() throws IOException {
         System.out.println("seach start");
-       // String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"20210101-20210429\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
-       // String param = "{\"Level\":\"Study\",\"CaseSensitive\":false,\"Expand\":true,\"Limit\":0,\"Query\":{\"StudyDate\":\"*\",\"PatientID\":\"*\",\"Modality\":\"MR\\\\\"}}";
         JsonObject query=new JsonObject();
         query.addProperty("Level", "Studies");
         query.addProperty("CaseSensitive", false);
@@ -223,14 +221,6 @@ public class SearchBean {
         patients.sort(Comparator.comparing(Patient::getName));
         seachCount = patients.size();
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
-
-//        for(Patient bufP:patients){
-//            System.out.println(bufP.getName());
-//            HashMap<String,Study> bufhashmap = bufP.getChildStudies();
-//            for(String key : bufP.getChildStudies().keySet()){
-//                System.out.println("study Key: " + key);
-//            }
-//        }
     }
 
     public void redirectPatientPanel(String patientID) throws IOException {

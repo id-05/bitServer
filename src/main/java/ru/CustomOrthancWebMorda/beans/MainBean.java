@@ -73,7 +73,7 @@ public class MainBean {
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("192.168.0.5");//setIpaddress("185.59.139.156");
+        mainServer.setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
         mainServer.setPort("8042");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
