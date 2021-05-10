@@ -63,24 +63,4 @@ public class Patient {
         }
         childStudies.put(study.getOrthancId(), study);
     }
-
-//    public void addStudies(ArrayList<Study> studies) {
-//        if(childStudies==null) {
-//            childStudies= new HashMap<>();
-//        }
-//        for(Study study:studies) {
-//            childStudies.put(study.getOrthancId(), study);
-//        }
-//
-//    }
-
-//    public ArrayList<Study> getStudies(){
-//        Study[] studyArray=childStudies.values().toArray(new Study[0]);
-//        return new ArrayList<>(Arrays.asList(studyArray));
-//    }
-
-//    public Study getChildStudy(String studyOrthancID) {
-//        return childStudies.get(studyOrthancID);
-//    }
-
 }

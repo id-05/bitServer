@@ -207,7 +207,6 @@ public class SearchBean {
             modalities.append(buf).append("\\");
         }
         queryDetails.addProperty("Modality", modalities.toString());
-
         query.add("Query", queryDetails);
         System.out.println(query.toString());
         //PrimeFaces.current().executeScript("alert('"+query.toString()+"');");
@@ -224,7 +223,6 @@ public class SearchBean {
     }
 
     public void redirectPatientPanel(String patientID) throws IOException {
-        //PrimeFaces.current().ajax().update(":seachform:dt-patients");
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientID);
         FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfoPage.xhtml");
     }
@@ -274,7 +272,6 @@ public class SearchBean {
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        //authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());//(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }
@@ -314,7 +311,7 @@ public class SearchBean {
                 String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
                 patientBirthDate = dateString;
             } catch (Exception e) {
-               //print("Errot to transfer date");
+               System.out.println("Errot to transfer date");
             }
 
             if(parentPatientDetails.has("PatientSex")) {
@@ -345,7 +342,7 @@ public class SearchBean {
                 SimpleDateFormat formatStudy =new SimpleDateFormat("yyyyMMdd");
                 studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
-              //  MainActivity.print("Errot to transfer date");
+              System.out.println("Errot to transfer date");
             }
 
             String studyDescription = "N/A";

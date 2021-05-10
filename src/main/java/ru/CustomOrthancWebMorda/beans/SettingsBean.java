@@ -26,7 +26,6 @@ import java.util.Set;
 @ViewScoped
 public class SettingsBean {
     String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
-    //public static String fulladdress = "http://127.0.0.1:8042";//"http://"+MainBean.mainServer.getIpaddress()+":"+MainBean.mainServer.getPort();//
     public static String authentication;
     public String ServerName;
     public JsonObject dicomNode=new JsonObject();
@@ -164,10 +163,10 @@ public class SettingsBean {
         selectedUser = new OrthancWebUser("","");
         selectedDicomModality = new DicomModaliti("","","","","");
         loadConfig();
-        List<OrthancWebUser> webUsers = new ArrayList<>();
+        List<OrthancWebUser> webUsers;// = new ArrayList<>();
         webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
-        List<DicomModaliti> dicomModalities = new ArrayList<>();;
+        List<DicomModaliti> dicomModalities;// = new ArrayList<>();;
         dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         this.dicomModalities = dicomModalities;
     }
@@ -348,7 +347,7 @@ public class SettingsBean {
         jsonOb.addProperty("MediaArchiveSize", mediaArchiveSize);
 
         File file = new File(fileSettingPath);
-        FileOutputStream fileOutputStream = new FileOutputStream(file, false); // true to append
+        FileOutputStream fileOutputStream = new FileOutputStream(file, false);
         String bufStr =jsonOb.toString().replaceAll(",",",\n");
         byte[] myBytes = jsonOb.toString().getBytes();
         fileOutputStream.write(myBytes);
@@ -357,7 +356,6 @@ public class SettingsBean {
     }
 
     public void resetServer(){
-        //"/tools/reset"
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/reset","" );
         System.out.println(sb);
         showMessage("Сообщение","Сервис перезагружен!", info);
@@ -392,7 +390,6 @@ public class SettingsBean {
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        //authentication = Base64.getEncoder().encodeToString(("doctor:doctor").getBytes());//(MainBean.mainServer.getLogin()+":"+MainBean.mainServer.getPassword()).getBytes());
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }
@@ -410,7 +407,7 @@ public class SettingsBean {
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {
         FacesMessage message = new FacesMessage(title, note);
-        message.setSeverity(type); //как выглядит окошко с сообщением
+        message.setSeverity(type);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 

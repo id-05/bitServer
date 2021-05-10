@@ -1,6 +1,5 @@
 package ru.CustomOrthancWebMorda.beans;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -88,7 +87,6 @@ public class JsonSettings {
             orthancJson = parser.parse(data).getAsJsonObject();
         }catch (Exception e){
             System.out.println("Ошибка парсинга = "+ e.getMessage());
-            //MainActivity.print(e.toString());
         }
         if (orthancJson.has("Name")) orthancName=orthancJson.get("Name").getAsString();
         if (orthancJson.has("StorageDirectory")) storageDirectory=orthancJson.get("StorageDirectory").getAsString();

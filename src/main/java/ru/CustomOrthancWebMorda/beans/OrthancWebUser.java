@@ -1,24 +1,15 @@
 package ru.CustomOrthancWebMorda.beans;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 
-@ManagedBean
-@ViewScoped
 public class OrthancWebUser implements Serializable {
 
     private String login;
-
     private String pass;
 
     public OrthancWebUser(String login, String pass) {
         this.login = login;
         this.pass = pass;
-    }
-
-    public OrthancWebUser clone() {
-        return new OrthancWebUser(getLogin(), getPass());
     }
 
     public String getLogin() {

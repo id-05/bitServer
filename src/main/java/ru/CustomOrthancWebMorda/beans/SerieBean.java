@@ -1,15 +1,11 @@
 package ru.CustomOrthancWebMorda.beans;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.myfaces.trinidad.render.ExtendedRenderKitService;
-import org.apache.myfaces.trinidad.util.Service;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -21,7 +17,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Iterator;
 
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
@@ -121,19 +116,7 @@ public class SerieBean {
     public void redirectToOsimis(SelectEvent<Serie> event) {
         String buf = event.getObject().getId();
         System.out.println("series id for redirect "+buf);
-//        FacesContext fctx = FacesContext.getCurrentInstance();
-//        ExtendedRenderKitService erks = null;
-//        erks = Service.getRenderKitService(
-//                fctx, ExtendedRenderKitService.class);
-//        //erks.addScript(fctx, "window.open('http://192.168.1.71:8042/osimis-viewer/app/index.html?series=','_blank')");
-//        String myJavaScriptCode = 'alert(Hello World);';
-//        erks.addScript(fctx, myJavaScriptCode );
-//        System.out.println(erks.toString());
         PrimeFaces.current().executeScript("window.open('http://192.168.0.5:8042/osimis-viewer/app/index.html?series="+buf+"','_blank')");
-        //FacesContext.getCurrentInstance().getExternalContext().redirect("http://192.168.1.71:8042/osimis-viewer/app/index.html?series="+buf);
-        //this.target="_blank";
-        //FacesContext.getCurrentInstance().get
-        //FacesContext.getCurrentInstance().getExternalContext() .redirect("seriePage.xhtml");
     }
 
     public ArrayList<Serie> getSeriesFromJson(String data){
