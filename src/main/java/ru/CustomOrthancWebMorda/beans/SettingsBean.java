@@ -172,21 +172,28 @@ public class SettingsBean {
     }
 
     public void loadConfig(){
-        StringBuilder stringBuilder = new StringBuilder();
-            boolean resultOpenFile =false;
-            try (FileInputStream fin = new FileInputStream(fileSettingPath)) {
-                int i = -1;
-                while ((i = fin.read()) != -1) {
-                    stringBuilder.append((char) i);
-                }
-                resultOpenFile = true;
-            } catch (IOException ex) {
-                System.out.println(ex.getMessage());
-                resultOpenFile = false;
-            }
+        System.out.println("loadconfig");
+        String urlParameters = "f = io.open(\""+ ModifyStr("/etc/orthanc/") +"orthanc.json\",\"r+\");" +
+                "print(f:read(\"*a\"))"+
+                "f:close()";
+        StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
+        //System.out.println(sb);
+//
+//        StringBuilder stringBuilder = new StringBuilder();
+//            boolean resultOpenFile =false;
+//            try (FileInputStream fin = new FileInputStream(fileSettingPath)) {
+//                int i = -1;
+//                while ((i = fin.read()) != -1) {
+//                    stringBuilder.append((char) i);
+//                }
+//                resultOpenFile = true;
+//            } catch (IOException ex) {
+//                System.out.println(ex.getMessage());
+//                resultOpenFile = false;
+//            }
 
         //парсинг файла настроек
-        if(resultOpenFile){
+        if(true){
             StringBuilder stringBuilderBuf = new StringBuilder();
             String buf = stringBuilder.toString();
             String[] words = buf.split("\n");
@@ -195,7 +202,7 @@ public class SettingsBean {
                       stringBuilderBuf.append(word);
                     }
                 }
-                json= new JsonSettings(stringBuilderBuf.toString());
+                json = new JsonSettings(stringBuilderBuf.toString());
                 users = json.users;
                 dicomNode = json.dicomNode;
                 ServerName = json.orthancName;
@@ -253,10 +260,12 @@ public class SettingsBean {
                 locale = json.locale;
         }else{
             FacesMessage message = new FacesMessage("Внимание", "Ошибка при чтении файла orthanc.json");
-            message.setSeverity(FacesMessage.SEVERITY_INFO); //как выглядит окошко с сообщением
+            message.setSeverity(FacesMessage.SEVERITY_INFO);
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
+
+
 
     public void saveConfig() throws IOException {
         JsonObject jsonOb = new JsonObject();
@@ -398,6 +407,18 @@ public class SettingsBean {
         os.flush();
         conn.getResponseMessage();
         return conn;
+    }
+
+    public String ModifyStr(String str){
+        String result;
+        String buf0;
+        String buf;
+        String buf2;
+        buf0 = str.replace("\\","\\\\");
+        buf = buf0.replace("/","\\/");
+        buf2 = buf.replace("\"","\\\"");
+        result = buf2.replace(",",",\\n");
+        return result;
     }
 
     public void restoreBackup(){
