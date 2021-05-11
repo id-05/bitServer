@@ -23,15 +23,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
 
-@ManagedBean(name = "mainBean", eager = false)
+@ManagedBean(name = "mainBean", eager = true)
 @ViewScoped
 public class MainBean {
 
     public static OrthancServer mainServer;
-    public String totalStudy;
-    public String totalPatient;
-    public String totalSize;
-    private DashboardModel model;
+    public String totalStudy = "0";
+    public String totalPatient = "0";
+    public String totalSize = "0";
+    public DashboardModel model;
     public static String authentication;
     public String buffer;
 
@@ -69,14 +69,23 @@ public class MainBean {
 
     @PostConstruct
     public void init() {
-        buffer ="test";
+        model = new DefaultDashboardModel();
+        DashboardColumn column1 = new DefaultDashboardColumn();
+        //DashboardColumn column2 = new DefaultDashboardColumn();
+        //DashboardColumn column3 = new DefaultDashboardColumn();
+        column1.addWidget("sports");
+        model.addColumn(column1);
+        //model.addColumn(column2);
+        //model.addColumn(column3);
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("185.59.139.156");//setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
-        mainServer.setPort("8142");//setPort("8142");
+        mainServer.setIpaddress("192.168.0.5");//setIpaddress("185.59.139.156");//setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
+        mainServer.setPort("8042");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
+        mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
+        //mainServer.setPathToJson("/etc/orthanc/");
         try {
             StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
             JsonParser parser = new JsonParser();
@@ -91,16 +100,7 @@ public class MainBean {
             totalPatient = String.valueOf(mainServer.getCountPatients());
             totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
 
-            model = new DefaultDashboardModel();
-            DashboardColumn column1 = new DefaultDashboardColumn();
-            DashboardColumn column2 = new DefaultDashboardColumn();
-            DashboardColumn column3 = new DefaultDashboardColumn();
 
-            column1.addWidget("sports");
-
-            model.addColumn(column1);
-            model.addColumn(column2);
-            model.addColumn(column3);
         }catch (Exception e){
             System.out.println(e.getMessage().toString());
         }
@@ -127,7 +127,7 @@ public class MainBean {
     }
 
     private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
-        HttpURLConnection conn=null;
+        HttpURLConnection conn  = null;
         String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
         URL url = new URL(fulladdress+apiUrl);
         authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());

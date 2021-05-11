@@ -19,13 +19,13 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
-//eager -  Если данный параметр равен “true“, то MB созадётся до первого запроса данного бина.
+//eager -  Если данный параметр равен “true“, то MB создаётся до первого запроса данного бина.
 // С другой стороны, если “eager = false“, то происходит, так называемая,
 // “ленивая” инициализация, при которой бин создаётся только после запроса.
 @ManagedBean(name = "settingsBean", eager = false)
 @ViewScoped
 public class SettingsBean {
-    String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
+    //String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
     public static String authentication;
     public String ServerName;
     public JsonObject dicomNode=new JsonObject();
@@ -173,11 +173,11 @@ public class SettingsBean {
 
     public void loadConfig(){
         System.out.println("loadconfig");
-        String urlParameters = "f = io.open(\""+ ModifyStr("/etc/orthanc/") +"orthanc.json\",\"r+\");" +
+        String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+
                 "f:close()";
         StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        //System.out.println(sb);
+        System.out.println("out settings = "+stringBuilder);
 //
 //        StringBuilder stringBuilder = new StringBuilder();
 //            boolean resultOpenFile =false;
@@ -193,76 +193,82 @@ public class SettingsBean {
 //            }
 
         //парсинг файла настроек
-        if(true){
-            StringBuilder stringBuilderBuf = new StringBuilder();
-            String buf = stringBuilder.toString();
-            String[] words = buf.split("\n");
-                for (String word : words) {
-                    if(truestring(word)){
-                      stringBuilderBuf.append(word);
-                    }
-                }
-                json = new JsonSettings(stringBuilderBuf.toString());
-                users = json.users;
-                dicomNode = json.dicomNode;
-                ServerName = json.orthancName;
-                storageDirectory = json.storageDirectory;
-                indexDirectory = json.indexDirectory;
-                StorageCompression = json.StorageCompression;
-                MaximumStorageSize = json.MaximumStorageSize;
-                MaximumPatientCount = json.MaximumPatientCount;
-                ConcurrentJobs = json.ConcurrentJobs;
-                HttpServerEnabled = json.HttpServerEnabled;
-                HttpPort = json.HttpPort;
-                HttpDescribeErrors = json.HttpDescribeErrors;
-                HttpCompressionEnabled = json.HttpCompressionEnabled;
-                DicomServerEnabled = json.DicomServerEnabled;
-                DicomAet = json.DicomAet;
-                DicomCheckCalledAet = json.DicomCheckCalledAet;
-                DicomPort = json.DicomPort;
-                DefaultEncoding = json.DefaultEncoding;
-                DeflatedTransferSyntaxAccepted = json.DeflatedTransferSyntaxAccepted;
-                JpegTransferSyntaxAccepted = json.JpegTransferSyntaxAccepted;
-                Jpeg2000TransferSyntaxAccepted = json.Jpeg2000TransferSyntaxAccepted;
-                JpegLosslessTransferSyntaxAccepted = json.JpegLosslessTransferSyntaxAccepted;
-                JpipTransferSyntaxAccepted = json.JpipTransferSyntaxAccepted;
-                Mpeg2TransferSyntaxAccepted = json.Mpeg2TransferSyntaxAccepted;
-                RleTransferSyntaxAccepted = json.RleTransferSyntaxAccepted;
-                UnknownSopClassAccepted = json.UnknownSopClassAccepted;
-                DicomScpTimeout = json.DicomScpTimeout;
-                RemoteAccessAllowed = json.RemoteAccessAllowed;
-                SslEnabled = json.SslEnabled ;
-                SslCertificate = json.SslCertificate;
-                AuthenticationEnabled = json.AuthenticationEnabled;
-                DicomScuTimeout = json.DicomScuTimeout;
-                HttpProxy = json.HttpProxy;
-                HttpTimeout = json.HttpTimeout;
-                HttpsVerifyPeers = json.HttpsVerifyPeers;
-                HttpsCACertificates = json.HttpsCACertificates;
-                StableAge = json.StableAge;
-                StrictAetComparison = json.StrictAetComparison;
-                dicomModalitiesInDb = json.dicomModalitiesInDb;
-                orthancPeerInDb = json.orthancPeerInDb;
-                overwriteInstances = json.overwriteInstances;
-                mediaArchiveSize = json.mediaArchiveSize;
-                storageAccessOnFind = json.storageAccessOnFind;
-                httpVerbose = json.httpVerbose;
-                tcpNoDelay = json.tcpNoDelay;
-                httpThreadsCount = json.httpThreadsCount;
-                saveJobs = json.saveJobs;
-                metricsEnabled = json.metricsEnabled;
-                AllowFindSopClassesInStudy = json.AllowFindSopClassesInStudy;
-                dicomAlwaysAllowEcho = json.dicomAlwaysAllowEcho;
-                DicomAlwaysStore = json.DicomAlwaysStore;
-                CheckModalityHost = json.CheckModalityHost;
-                SynchronousCMove = json.SynchronousCMove;
-                JobsHistorySize = json.JobsHistorySize;
-                locale = json.locale;
-        }else{
-            FacesMessage message = new FacesMessage("Внимание", "Ошибка при чтении файла orthanc.json");
-            message.setSeverity(FacesMessage.SEVERITY_INFO);
-            FacesContext.getCurrentInstance().addMessage(null, message);
-        }
+//        StringBuilder stringBuilderBuf = new StringBuilder();
+//        assert stringBuilder != null;
+//        String buf = stringBuilder.toString();
+//        String[] words = buf.split("\n");
+//        for (String word : words) {
+//            if(truestring(word)){
+//              stringBuilderBuf.append(word);
+//            }
+//        }
+        json = new JsonSettings(stringBuilder.toString());
+        users = json.users;
+        dicomNode = json.dicomNode;
+        ServerName = json.orthancName;
+        storageDirectory = json.storageDirectory;
+        indexDirectory = json.indexDirectory;
+        StorageCompression = json.StorageCompression;
+        MaximumStorageSize = json.MaximumStorageSize;
+        MaximumPatientCount = json.MaximumPatientCount;
+        ConcurrentJobs = json.ConcurrentJobs;
+        HttpServerEnabled = json.HttpServerEnabled;
+        HttpPort = json.HttpPort;
+        HttpDescribeErrors = json.HttpDescribeErrors;
+        HttpCompressionEnabled = json.HttpCompressionEnabled;
+        DicomServerEnabled = json.DicomServerEnabled;
+        DicomAet = json.DicomAet;
+        DicomCheckCalledAet = json.DicomCheckCalledAet;
+        DicomPort = json.DicomPort;
+        DefaultEncoding = json.DefaultEncoding;
+        DeflatedTransferSyntaxAccepted = json.DeflatedTransferSyntaxAccepted;
+        JpegTransferSyntaxAccepted = json.JpegTransferSyntaxAccepted;
+        Jpeg2000TransferSyntaxAccepted = json.Jpeg2000TransferSyntaxAccepted;
+        JpegLosslessTransferSyntaxAccepted = json.JpegLosslessTransferSyntaxAccepted;
+        JpipTransferSyntaxAccepted = json.JpipTransferSyntaxAccepted;
+        Mpeg2TransferSyntaxAccepted = json.Mpeg2TransferSyntaxAccepted;
+        RleTransferSyntaxAccepted = json.RleTransferSyntaxAccepted;
+        UnknownSopClassAccepted = json.UnknownSopClassAccepted;
+        DicomScpTimeout = json.DicomScpTimeout;
+        RemoteAccessAllowed = json.RemoteAccessAllowed;
+        SslEnabled = json.SslEnabled ;
+        SslCertificate = json.SslCertificate;
+        AuthenticationEnabled = json.AuthenticationEnabled;
+        DicomScuTimeout = json.DicomScuTimeout;
+        HttpProxy = json.HttpProxy;
+        HttpTimeout = json.HttpTimeout;
+        HttpsVerifyPeers = json.HttpsVerifyPeers;
+        HttpsCACertificates = json.HttpsCACertificates;
+        StableAge = json.StableAge;
+        StrictAetComparison = json.StrictAetComparison;
+        StoreMD5ForAttachments = json.StoreMD5ForAttachments;
+        LimitFindResults = json.LimitFindInstances;
+        LimitFindInstances = json.LimitFindInstances;
+        LimitJobs = json.LimitJobs;
+        LogExportedResources = json.LogExportedResources;
+        KeepAlive = json.KeepAlive;
+        StoreDicom = json.StoreDicom;
+        DicomAssociationCloseDelay = json.DicomAssociationCloseDelay;
+        QueryRetrieveSize = json.QueryRetrieveSize;
+        CaseSensitivePN = json.CaseSensitivePN;
+        LoadPrivateDictionary = json.LoadPrivateDictionary;
+        dicomModalitiesInDb = json.dicomModalitiesInDb;
+        orthancPeerInDb = json.orthancPeerInDb;
+        overwriteInstances = json.overwriteInstances;
+        mediaArchiveSize = json.mediaArchiveSize;
+        storageAccessOnFind = json.storageAccessOnFind;
+        httpVerbose = json.httpVerbose;
+        tcpNoDelay = json.tcpNoDelay;
+        httpThreadsCount = json.httpThreadsCount;
+        saveJobs = json.saveJobs;
+        metricsEnabled = json.metricsEnabled;
+        AllowFindSopClassesInStudy = json.AllowFindSopClassesInStudy;
+        dicomAlwaysAllowEcho = json.dicomAlwaysAllowEcho;
+        DicomAlwaysStore = json.DicomAlwaysStore;
+        CheckModalityHost = json.CheckModalityHost;
+        SynchronousCMove = json.SynchronousCMove;
+        JobsHistorySize = json.JobsHistorySize;
+        locale = json.locale;
     }
 
 
@@ -322,16 +328,25 @@ public class SettingsBean {
         jsonOb.addProperty("DicomAlwaysAllowStore", DicomAlwaysStore);
         jsonOb.addProperty("DicomCheckModalityHost", CheckModalityHost);
         jsonOb.addProperty("DicomScuTimeout", DicomScuTimeout);
+
+        jsonObj = new JsonObject();
+        jsonOb.add("OrthancPeers", jsonObj);
         //orthancJson = parser.parse(prefs.getString("OrthancPeers", "")).getAsJsonObject();
         //jsonOb.add("OrthancPeers",orthancJson);
+
         jsonOb.addProperty("OrthancPeersInDatabase", orthancPeerInDb);
         jsonOb.addProperty("HttpProxy", HttpProxy);
         jsonOb.addProperty("HttpVerbose", httpVerbose);
         jsonOb.addProperty("HttpTimeout", HttpTimeout);
         jsonOb.addProperty("HttpsVerifyPeers", HttpsVerifyPeers);
         jsonOb.addProperty("HttpsCACertificates", HttpsCACertificates);
+
+        jsonObj = new JsonObject();
+        jsonOb.add("UserMetadata", jsonObj);
 //        orthancJson = parser.parse(prefs.getString("UserMetadata", "")).getAsJsonObject();
 //        jsonOb.add("UserMetadata", orthancJson);
+        jsonObj = new JsonObject();
+        jsonOb.add("UserContentTyp", jsonObj);
 //        orthancJson = parser.parse(prefs.getString("UserContentType", "")).getAsJsonObject();
 //        jsonOb.add("UserContentType", orthancJson);
         jsonOb.addProperty("StableAge", StableAge);
@@ -348,42 +363,80 @@ public class SettingsBean {
         jsonOb.addProperty("CaseSensitivePN", CaseSensitivePN);
         jsonOb.addProperty("AllowFindSopClassesInStudy", AllowFindSopClassesInStudy);
         jsonOb.addProperty("LoadPrivateDictionary", LoadPrivateDictionary);
+
+        jsonObj = new JsonObject();
+        jsonOb.add("Dictionary", jsonObj);
 //        orthancJson = parser.parse(prefs.getString("Dictionary", "")).getAsJsonObject();
 //        jsonOb.add("Dictionary", orthancJson);
         jsonOb.addProperty("SynchronousCMove", SynchronousCMove);
         jsonOb.addProperty("JobsHistorySize", JobsHistorySize);
         jsonOb.addProperty("OverwriteInstances", overwriteInstances);
         jsonOb.addProperty("MediaArchiveSize", mediaArchiveSize);
+        jsonOb.addProperty("ExecuteLuaEnabled",true);
 
-        File file = new File(fileSettingPath);
-        FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-        String bufStr =jsonOb.toString().replaceAll(",",",\n");
-        byte[] myBytes = jsonOb.toString().getBytes();
-        fileOutputStream.write(myBytes);
-        fileOutputStream.close();
+        String modifyStr = ModifyStr(jsonOb.toString());
+        String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"w+\");" +
+                "f:write(\""+modifyStr+"\"); "+
+                "f:close()";
+        //System.out.println("url param "+urlParameters);
+        StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
+
+        //System.out.println("saveout = "+jsonOb.toString());
         showMessage("Сообщение","Изменения сохранены!", info);
     }
 
     public void resetServer(){
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/reset","" );
-        System.out.println(sb);
+        //System.out.println(sb);
         showMessage("Сообщение","Сервис перезагружен!", info);
     }
+
+//    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
+//        StringBuilder sb =null;
+//        try {
+//            sb=new StringBuilder();
+//            HttpURLConnection conn = makePostConnection(apiUrl, post);
+//            BufferedReader br = new BufferedReader(new InputStreamReader(
+//                    (conn.getInputStream())));
+//            String output;
+//            while ((output = br.readLine()) != null) {
+//                int i = output.indexOf("}");
+//                sb.append(output);
+//            }
+//            conn.disconnect();
+//            conn.getResponseMessage();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//        return sb;
+//    }
 
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
         StringBuilder sb =null;
         try {
-            sb=new StringBuilder();
+            sb = new StringBuilder();
             HttpURLConnection conn = makePostConnection(apiUrl, post);
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
             String output;
             while ((output = br.readLine()) != null) {
-                int i = output.indexOf("}");
-                sb.append(output);
+                if(truestring(output)){
+                    int i = output.indexOf("}");
+                    if(i!= -1){
+                        if ((i == (output.length()-1)&(i!=0))) {
+                            sb.append(output);
+                        }else
+                        {
+                            sb.append(output);
+                        }
+                    }else {
+                        sb.append(output);
+                    }
+                }
             }
             conn.disconnect();
             conn.getResponseMessage();
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -418,6 +471,7 @@ public class SettingsBean {
         buf = buf0.replace("/","\\/");
         buf2 = buf.replace("\"","\\\"");
         result = buf2.replace(",",",\\n");
+        System.out.println("modifi = "+result);
         return result;
     }
 
