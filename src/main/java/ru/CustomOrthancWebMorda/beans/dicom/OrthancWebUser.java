@@ -1,4 +1,4 @@
-package ru.CustomOrthancWebMorda.beans;
+package ru.CustomOrthancWebMorda.beans.dicom;
 
 import java.io.Serializable;
 

@@ -1,13 +1,15 @@
 package ru.CustomOrthancWebMorda.beans;
 
 import org.primefaces.event.SelectEvent;
+import ru.CustomOrthancWebMorda.beans.dicom.Patient;
+import ru.CustomOrthancWebMorda.beans.dicom.Serie;
+import ru.CustomOrthancWebMorda.beans.dicom.Study;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

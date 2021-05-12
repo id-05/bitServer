@@ -5,14 +5,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
+import ru.CustomOrthancWebMorda.beans.dicom.Patient;
+import ru.CustomOrthancWebMorda.beans.dicom.Study;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.BufferedReader;
 import java.io.IOException;

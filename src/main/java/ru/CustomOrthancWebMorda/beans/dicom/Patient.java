@@ -1,4 +1,6 @@
-package ru.CustomOrthancWebMorda.beans;
+package ru.CustomOrthancWebMorda.beans.dicom;
+
+import ru.CustomOrthancWebMorda.beans.dicom.Study;
 
 import java.util.HashMap;
 
