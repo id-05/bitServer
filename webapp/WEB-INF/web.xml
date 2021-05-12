@@ -7,6 +7,12 @@
         <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
         <param-value>131072</param-value>
     </context-param>
+
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>#{mainBean.selectTheme}</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -17,7 +23,7 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>views/autorisePage.xhtml</welcome-file>
     </welcome-file-list>
 
 </web-app>

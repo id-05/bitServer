@@ -10,6 +10,7 @@ import org.primefaces.event.SelectEvent;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -27,7 +28,7 @@ import java.util.*;
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
 @ManagedBean(name = "searchBean", eager = true)
-@ViewScoped
+@SessionScoped
 public class SearchBean {
 
     public static String authentication;

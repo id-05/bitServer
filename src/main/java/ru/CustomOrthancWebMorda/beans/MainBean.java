@@ -21,10 +21,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Base64;
 
 @ManagedBean(name = "mainBean", eager = true)
-@ViewScoped
+@SessionScoped
 public class MainBean {
 
     public static OrthancServer mainServer;
@@ -34,6 +35,24 @@ public class MainBean {
     public DashboardModel model;
     public static String authentication;
     public String buffer;
+    public String selectTheme;
+    public ArrayList<String> themeList;
+
+    public String getSelectTheme() {
+        return selectTheme;
+    }
+
+    public void setSelectTheme(String selectTheme) {
+        this.selectTheme = selectTheme;
+    }
+
+    public ArrayList<String> getThemeList() {
+        return themeList;
+    }
+
+    public void setThemeList(ArrayList<String> themeList) {
+        this.themeList = themeList;
+    }
 
     public String getBuffer() {
         return buffer;
@@ -80,12 +99,12 @@ public class MainBean {
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("192.168.0.5");//setIpaddress("185.59.139.156");//setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
+        mainServer.setIpaddress("192.168.1.58");//setIpaddress("185.59.139.156");//setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
         mainServer.setPort("8042");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
-        mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
-        //mainServer.setPathToJson("/etc/orthanc/");
+        //mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
+         mainServer.setPathToJson("/etc/orthanc/");
         try {
             StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
             JsonParser parser = new JsonParser();
@@ -105,6 +124,50 @@ public class MainBean {
             System.out.println(e.getMessage().toString());
         }
 
+        themeList = themeListinit();
+        selectTheme = themeList.get(1);
+    }
+
+    public ArrayList<String> themeListinit(){
+        ArrayList<String> themeList = new ArrayList<>();
+        themeList.add("afterdark");
+        themeList.add("afternoon");
+        themeList.add("afterwork");
+        themeList.add("black-tie");
+        themeList.add("blitzer");
+        themeList.add("bluesky");
+        themeList.add("bootstrap");
+        themeList.add("casablanca");
+        themeList.add("cruze");
+        themeList.add("cupertino");
+        themeList.add("dark-hive");
+        themeList.add("delta");
+        themeList.add("dot-luv");
+        themeList.add("eggplant");
+        themeList.add("excite-bike");
+        themeList.add("flick");
+        themeList.add("glass-x");
+        themeList.add("home");
+        themeList.add("hot-sneaks");
+        themeList.add("humanity");
+        themeList.add("le-frog");
+        themeList.add("midnight");
+        themeList.add("mint-choc");
+        themeList.add("overcast");
+        themeList.add("pepper-grinder");
+        themeList.add("redmond");
+        themeList.add("rocket");
+        themeList.add("sam");
+        themeList.add("smoothness");
+        themeList.add("south-street");
+        themeList.add("start");
+        themeList.add("sunny");
+        themeList.add("swanky-purse");
+        themeList.add("trontastic");
+        themeList.add("ui-darkness");
+        themeList.add("ui-lightness");
+        themeList.add("vader");
+        return themeList;
     }
 
     public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {

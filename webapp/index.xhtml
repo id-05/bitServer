@@ -71,6 +71,12 @@
                            <label id="totalSize">#{mainBean.totalSize} Gb</label>
                         </div>
                      </div>
+
+                     <p:cascadeSelect value="#{mainBean.selectTheme}" style="min-width: 14rem" placeholder="#{mainBean.selectTheme}">
+                        <p:ajax event="itemSelect"  update="form"/>
+                        <f:selectItems value="#{mainBean.themeList}"/>
+                     </p:cascadeSelect>
+
                   </div>
                </p:panel>
             </p:dashboard>

@@ -6,12 +6,12 @@ import com.google.gson.JsonParser;
 
 public class JsonSettings {
 
-    JsonObject dicomNode=new JsonObject();
-    JsonObject orthancPeer=new JsonObject();
-    JsonObject contentType=new JsonObject();
-    JsonObject dictionary=new JsonObject();
-    private JsonArray luaFolder=new JsonArray();
-    private JsonArray pluginsFolder=new JsonArray();
+    JsonObject dicomNode = new JsonObject();
+    JsonObject orthancPeer = new JsonObject();
+    JsonObject contentType = new JsonObject();
+    JsonObject dictionary = new JsonObject();
+    private JsonArray luaFolder = new JsonArray();
+    private JsonArray pluginsFolder = new JsonArray();
     JsonObject users = new JsonObject();
     JsonObject userMetadata = new JsonObject();
     String orthancName;
@@ -79,6 +79,13 @@ public class JsonSettings {
     boolean metricsEnabled;
     boolean AllowFindSopClassesInStudy;
 
+    public JsonArray getPluginsFolder() {
+        return pluginsFolder;
+    }
+
+    public void setPluginsFolder(JsonArray pluginsFolder) {
+        this.pluginsFolder = pluginsFolder;
+    }
 
     JsonSettings(String data) {
         JsonParser parser = new JsonParser();

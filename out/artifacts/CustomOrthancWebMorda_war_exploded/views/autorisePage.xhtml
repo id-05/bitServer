@@ -88,6 +88,7 @@
 
         <div class="centercard">
         <h:form id="autorise">
+            <p:growl id="growl" showDetail="true" />
 
                 <div class="p-field p-grid">
                     <span class="ui-float-label" style="margin-top: 150px">
@@ -107,7 +108,7 @@
 
                 <div class="p-field p-grid">
                         <span class="ui-float-label" style="align-self: center; align-items: center">
-                            <p:button icon="pi pi-sign-in" styleClass="rounded-button" />
+                            <p:commandButton icon="pi pi-sign-in" styleClass="rounded-button ui-button-info ui-button-flat" action="#{autoriseBean.validateUsernamePassword}" update="growl"/>
                         </span>
                 </div>
 

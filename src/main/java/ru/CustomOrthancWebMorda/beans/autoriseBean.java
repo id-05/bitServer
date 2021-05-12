@@ -1,16 +1,23 @@
 package ru.CustomOrthancWebMorda.beans;
 
+
+import org.primefaces.PrimeFaces;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
 
 @ManagedBean(name = "autoriseBean", eager = false)
-@ViewScoped
-public class autoriseBean {
+@SessionScoped
+public class autoriseBean implements UserDao {
 
     String inputUserName;
     String inputPassword;
+    public Users User;
 
     public String getInputUserName() {
         return inputUserName;
@@ -30,10 +37,37 @@ public class autoriseBean {
 
     @PostConstruct
     public void init() {
-
+       System.out.println("autorise");
+       initialHibernate();
     }
 
-    public void enterPressed(AjaxBehaviorEvent event){
-        System.out.println(inputPassword+"   "+inputUserName+"     "+event);
+    public void loginValidate(){
+        System.out.println("loginValidate");
+        User = validateUserAndGetIfExist(inputUserName,inputPassword);
+        if (User.getUname()!=null){
+            PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8084/index.xhtml')");
+        }
+        System.out.println(User.getUname());
+    }
+
+
+    public String validateUsernamePassword() {
+        User = validateUserAndGetIfExist(inputUserName,inputPassword);
+
+        if (User.getUname()!=null) {
+            HttpSession session = SessionUtils.getSession();
+            session.setAttribute("username", User.getUid());
+            return "homePage";
+        } else {
+
+            return "autorisePage";
+        }
+    }
+
+    //logout event, invalidate session
+    public String logout() {
+        HttpSession session = SessionUtils.getSession();
+        session.invalidate();
+        return "autorisePage";
     }
 }

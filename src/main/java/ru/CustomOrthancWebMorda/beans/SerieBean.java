@@ -8,6 +8,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.BufferedReader;
@@ -21,7 +22,7 @@ import java.util.Base64;
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
 @ManagedBean(name = "serieBean", eager = true)
-@ViewScoped
+@SessionScoped
 public class SerieBean {
 
     public String serieID;
@@ -116,7 +117,7 @@ public class SerieBean {
     public void redirectToOsimis(SelectEvent<Serie> event) {
         String buf = event.getObject().getId();
         System.out.println("series id for redirect "+buf);
-        PrimeFaces.current().executeScript("window.open('http://192.168.0.5:8042/osimis-viewer/app/index.html?series="+buf+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?series="+buf+"','_blank')");
     }
 
     public ArrayList<Serie> getSeriesFromJson(String data){

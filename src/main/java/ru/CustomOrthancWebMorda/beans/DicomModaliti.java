@@ -1,11 +1,7 @@
 package ru.CustomOrthancWebMorda.beans;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import java.io.Serializable;
 
-@ManagedBean
-@ViewScoped
 public class DicomModaliti implements Serializable {
 
     private String dicomtitle;

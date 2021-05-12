@@ -9,6 +9,7 @@ import org.primefaces.PrimeFaces;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.*;
@@ -23,17 +24,17 @@ import java.util.Set;
 // С другой стороны, если “eager = false“, то происходит, так называемая,
 // “ленивая” инициализация, при которой бин создаётся только после запроса.
 @ManagedBean(name = "settingsBean", eager = false)
-@ViewScoped
+@SessionScoped
 public class SettingsBean {
     //String fileSettingPath = "C://Program Files//Orthanc Server//Configuration//orthanc.json";
     public static String authentication;
     public String ServerName;
-    public JsonObject dicomNode=new JsonObject();
-    public JsonObject orthancPeer=new JsonObject();
-    public JsonObject contentType=new JsonObject();
-    public JsonObject dictionary=new JsonObject();
-    public JsonArray luaFolder=new JsonArray();
-    public JsonArray pluginsFolder=new JsonArray();
+    public JsonObject dicomNode = new JsonObject();
+    public JsonObject orthancPeer = new JsonObject();
+    public JsonObject contentType = new JsonObject();
+    public JsonObject dictionary = new JsonObject();
+    public JsonArray luaFolder = new JsonArray();
+    public JsonArray pluginsFolder = new JsonArray();
     public JsonObject users = new JsonObject();
     public JsonObject userMetadata = new JsonObject();
     public String storageDirectory;
@@ -269,6 +270,7 @@ public class SettingsBean {
         SynchronousCMove = json.SynchronousCMove;
         JobsHistorySize = json.JobsHistorySize;
         locale = json.locale;
+        pluginsFolder = json.getPluginsFolder();
     }
 
 
@@ -281,6 +283,7 @@ public class SettingsBean {
         jsonOb.addProperty("StorageCompression", StorageCompression);
         jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
+        jsonOb.add("Plugins",pluginsFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
         jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
         jsonOb.addProperty("HttpPort", HttpPort);
@@ -608,6 +611,14 @@ public class SettingsBean {
     public void openNewModaliti() {
         System.out.println("open new modaliti");
         selectedDicomModality = new DicomModaliti("","","","","");
+    }
+
+    public JsonArray getPluginsFolder() {
+        return pluginsFolder;
+    }
+
+    public void setPluginsFolder(JsonArray pluginsFolder) {
+        this.pluginsFolder = pluginsFolder;
     }
 
     public String getServerName() {
