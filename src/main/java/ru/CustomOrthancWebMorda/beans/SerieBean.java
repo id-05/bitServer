@@ -184,6 +184,6 @@ public class SerieBean {
 
     public void backpressed() throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientId);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfoPage.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfo.xhtml");
     }
 }

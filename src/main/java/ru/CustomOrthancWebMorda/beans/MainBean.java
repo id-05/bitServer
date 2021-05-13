@@ -124,43 +124,13 @@ public class MainBean {
 
     public ArrayList<String> themeListinit(){
         ArrayList<String> themeList = new ArrayList<>();
-        themeList.add("afterdark");
-        themeList.add("afternoon");
-        themeList.add("afterwork");
-        themeList.add("black-tie");
-        themeList.add("blitzer");
-        themeList.add("bluesky");
-        themeList.add("bootstrap");
-        themeList.add("casablanca");
-        themeList.add("cruze");
-        themeList.add("cupertino");
-        themeList.add("dark-hive");
-        themeList.add("delta");
-        themeList.add("dot-luv");
-        themeList.add("eggplant");
-        themeList.add("excite-bike");
-        themeList.add("flick");
-        themeList.add("glass-x");
-        themeList.add("home");
-        themeList.add("hot-sneaks");
-        themeList.add("humanity");
-        themeList.add("le-frog");
-        themeList.add("midnight");
-        themeList.add("mint-choc");
-        themeList.add("overcast");
-        themeList.add("pepper-grinder");
-        themeList.add("redmond");
-        themeList.add("rocket");
-        themeList.add("sam");
-        themeList.add("smoothness");
-        themeList.add("south-street");
-        themeList.add("start");
-        themeList.add("sunny");
-        themeList.add("swanky-purse");
-        themeList.add("trontastic");
-        themeList.add("ui-darkness");
-        themeList.add("ui-lightness");
-        themeList.add("vader");
+        themeList.add("nova-light");
+        themeList.add("nova-dark");
+        themeList.add("nova-colored");
+        themeList.add("luna-blue");
+        themeList.add("luna-amber");
+        themeList.add("luna-green");
+        themeList.add("luna-pink");
         return themeList;
     }
 

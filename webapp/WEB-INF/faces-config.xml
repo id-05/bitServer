@@ -10,7 +10,7 @@
 
         <navigation-case>
             <from-outcome>autorisePage</from-outcome>
-            <to-view-id>/views/autorisePage.xhtml</to-view-id>
+            <to-view-id>/views/login.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
@@ -20,27 +20,42 @@
 
         <navigation-case>
             <from-outcome>searchPage</from-outcome>
-            <to-view-id>/views/searchPage.xhtml</to-view-id>
+            <to-view-id>/views/search.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
             <from-outcome>patientPage</from-outcome>
-            <to-view-id>/views/patientinfoPage.xhtml</to-view-id>
+            <to-view-id>/views/patientinfo.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
             <from-outcome>adminPage</from-outcome>
-            <to-view-id>/views/adminPage.xhtml</to-view-id>
+            <to-view-id>/views/admin.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
             <from-outcome>seriePage</from-outcome>
-            <to-view-id>/views/seriePage.xhtml</to-view-id>
+            <to-view-id>/views/serie.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>settingsPage</from-outcome>
-            <to-view-id>/views/settingsPage.xhtml</to-view-id>
+            <from-outcome>settings_orthanc</from-outcome>
+            <to-view-id>/views/settings_orthanc.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_bitserver</from-outcome>
+            <to-view-id>/views/settings_bitserver.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>localuser</from-outcome>
+            <to-view-id>/views/localuser.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>remoteuser</from-outcome>
+            <to-view-id>/views/remoteuser.xhtml</to-view-id>
         </navigation-case>
         
     </navigation-rule>

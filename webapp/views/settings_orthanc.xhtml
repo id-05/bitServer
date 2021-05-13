@@ -15,10 +15,10 @@
         <h:form id="form">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
-                <p:menuitem value="Назад" outcome="homePage" icon="pi pi-backward"/>
-                <p:menuitem value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
-                <p:menuitem value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{settingsBean.resetServer()}" process="@this" update="growl"/>
-                <p:menuitem value="Отменить изменения" icon="pi pi-replay" actionListener="#{settingsBean.restoreBackup()}" process="@this" update="form, growl"/>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
+                <p:menuitem style="margin-right: 5px" value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{settingsBean.resetServer()}" process="@this" update="growl"/>
+                <p:menuitem style="margin-right: 5px" value="Отменить изменения" icon="pi pi-replay" actionListener="#{settingsBean.restoreBackup()}" process="@this" update="form, growl"/>
 
                 <f:facet name="options">
                     <div class="ui-input-icon-left p-mr-2">
@@ -45,61 +45,62 @@
 
             <p:accordionPanel widgetVar="serverSettings" id="accordion">
             <p:tab title="Основные настройки">
-                    <p:divider align="left" type="dashed">
-                        <b>Имя сервера</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.serverName}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
-
-                    <p:divider align="left" type="dashed">
-                        <b>Каталог хранения</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.storageDirectory}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
-
-                    <p:divider align="left" type="dashed">
-                        <b>Каталог указателей</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.indexDirectory}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
-
-                    <p:divider align="left" type="dashed">
-                        <b>Сжатие хранилища</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:toggleSwitch value="#{settingsBean.storageCompression}"/>
-                        </p>
-                        <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
-
-                    <p:divider align="left" type="dashed">
-                        <b>Максимальный размер хранилища</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.maximumStorageSize}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
-
-                    <p:divider align="left" type="dashed">
-                        <b>Максимальное количество пациентов</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.maximumPatientCount}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
 
                 <p:divider align="left" type="dashed">
-                        <b>Одновременные задания</b>
-                    </p:divider>
-                        <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.concurrentJobs}" > </p:inputText>
-                        </p>
-                        <div class="p-text-capitalize">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
+                    <b>Имя сервера</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.serverName}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Каталог хранения</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.storageDirectory}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Каталог указателей</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.indexDirectory}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Сжатие хранилища</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:toggleSwitch value="#{settingsBean.storageCompression}"/>
+                </p>
+                <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Максимальный размер хранилища</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.maximumStorageSize}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Максимальное количество пациентов</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.maximumPatientCount}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
+
+                <p:divider align="left" type="dashed">
+                    <b>Одновременные задания</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.concurrentJobs}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize" style="margin-bottom: 35px">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
             </p:tab>
             <p:tab title="Конфигурация HTTP сервера">
                     <p:divider align="left" type="dashed">

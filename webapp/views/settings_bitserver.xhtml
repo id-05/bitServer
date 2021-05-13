@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+
+    <h:head><title>bitServer Settings</title></h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growl2" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
+
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right" class="p-text-bold">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right" class="p-text-bold">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <p:accordionPanel widgetVar="serverSettings" id="accordion">
+                <p:tab title="Пользователи">
+
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUser}"
+                                             update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                                <p:resetInput target="dialogNewUser"/>
+
+                            </p:commandButton>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-users" widgetVar="dtUsers" var="Users" value="#{settingBitServerBean.usersList}"
+                                 reflow="true" styleClass="users-table"
+                                 selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
+                                 rows="10" rowSelectMode="add" >
+
+                        <p:column headerText="ФИО" sortBy="#{Users.ruFamily}" style="text-align: center">
+                            <h:outputText value="#{Users.ruFamily} #{Users.ruName} #{Users.ruMiddleName}" />
+                        </p:column>
+
+                        <p:column headerText="Логин" sortBy="#{Users.uname}" style="text-align: center">
+                            <h:outputText value="#{Users.uname}" />
+                        </p:column>
+
+                        <p:column headerText="Пароль" sortBy="#{Users.password}" style="text-align: center">
+                            <h:outputText value="#{Users.password}"/>
+                        </p:column>
+
+                        <p:column headerText="Роль" sortBy="#{Users.role}" style="text-align: center">
+                            <h:outputText value="#{Users.role}"/>
+                        </p:column>
+
+                        <p:column headerText="Группа пользователей" sortBy="#{Users.groupUser}" style="text-align: center">
+                            <h:outputText value="#{Users.groupUser}"/>
+                        </p:column>
+
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
+                                             oncomplete="PF('manageUserDialog').show()"
+                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                <f:setPropertyActionListener value="#{Users}" target="#{settingBitServerBean.selectedUser}"/>
+                                <p:resetInput target=":form:accordion:manage-user-content"/>
+                            </p:commandButton>
+                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                             oncomplete="PF('deleteUserDialog').show()">
+                                <f:setPropertyActionListener value="#{Users}" target="#{settingBitServerBean.selectedUser}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:dialog id="dialogNewUser" header="Пользователь" showEffect="fade" modal="true"
+                              widgetVar="manageUserDialog" responsive="true">
+                        <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
+                            <p:outputLabel for="family" style="margin-right: .5rem">Фамилия</p:outputLabel>
+                            <p:inputText id="family" value="#{settingBitServerBean.selectedUser.ruFamily}" />
+
+                            <p:outputLabel for="name" style="margin-right: .5rem">Имя</p:outputLabel>
+                            <p:inputText id="name" value="#{settingBitServerBean.selectedUser.ruName}" />
+
+                            <p:outputLabel for="midlename" style="margin-right: .5rem">Отчество</p:outputLabel>
+                            <p:inputText id="midlename" value="#{settingBitServerBean.selectedUser.ruMiddleName}" />
+
+                            <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                            <p:inputText id="login" value="#{settingBitServerBean.selectedUser.uname}" />
+
+                            <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                            <p:inputText id="pass" value="#{settingBitServerBean.selectedUser.password}" />
+
+                            <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
+                            <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
+                                <f:selectItem itemLabel="Администратор" itemValue="admin"/>
+                                <f:selectItem itemLabel="Врач с ПД" itemValue="localuser"/>
+                                <f:selectItem itemLabel="Врач без ПД" itemValue="remoteuser"/>
+                            </p:selectOneMenu>
+
+
+                            <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
+                            <p:inputText id="ugroup" value="#{settingBitServerBean.selectedUser.groupUser}" />
+                        </p:panelGrid>
+
+                        <f:facet name="footer">
+
+                            <p:commandButton value="Сохранить" icon="pi pi-check" onclick="" actionListener="#{settingBitServerBean.AddNewUser}"
+                                             update=":form:growl2">
+                                <p:resetInput target="dialogNewUser"/>
+                            </p:commandButton>
+
+                            <span style="padding: 20px;">&nbsp;</span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                             class="ui-button-secondary" update="dialogNewUser">
+                                <p:resetInput target="dialogNewUser"/>
+                            </p:commandButton>
+
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                              message="Удалить пользователя?" header="Удалить пользователя?" severity="warn">
+                        <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUser}"
+                                         oncomplete="PF('deleteUserDialog').hide()"/>
+                        <span style="padding: 20px;">&nbsp;</span>
+                        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('deleteUserDialog').hide()"/>
+                    </p:dialog>
+                    <div class="p-text-capitalize">Списко зарегистрированных пользователей.
+                    Роль Администратор - дает возмножность изменять настройки системы,
+                    Локальный пользователь - позволяет видит все исследования с ПД,
+                    Удаленный пользователь - видит только исследования отправленные на диагностику в его группу,
+                    без ПД.</div>
+
+                </p:tab>
+
+                <p:tab title="Группы пользователей">
+                    <div class="p-text-capitalize">Списко зарегистрированных групп пользователей, группа "Локальные пользователи" - недоступна для изменения.</div>
+                </p:tab>
+
+            </p:accordionPanel>
+        </h:form>
+    </h:body>
+</f:view>
+</html>

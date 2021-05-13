@@ -91,7 +91,7 @@ public class PatientInfoBean {
         System.out.println("study id for redirect "+buf);
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientId);
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("studyID", buf);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("seriePage.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("serie.xhtml");
     }
 
 }

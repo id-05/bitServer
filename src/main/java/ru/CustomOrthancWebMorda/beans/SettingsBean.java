@@ -566,9 +566,7 @@ public class SettingsBean {
     }
 
     public void AddNewWebUser(){
-        System.out.println("selectedUser.getLogin() = "+selectedUser.getLogin()+"  "+"selectedUser.getPass() = "+selectedUser.getPass());
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
-            System.out.println("add new webuser");
             webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accordion:dt-users");
@@ -587,7 +585,7 @@ public class SettingsBean {
             PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
         }else{
-            System.out.println("else new modality");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Все поля должны быть заполнены!"));
         }
     }
 

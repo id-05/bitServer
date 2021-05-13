@@ -224,7 +224,7 @@ public class SearchBean {
 
     public void redirectPatientPanel(String patientID) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("patientID", patientID);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfoPage.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("patientinfo.xhtml");
     }
 
     public Boolean firstDateSelect(){

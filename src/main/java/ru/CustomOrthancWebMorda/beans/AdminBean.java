@@ -7,7 +7,7 @@ import javax.faces.bean.ViewScoped;
 
 @ManagedBean(name = "adminBean", eager = true)
 @SessionScoped
-public class adminBean {
+public class AdminBean {
 
     @PostConstruct
     public void init(){

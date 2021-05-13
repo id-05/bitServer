@@ -103,16 +103,16 @@
 
                 <div class="p-field p-grid">
                     <span class="ui-float-label">
-                        <p:inputText id="float-input2" value="#{autoriseBean.inputPassword}" >
 
-                        </p:inputText>
+                        <p:password id="toggle" value="#{autoriseBean.inputPassword}"/>
+
                         <p:outputLabel for="@previous" value="Password"/>
                     </span>
                 </div>
 
                 <div class="p-field p-grid">
                         <span class="ui-float-label" style="align-self: center; align-items: center">
-                            <p:commandButton icon="pi pi-sign-in" styleClass="rounded-button ui-button-info ui-button-flat" action="#{autoriseBean.validateUsernamePassword}" update="growl"/>
+                            <p:commandButton icon="pi pi-sign-in" styleClass="rounded-button ui-button-info ui-button-flat" actionListener="#{autoriseBean.validateUsernamePassword}" update="growl"/>
                         </span>
                 </div>
 

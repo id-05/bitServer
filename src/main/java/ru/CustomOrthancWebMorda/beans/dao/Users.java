@@ -1,4 +1,4 @@
-package ru.CustomOrthancWebMorda.beans;
+package ru.CustomOrthancWebMorda.beans.dao;
 
 
 
@@ -13,7 +13,6 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long uid;
-
     private String uname;
     private String password;
     private String ruName;

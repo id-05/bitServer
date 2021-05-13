@@ -3,7 +3,11 @@ package ru.CustomOrthancWebMorda.beans;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import ru.CustomOrthancWebMorda.beans.dao.Users;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,9 +23,25 @@ interface UserDao {
 
     public default void saveNewUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction tx1 = session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         session.save(user);
-        tx1.commit();
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteUser(Users user) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(user);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void updateUser(Users user) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(user);
+        transaction.commit();
         session.close();
     }
 
@@ -39,5 +59,15 @@ interface UserDao {
             Users user = new Users();
             return user;
         }
+    }
+
+    public default List<Users> getBitServerUserList() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Users> criteriaQuery = builder.createQuery(Users.class);
+        Root<Users> root = criteriaQuery.from(Users.class);
+        criteriaQuery.select(root);
+        Query<Users> query = session.createQuery(criteriaQuery);
+        return query.getResultList();
     }
 }
