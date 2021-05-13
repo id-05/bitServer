@@ -1,7 +1,5 @@
 package ru.CustomOrthancWebMorda.beans.dao;
 
-
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

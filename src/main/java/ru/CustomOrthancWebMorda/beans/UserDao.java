@@ -3,8 +3,8 @@ package ru.CustomOrthancWebMorda.beans;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -43,6 +43,40 @@ interface UserDao {
         session.update(user);
         transaction.commit();
         session.close();
+    }
+
+    public default void saveNewUsergroup(Usergroup usergroup) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(usergroup);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteUsergroup(Usergroup usergroup) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(usergroup);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void updateUsergroup(Usergroup usergroup) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(usergroup);
+        transaction.commit();
+        session.close();
+    }
+
+    public default List<Usergroup> getBitServerUsergroupList() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Usergroup> criteriaQuery = builder.createQuery(Usergroup.class);
+        Root<Usergroup> root = criteriaQuery.from(Usergroup.class);
+        criteriaQuery.select(root);
+        Query<Usergroup> query = session.createQuery(criteriaQuery);
+        return query.getResultList();
     }
 
     public default Users validateUserAndGetIfExist(String ulogin, String upassword) {

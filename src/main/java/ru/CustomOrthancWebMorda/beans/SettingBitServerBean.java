@@ -1,15 +1,14 @@
 package ru.CustomOrthancWebMorda.beans;
 
 import org.primefaces.PrimeFaces;
+import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
-import ru.CustomOrthancWebMorda.beans.dicom.OrthancWebUser;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import java.util.ArrayList;
 import java.util.List;
 
 import static ru.CustomOrthancWebMorda.beans.AutoriseBean.showMessage;
@@ -22,6 +21,34 @@ public class SettingBitServerBean implements UserDao{
     public List<Users> usersList;
     public List<Users> selectedUsers;
     public Users selectedUser;
+
+    public List<Usergroup> usergroupList;
+    public List<Usergroup> selectedUsergroups;
+    public Usergroup selectedUsergroup;
+
+    public List<Usergroup> getUsergroupList() {
+        return usergroupList;
+    }
+
+    public void setUsergroupList(List<Usergroup> usergroupList) {
+        this.usergroupList = usergroupList;
+    }
+
+    public List<Usergroup> getSelectedUsergroups() {
+        return selectedUsergroups;
+    }
+
+    public void setSelectedUsergroups(List<Usergroup> selectedUsergroups) {
+        this.selectedUsergroups = selectedUsergroups;
+    }
+
+    public Usergroup getSelectedUsergroup() {
+        return selectedUsergroup;
+    }
+
+    public void setSelectedUsergroup(Usergroup selectedUsergroup) {
+        this.selectedUsergroup = selectedUsergroup;
+    }
 
     public List<Users> getUsersList() {
         return usersList;
@@ -52,10 +79,18 @@ public class SettingBitServerBean implements UserDao{
     public void init(){
             System.out.println("settingBitServerBean page");
             usersList = getBitServerUserList();
+            usergroupList = getBitServerUsergroupList();
+            for(Usergroup buf:usergroupList){
+                System.out.println("buf "+buf.getRuName());
+            }
     }
 
     public void initNewUser() {
         selectedUser = new Users();
+    }
+
+    public void initNewUsergroup() {
+        selectedUsergroup = new Usergroup();
     }
 
     public void AddNewUser(){
@@ -87,11 +122,44 @@ public class SettingBitServerBean implements UserDao{
         }
     }
 
-    public void deleteUser() {
+    public void deleteUserSetting() {
         deleteUser(selectedUser);
         usersList.remove(selectedUser);
         selectedUser = new Users();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
         PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+    }
+
+    public void AddNewUsergroup(){
+        if((selectedUsergroup.getgName()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
+        {
+            boolean verifiUnical = true;
+            for(Usergroup bufUsergroup:usergroupList){
+                if(bufUsergroup.getRuName().equals(selectedUsergroup.getgName())){
+                    verifiUnical = false;
+                }
+            }
+            if(verifiUnical) {
+                usergroupList.add(new Usergroup(selectedUsergroup.getgName(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus()));
+                saveNewUsergroup(selectedUsergroup);
+                PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
+            }else{
+                updateUsergroup(selectedUsergroup);
+                usergroupList = getBitServerUsergroupList();
+                PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
+            }
+        }else{
+            showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+    public void deleteUsergroupSetting() {
+        deleteUsergroup(selectedUsergroup);
+        usergroupList.remove(selectedUsergroup);
+        selectedUsergroup = new Usergroup();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
+        PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
     }
 }

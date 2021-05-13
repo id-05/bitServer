@@ -7,6 +7,7 @@
           <element id="module-output" name="CustomOrthancWebMorda" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Hibernate 5.4.11-5.4.11" />
           <element id="library" level="project" name="Maven: org.glassfish:javax.faces:2.2.10" />
           <element id="library" level="project" name="Maven: org.primefaces:primefaces:10.0.0-RC2" />
           <element id="library" level="project" name="Maven: com.sun.faces:jsf-api:2.2.15" />
@@ -19,8 +20,6 @@
           <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.5" />
           <element id="library" level="project" name="Maven: mysql:mysql-connector-java:8.0.25" />
           <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.11.4" />
-          <element id="library" level="project" name="Hibernate 5.4.11-5.4.11" />
-          <element id="library" level="project" name="Java EE 6-Java EE 6" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="CustomOrthancWebMorda/web/Web" />
