@@ -457,6 +457,7 @@ public class SettingsBean {
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
+        System.out.println("authentication = "+authentication);
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }

@@ -9,14 +9,18 @@
 
 <f:view>
 
-    <h:head><title>bitServer Settings</title></h:head>
+    <h:head><title>bitServer Settings</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
 
     <h:body>
         <h:form id="form">
             <p:growl id="growl2" showDetail="true" />
             <p:menubar>
                 <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
-                <p:menuitem style="margin-right: 5px" value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
 
                 <f:facet name="options">
                     <div class="ui-input-icon-left p-mr-2">
@@ -26,7 +30,26 @@
                 </f:facet>
             </p:menubar>
 
-            <p:accordionPanel widgetVar="serverSettings" id="accordion">
+            <p:accordionPanel widgetVar="serverSettings" id="accord">
+                <p:tab title="Сеть">
+                    <p:outputPanel>
+                        <div class="p-field p-grid">
+                            <div class="p-col" style="margin-top: 20px">
+                                <p:outputLabel style="margin-top: 20px" value="Внешний адрес этого сервера: "/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <div class="p-col">
+                                <p:inplace editor="true" style="margin-bottom: 20px">
+                                    <p:inputText value="#{settingBitServerBean.externalAdress}" required="true" label="text"/>
+                                    <p:ajax event="save" listener="#{settingBitServerBean.saveAddress}"  />
+                                </p:inplace>
+                            </div>
+                        </div>
+
+                    </p:outputPanel>
+                </p:tab>
                 <p:tab title="Пользователи">
                     <p:outputPanel>
                     <p:toolbar>
@@ -35,7 +58,6 @@
                                              update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
                                              styleClass="ui-button-success" style="margin-right: .5rem">
                                 <p:resetInput target="dialogNewUser"/>
-
                             </p:commandButton>
                         </p:toolbarGroup>
                     </p:toolbar>
@@ -66,17 +88,18 @@
                         </p:column>
 
                         <p:column exportable="false">
-                            <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
+                            <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
                                              oncomplete="PF('manageUserDialog').show()"
                                              styleClass="edit-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
-                                <p:resetInput target=":form:accordion:manage-user-content"/>
+                                <p:resetInput target=":form:accord:manage-user-content"/>
                             </p:commandButton>
                             <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                              oncomplete="PF('deleteUserDialog').show()">
                                 <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
                             </p:commandButton>
                         </p:column>
+
                     </p:dataTable>
 
                     <p:dialog id="dialogNewUser" header="Пользователь" showEffect="fade" modal="true"
@@ -106,7 +129,9 @@
 
 
                             <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
-                            <p:inputText id="ugroup" value="#{settingBitServerBean.selectedUser.groupUser}" />
+                            <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.groupUser}" dynamic="true">
+                                <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
+                            </p:selectOneMenu>
                         </p:panelGrid>
 
                         <f:facet name="footer">
@@ -155,7 +180,7 @@
                     </p:toolbar>
 
                     <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup" var="usergroup" value="#{settingBitServerBean.usergroupList}"
-                                 reflow="true" styleClass="users-table"
+                                 reflow="true" styleClass="usergroup-table"
                                  selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.gName}"
                                  rows="10" rowSelectMode="add" >
 
@@ -172,11 +197,11 @@
                         </p:column>
 
                         <p:column exportable="false">
-                            <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-usergroup-content"
+                            <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-usergroup-content"
                                              oncomplete="PF('manageUsergroupDialog').show()"
                                              styleClass="edit-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
-                                <p:resetInput target=":form:accordion:manage-usergroup-content"/>
+                                <p:resetInput target=":form:accord:manage-usergroup-content"/>
                             </p:commandButton>
                             <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                              oncomplete="PF('deleteUsergroupDialog').show()">
@@ -193,17 +218,20 @@
 
                             <p:outputLabel for="type" style="margin-right: .5rem">Тип</p:outputLabel>
                             <p:selectOneMenu id="type" value="#{settingBitServerBean.selectedUsergroup.gName}">
-                                <f:selectItem itemLabel="Собственная группа" itemValue="sameuser"/>
+                                <f:selectItem itemLabel="Собственная" itemValue="sameuser"/>
                                 <f:selectItem itemLabel="Контрагент" itemValue="alienuser"/>
                             </p:selectOneMenu>
 
                             <p:outputLabel for="status" style="margin-right: .5rem">Статус</p:outputLabel>
-                            <p:inputText id="status" value="#{settingBitServerBean.selectedUsergroup.status}" />
+                            <p:selectOneMenu id="status" value="#{settingBitServerBean.selectedUsergroup.status}">
+                                <f:selectItem itemLabel="Активна" itemValue="active"/>
+                                <f:selectItem itemLabel="Неактивна" itemValue="inactive"/>
+                            </p:selectOneMenu>
                         </p:panelGrid>
 
                         <f:facet name="footer">
 
-                            <p:commandButton value="Сохранить" icon="pi pi-check" onclick="" actionListener="#{settingBitServerBean.AddNewUsergroup}"
+                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.AddNewUsergroup}"
                                              update=":form:growl2">
                                 <p:resetInput target="dialogNewUsergroup"/>
                             </p:commandButton>
@@ -230,7 +258,6 @@
                     <div class="p-text-capitalize">Списко зарегистрированных групп пользователей, группа "Локальные пользователи" - недоступна для изменения.</div>
                     </p:outputPanel>
                 </p:tab>
-
             </p:accordionPanel>
         </h:form>
     </h:body>

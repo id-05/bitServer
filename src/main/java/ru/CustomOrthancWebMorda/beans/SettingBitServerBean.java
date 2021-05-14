@@ -9,6 +9,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ru.CustomOrthancWebMorda.beans.AutoriseBean.showMessage;
@@ -23,8 +24,31 @@ public class SettingBitServerBean implements UserDao{
     public Users selectedUser;
 
     public List<Usergroup> usergroupList;
+    public List<String> usergroupListRuName;
     public List<Usergroup> selectedUsergroups;
     public Usergroup selectedUsergroup;
+    public String externalAdress;
+    public BitServiceDBresources bitServiceDBresources;
+
+    public String getExternalAdress() {
+        return externalAdress;
+    }
+
+    public void setExternalAdress(String externalAdress) {
+        this.externalAdress = externalAdress;
+    }
+
+    public List<String> getUsergroupListRuName() {
+        usergroupListRuName = new ArrayList<String>();
+        for(Usergroup bufgroup:usergroupList){
+            usergroupListRuName.add(bufgroup.getRuName());
+        }
+        return usergroupListRuName;
+    }
+
+    public void setUsergroupListRuName(List<String> usergroupListRuName) {
+        this.usergroupListRuName = usergroupListRuName;
+    }
 
     public List<Usergroup> getUsergroupList() {
         return usergroupList;
@@ -77,12 +101,22 @@ public class SettingBitServerBean implements UserDao{
 
     @PostConstruct
     public void init(){
-            System.out.println("settingBitServerBean page");
-            usersList = getBitServerUserList();
-            usergroupList = getBitServerUsergroupList();
+        System.out.println("settingBitServerBean page");
+        usersList = getBitServerUserList();
+        usergroupList = getBitServerUsergroupList();
             for(Usergroup buf:usergroupList){
                 System.out.println("buf "+buf.getRuName());
             }
+        initNewUser();
+        initNewUsergroup();
+        bitServiceDBresources = getBitServerResource("address");
+        externalAdress = bitServiceDBresources.getRvalue();
+    }
+
+    public void saveAddress(){
+        bitServiceDBresources.setRvalue(externalAdress);
+        updateBitServiceDBresource(bitServiceDBresources);
+        System.out.println("save");
     }
 
     public void initNewUser() {
@@ -110,12 +144,12 @@ public class SettingBitServerBean implements UserDao{
                         selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getGroupUser()));
                 saveNewUser(selectedUser);
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+                PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }else{
                 updateUser(selectedUser);
                 usersList = getBitServerUserList();
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+                PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
@@ -127,7 +161,7 @@ public class SettingBitServerBean implements UserDao{
         usersList.remove(selectedUser);
         selectedUser = new Users();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
-        PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+        PrimeFaces.current().ajax().update(":form:accord:dt-users");
     }
 
     public void AddNewUsergroup(){
@@ -135,7 +169,7 @@ public class SettingBitServerBean implements UserDao{
         {
             boolean verifiUnical = true;
             for(Usergroup bufUsergroup:usergroupList){
-                if(bufUsergroup.getRuName().equals(selectedUsergroup.getgName())){
+                if(bufUsergroup.getRuName().equals(selectedUsergroup.getRuName())){
                     verifiUnical = false;
                 }
             }
@@ -143,12 +177,12 @@ public class SettingBitServerBean implements UserDao{
                 usergroupList.add(new Usergroup(selectedUsergroup.getgName(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus()));
                 saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
+                PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
             }else{
                 updateUsergroup(selectedUsergroup);
                 usergroupList = getBitServerUsergroupList();
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
+                PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
             }
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
@@ -160,6 +194,6 @@ public class SettingBitServerBean implements UserDao{
         usergroupList.remove(selectedUsergroup);
         selectedUsergroup = new Usergroup();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
-        PrimeFaces.current().ajax().update(":form:accordion:dt-usergroup");
+        PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
     }
 }

@@ -82,7 +82,6 @@ interface UserDao {
     public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.uname = '" + ulogin + "' and U.password = '" + upassword + "'";
-        System.out.println("hql = " + hql);
         Query query = session.createQuery(hql);
         List<Users> results = query.list();
 
@@ -104,4 +103,27 @@ interface UserDao {
         Query<Users> query = session.createQuery(criteriaQuery);
         return query.getResultList();
     }
+
+    public default BitServiceDBresources getBitServerResource(String uname) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM BitServiceDBresources U WHERE U.rname = '" + uname + "'";
+        System.out.println("hql = " + hql);
+        Query query = session.createQuery(hql);
+        List<BitServiceDBresources> results = query.list();
+
+        if (results.size() > 0) {
+            Iterator<BitServiceDBresources> it = results.iterator();
+            return  (BitServiceDBresources) it.next();
+        }
+        return null;
+    }
+
+    public default void updateBitServiceDBresource(BitServiceDBresources bitServiceDBresources) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(bitServiceDBresources);
+        transaction.commit();
+        session.close();
+    }
+
 }

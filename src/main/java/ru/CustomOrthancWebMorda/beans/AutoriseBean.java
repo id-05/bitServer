@@ -1,8 +1,10 @@
 package ru.CustomOrthancWebMorda.beans;
 
 
+
 import org.primefaces.PrimeFaces;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
+import ru.CustomOrthancWebMorda.beans.MainBean;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -23,7 +25,25 @@ public class AutoriseBean implements UserDao {
 
     String inputUserName;
     String inputPassword;
-    public Users User;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public Users currentUser;
+    public String currentuserTheme = "nova-dark";
+
+    public String getCurrentuserTheme() {
+        return currentuserTheme;
+    }
+
+    public void setCurrentuserTheme(String currentuserTheme) {
+        this.currentuserTheme = currentuserTheme;
+    }
 
     public String getInputUserName() {
         return inputUserName;
@@ -47,24 +67,24 @@ public class AutoriseBean implements UserDao {
        initialHibernate();
     }
 
-    public void loginValidate(){
-        System.out.println("loginValidate");
-        User = validateUserAndGetIfExist(inputUserName,inputPassword);
-        if (User.getUname()!=null){
-            PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8084/index.xhtml')");
-        }
-        System.out.println(User.getUname());
+    public void setTheme(String tName){
+        currentuserTheme = tName;
+        currentUser.setuTheme(currentuserTheme);
+        updateUser(currentUser);
+        PrimeFaces.current().executeScript("location.reload();");
     }
 
-
     public void validateUsernamePassword() throws IOException {
-        User = validateUserAndGetIfExist(inputUserName,inputPassword);
-
-        if (User.getUname()!=null) {
+        currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
+        if (currentUser.getUname()!=null) {
             HttpSession session = SessionUtils.getSession();
-            session.setAttribute("username", User.getUid());
-            String buf = null;
-            switch (User.getRole()){
+            session.setAttribute("username", currentUser.getUid());
+            if(!currentUser.getuTheme().equals("")){
+            currentuserTheme = currentUser.getuTheme();
+            }else{
+                currentuserTheme = "nova-dark";
+            }
+            switch (currentUser.getRole()){
                 case "localuser":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/views/localuser.xhtml");
                     break;

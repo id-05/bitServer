@@ -18,7 +18,7 @@ public class Users {
     private String ruFamily;
     private String role;
     private String groupUser;
-
+    private String uTheme;
 
     public String getRuName() {
         return ruName;
@@ -87,6 +87,14 @@ public class Users {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getuTheme() {
+        return uTheme;
+    }
+
+    public void setuTheme(String uTheme) {
+        this.uTheme = uTheme;
     }
 
     public Users(){

@@ -2,6 +2,7 @@ package ru.CustomOrthancWebMorda.beans;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
@@ -31,6 +32,15 @@ public class MainBean {
     public String buffer;
     public String selectTheme;
     public ArrayList<String> themeList;
+    public String versionInfo;
+
+    public String getVersionInfo() {
+        return versionInfo;
+    }
+
+    public void setVersionInfo(String versionInfo) {
+        this.versionInfo = versionInfo;
+    }
 
     public String getSelectTheme() {
         return selectTheme;
@@ -82,6 +92,8 @@ public class MainBean {
 
     @PostConstruct
     public void init() {
+        versionInfo = "1.1";
+
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
         //DashboardColumn column2 = new DefaultDashboardColumn();
@@ -133,6 +145,8 @@ public class MainBean {
         themeList.add("luna-pink");
         return themeList;
     }
+
+
 
     public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
         StringBuilder sb = null ;

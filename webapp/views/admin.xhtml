@@ -35,8 +35,16 @@
                     <p:menuitem style="margin-right: 5px" value="Orthanc настройки" outcome="settings_orthanc" icon="pi pi-cog"/>
                     <p:menuitem style="margin-right: 5px" value="BitServer настройки" outcome="settings_bitserver" icon="pi pi-cog"/>
                     <p:menuitem style="margin-right: 5px" value="Поиск по базе Orthanc" outcome="searchPage" icon="pi pi-search"/>
+                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}">
+                        <p:menuitem value="nova-light" actionListener="#{autoriseBean.setTheme('nova-light')}" process="@this"/>
+                        <p:menuitem value="nova-dark" actionListener="#{autoriseBean.setTheme('nova-dark')}" process="@this"/>
+                        <p:menuitem value="nova-colored" actionListener="#{autoriseBean.setTheme('nova-colored')}" process="@this"/>
+                        <p:menuitem value="luna-blue" actionListener="#{autoriseBean.setTheme('luna-blue')}" process="@this"/>
+                        <p:menuitem value="luna-amber" actionListener="#{autoriseBean.setTheme('luna-amber')}" process="@this"/>
+                        <p:menuitem value="luna-green" actionListener="#{autoriseBean.setTheme('luna-green')}" process="@this"/>
+                        <p:menuitem value="luna-pink" actionListener="#{autoriseBean.setTheme('luna-pink')}" process="@this"/>
+                    </p:submenu>
                     <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
-
 
                     <f:facet name="options">
                         <div class="ui-input-icon-left p-mr-2">
@@ -51,10 +59,7 @@
 
         <div class="card">
             <h:form>
-                <p:cascadeSelect value="#{mainBean.selectTheme}" style="min-width: 14rem" placeholder="#{mainBean.selectTheme}">
-                    <p:ajax event="itemSelect"  update="form"/>
-                    <f:selectItems value="#{mainBean.themeList}"/>
-                </p:cascadeSelect>
+
             </h:form>
         </div>
 

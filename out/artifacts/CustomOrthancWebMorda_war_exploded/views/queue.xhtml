@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style type="text/css">
+            .value {
+                font-weight: bold;
+            }
+        </style>
+
+
+        <h:form id="seachform">
+
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
+
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+
+            <p:panel id="panel1" header="Фильтр" >
+                <div style="align-content: center">
+                    <p:card style="margin-bottom: 2em">
+
+                        <div class="p-grid">
+                            <p:panelGrid columns="2" layout="grid">
+
+                            </p:panelGrid>
+                        </div>
+
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
+                            <p:outputLabel style="font-size: large" value="Состояние:"/>
+                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em" >
+                                <f:selectItem itemLabel="Не описан" itemValue="no" />
+                                <f:selectItem itemLabel="Описан" itemValue="yes"/>
+                                <f:selectItem itemLabel="Все" itemValue="all"/>
+                                <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
+                            </p:selectOneButton>
+                        </div>
+
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
+                            <p:outputLabel style="font-size: large" value="Дата исследования:"/>
+                            <p:selectOneButton id="oneButton" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em">
+                                <f:selectItem itemLabel="Сегодня" itemValue="today" />
+                                <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
+                                <f:selectItem itemLabel="Точная дата" itemValue="targetdate"/>
+                                <f:selectItem itemLabel="Диапазон" itemValue="range"/>
+                                <p:ajax event="change" />
+                            </p:selectOneButton>
+                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}"/>
+                            </p:datePicker>
+                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}"/>
+                            </p:datePicker>
+                        </div>
+                    </p:card>
+
+                    <p:toolbar>
+                        <p:toolbarGroup>
+
+
+                        </p:toolbarGroup>
+                        <p:toolbarGroup align="right">
+
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-studys" widgetVar="dtStudys" var="visibleStudy" value="#{queueBean.visibleStudiesList}"
+                                 reflow="true" styleClass="products-table"
+                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{VisibleStudy.patientName}" paginator="true"
+                                 rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Исследования</span>
+                            </div>
+                        </f:facet>
+
+                      
+
+                        <p:column selectionMode="multiple" exportable="false"> </p:column>
+
+                        <p:column headerText="Patient" sortBy="#{queueBean.selectedVisibleStudy.patientName}" filterBy="#{queueBean.selectedVisibleStudy.patientName}">
+                            <h:outputText value="#{queueBean.selectedVisibleStudy.patientName}"/>
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{queueBean.selectedVisibleStudy.description}" filterBy="#{queueBean.selectedVisibleStudy.description}">
+                            <h:outputText value="#{queueBean.selectedVisibleStudy.description}"/>
+                        </p:column>
+
+                        <p:column headerText="Date" sortBy="#{queueBean.selectedVisibleStudy.dateToStr}" filterBy="#{queueBean.selectedVisibleStudy.dateToStr}">
+                            <h:outputText value="#{queueBean.selectedVisibleStudy.dateToStr}"/>
+                        </p:column>
+
+                        <p:column exportable="false">
+                            <p:commandButton icon="pi pi-pencil"
+
+                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                <f:setPropertyActionListener value="#{visibleStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+
+                            </p:commandButton>
+                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                             >
+                                <f:setPropertyActionListener value="#{visibleStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                </div>
+            </p:panel>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>
