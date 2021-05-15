@@ -109,7 +109,7 @@
 
                         <p:column selectionMode="multiple" exportable="false"> </p:column>
 
-                        <p:column headerText="Patient" sortBy="#{visibleStudy.patientName}" style="text-align: center">
+                        <p:column headerText="Patient" sortBy="#{visibleStudy.patientName}" filterBy="#{visibleStudy.patientName}"> style="text-align: center">
                             <h:outputText value="#{visibleStudy.patientName}"/>
                         </p:column>
 

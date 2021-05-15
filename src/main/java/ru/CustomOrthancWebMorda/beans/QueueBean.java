@@ -92,6 +92,7 @@ public class QueueBean {
         visibleStudiesList.add(new VisibleStudy("4","4","4","4"));
         visibleStudiesList.add(new VisibleStudy("5","5","5","5"));
         this.visibleStudiesList = visibleStudiesList;
+        readStudyFromDB();
 
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
@@ -115,4 +116,9 @@ public class QueueBean {
             System.out.println("patientName ="+buf.getPatientName());
         }
     }
+
+    public void readStudyFromDB(){
+
+    }
+
 }
