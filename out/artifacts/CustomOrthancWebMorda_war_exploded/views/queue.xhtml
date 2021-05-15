@@ -96,35 +96,38 @@
                         </p:toolbarGroup>
                     </p:toolbar>
 
-                    <p:dataTable id="dt-studys" widgetVar="dtStudys" var="visibleStudy" value="#{queueBean.visibleStudiesList}"
-                                 reflow="true" styleClass="products-table"
-                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{VisibleStudy.patientName}" paginator="true"
-                                 rows="10" rowSelectMode="add" paginatorPosition="bottom">
+
+                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="visibleStudy" value="#{queueBean.visibleStudiesList}"
+                                 reflow="true" styleClass="studys-table"
+                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{visibleStudy.patientName}" paginator="true"
+                                 rows="25" rowSelectMode="add" paginatorPosition="bottom">
                         <f:facet name="header">
                             <div class="products-table-header">
                                 <span style="font-weight: bold">Исследования</span>
                             </div>
                         </f:facet>
 
-                      
-
                         <p:column selectionMode="multiple" exportable="false"> </p:column>
 
-                        <p:column headerText="Patient" sortBy="#{queueBean.selectedVisibleStudy.patientName}" filterBy="#{queueBean.selectedVisibleStudy.patientName}">
-                            <h:outputText value="#{queueBean.selectedVisibleStudy.patientName}"/>
+                        <p:column headerText="Patient" sortBy="#{visibleStudy.patientName}" style="text-align: center">
+                            <h:outputText value="#{visibleStudy.patientName}"/>
                         </p:column>
 
-                        <p:column headerText="Description" sortBy="#{queueBean.selectedVisibleStudy.description}" filterBy="#{queueBean.selectedVisibleStudy.description}">
-                            <h:outputText value="#{queueBean.selectedVisibleStudy.description}"/>
+                        <p:column headerText="Description" sortBy="#{visibleStudy.description}" style="text-align: center">
+                            <h:outputText value="#{visibleStudy.description}"/>
                         </p:column>
 
-                        <p:column headerText="Date" sortBy="#{queueBean.selectedVisibleStudy.dateToStr}" filterBy="#{queueBean.selectedVisibleStudy.dateToStr}">
-                            <h:outputText value="#{queueBean.selectedVisibleStudy.dateToStr}"/>
+                        <p:column headerText="Date" sortBy="#{visibleStudy.dateToStr}" style="text-align: center">
+                            <h:outputText value="#{visibleStudy.dateToStr}"/>
+                        </p:column>
+
+                        <p:column headerText="id" sortBy="#{visibleStudy.orthancId}" style="text-align: center">
+                            <h:outputText value="#{visibleStudy.orthancId}"/>
                         </p:column>
 
                         <p:column exportable="false">
                             <p:commandButton icon="pi pi-pencil"
-
+                                             update=":seachform:dt-studys"
                                              styleClass="edit-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{visibleStudy}" target="#{queueBean.selectedVisibleStudy}"/>
 

@@ -1,13 +1,13 @@
 package ru.CustomOrthancWebMorda.beans;
 
-import java.util.Date;
+import java.io.Serializable;
 
-public class VisibleStudy {
+public class VisibleStudy implements Serializable {
 
-    public String orthancId;
-    public String patientName;
-    public String description;
-    public String dateToStr;
+    private String orthancId;
+    private String patientName;
+    private String description;
+    private String dateToStr;
 
     public String getOrthancId() {
         return orthancId;

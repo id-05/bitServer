@@ -6,6 +6,7 @@ import ru.CustomOrthancWebMorda.beans.dao.Users;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,40 +20,16 @@ public class QueueBean {
     public Date seconddate;
     public String typeSeach = "no";
 
-    public List<VisibleStudy> visibleStudiesList;
-    public List<VisibleStudy> selectedVisibleStudies;
-    public VisibleStudy selectedVisibleStudy;
+    private List<VisibleStudy> visibleStudiesList;
+    private List<VisibleStudy> selectedVisibleStudies;
+    private VisibleStudy selectedVisibleStudy;
 
-    public VisibleStudy getSelectedVisibleStudy() {
-        return selectedVisibleStudy;
+    public String getFiltrDate() {
+        return filtrDate;
     }
 
-    public void setSelectedVisibleStudy(VisibleStudy selectedVisibleStudy) {
-        this.selectedVisibleStudy = selectedVisibleStudy;
-    }
-
-    public List<VisibleStudy> getVisibleStudiesList() {
-        return visibleStudiesList;
-    }
-
-    public void setVisibleStudiesList(List<VisibleStudy> visibleStudiesList) {
-        this.visibleStudiesList = visibleStudiesList;
-    }
-
-    public List<VisibleStudy> getSelectedVisibleStudies() {
-        return selectedVisibleStudies;
-    }
-
-    public void setSelectedVisibleStudies(List<VisibleStudy> selectedVisibleStudies) {
-        this.selectedVisibleStudies = selectedVisibleStudies;
-    }
-
-    public String getTypeSeach() {
-        return typeSeach;
-    }
-
-    public void setTypeSeach(String typeSeach) {
-        this.typeSeach = typeSeach;
+    public void setFiltrDate(String filtrDate) {
+        this.filtrDate = filtrDate;
     }
 
     public Date getFirstdate() {
@@ -71,39 +48,71 @@ public class QueueBean {
         this.seconddate = seconddate;
     }
 
-    public String getFiltrDate() {
-        return filtrDate;
+    public String getTypeSeach() {
+        return typeSeach;
     }
 
-    public void setFiltrDate(String filtrDate) {
-        this.filtrDate = filtrDate;
+    public void setTypeSeach(String typeSeach) {
+        this.typeSeach = typeSeach;
+    }
+
+    public List<VisibleStudy> getVisibleStudiesList() {
+        return visibleStudiesList;
+    }
+
+    public void setVisibleStudiesList(List<VisibleStudy> visibleStudiesList) {
+        this.visibleStudiesList = visibleStudiesList;
+    }
+
+    public List<VisibleStudy> getSelectedVisibleStudies() {
+        return selectedVisibleStudies;
+    }
+
+    public void setSelectedVisibleStudies(List<VisibleStudy> selectedVisibleStudies) {
+        this.selectedVisibleStudies = selectedVisibleStudies;
+    }
+
+    public VisibleStudy getSelectedVisibleStudy() {
+        return selectedVisibleStudy;
+    }
+
+    public void setSelectedVisibleStudy(VisibleStudy selectedVisibleStudy) {
+        this.selectedVisibleStudy = selectedVisibleStudy;
     }
 
     @PostConstruct
     public void init() {
         System.out.println("QueueBean");
-
         firstdate = new Date();
         seconddate = new Date();
-        visibleStudiesList = new ArrayList<>();
+        List<VisibleStudy> visibleStudiesList = new ArrayList<>();
         visibleStudiesList.add(new VisibleStudy("1","1","1","1"));
         visibleStudiesList.add(new VisibleStudy("2","2","2","2"));
         visibleStudiesList.add(new VisibleStudy("3","3","3","3"));
+        visibleStudiesList.add(new VisibleStudy("4","4","4","4"));
+        visibleStudiesList.add(new VisibleStudy("5","5","5","5"));
+        this.visibleStudiesList = visibleStudiesList;
+
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
     public Boolean firstDateSelect(){
         filtrDate = "targetdate";
-        PrimeFaces.current().ajax().update(":seachform");
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
         return true;
     }
 
     public Boolean secondDateSelect(){
         filtrDate = "range";
-        PrimeFaces.current().ajax().update(":seachform");
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
         return true;
     }
 
     public void dataoutput(){
         System.out.println("dsdjl ="+typeSeach);
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        for(VisibleStudy buf:visibleStudiesList){
+            System.out.println("patientName ="+buf.getPatientName());
+        }
     }
 }
