@@ -32,7 +32,7 @@ public class QueueBean implements UserDao {
     public String filtrDate = "today";
     public Date firstdate;
     public Date seconddate;
-    public String typeSeach = "no";
+    public String typeSeach = "Не описан";
     private static List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public static String authentication;
@@ -118,7 +118,6 @@ public class QueueBean implements UserDao {
     @PostConstruct
     public void init() {
         System.out.println("QueueBean");
-
         firstdate = new Date();
         seconddate = new Date();
         selectedModaliti.clear();
@@ -132,18 +131,9 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("CR");
         selectedModaliti.add("MG");
         selectedModaliti.add("DX");
-
         firstdate = new Date();
         seconddate = new Date();
-//        List<VisibleStudy> visibleStudiesList = new ArrayList<>();
-//        visibleStudiesList.add(new VisibleStudy("1", "1", "1", "1"));
-//        visibleStudiesList.add(new VisibleStudy("2", "2", "2", "2"));
-//        visibleStudiesList.add(new VisibleStudy("3", "3", "3", "3"));
-//        visibleStudiesList.add(new VisibleStudy("4", "4", "4", "4"));
-//        visibleStudiesList.add(new VisibleStudy("5", "5", "5", "5"));
-//        this.visibleStudiesList = visibleStudiesList;
         readStudyFromDB();
-
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
@@ -160,12 +150,8 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        System.out.println("dsdjl =" + typeSeach);
-        getBitServerStudy(typeSeach);
+        visibleStudiesList = getBitServerStudy(typeSeach);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        for (BitServerStudy buf : visibleStudiesList) {
-            System.out.println("patientName =" + buf.getPatientname());
-        }
     }
 
     public void readStudyFromDB() {
@@ -178,7 +164,6 @@ public class QueueBean implements UserDao {
         String dateStr;
 
         String dateStartFromBase = "20190101";
-        //firstdate = dateStartFromBase;
         seconddate = new Date();
         dateStr = dateStartFromBase + "-" + format.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
@@ -205,16 +190,15 @@ public class QueueBean implements UserDao {
                 if(bS.getOrthancId().equals(bBSS.getSid())){
                     existInTable = true;
                 }
-                System.out.println(bS.getOrthancId() +"   =  "+bBSS.getSid());
-                System.out.println(existInTable);
             }
             if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getStudyDateToStr(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","","Не описан","","","","","","");
+                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getDate(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","","Не описан");//,"","",null,"",null,"");
                 addStudyInBitServerStudyTable(buf);
             }
         }
 
         visibleStudiesList = getBitServerStudy(typeSeach);
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
@@ -271,7 +255,6 @@ public class QueueBean implements UserDao {
             }
             String parentPatientID = studyData.get("ParentPatient").getAsString();
             String studyId = studyData.get("ID").getAsString();
-            //String studyShortId = studyData.get("StudyID").getAsString();
             JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
             String patientBirthDate = "N/A";
             String patientSex = "N/A";
@@ -286,8 +269,8 @@ public class QueueBean implements UserDao {
 
             try {
                 patientDob = format.parse(patientDobString);
-                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
-                patientBirthDate = dateString;
+                //String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
+                //patientBirthDate = dateString;
             } catch (Exception e) {
                 System.out.println("Errot to transfer date");
             }
@@ -317,7 +300,15 @@ public class QueueBean implements UserDao {
             try {
                 studyDateObject = format.parse("19000101");
                 assert studyDate != null;
-                SimpleDateFormat formatStudy = new SimpleDateFormat("yyyyMMdd");
+                //SimpleDateFormat formatStudy = new SimpleDateFormat("yyyyMMdd");
+                studyDateObject = format.parse(studyDate);
+            } catch (Exception e) {
+                System.out.println("Errot to transfer date");
+            }
+
+            try {
+                studyDateObject = format.parse("19000101");
+                assert studyDate != null;
                 studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
                 System.out.println("Errot to transfer date");
@@ -328,7 +319,7 @@ public class QueueBean implements UserDao {
                 studyDescription = studyDetails.get("StudyDescription").getAsString();
             }
 
-            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, format.format(patientDob), patientSex, parentPatientID, studyInstanceUid);
+            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }
         return studyList;

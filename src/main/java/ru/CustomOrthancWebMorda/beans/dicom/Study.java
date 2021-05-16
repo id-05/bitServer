@@ -17,7 +17,7 @@ public class Study {
     private String studyDateToStr;
     private String PatientName;
     private String PatientSex;
-    private String PatientBirthDate;
+    private Date PatientBirthDate;
     private List<Serie> Series;
 
     public String getShortId() {
@@ -44,11 +44,11 @@ public class Study {
         PatientSex = patientSex;
     }
 
-    public String getPatientBirthDate() {
+    public Date getPatientBirthDate() {
         return PatientBirthDate;
     }
 
-    public void setPatientBirthDate(String patientBirthDate) {
+    public void setPatientBirthDate(Date patientBirthDate) {
         PatientBirthDate = patientBirthDate;
     }
 
@@ -72,7 +72,7 @@ public class Study {
         this.studyDateToStr = studyDateToStr;
     }
 
-    public Study(String studyDescription, Date date, String accession, String StudyOrthancId, String patientName, String patientID, String birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+    public Study(String studyDescription, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
         this.studyDescription = studyDescription;
         this.date = date;
         this.ShortId = patientID;

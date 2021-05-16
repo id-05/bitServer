@@ -61,9 +61,10 @@
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
                             <p:outputLabel style="font-size: large" value="Состояние:"/>
                             <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em" >
-                                <f:selectItem itemLabel="Не описан" itemValue="no" />
-                                <f:selectItem itemLabel="Описан" itemValue="yes"/>
-                                <f:selectItem itemLabel="Все" itemValue="all"/>
+                                <f:selectItem itemLabel="Не описан" itemValue="Не описан" />
+                                <f:selectItem itemLabel="Отправлен на описание" itemValue="Отправлен на описание" />
+                                <f:selectItem itemLabel="Описан" itemValue="Описан"/>
+                                <f:selectItem itemLabel="Все" itemValue="Все"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
                         </div>
@@ -99,6 +100,7 @@
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="studys-table"
+                                 emptyMessage="Нет записей для отображения"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
                         <f:facet name="header">
@@ -118,7 +120,9 @@
                         </p:column>
 
                         <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center">
-                            <h:outputText value="#{bitServerStudy.sdate}"/>
+                            <h:outputText value="#{bitServerStudy.sdate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
                         </p:column>
 
                         <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">

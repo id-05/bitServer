@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class BitServerStudy {
@@ -13,21 +14,21 @@ public class BitServerStudy {
     private String sid;
     private String shortid;
     private String sdescription;
-    private String sdate;
+    private Date sdate;
     private String patientname;
-    private String patientbirthdate;
+    private Date patientbirthdate;
     private String patientsex;
     private String anamnes;
     private String result;
     private String status;
     private String anonimstudyid;
     private String userwhosent;
-    private String datesent;
+    private Date datesent;
     private String userwhodiagnost;
-    private String dateresult;
+    private Date dateresult;
     private String usergroupwhosees;
 
-    public BitServerStudy(String sid, String shortid, String sdescription, String sdate, String patientname, String patientbirthdate, String patientsex, String anamnes, String result, String status, String anonimstudyid, String userwhosent, String datesent, String userwhodiagnost, String dateresult, String usergroupwhosees) {
+    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, String status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
         this.shortid = shortid;
         this.sdescription = sdescription;
@@ -38,12 +39,12 @@ public class BitServerStudy {
         this.anamnes = anamnes;
         this.result = result;
         this.status = status;
-        this.anonimstudyid = anonimstudyid;
-        this.userwhosent = userwhosent;
-        this.datesent = datesent;
-        this.userwhodiagnost = userwhodiagnost;
-        this.dateresult = dateresult;
-        this.usergroupwhosees = usergroupwhosees;
+//        this.anonimstudyid = anonimstudyid;
+//        this.userwhosent = userwhosent;
+//        this.datesent = datesent;
+//        this.userwhodiagnost = userwhodiagnost;
+//        this.dateresult = dateresult;
+//        this.usergroupwhosees = usergroupwhosees;
     }
 
     public void setId(Long id) {
@@ -78,11 +79,11 @@ public class BitServerStudy {
         this.sdescription = sdescription;
     }
 
-    public String getSdate() {
+    public Date getSdate() {
         return sdate;
     }
 
-    public void setSdate(String sdate) {
+    public void setSdate(Date sdate) {
         this.sdate = sdate;
     }
 
@@ -94,11 +95,11 @@ public class BitServerStudy {
         this.patientname = patientname;
     }
 
-    public String getPatientbirthdate() {
+    public Date getPatientbirthdate() {
         return patientbirthdate;
     }
 
-    public void setPatientbirthdate(String patientbirthdate) {
+    public void setPatientbirthdate(Date patientbirthdate) {
         this.patientbirthdate = patientbirthdate;
     }
 
@@ -150,14 +151,6 @@ public class BitServerStudy {
         this.userwhosent = userwhosent;
     }
 
-    public String getDatesent() {
-        return datesent;
-    }
-
-    public void setDatesent(String datesent) {
-        this.datesent = datesent;
-    }
-
     public String getUserwhodiagnost() {
         return userwhodiagnost;
     }
@@ -166,11 +159,19 @@ public class BitServerStudy {
         this.userwhodiagnost = userwhodiagnost;
     }
 
-    public String getDateresult() {
+    public Date getDatesent() {
+        return datesent;
+    }
+
+    public void setDatesent(Date datesent) {
+        this.datesent = datesent;
+    }
+
+    public Date getDateresult() {
         return dateresult;
     }
 
-    public void setDateresult(String dateresult) {
+    public void setDateresult(Date dateresult) {
         this.dateresult = dateresult;
     }
 

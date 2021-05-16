@@ -302,18 +302,18 @@ public class SearchBean {
             String patientName = "N/A";
             String patientId = "N/A";
             String patientDobString = null;
-            String patientDob = "N/A";
+            Date patientDob = null;
 
             if(parentPatientDetails.has("PatientBirthDate"))
                 { patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString(); }
 
-//            try {
-//                patientDob = format.parse(patientDobString);
-//                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
-//                patientBirthDate = dateString;
-//            } catch (Exception e) {
-//               System.out.println("Errot to transfer date");
-//            }
+            try {
+                patientDob = format.parse(patientDobString);
+                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
+                patientBirthDate = dateString;
+            } catch (Exception e) {
+               System.out.println("Errot to transfer date");
+            }
 
             if(parentPatientDetails.has("PatientSex")) {
                 patientSex = parentPatientDetails.get("PatientSex").getAsString();
@@ -350,7 +350,7 @@ public class SearchBean {
             if(studyDetails.has("StudyDescription")){
                 studyDescription=studyDetails.get("StudyDescription").getAsString();
             }
-            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDobString, patientSex, parentPatientID, studyInstanceUid);
+            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);

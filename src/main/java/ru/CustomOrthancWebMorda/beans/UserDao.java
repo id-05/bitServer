@@ -131,6 +131,7 @@ interface UserDao {
 //        public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
             Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
             String hql = "FROM BitServerStudy U WHERE U.status = '" + state + "'";
+            System.out.println(hql);
             Query query = session.createQuery(hql);
             List<BitServerStudy> results = query.list();
 
