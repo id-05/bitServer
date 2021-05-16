@@ -92,7 +92,7 @@ public class MainBean {
 
     @PostConstruct
     public void init() {
-        versionInfo = "1.1";
+        versionInfo = "Version 1.1";
 
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();

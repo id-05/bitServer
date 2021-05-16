@@ -92,14 +92,14 @@
 
                         </p:toolbarGroup>
                         <p:toolbarGroup align="right">
-
+                            <p:commandButton value="Обновить" actionListener="#{queueBean.readStudyFromDB}" icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
                         </p:toolbarGroup>
                     </p:toolbar>
 
 
-                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="visibleStudy" value="#{queueBean.visibleStudiesList}"
+                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="studys-table"
-                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{visibleStudy.patientName}" paginator="true"
+                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
                         <f:facet name="header">
                             <div class="products-table-header">
@@ -109,32 +109,36 @@
 
                         <p:column selectionMode="multiple" exportable="false"> </p:column>
 
-                        <p:column headerText="Patient" sortBy="#{visibleStudy.patientName}" filterBy="#{visibleStudy.patientName}"> style="text-align: center">
-                            <h:outputText value="#{visibleStudy.patientName}"/>
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.shortid}"/>
                         </p:column>
 
-                        <p:column headerText="Description" sortBy="#{visibleStudy.description}" style="text-align: center">
-                            <h:outputText value="#{visibleStudy.description}"/>
+                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}" filterBy="#{bitServerStudy.patientname}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientname}"/>
                         </p:column>
 
-                        <p:column headerText="Date" sortBy="#{visibleStudy.dateToStr}" style="text-align: center">
-                            <h:outputText value="#{visibleStudy.dateToStr}"/>
+                        <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdate}"/>
                         </p:column>
 
-                        <p:column headerText="id" sortBy="#{visibleStudy.orthancId}" style="text-align: center">
-                            <h:outputText value="#{visibleStudy.orthancId}"/>
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdescription}"/>
+                        </p:column>
+
+                        <p:column headerText="Статус" sortBy="#{bitServerStudy.status}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.status}"/>
                         </p:column>
 
                         <p:column exportable="false">
                             <p:commandButton icon="pi pi-pencil"
                                              update=":seachform:dt-studys"
                                              styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                <f:setPropertyActionListener value="#{visibleStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
 
                             </p:commandButton>
                             <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                              >
-                                <f:setPropertyActionListener value="#{visibleStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                         </p:column>
 

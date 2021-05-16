@@ -11,6 +11,7 @@ public class BitServerStudy {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String sid;
+    private String shortid;
     private String sdescription;
     private String sdate;
     private String patientname;
@@ -26,6 +27,24 @@ public class BitServerStudy {
     private String dateresult;
     private String usergroupwhosees;
 
+    public BitServerStudy(String sid, String shortid, String sdescription, String sdate, String patientname, String patientbirthdate, String patientsex, String anamnes, String result, String status, String anonimstudyid, String userwhosent, String datesent, String userwhodiagnost, String dateresult, String usergroupwhosees) {
+        this.sid = sid;
+        this.shortid = shortid;
+        this.sdescription = sdescription;
+        this.sdate = sdate;
+        this.patientname = patientname;
+        this.patientbirthdate = patientbirthdate;
+        this.patientsex = patientsex;
+        this.anamnes = anamnes;
+        this.result = result;
+        this.status = status;
+        this.anonimstudyid = anonimstudyid;
+        this.userwhosent = userwhosent;
+        this.datesent = datesent;
+        this.userwhodiagnost = userwhodiagnost;
+        this.dateresult = dateresult;
+        this.usergroupwhosees = usergroupwhosees;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -41,6 +60,14 @@ public class BitServerStudy {
 
     public void setSid(String sid) {
         this.sid = sid;
+    }
+
+    public String getShortid() {
+        return shortid;
+    }
+
+    public void setShortid(String shortid) {
+        this.shortid = shortid;
     }
 
     public String getSdescription() {

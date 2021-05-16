@@ -126,4 +126,50 @@ interface UserDao {
         session.close();
     }
 
+    public default List<BitServerStudy> getBitServerStudy(String state) {
+
+//        public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
+            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+            String hql = "FROM BitServerStudy U WHERE U.status = '" + state + "'";
+            Query query = session.createQuery(hql);
+            List<BitServerStudy> results = query.list();
+
+            return results;
+//        }
+
+//        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<BitServerStudy> criteriaQuery = builder.createQuery(BitServerStudy.class);
+//        Root<BitServerStudy> root = criteriaQuery.from(BitServerStudy.class);
+//        criteriaQuery.select(root);
+//        Query<BitServerStudy> query = session.createQuery(criteriaQuery);
+//        return query.getResultList();
+    }
+
+    public default List<BitServerStudy> getAllBitServerStudy() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BitServerStudy> criteriaQuery = builder.createQuery(BitServerStudy.class);
+        Root<BitServerStudy> root = criteriaQuery.from(BitServerStudy.class);
+        criteriaQuery.select(root);
+        Query<BitServerStudy> query = session.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
+
+    public default void addStudyInBitServerStudyTable(BitServerStudy study) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(study);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void updateStudyInBitServerStudyTable(BitServerStudy study) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(study);
+        transaction.commit();
+        session.close();
+    }
+
 }

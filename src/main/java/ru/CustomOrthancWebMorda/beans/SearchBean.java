@@ -137,7 +137,7 @@ public class SearchBean {
     public void init() {
         searchDate = "today";
         System.out.println("seach");
-        FacesContext facesContext = FacesContext.getCurrentInstance();
+        //FacesContext facesContext = FacesContext.getCurrentInstance();
         firstdate = new Date();
         seconddate = new Date();
         selectedModaliti.clear();
@@ -210,6 +210,7 @@ public class SearchBean {
         query.add("Query", queryDetails);
         System.out.println(query.toString());
         //PrimeFaces.current().executeScript("alert('"+query.toString()+"');");
+        System.out.println(query.toString());
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
         assert sb != null;
         //PrimeFaces.current().executeScript("alert('"+sb.toString()+"');");
@@ -301,18 +302,18 @@ public class SearchBean {
             String patientName = "N/A";
             String patientId = "N/A";
             String patientDobString = null;
-            Date patientDob = null;
+            String patientDob = "N/A";
 
             if(parentPatientDetails.has("PatientBirthDate"))
                 { patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString(); }
 
-            try {
-                patientDob = format.parse(patientDobString);
-                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
-                patientBirthDate = dateString;
-            } catch (Exception e) {
-               System.out.println("Errot to transfer date");
-            }
+//            try {
+//                patientDob = format.parse(patientDobString);
+//                String dateString = new SimpleDateFormat("d MMM yyyy").format(patientDob);
+//                patientBirthDate = dateString;
+//            } catch (Exception e) {
+//               System.out.println("Errot to transfer date");
+//            }
 
             if(parentPatientDetails.has("PatientSex")) {
                 patientSex = parentPatientDetails.get("PatientSex").getAsString();
@@ -349,7 +350,7 @@ public class SearchBean {
             if(studyDetails.has("StudyDescription")){
                 studyDescription=studyDetails.get("StudyDescription").getAsString();
             }
-            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDobString, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);

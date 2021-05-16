@@ -33,19 +33,10 @@
             <div class="card">
                 <p:menubar>
                     <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
-                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}">
-                        <p:menuitem value="nova-light" actionListener="#{autoriseBean.setTheme('nova-light')}" process="@this"/>
-                        <p:menuitem value="nova-dark" actionListener="#{autoriseBean.setTheme('nova-dark')}" process="@this"/>
-                        <p:menuitem value="nova-colored" actionListener="#{autoriseBean.setTheme('nova-colored')}" process="@this"/>
-                        <p:menuitem value="luna-blue" actionListener="#{autoriseBean.setTheme('luna-blue')}" process="@this"/>
-                        <p:menuitem value="luna-amber" actionListener="#{autoriseBean.setTheme('luna-amber')}" process="@this"/>
-                        <p:menuitem value="luna-green" actionListener="#{autoriseBean.setTheme('luna-green')}" process="@this"/>
-                        <p:menuitem value="luna-pink" actionListener="#{autoriseBean.setTheme('luna-pink')}" process="@this"/>
-                    </p:submenu>
+                    <p:menuitem value="Search" outcome="searchPage" icon="pi pi-fw pi-search"/>
                     <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
                     <f:facet name="options">
                         <div class="ui-input-icon-left p-mr-2">
-
                             <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
                             <div align="right">Комплексные решения в области рентгенологии</div>
                         </div>
