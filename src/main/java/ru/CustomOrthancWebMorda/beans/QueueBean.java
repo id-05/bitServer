@@ -397,6 +397,7 @@ public class QueueBean implements UserDao {
         dataoutput();
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows()");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        PrimeFaces.current().ajax().update(":seachform:send-button");
     }
 
     public void addAnamnes(){
