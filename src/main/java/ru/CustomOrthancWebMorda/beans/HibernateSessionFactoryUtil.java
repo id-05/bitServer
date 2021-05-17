@@ -3,6 +3,8 @@ package ru.CustomOrthancWebMorda.beans;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
+import ru.CustomOrthancWebMorda.beans.dao.BitServiceDBresources;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
 

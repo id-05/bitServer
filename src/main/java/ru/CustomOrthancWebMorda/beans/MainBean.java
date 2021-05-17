@@ -10,6 +10,7 @@ import org.primefaces.model.DefaultDashboardModel;
 import ru.CustomOrthancWebMorda.beans.dicom.OrthancServer;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.io.BufferedReader;
@@ -33,6 +34,9 @@ public class MainBean {
     public String selectTheme;
     public ArrayList<String> themeList;
     public String versionInfo;
+    public static FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
+    public static FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
+    public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
     public String getVersionInfo() {
         return versionInfo;
@@ -93,6 +97,7 @@ public class MainBean {
     @PostConstruct
     public void init() {
         versionInfo = "Version 1.1";
+
 
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();

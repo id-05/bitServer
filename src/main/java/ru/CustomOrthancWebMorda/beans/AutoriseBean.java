@@ -35,6 +35,7 @@ public class AutoriseBean implements UserDao {
     }
 
     public Users currentUser;
+
     public String currentuserTheme = "nova-dark";
 
     public String getCurrentuserTheme() {

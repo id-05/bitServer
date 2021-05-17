@@ -3,15 +3,25 @@ package ru.CustomOrthancWebMorda.beans;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
+import ru.CustomOrthancWebMorda.beans.dao.BitServiceDBresources;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import static javax.persistence.TemporalType.DATE;
+
 interface UserDao {
+
+    final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     public default void initialHibernate(){
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -79,6 +89,18 @@ interface UserDao {
         return query.getResultList();
     }
 
+    public default List<Usergroup> getActiveBitServerUsergroupList() {
+        String hql= "from Usergroup where status=:status and gType=:gtype";
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Query query = session.createQuery(hql);
+        query = session.createQuery(hql);
+        query.setParameter("status", "active");
+        query.setParameter("gtype", "alienuser");
+        List<Usergroup> results = query.list();
+        session.close();
+        return results;
+    }
+
     public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.uname = '" + ulogin + "' and U.password = '" + upassword + "'";
@@ -126,25 +148,54 @@ interface UserDao {
         session.close();
     }
 
-    public default List<BitServerStudy> getBitServerStudy(String state) {
+    public default List<BitServerStudy> getBitServerStudy(String state, String dateSeachType, Date firstdate, Date seconddate) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
 
-//        public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
-            Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-            String hql = "FROM BitServerStudy U WHERE U.status = '" + state + "'";
-            System.out.println(hql);
-            Query query = session.createQuery(hql);
-            List<BitServerStudy> results = query.list();
+        switch (dateSeachType){
+            case "today":
+                firstdate = new Date();
+                seconddate = new Date();
+                break;
+            case "yesterday":
+                Instant now = Instant.now();
+                Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+                firstdate = Date.from(yesterday);
+                seconddate = Date.from(yesterday);
+                break;
+            case "targetdate":
+                seconddate = firstdate;
+                break;
+        }
+        Query query = null;
 
-            return results;
-//        }
+        if(state.equals("Все")){
+            if(dateSeachType.equals("Все")){
+                String hql= "from BitServerStudy";
+                query = session.createQuery(hql);
+            }else{
+                String hql= "from BitServerStudy  where sdate BETWEEN :frmdate and :todate";
+                query = session.createQuery(hql);
+                query.setParameter("frmdate", firstdate,DATE);
+                query.setParameter("todate", seconddate,DATE);
+            }
+        }else{
+            if(dateSeachType.equals("Все")){
+                String hql= "from BitServerStudy  where status=:pstatus";
+                query = session.createQuery(hql);
+                query.setParameter("pstatus", state);
+            }else{
+                String hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
+                query = session.createQuery(hql);
+                query.setParameter("pstatus", state);
+                query.setParameter("frmdate", firstdate,DATE);
+                query.setParameter("todate", seconddate,DATE);
+            }
+        }
 
-//        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<BitServerStudy> criteriaQuery = builder.createQuery(BitServerStudy.class);
-//        Root<BitServerStudy> root = criteriaQuery.from(BitServerStudy.class);
-//        criteriaQuery.select(root);
-//        Query<BitServerStudy> query = session.createQuery(criteriaQuery);
-//        return query.getResultList();
+        List<BitServerStudy> results = query.list();
+        session.close();
+        return results;
     }
 
     public default List<BitServerStudy> getAllBitServerStudy() {

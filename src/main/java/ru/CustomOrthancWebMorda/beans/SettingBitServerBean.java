@@ -1,6 +1,7 @@
 package ru.CustomOrthancWebMorda.beans;
 
 import org.primefaces.PrimeFaces;
+import ru.CustomOrthancWebMorda.beans.dao.BitServiceDBresources;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
 
@@ -14,7 +15,6 @@ import java.util.List;
 
 import static ru.CustomOrthancWebMorda.beans.AutoriseBean.showMessage;
 
-
 @ManagedBean(name = "settingBitServerBean", eager = false)
 @SessionScoped
 public class SettingBitServerBean implements UserDao{
@@ -22,7 +22,6 @@ public class SettingBitServerBean implements UserDao{
     public List<Users> usersList;
     public List<Users> selectedUsers;
     public Users selectedUser;
-
     public List<Usergroup> usergroupList;
     public List<String> usergroupListRuName;
     public List<Usergroup> selectedUsergroups;
@@ -165,7 +164,7 @@ public class SettingBitServerBean implements UserDao{
     }
 
     public void AddNewUsergroup(){
-        if((selectedUsergroup.getgName()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
+        if((selectedUsergroup.getgType()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
         {
             boolean verifiUnical = true;
             for(Usergroup bufUsergroup:usergroupList){
@@ -174,7 +173,7 @@ public class SettingBitServerBean implements UserDao{
                 }
             }
             if(verifiUnical) {
-                usergroupList.add(new Usergroup(selectedUsergroup.getgName(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus()));
+                usergroupList.add(new Usergroup(selectedUsergroup.getgType(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus()));
                 saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");

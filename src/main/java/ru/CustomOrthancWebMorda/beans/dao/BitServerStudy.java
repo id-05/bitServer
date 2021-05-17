@@ -1,4 +1,4 @@
-package ru.CustomOrthancWebMorda.beans;
+package ru.CustomOrthancWebMorda.beans.dao;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

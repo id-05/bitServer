@@ -181,11 +181,11 @@
 
                     <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup" var="usergroup" value="#{settingBitServerBean.usergroupList}"
                                  reflow="true" styleClass="usergroup-table"
-                                 selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.gName}"
+                                 selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
                                  rows="10" rowSelectMode="add" >
 
-                        <p:column headerText="Тип группы" sortBy="#{usergroup.gName}" style="text-align: center">
-                            <h:outputText value="#{usergroup.gName}" />
+                        <p:column headerText="Тип группы" sortBy="#{usergroup.gType}" style="text-align: center">
+                            <h:outputText value="#{usergroup.gType}" />
                         </p:column>
 
                         <p:column headerText="Название" sortBy="#{usergroup.ruName}" style="text-align: center">
@@ -199,7 +199,7 @@
                         <p:column exportable="false">
                             <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-usergroup-content"
                                              oncomplete="PF('manageUsergroupDialog').show()"
-                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                             styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
                                 <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
                                 <p:resetInput target=":form:accord:manage-usergroup-content"/>
                             </p:commandButton>
@@ -217,7 +217,7 @@
                             <p:inputText id="groupname" value="#{settingBitServerBean.selectedUsergroup.ruName}" />
 
                             <p:outputLabel for="type" style="margin-right: .5rem">Тип</p:outputLabel>
-                            <p:selectOneMenu id="type" value="#{settingBitServerBean.selectedUsergroup.gName}">
+                            <p:selectOneMenu id="type" value="#{settingBitServerBean.selectedUsergroup.gType}">
                                 <f:selectItem itemLabel="Собственная" itemValue="sameuser"/>
                                 <f:selectItem itemLabel="Контрагент" itemValue="alienuser"/>
                             </p:selectOneMenu>

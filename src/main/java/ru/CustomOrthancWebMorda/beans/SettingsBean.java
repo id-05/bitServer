@@ -396,27 +396,6 @@ public class SettingsBean {
         showMessage("Сообщение","Сервис перезагружен!", info);
     }
 
-//    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
-//        StringBuilder sb =null;
-//        try {
-//            sb=new StringBuilder();
-//            HttpURLConnection conn = makePostConnection(apiUrl, post);
-//            BufferedReader br = new BufferedReader(new InputStreamReader(
-//                    (conn.getInputStream())));
-//            String output;
-//            while ((output = br.readLine()) != null) {
-//                int i = output.indexOf("}");
-//                sb.append(output);
-//            }
-//            conn.disconnect();
-//            conn.getResponseMessage();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//        return sb;
-//    }
-
     public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
         StringBuilder sb =null;
         try {

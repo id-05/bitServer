@@ -11,8 +11,9 @@ public class Usergroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String gName;
+    private String gType;
     private String ruName;
+    private String status;
 
     public String getStatus() {
         return status;
@@ -22,8 +23,6 @@ public class Usergroup {
         this.status = status;
     }
 
-    private String status;
-
     public Long getId() {
         return id;
     }
@@ -32,12 +31,12 @@ public class Usergroup {
         this.id = id;
     }
 
-    public String getgName() {
-        return gName;
+    public String getgType() {
+        return gType;
     }
 
-    public void setgName(String gName) {
-        this.gName = gName;
+    public void setgType(String gType) {
+        this.gType = gType;
     }
 
     public String getRuName() {
@@ -54,7 +53,7 @@ public class Usergroup {
     }
 
     public Usergroup(String gName, String ruName, String status){
-        this.gName = gName;
+        this.gType = gName;
         this.ruName = ruName;
         this.status = status;
     }
