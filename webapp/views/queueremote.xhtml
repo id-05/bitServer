@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style type="text/css">
+            .value {
+                font-weight: bold;
+            }
+
+            .ui-datatable.borderless {
+                border : 0px !important;
+            }
+
+        </style>
+
+
+        <h:form id="seachform">
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
+
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+
+            <p:panel id="panel1" header="Фильтр" >
+                <div style="align-content: center">
+
+
+                    <p:toolbar>
+
+                        <p:toolbarGroup align="right">
+                            <p:commandButton value="Обновить" actionListener="#{queueremoteBean.dataoutput}"
+                                             process="@this" update="searchgrowl"
+                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+
+                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueremoteBean.visibleStudiesList}"
+                                 reflow="true" styleClass="borderless"
+                                 emptyMessage="Нет записей для отображения"
+                                 selection="#{queueremoteBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
+                                 rows="25" rowSelectMode="add" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Исследования</span>
+                            </div>
+                        </f:facet>
+
+
+
+                        <p:column selectionMode="multiple" exportable="false" style="width: 40px"> </p:column>
+
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.shortid}"/>
+                        </p:column>
+
+                        <p:column headerText="Пол"  style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientsex}"/>
+
+                        </p:column>
+
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdescription}"/>
+                        </p:column>
+
+                        <p:column exportable="false" style="align-content: center; width:100px">
+
+                            <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                                             styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+
+                            <p:commandButton styleClass="edit-button rounded-button ui-button-success" icon="pi pi-eye" process="@this"
+                                             actionListener="#{queueremoteBean.redirectToOsimis(bitServerStudy.anonimstudyid)}">
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                              widgetVar="manageAnamnes" responsive="true">
+                        <p:inputTextarea value="#{queueremoteBean.selectedVisibleStudy.anamnes}" rows="6" style="width: 300px;"/>
+
+                        <f:facet name="footer">
+
+                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueremoteBean.addAnamnes}"
+                                             update=":seachform">
+                                <p:resetInput target="dialogStudyAnamnes"/>
+                            </p:commandButton>
+
+                            <span style="padding: 20px;">&nbsp;</span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
+                                             class="ui-button-secondary" update="dialogStudyAnamnes">
+                                <p:resetInput target="dialogStudyAnamnes"/>
+                            </p:commandButton>
+
+                        </f:facet>
+                    </p:dialog>
+
+                </div>
+            </p:panel>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

@@ -96,7 +96,7 @@ public class MainBean {
 
     @PostConstruct
     public void init() {
-        versionInfo = "Version 1.1";
+        versionInfo = "1.1";
 
 
         model = new DefaultDashboardModel();

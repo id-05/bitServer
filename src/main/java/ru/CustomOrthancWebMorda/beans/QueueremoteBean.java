@@ -5,10 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
 import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
-import ru.CustomOrthancWebMorda.beans.dicom.Serie;
+import ru.CustomOrthancWebMorda.beans.dao.Users;
 import ru.CustomOrthancWebMorda.beans.dicom.Study;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -27,9 +26,9 @@ import java.util.*;
 import static ru.CustomOrthancWebMorda.beans.MainBean.info;
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
-@ManagedBean(name = "queueBean", eager = false)
+@ManagedBean(name = "queueremoteBean", eager = false)
 @SessionScoped
-public class QueueBean implements UserDao {
+public class QueueremoteBean implements UserDao {
 
     public String filtrDate = "today";
     public Date firstdate;
@@ -46,7 +45,8 @@ public class QueueBean implements UserDao {
     public List<Usergroup> usergroupList;
     public String selectedUserGroup;
     public List<String> usergroupListRuName;
-    public String currentUser;
+    public Users currentUser;
+    public String currentUserId;
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class QueueBean implements UserDao {
     }
 
     public static void setSelectedModaliti(List<String> selectedModaliti) {
-        QueueBean.selectedModaliti = selectedModaliti;
+        QueueremoteBean.selectedModaliti = selectedModaliti;
     }
 
     public List<BitServerStudy> getVisibleStudiesList() {
@@ -149,10 +149,10 @@ public class QueueBean implements UserDao {
     public void init() {
 
         HttpSession session = SessionUtils.getSession();
-        currentUser = session.getAttribute("username").toString();
+        currentUserId = session.getAttribute("username").toString();
         System.out.println("  currentUser   "+currentUser);
 
-        System.out.println("QueueBean");
+        System.out.println("QueueremoteBean");
 
         firstdate = new Date();
         seconddate = new Date();
@@ -169,9 +169,10 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("DX");
         firstdate = new Date();
         seconddate = new Date();
-        readStudyFromDB();
+
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
+        dataoutput();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
@@ -190,55 +191,8 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-    }
-
-    public void readStudyFromDB() {
-        selectedVisibleStudy = new BitServerStudy();
-        JsonObject query = new JsonObject();
-        query.addProperty("Level", "Studies");
-        query.addProperty("CaseSensitive", false);
-        query.addProperty("Expand", true);
-        query.addProperty("Limit", 0);
-        JsonObject queryDetails = new JsonObject();
-        String dateStr;
-
-        String dateStartFromBase = "20190101";
-        seconddate = new Date();
-        dateStr = dateStartFromBase + "-" + format.format(seconddate);
-        queryDetails.addProperty("StudyDate", dateStr);
-        queryDetails.addProperty("PatientID", "*");
-
-        StringBuilder modalities = new StringBuilder();
-        for (String buf : selectedModaliti) {
-            modalities.append(buf).append("\\");
-        }
-        queryDetails.addProperty("Modality", modalities.toString());
-        query.add("Query", queryDetails);
-
-   //     {"Level":"Studies","CaseSensitive":false,"Expand":true,"Limit":0,"Query":{"StudyDate":"20210101-20210516","PatientID":"*","Modality":"CR\\CT\\MR\\NM\\PT\\US\\XA\\CR\\MG\\DX\\"}}
-
-        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find", query.toString());
-        assert sb != null;
-
-        Boolean existInTable = false;
-        studiesFromRestApi = getStudiesFromJson(sb.toString());
-        studiesFromTableBitServer = getAllBitServerStudy();
-        for(Study bS:studiesFromRestApi){
-            existInTable = false;
-            for(BitServerStudy bBSS:studiesFromTableBitServer){
-                if(bS.getOrthancId().equals(bBSS.getSid())){
-                    existInTable = true;
-                }
-            }
-            if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getDate(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","","Не описан");//,"","",null,"",null,"");
-                addStudyInBitServerStudyTable(buf);
-            }
-        }
-
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
+        currentUser = getUserById(currentUserId);
+        visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getGroupUser());
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
@@ -363,43 +317,43 @@ public class QueueBean implements UserDao {
         return studyList;
     }
 
-    public void sendToAgent(){
-        JsonObject query = new JsonObject();
-        JsonObject queryDetails = new JsonObject();
-        queryDetails.addProperty("PatientName", "Hello");
-        queryDetails.addProperty("0010-1001", "World");
-        query.add("Replace", queryDetails);
-        JsonArray queryArray = new JsonArray();
-        queryArray.add("StudyDescription");
-        queryArray.add("SeriesDescription");
-        query.add("Keep",queryArray);
-        query.addProperty("KeepPrivateTags",true);
-        query.addProperty("DicomVersion","2017c");
-        int i = 0;
-        for(BitServerStudy bufStudy:selectedVisibleStudies){
-            if(!bufStudy.getStatus().equals("Отправлен на описание")) {
-                StringBuilder sb = makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
-                JsonParser parserJson = new JsonParser();
-                JsonObject studies = (JsonObject) parserJson.parse(sb.toString());
-                bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
-                bufStudy.setStatus("Отправлен на описание");
-                bufStudy.setDatesent(new Date());
-                bufStudy.setUsergroupwhosees(selectedUserGroup);
-                bufStudy.setUserwhosent(currentUser);
-                updateStudyInBitServerStudyTable(bufStudy);
-                i++;
-            }else{
-                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" уже было отправлено ранее!",info);
-            }
-
-        }
-        showMessage("Внимание","Всего отправлено: "+i,info);
-        selectedVisibleStudies = null;
-        dataoutput();
-        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows()");
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        PrimeFaces.current().ajax().update(":seachform:send-button");
-    }
+//    public void sendToAgent(){
+//        JsonObject query = new JsonObject();
+//        JsonObject queryDetails = new JsonObject();
+//        queryDetails.addProperty("PatientName", "Hello");
+//        queryDetails.addProperty("0010-1001", "World");
+//        query.add("Replace", queryDetails);
+//        JsonArray queryArray = new JsonArray();
+//        queryArray.add("StudyDescription");
+//        queryArray.add("SeriesDescription");
+//        query.add("Keep",queryArray);
+//        query.addProperty("KeepPrivateTags",true);
+//        query.addProperty("DicomVersion","2017c");
+//        int i = 0;
+//        for(BitServerStudy bufStudy:selectedVisibleStudies){
+//            if(!bufStudy.getStatus().equals("Отправлен на описание")) {
+//                StringBuilder sb = makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
+//                JsonParser parserJson = new JsonParser();
+//                JsonObject studies = (JsonObject) parserJson.parse(sb.toString());
+//                bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
+//                bufStudy.setStatus("Отправлен на описание");
+//                bufStudy.setDatesent(new Date());
+//                bufStudy.setUsergroupwhosees(selectedUserGroup);
+//                bufStudy.setUserwhosent(currentUser);
+//                updateStudyInBitServerStudyTable(bufStudy);
+//                i++;
+//            }else{
+//                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" уже было отправлено ранее!",info);
+//            }
+//
+//        }
+//        showMessage("Внимание","Всего отправлено: "+i,info);
+//        selectedVisibleStudies = null;
+//        dataoutput();
+//        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows()");
+//        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+//        PrimeFaces.current().ajax().update(":seachform:send-button");
+//    }
 
     public void addAnamnes(){
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
@@ -420,3 +374,4 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 }
+

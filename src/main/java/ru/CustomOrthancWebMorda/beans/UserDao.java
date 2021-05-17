@@ -116,6 +116,21 @@ interface UserDao {
         }
     }
 
+    public default Users getUserById(String userid){
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM Users U WHERE U.id = '" + userid + "'";
+        Query query = session.createQuery(hql);
+        List<Users> results = query.list();
+
+        if (results.size() > 0) {
+            Iterator<Users> it = results.iterator();
+            return (Users) it.next();
+        }else{
+            Users user = new Users();
+            return user;
+        }
+    }
+
     public default List<Users> getBitServerUserList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -193,6 +208,18 @@ interface UserDao {
             }
         }
 
+        List<BitServerStudy> results = query.list();
+        session.close();
+        return results;
+    }
+
+    public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        Query query = null;
+        String hql= "from BitServerStudy  where usergroupwhosees=:pstatus";
+        query = session.createQuery(hql);
+        query.setParameter("pstatus", usergroup);
         List<BitServerStudy> results = query.list();
         session.close();
         return results;
