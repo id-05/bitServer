@@ -13,7 +13,12 @@
 
     <h:head><title>bitServer</title>
 
-        <style type="">
+        <style type="text/css">
+
+            .my_text
+            {
+                font-family:    Arial, Helvetica, sans-serif;
+            }
 
              div.centercard
              {
@@ -76,10 +81,10 @@
 
     <h:body>
         <h:form id="autorise">
-            <div class="p-d-flex p-flex-column">
-                <div class="p-mb-2" style="color: darkgray">Dicom Remote Analysis</div>
-                <div class="p-mb-2" style="color: darkgray">bitServer</div>
-                <div class="p-mb-2" style="color: darkgray">Ver: #{mainBean.versionInfo}</div>
+            <div class="p-d-flex p-flex-column" style="font: -apple-system-body">
+                <div class="my_text" style="color: darkgray; font: -apple-system-body">Dicom Remote Analysis</div>
+                <div class="my_text" style="color: darkgray">bitServer</div>
+                <div class="my_text" style="color: darkgray">Ver: #{mainBean.versionInfo}</div>
             </div>
 
             <div class="centercard">

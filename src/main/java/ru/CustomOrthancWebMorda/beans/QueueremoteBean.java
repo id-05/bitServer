@@ -4,7 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.xml.internal.ws.client.RequestContext;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
@@ -15,11 +19,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -37,8 +43,6 @@ public class QueueremoteBean implements UserDao {
     private static List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public static String authentication;
-    public ArrayList<Study> studiesFromRestApi = new ArrayList<>();
-    public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
     private List<BitServerStudy> selectedVisibleStudies;
     private BitServerStudy selectedVisibleStudy;
@@ -47,6 +51,15 @@ public class QueueremoteBean implements UserDao {
     public List<String> usergroupListRuName;
     public Users currentUser;
     public String currentUserId;
+    private UploadedFile resultFile;
+
+    public UploadedFile getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(UploadedFile resultFile) {
+        this.resultFile = resultFile;
+    }
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<String>();
@@ -147,7 +160,7 @@ public class QueueremoteBean implements UserDao {
 
     @PostConstruct
     public void init() {
-
+        selectedVisibleStudy = new BitServerStudy();
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("username").toString();
         System.out.println("  currentUser   "+currentUser);
@@ -317,6 +330,12 @@ public class QueueremoteBean implements UserDao {
         return studyList;
     }
 
+    public void addResult(){
+        PrimeFaces.current().executeScript("PF('sidebar').hide()");
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        System.out.println("сохранение результата");
+    }
+
 //    public void sendToAgent(){
 //        JsonObject query = new JsonObject();
 //        JsonObject queryDetails = new JsonObject();
@@ -373,5 +392,46 @@ public class QueueremoteBean implements UserDao {
         System.out.println("osimis id for redirect "+sid);
         PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
+
+    public void handleFileUpload(FileUploadEvent event) throws IOException {
+        this.resultFile = null;
+        UploadedFile file = event.getFile();
+        if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
+            this.resultFile = file;
+            System.out.println(resultFile.getFileName());
+
+            Path folder = Paths.get(MainBean.pathToSaveResult);
+
+            //String filename = FilenameUtils.getBaseName(resultFile.getFileName());
+            String extension = FilenameUtils.getExtension(file.getFileName());
+            //String extension2 = FilenameUtils.getExtension(resultFile.getContentType());
+            Path file2 = Files.createTempFile(folder, selectedVisibleStudy.getSid(), "." + extension);
+
+            try (InputStream input = resultFile.getInputStream()) {
+                Files.copy(input, file2, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
+    public void lockedStudy(){
+        resultFile = null;
+        PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
+        PrimeFaces.current().ajax().update(":seachform:editorcomponent");
+        PrimeFaces.current().ajax().update(":seachform:selectfilename");
+        //заносим в бд запись о том что данное исследование в настоящий момент обрабатывается
+        System.out.println("запись обрабатываемся!");
+    }
+
+    public void save() throws IOException {
+        Path folder = Paths.get("/home/evv/results");
+        String filename = FilenameUtils.getBaseName(resultFile.getFileName());
+        String extension = FilenameUtils.getExtension(resultFile.getFileName());
+        Path file = Files.createTempFile(folder, filename + "-", "." + extension);
+
+        try (InputStream input = resultFile.getInputStream()) {
+            Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
 }
 

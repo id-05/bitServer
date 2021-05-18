@@ -25,6 +25,7 @@ import java.util.Base64;
 public class MainBean {
 
     public static OrthancServer mainServer;
+    public static String pathToSaveResult = "D://results";
     public String totalStudy = "0";
     public String totalPatient = "0";
     public String totalSize = "0";

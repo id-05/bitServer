@@ -161,11 +161,14 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
-                            <p:commandButton styleClass="edit-button rounded-button ui-button-success" icon="pi pi-eye" process="@this"
+                            <p:commandButton style="margin-right: 10px" styleClass="edit-button rounded-button ui-button-success" icon="pi pi-eye" process="@this"
                                              actionListener="#{queueBean.redirectToOsimis(bitServerStudy.sid)}">
                             </p:commandButton>
-                        </p:column>
 
+                            <p:commandButton style="margin-right: 10px" styleClass="edit-button rounded-button ui-button-success" icon="pi pi-file" process="@this"
+                                             onclick="PF('sidebar').show()" disabled="#{!queueBean.hasSelectedStudy()}">
+                            </p:commandButton>
+                        </p:column>
                     </p:dataTable>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
@@ -179,7 +182,7 @@
                                 <p:resetInput target="dialogStudyAnamnes"/>
                             </p:commandButton>
 
-                            <span style="padding: 20px;">&nbsp;</span>
+                            <span style="padding: 20px;"> </span>
 
                             <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
                                              class="ui-button-secondary" update="dialogStudyAnamnes">
@@ -188,6 +191,10 @@
 
                         </f:facet>
                     </p:dialog>
+
+                    <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="10000">
+                        <h3>Full Screen Sidebar</h3>
+                    </p:sidebar>
 
                 </div>
             </p:panel>

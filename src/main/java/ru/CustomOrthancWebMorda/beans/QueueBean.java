@@ -282,6 +282,7 @@ public class QueueBean implements UserDao {
     }
 
     private ArrayList<Study> getStudiesFromJson(String data) {
+        System.out.println(data);
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
