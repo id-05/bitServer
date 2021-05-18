@@ -107,8 +107,8 @@
                                              actionListener="#{queueremoteBean.redirectToOsimis(bitServerStudy.anonimstudyid)}">
                             </p:commandButton>
 
-                            <p:commandButton style="margin-right: 10px" value="Взять на описание" icon="pi pi-file" process="@this"
-                                             onclick="PF('sidebar').show()" actionListener="#{queueremoteBean.lockedStudy}">
+                            <p:commandButton style="margin-right: 10px" value="Взять на описание" icon="pi pi-file"
+                                             oncomplete="PF('sidebar').show()" actionListener="#{queueremoteBean.lockedStudy}">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                         </p:column>
@@ -155,7 +155,7 @@
                             <b>Ввести вручную:</b>
                         </p:divider>
 
-                        <p:textEditor widgetVar="editor" id="editorcomponent" disabled="#{not empty queueremoteBean.resultFile.fileName}" secure="false" value="#{queueremoteBean.selectedVisibleStudy.result}" height="200" placeholder="Enter your content">
+                        <p:textEditor widgetVar="editor" id="editorcomponent" disabled="#{not empty queueremoteBean.resultFile.fileName}" secure="false" value="#{queueremoteBean.bufResult}" height="200" placeholder="Enter your content">
                             <f:facet name="toolbar">
                                  <span class="ql-formats">
                                     <button class="ql-bold"></button>

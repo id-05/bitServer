@@ -52,6 +52,15 @@ public class QueueremoteBean implements UserDao {
     public Users currentUser;
     public String currentUserId;
     private UploadedFile resultFile;
+    private String bufResult;
+
+    public String getBufResult() {
+        return bufResult;
+    }
+
+    public void setBufResult(String bufResult) {
+        this.bufResult = bufResult;
+    }
 
     public UploadedFile getResultFile() {
         return resultFile;
@@ -189,20 +198,6 @@ public class QueueremoteBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-    public Boolean firstDateSelect() {
-        filtrDate = "targetdate";
-        dataoutput();
-        PrimeFaces.current().ajax().update(":seachform");
-        return true;
-    }
-
-    public Boolean secondDateSelect() {
-        filtrDate = "range";
-        dataoutput();
-        PrimeFaces.current().ajax().update(":seachform");
-        return true;
-    }
-
     public void dataoutput() {
         currentUser = getUserById(currentUserId);
         visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getGroupUser());
@@ -330,10 +325,30 @@ public class QueueremoteBean implements UserDao {
         return studyList;
     }
 
-    public void addResult(){
-        PrimeFaces.current().executeScript("PF('sidebar').hide()");
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        System.out.println("сохранение результата");
+    public void addResult() throws IOException {
+
+        selectedVisibleStudy.setStatus("Описан");
+        selectedVisibleStudy.setUserwhodiagnost(currentUserId);
+        selectedVisibleStudy.setDateresult(new Date());
+        if(resultFile!=null){
+            Path folder = Paths.get(MainBean.pathToSaveResult);
+            String extension = FilenameUtils.getExtension(resultFile.getFileName());
+            Path file2 = Files.createFile(Paths.get(folder.toString()+"/" + selectedVisibleStudy.getSid() + "." + extension));
+            try (InputStream input = resultFile.getInputStream()) {
+                Files.copy(input, file2, StandardCopyOption.REPLACE_EXISTING);
+            }catch (Exception e){
+                System.out.println("error"+e.getMessage().toString());
+            }
+            selectedVisibleStudy.setTyperesult(true);
+            selectedVisibleStudy.setResult(file2.toString());
+        }else{
+            selectedVisibleStudy.setTyperesult(false);
+            selectedVisibleStudy.setResult(bufResult);
+        }
+        selectedVisibleStudy.setLocked(false);
+        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+
+        dataoutput();
     }
 
 //    public void sendToAgent(){
@@ -398,40 +413,19 @@ public class QueueremoteBean implements UserDao {
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             this.resultFile = file;
-            System.out.println(resultFile.getFileName());
-
-            Path folder = Paths.get(MainBean.pathToSaveResult);
-
-            //String filename = FilenameUtils.getBaseName(resultFile.getFileName());
-            String extension = FilenameUtils.getExtension(file.getFileName());
-            //String extension2 = FilenameUtils.getExtension(resultFile.getContentType());
-            Path file2 = Files.createTempFile(folder, selectedVisibleStudy.getSid(), "." + extension);
-
-            try (InputStream input = resultFile.getInputStream()) {
-                Files.copy(input, file2, StandardCopyOption.REPLACE_EXISTING);
-            }
         }
     }
 
     public void lockedStudy(){
+        System.out.println(selectedVisibleStudy.getId());
         resultFile = null;
+        //selectedVisibleStudy.setLocked(true);
+        //updateStudyInBitServerStudyTable(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
         PrimeFaces.current().ajax().update(":seachform:editorcomponent");
         PrimeFaces.current().ajax().update(":seachform:selectfilename");
         //заносим в бд запись о том что данное исследование в настоящий момент обрабатывается
         System.out.println("запись обрабатываемся!");
     }
-
-    public void save() throws IOException {
-        Path folder = Paths.get("/home/evv/results");
-        String filename = FilenameUtils.getBaseName(resultFile.getFileName());
-        String extension = FilenameUtils.getExtension(resultFile.getFileName());
-        Path file = Files.createTempFile(folder, filename + "-", "." + extension);
-
-        try (InputStream input = resultFile.getInputStream()) {
-            Files.copy(input, file, StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-
 }
 

@@ -27,6 +27,10 @@ public class BitServerStudy {
     private String userwhodiagnost;
     private Date dateresult;
     private String usergroupwhosees;
+    private boolean typeresult;
+    private boolean locked;
+
+
 
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, String status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
@@ -45,6 +49,22 @@ public class BitServerStudy {
 //        this.userwhodiagnost = userwhodiagnost;
 //        this.dateresult = dateresult;
 //        this.usergroupwhosees = usergroupwhosees;
+    }
+
+    public boolean isTyperesult() {
+        return typeresult;
+    }
+
+    public void setTyperesult(boolean typeresult) {
+        this.typeresult = typeresult;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public void setId(Long id) {

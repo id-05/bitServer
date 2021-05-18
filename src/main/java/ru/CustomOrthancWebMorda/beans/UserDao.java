@@ -217,9 +217,10 @@ interface UserDao {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         Query query = null;
-        String hql= "from BitServerStudy  where usergroupwhosees=:pstatus";
+        String hql= "from BitServerStudy  where usergroupwhosees=:pgroup and status=:pstatus";
         query = session.createQuery(hql);
-        query.setParameter("pstatus", usergroup);
+        query.setParameter("pgroup", usergroup);
+        query.setParameter("pstatus", "Отправлен на описание");
         List<BitServerStudy> results = query.list();
         session.close();
         return results;
