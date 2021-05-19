@@ -36,7 +36,7 @@ public class AutoriseBean implements UserDao {
 
     public Users currentUser;
 
-    public String currentuserTheme = "nova-dark";
+    public String currentuserTheme = "saga";
 
     public String getCurrentuserTheme() {
         return currentuserTheme;
@@ -83,7 +83,7 @@ public class AutoriseBean implements UserDao {
             if(!currentUser.getuTheme().equals("")){
             currentuserTheme = currentUser.getuTheme();
             }else{
-                currentuserTheme = "nova-dark";
+                currentuserTheme = "saga";
             }
             switch (currentUser.getRole()){
                 case "localuser":
