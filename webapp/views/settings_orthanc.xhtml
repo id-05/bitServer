@@ -22,8 +22,8 @@
 
                 <f:facet name="options">
                     <div class="ui-input-icon-left p-mr-2">
-                        <div align="right" class="p-text-bold">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                        <div align="right" class="p-text-bold">Комплексные решения в области рентгенологии</div>
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
                     </div>
                 </f:facet>
             </p:menubar>
@@ -265,6 +265,7 @@
 
                         <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{settingsBean.webUsers}"
                                      reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
                                      selection="#{settingsBean.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
                                      rows="10" rowSelectMode="add" >
 
@@ -349,6 +350,7 @@
 
                             <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{settingsBean.dicomModalities}"
                                          reflow="true" styleClass="users-table"
+                                         emptyMessage="Нет записей для отображения"
                                          selection="#{settingsBean.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
                                          rows="10" rowSelectMode="add" >
 

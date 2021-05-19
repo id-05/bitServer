@@ -64,7 +64,7 @@
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
 
                             <label for="state" class="p-col-fixed" style="width:250px; font-size: large">Состояние исследования:</label>
-                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em" >
+                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px" >
                                 <f:selectItem itemLabel="Не описан" itemValue="Не описан" />
                                 <f:selectItem itemLabel="Отправлен на описание" itemValue="Отправлен на описание" />
                                 <f:selectItem itemLabel="Описан" itemValue="Описан"/>
@@ -75,7 +75,7 @@
 
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
                             <label for="dateStudySelector" class="p-col-fixed" style="width:250px; font-size: large">Дата исследования:</label>
-                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em">
+                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px">
                                 <f:selectItem itemLabel="Сегодня" itemValue="today" />
                                 <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
                                 <f:selectItem itemLabel="Точная дата" itemValue="targetdate"/>

@@ -1,7 +1,7 @@
 package ru.CustomOrthancWebMorda.beans;
 
 import org.primefaces.PrimeFaces;
-import ru.CustomOrthancWebMorda.beans.dao.BitServiceDBresources;
+import ru.CustomOrthancWebMorda.beans.dao.BitServerDBresources;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
 
@@ -26,15 +26,61 @@ public class SettingBitServerBean implements UserDao{
     public List<String> usergroupListRuName;
     public List<Usergroup> selectedUsergroups;
     public Usergroup selectedUsergroup;
-    public String externalAdress;
-    public BitServiceDBresources bitServiceDBresources;
+    public String externalAddress;
+    public String orthancWebPort;
+    public String orthancLogin;
+    public String orthancPassword;
+    public String orthancPathToJson;
+    public String orthancPathToResultFile;
+    public BitServerDBresources bitServerDBresources;
+    public List<BitServerDBresources> bitServerDBresourcesList = new ArrayList<>();
 
-    public String getExternalAdress() {
-        return externalAdress;
+    public String getOrthancWebPort() {
+        return orthancWebPort;
     }
 
-    public void setExternalAdress(String externalAdress) {
-        this.externalAdress = externalAdress;
+    public void setOrthancWebPort(String orthancWebPort) {
+        this.orthancWebPort = orthancWebPort;
+    }
+
+    public String getOrthancLogin() {
+        return orthancLogin;
+    }
+
+    public void setOrthancLogin(String orthancLogin) {
+        this.orthancLogin = orthancLogin;
+    }
+
+    public String getOrthancPassword() {
+        return orthancPassword;
+    }
+
+    public void setOrthancPassword(String orthancPassword) {
+        this.orthancPassword = orthancPassword;
+    }
+
+    public String getOrthancPathToJson() {
+        return orthancPathToJson;
+    }
+
+    public void setOrthancPathToJson(String orthancPathToJson) {
+        this.orthancPathToJson = orthancPathToJson;
+    }
+
+    public String getOrthancPathToResultFile() {
+        return orthancPathToResultFile;
+    }
+
+    public void setOrthancPathToResultFile(String orthancPathToResultFile) {
+        this.orthancPathToResultFile = orthancPathToResultFile;
+    }
+
+    public String getExternalAddress() {
+        return externalAddress;
+    }
+
+    public void setExternalAddress(String externalAddress) {
+        this.externalAddress = externalAddress;
     }
 
     public List<String> getUsergroupListRuName() {
@@ -108,14 +154,49 @@ public class SettingBitServerBean implements UserDao{
             }
         initNewUser();
         initNewUsergroup();
-        bitServiceDBresources = getBitServerResource("address");
-        externalAdress = bitServiceDBresources.getRvalue();
+//        bitServerDBresources = getBitServerResource("address");
+//        externalAddress = bitServerDBresources.getRvalue();
+
+
+        bitServerDBresourcesList = getAllBitServerResource();
+        for(BitServerDBresources buf:bitServerDBresourcesList){
+            switch (buf.getRname()){
+                case "address": externalAddress = buf.getRvalue();
+                    break;
+                case "port": orthancWebPort = buf.getRvalue();
+                    break;
+                case "login": orthancLogin = buf.getRvalue();
+                    break;
+                case "password": orthancPassword = buf.getRvalue();
+                    break;
+                case "pathtojson": orthancPathToJson = buf.getRvalue();
+                    break;
+                case "pathtoresultfile": orthancPathToResultFile = buf.getRvalue();
+                    break;
+            }
+        }
+
     }
 
-    public void saveAddress(){
-        bitServiceDBresources.setRvalue(externalAdress);
-        updateBitServiceDBresource(bitServiceDBresources);
-        System.out.println("save");
+    public void saveParam(){
+        for(BitServerDBresources buf:bitServerDBresourcesList){
+            switch (buf.getRname()){
+                case "address": buf.setRvalue(externalAddress);
+                    break;
+                case "port": buf.setRvalue(orthancWebPort);
+                    break;
+                case "login": buf.setRvalue(orthancLogin);
+                    break;
+                case "password": buf.setRvalue(orthancPassword);
+                    break;
+                case "pathtojson": buf.setRvalue(orthancPathToJson);
+                    break;
+                case "pathtoresultfile": buf.setRvalue(orthancPathToResultFile);
+                    break;
+            }
+            updateBitServiceDBresource(buf);
+        }
+        //bitServerDBresources.setRvalue(externalAddress);
     }
 
     public void initNewUser() {

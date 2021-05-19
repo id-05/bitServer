@@ -82,8 +82,8 @@
     <h:body>
         <h:form id="autorise">
             <div class="p-d-flex p-flex-column" style="font: -apple-system-body">
-                <div class="my_text" style="color: darkgray; margin-bottom: 10px">Dicom Remote Analysis</div>
-                <div class="my_text" style="color: darkgray; margin-bottom: 10px">bitServer</div>
+                <div class="my_text" style="color: darkgray; margin-bottom: 5px">Dicom Remote Analysis</div>
+                <div class="my_text" style="color: darkgray; margin-bottom: 5px">bitServer</div>
                 <div class="my_text" style="color: darkgray">Ver: #{mainBean.versionInfo}</div>
             </div>
 
@@ -106,12 +106,8 @@
                 </div>
 
                 <div class="p-field p-grid">
-
-                            <p:commandButton style="width: 200px" icon="pi pi-sign-in"  actionListener="#{autoriseBean.validateUsernamePassword}" update="growl"/>
-
+                    <p:commandButton style="width: 200px" icon="pi pi-sign-in"  actionListener="#{autoriseBean.validateUsernamePassword}" update="growl"/>
                 </div>
-
-
             </div>
             </div>
         </h:form>

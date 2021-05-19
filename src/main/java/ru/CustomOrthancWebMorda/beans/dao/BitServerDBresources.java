@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class BitServiceDBresources {
+public class BitServerDBresources {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class BitServiceDBresources {
         return id;
     }
 
-    public BitServiceDBresources(){
+    public BitServerDBresources(){
 
     }
 }

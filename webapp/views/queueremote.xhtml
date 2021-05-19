@@ -30,8 +30,12 @@
                 font-weight: bold;
             }
 
-            .ui-datatable.borderless {
-                border : 0px !important;
+            .ui-datatable.home {
+                border : none;
+            }
+
+            .ui-datatable2 .ui-datatable-data td{
+                border: none;
             }
 
             .my_text
@@ -66,7 +70,7 @@
                         </p:toolbarGroup>
                     </p:toolbar>
 
-                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueremoteBean.visibleStudiesList}"
+                    <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{queueremoteBean.visibleStudiesList}"
                                  reflow="true" styleClass="borderless"
                                  emptyMessage="Нет записей для отображения"
                                  rowKey="#{bitServerStudy.sid}" paginator="true"
@@ -137,25 +141,21 @@
                                       mode="advanced"
                                       multiple="false"
                                       label="Обзор"
-                                      uploadLabel="Загрузить"
+                                      uploadLabel="Сохранить и закрыть"
                                       cancelLabel="Отмена"
                                       dragDropSupport="true"
                                       fileLimit="1"
-                                      update="@this :seachform:editorcomponent :seachform:selectfilename"
+                                      update="@this :seachform:editorcomponent searchgrowl"
                                       sizeLimit="10240000" allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
                                       invalidSizeMessage="Maximum file size allowed is 10 MB"
                                       invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
                                       listener="#{queueremoteBean.handleFileUpload}"/>
 
-                        <label for="selectfilename" class="p-col-fixed" style="margin-top: 20px; font-size: large">Выбранный файл: </label>
-                        <p:outputLabel id="selectfilename" value="#{queueremoteBean.resultFile.fileName}" style="margin-left: 1em; margin-right: 1em"/>
-
-
                         <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
                             <b>Ввести вручную:</b>
                         </p:divider>
 
-                        <p:textEditor widgetVar="editor" id="editorcomponent" disabled="#{not empty queueremoteBean.resultFile.fileName}" secure="false" value="#{queueremoteBean.bufResult}" height="200" placeholder="Enter your content">
+                        <p:textEditor widgetVar="editor" id="editorcomponent" disabled="#{not empty queueremoteBean.resultFile.fileName}" secure="false" value="#{queueremoteBean.selectedVisibleStudy.result}" height="200" placeholder="Enter your content">
                             <f:facet name="toolbar">
                                  <span class="ql-formats">
                                     <button class="ql-bold"></button>
@@ -176,7 +176,7 @@
                        
                         <div>
                             <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueremoteBean.addResult}"
-                                             update=":seachform">
+                                             update=":seachform searchgrowl">
                             </p:commandButton>
 
                             <span style="padding: 20px;"> </span>

@@ -10,10 +10,6 @@
 <f:view>
 
     <h:head><title>bitServer Settings</title>
-        <f:facet name="last">
-            <link rel="stylesheet" type="text/css"
-                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
-        </f:facet>
     </h:head>
 
     <h:body>
@@ -24,29 +20,78 @@
 
                 <f:facet name="options">
                     <div class="ui-input-icon-left p-mr-2">
-                        <div align="right" class="p-text-bold">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                        <div align="right" class="p-text-bold">Комплексные решения в области рентгенологии</div>
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
                     </div>
                 </f:facet>
             </p:menubar>
 
             <p:accordionPanel widgetVar="serverSettings" id="accord">
-                <p:tab title="Сеть">
+                <p:tab title="Сеть и доступ">
                     <p:outputPanel>
-                        <div class="p-field p-grid">
-                            <div class="p-col" style="margin-top: 20px">
-                                <p:outputLabel style="margin-top: 20px" value="Внешний адрес этого сервера: "/>
-                            </div>
-                        </div>
 
-                        <div class="p-field p-grid">
-                            <div class="p-col">
-                                <p:inplace editor="true" style="margin-bottom: 20px">
-                                    <p:inputText value="#{settingBitServerBean.externalAdress}" required="true" label="text"/>
-                                    <p:ajax event="save" listener="#{settingBitServerBean.saveAddress}"  />
-                                </p:inplace>
-                            </div>
-                        </div>
+                        <p:divider align="left" type="dashed">
+                            <b>Внешний адрес этого сервера</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.externalAddress}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">Адрес по которому данный сервер, доступен пользователям из сети интерне</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Порт RESTAPI</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancWebPort}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">Порт для доступа к RESTAPI Orthanc</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Логин и пароль для доступа к Orthanc</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <label for="ulogin" class="p-col-fixed" style="width:100px">Логин: </label>
+                            <p:inplace editor="true" >
+                                <p:inputText id="ulogin" value="#{settingBitServerBean.orthancLogin}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
+                            </p:inplace>
+                            <label for="upass" class="p-col-fixed" style="width:100px">  Пароль: </label>
+                            <p:inplace editor="true" >
+                                <p:inputText id="upass" value="#{settingBitServerBean.orthancPassword}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Путь к файлу orthanc.json</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancPathToJson}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">Данный файл используется для настройки сервера Orthanc</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Каталог хранения файлов результатов анализа</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancPathToResultFile}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">В этом каталоге будут размещены файлы с результати анализов, прикрепляемые пользователями</div>
+
+
 
                     </p:outputPanel>
                 </p:tab>
@@ -64,6 +109,7 @@
 
                     <p:dataTable id="dt-users" widgetVar="dtUsers" var="users" value="#{settingBitServerBean.usersList}"
                                  reflow="true" styleClass="users-table"
+                                 emptyMessage="Нет записей для отображения"
                                  selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
                                  rows="10" rowSelectMode="add" >
 
@@ -89,7 +135,7 @@
 
                         <p:column exportable="false">
                             <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
-                                             oncomplete="PF('manageUserDialog').show()"
+                                             oncomplete="PF('manageUserDialog').show()" style="margin-right: 10px"
                                              styleClass="edit-button rounded-button ui-button-success" process="@this">
                                 <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
                                 <p:resetInput target=":form:accord:manage-user-content"/>
@@ -181,6 +227,7 @@
 
                     <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup" var="usergroup" value="#{settingBitServerBean.usergroupList}"
                                  reflow="true" styleClass="usergroup-table"
+                                 emptyMessage="Нет записей для отображения"
                                  selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
                                  rows="10" rowSelectMode="add" >
 
