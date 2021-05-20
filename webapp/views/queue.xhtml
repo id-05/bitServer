@@ -25,17 +25,26 @@
             //]]>
         </script>
 
+        <script type="text/javascript">
+            function showStatus() {
+                PF('statusDialog').show();
+            }
+            function hideStatus() {
+                PF('statusDialog').hide();
+            }
+        </script>
+
         <style type="text/css">
             .value {
                 font-weight: bold;
             }
 
-            .ui-datatable.borderless {
-                border : 0px !important;
+            .ui-datatable.products-table {
+
+
             }
 
         </style>
-
 
         <h:form id="seachform">
             <p:growl id="searchgrowl" showDetail="true" />
@@ -76,17 +85,17 @@
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
                             <label for="dateStudySelector" class="p-col-fixed" style="width:250px; font-size: large">Дата исследования:</label>
                             <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px">
-                                <f:selectItem itemLabel="Сегодня" itemValue="today" />
-                                <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
-                                <f:selectItem itemLabel="Точная дата" itemValue="targetdate"/>
+                                <f:selectItem itemLabel="Сегодня " itemValue="today" />
+                                <f:selectItem itemLabel="Вчера " itemValue="yesterday"/>
+                                <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
                                 <f:selectItem itemLabel="Диапазон" itemValue="range"/>
-                                <f:selectItem itemLabel="Все" itemValue="Все"/>
+                                <f:selectItem itemLabel=" Все" itemValue="Все"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
-                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-top: 10px; margin-left: 1em; margin-right: 1em">
                                 <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}"/>
                             </p:datePicker>
-                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true" style="margin-top: 10px; margin-left: 1em; margin-right: 1em">
                                 <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}"/>
                             </p:datePicker>
                         </div>
@@ -94,9 +103,13 @@
 
                     <p:toolbar>
                         <p:toolbarGroup>
+                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                                <p:graphicImage value="/resources/images/upload.gif" />
+                            </p:dialog>
                             <p:commandButton id="send-button" value="Отправить на описание в:"
                                              icon="pi pi-send" actionListener="#{queueBean.sendToAgent}"
                                              styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy()}"
+                                             onclick="PF('statusDialog').show()"
                                              process="@this" update="searchgrowl"
                                              style="margin-right: 5px">
                             </p:commandButton>
@@ -114,7 +127,7 @@
 
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
-                                 reflow="true" styleClass="borderless"
+                                 reflow="true" styleClass="products-table"
                                  emptyMessage="Нет записей для отображения"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
@@ -130,7 +143,7 @@
                         <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
 
-                        <p:column selectionMode="multiple" exportable="false" style="width: 40px"> </p:column>
+                        <p:column selectionMode="multiple" exportable="false" style="width:20px;"> </p:column>
 
                         <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
                             <h:outputText value="#{bitServerStudy.shortid}"/>
@@ -154,20 +167,33 @@
                             <h:outputText value="#{bitServerStudy.status}"/>
                         </p:column>
 
-                        <p:column exportable="false" style="align-content: center; width:100px">
+                        <p:column exportable="false" style="align-content: center; ">
 
                             <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
-                                             styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
+                                             styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
-                            <p:commandButton style="margin-right: 10px" styleClass="edit-button rounded-button ui-button-success" icon="pi pi-eye" process="@this"
+                            <p:commandButton style="margin-right: 10px" styleClass="rounded-button ui-button-help" icon="pi pi-eye" process="@this"
                                              actionListener="#{queueBean.redirectToOsimis(bitServerStudy.sid)}">
                             </p:commandButton>
 
-                            <p:commandButton style="margin-right: 10px" styleClass="edit-button rounded-button ui-button-success" icon="pi pi-file" process="@this"
-                                             onclick="PF('sidebar').show()" disabled="#{!queueBean.hasSelectedStudy()}">
+                            <p:commandButton ajax="false" style="margin-right: 10px"
+                                             styleClass="edit-button rounded-button ui-button-success"
+                                             icon="pi pi-file"
+                                             update=":seachform:sidebar"
+                                             disabled="#{!not empty bitServerStudy.result}">
+                                <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+
+                            <p:commandButton icon="pi pi-pencil" update=":seachform"
+                                             onclick="PF('sidebar').show()"
+                                             styleClass="rounded-button" process="@this"
+                                             disabled="#{not empty bitServerStudy.result}">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+
                         </p:column>
                     </p:dataTable>
 
@@ -192,8 +218,45 @@
                         </f:facet>
                     </p:dialog>
 
-                    <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="10000">
-                        <h3>Full Screen Sidebar</h3>
+                    <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="100">
+                        <h3>Описание исследования</h3>
+
+                        <div class="p-d-flex p-flex-column" style="margin-top: 10px">
+                            <div class="my_text" style="color: crimson; margin-bottom: 5px">Внимание! Пока это окно открыто, другие пользователи не видят данного исследования и не могут взять его на описание!</div>
+                            <div class="my_text" style="color: crimson; margin-bottom: 20px">После того, как вы нажмете "Сохранить" - результат отправится заказчику и вы больше не сможете просматривать это исследование!</div>
+                        </div>
+
+                        <p:textEditor widgetVar="editor" id="editorcomponent" secure="false" value="#{queueBean.selectedVisibleStudy.result}" height="200" placeholder="Enter your content">
+                            <f:facet name="toolbar">
+                                 <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <select class="ql-font"></select>
+                                    <select class="ql-size"></select>
+                                </span>
+                            </f:facet>
+                        </p:textEditor>
+
+                        <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
+                            <b>Сохранение результата:</b>
+                        </p:divider>
+
+                        <div>
+                            <p:commandButton value="Сохранить" icon="pi pi-check"
+                                             update=":seachform searchgrowl">
+                            </p:commandButton>
+
+                            <span style="padding: 20px;"> </span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('sidebar').hide()"
+                                             class="ui-button-secondary" update=":seachform">
+                            </p:commandButton>
+                        </div>
+
                     </p:sidebar>
 
                 </div>

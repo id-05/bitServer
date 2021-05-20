@@ -5,10 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
-import ru.CustomOrthancWebMorda.beans.dicom.Serie;
 import ru.CustomOrthancWebMorda.beans.dicom.Study;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -16,11 +17,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -365,6 +366,7 @@ public class QueueBean implements UserDao {
     }
 
     public void sendToAgent(){
+        PrimeFaces.current().executeScript("PF('statusDialog').show()");
         JsonObject query = new JsonObject();
         JsonObject queryDetails = new JsonObject();
         queryDetails.addProperty("PatientName", "Hello");
@@ -392,11 +394,11 @@ public class QueueBean implements UserDao {
             }else{
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" уже было отправлено ранее!",info);
             }
-
         }
         showMessage("Внимание","Всего отправлено: "+i,info);
         selectedVisibleStudies = null;
         dataoutput();
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows()");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
@@ -417,7 +419,28 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        System.out.println("osimis id for redirect "+sid);
         PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
+
+    public StreamedContent getResult(BitServerStudy study) throws IOException {
+        if(study.isTyperesult()){
+            Path path = Paths.get(study.getResult());
+            String extension = FilenameUtils.getExtension(study.getResult());
+            InputStream inputStream = new FileInputStream(path.toString());
+            System.out.println("path.toString() "+path.toString());
+            System.out.println("uri = "+Paths.get(study.getResult()).toUri().toString());
+            System.out.println("url = "+Paths.get(study.getResult()).toUri().toURL());
+            return DefaultStreamedContent.builder()
+                    .name(study.getPatientname()+"-"+study.getSdescription()+"."+extension)
+                    .contentType("image/jpg")
+                    .stream(() -> inputStream)
+                    .build();
+        }else{
+            PrimeFaces.current().executeScript("PF('sidebar').show()");
+            return null;
+        }
+    }
+
+
+
 }

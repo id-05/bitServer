@@ -14,11 +14,15 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import static ru.CustomOrthancWebMorda.beans.MainBean.info;
+import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
 @ManagedBean(name = "queueremoteBean", eager = false)
 @SessionScoped
@@ -33,6 +37,7 @@ public class QueueremoteBean implements UserDao {
     public String currentUserId;
     private UploadedFile resultFile;
     private String bufResult;
+    public static String authentication;
 
     public UploadedFile getResultFile() {
         return resultFile;
@@ -96,13 +101,28 @@ public class QueueremoteBean implements UserDao {
             selectedVisibleStudy.setResult(folder.toString()+"\\" + selectedVisibleStudy.getSid() + "." + extension);
         }else{
             selectedVisibleStudy.setTyperesult(false);
-            //selectedVisibleStudy.setResult(bufResult);
         }
         selectedVisibleStudy.setLocked(false);
+        //удаление исследования из орфанк
+        deleteStudyFromOrthanc(selectedVisibleStudy);
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('sidebar').hide()");
         showMessage("Информация","Заключение было прикреплено к исследованию! Статус исследования был изменен на 'Описано'",info);
         dataoutput();
+    }
+
+    public void deleteStudyFromOrthanc(BitServerStudy study) throws IOException {
+        String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
+        URL url = new URL(fulladdress + "/studies/" + study.getAnonimstudyid());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("DELETE");
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin() + ":" + mainServer.getPassword()).getBytes());
+        if(this.authentication != null){
+            conn.setRequestProperty("Authorization", "Basic " + this.authentication);
+        }
+        conn.getResponseMessage();
+        conn.disconnect();
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {
