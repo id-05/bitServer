@@ -111,8 +111,8 @@ public class MainBean {
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("192.168.1.58");//setIpaddress("185.59.139.156");//setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
-        mainServer.setPort("8042");//setPort("8142");
+        mainServer.setIpaddress("185.59.139.156");//setIpaddress("192.168.1.58");////setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
+        mainServer.setPort("8142");//setPort("8142");
         mainServer.setLogin("doctor");
         mainServer.setPassword("doctor");
         //mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");

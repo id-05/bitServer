@@ -77,9 +77,10 @@ public class AutoriseBean implements UserDao {
 
     public void validateUsernamePassword() throws IOException {
         currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
+        System.out.println(currentUser.getUname());
         if (currentUser.getUname()!=null) {
             HttpSession session = SessionUtils.getSession();
-            session.setAttribute("username", currentUser.getUid());
+            session.setAttribute("userid", currentUser.getUid());
             if(!currentUser.getuTheme().equals("")){
             currentuserTheme = currentUser.getuTheme();
             }else{

@@ -74,10 +74,10 @@
 
                             <label for="state" class="p-col-fixed" style="width:250px; font-size: large">Состояние исследования:</label>
                             <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px" >
-                                <f:selectItem itemLabel="Не описан" itemValue="Не описан" />
-                                <f:selectItem itemLabel="Отправлен на описание" itemValue="Отправлен на описание" />
-                                <f:selectItem itemLabel="Описан" itemValue="Описан"/>
-                                <f:selectItem itemLabel="Все" itemValue="Все"/>
+                                <f:selectItem itemLabel="Не описан" itemValue="0" />
+                                <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
+                                <f:selectItem itemLabel="Описан" itemValue="2"/>
+                                <f:selectItem itemLabel="Все" itemValue="5"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
                         </div>
@@ -89,7 +89,7 @@
                                 <f:selectItem itemLabel="Вчера " itemValue="yesterday"/>
                                 <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
                                 <f:selectItem itemLabel="Диапазон" itemValue="range"/>
-                                <f:selectItem itemLabel=" Все" itemValue="Все"/>
+                                <f:selectItem itemLabel=" Все" itemValue="all"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
                             <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-top: 10px; margin-left: 1em; margin-right: 1em">
@@ -163,8 +163,12 @@
                             <h:outputText value="#{bitServerStudy.sdescription}"/>
                         </p:column>
 
-                        <p:column headerText="Статус" sortBy="#{bitServerStudy.status}" style="text-align: center">
-                            <h:outputText value="#{bitServerStudy.status}"/>
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
+                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.rustatus}"/>
                         </p:column>
 
                         <p:column exportable="false" style="align-content: center; ">

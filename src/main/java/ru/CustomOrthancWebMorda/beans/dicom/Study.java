@@ -12,6 +12,7 @@ public class Study {
     private String studyDescription;
     private Date   date;
     private String accession;
+    private String modality;
     private String StudyOrthancId;
     private String ShortId;
     private String studyDateToStr;
@@ -72,9 +73,18 @@ public class Study {
         this.studyDateToStr = studyDateToStr;
     }
 
-    public Study(String studyDescription, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+    public String getModality() {
+        return modality;
+    }
+
+    public void setModality(String modality) {
+        this.modality = modality;
+    }
+
+    public Study(String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
         this.studyDescription = studyDescription;
         this.date = date;
+        this.modality = modality;
         this.ShortId = patientID;
         this.PatientName = patientName;
         this.PatientBirthDate = birthDate;

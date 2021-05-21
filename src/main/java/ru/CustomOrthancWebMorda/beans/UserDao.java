@@ -173,7 +173,7 @@ interface UserDao {
         session.close();
     }
 
-    public default List<BitServerStudy> getBitServerStudy(String state, String dateSeachType, Date firstdate, Date seconddate) {
+    public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -194,8 +194,8 @@ interface UserDao {
         }
         Query query = null;
 
-        if(state.equals("Все")){
-            if(dateSeachType.equals("Все")){
+        if(state==5){
+            if(dateSeachType.equals("all")){
                 String hql= "from BitServerStudy";
                 query = session.createQuery(hql);
             }else{
@@ -205,7 +205,7 @@ interface UserDao {
                 query.setParameter("todate", seconddate,DATE);
             }
         }else{
-            if(dateSeachType.equals("Все")){
+            if(dateSeachType.equals("all")){
                 String hql= "from BitServerStudy  where status=:pstatus";
                 query = session.createQuery(hql);
                 query.setParameter("pstatus", state);
@@ -230,7 +230,7 @@ interface UserDao {
         String hql= "from BitServerStudy  where usergroupwhosees=:pgroup and status=:pstatus";
         query = session.createQuery(hql);
         query.setParameter("pgroup", usergroup);
-        query.setParameter("pstatus", "Отправлен на описание");
+        query.setParameter("pstatus", 1);
         List<BitServerStudy> results = query.list();
         session.close();
         return results;

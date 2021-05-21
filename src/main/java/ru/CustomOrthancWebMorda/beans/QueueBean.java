@@ -10,6 +10,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
+import ru.CustomOrthancWebMorda.beans.dao.Users;
 import ru.CustomOrthancWebMorda.beans.dicom.Study;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -35,7 +36,7 @@ public class QueueBean implements UserDao {
     public String filtrDate = "today";
     public Date firstdate;
     public Date seconddate;
-    public String typeSeach = "Не описан";
+    public int typeSeach = 0;
     private static List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public static String authentication;
@@ -47,10 +48,10 @@ public class QueueBean implements UserDao {
     public List<Usergroup> usergroupList;
     public String selectedUserGroup;
     public List<String> usergroupListRuName;
-    public String currentUser;
+    public Users currentUser;
 
     public List<String> getUsergroupListRuName() {
-        usergroupListRuName = new ArrayList<String>();
+        usergroupListRuName = new ArrayList<>();
         for(Usergroup bufgroup:usergroupList){
             usergroupListRuName.add(bufgroup.getRuName());
         }
@@ -133,26 +134,26 @@ public class QueueBean implements UserDao {
         this.seconddate = seconddate;
     }
 
-    public String getTypeSeach() {
+    public int getTypeSeach() {
         return typeSeach;
     }
 
-    public void setTypeSeach(String typeSeach) {
+    public void setTypeSeach(int typeSeach) {
         this.typeSeach = typeSeach;
     }
 
     ////Status
-    /// Описан
-    /// Отправлен на описание
-    /// Не описан
+    /// Заблокирован на описание - 3
+    /// Описан - 2
+    /// Отправлен на описание - 1
+    /// Не описан - 0
 
     @PostConstruct
     public void init() {
 
         HttpSession session = SessionUtils.getSession();
-        currentUser = session.getAttribute("username").toString();
-        System.out.println("  currentUser   "+currentUser);
-
+        //currentUser = session.getAttribute("userid").toString();
+        currentUser = getUserById(session.getAttribute("userid").toString());
         System.out.println("QueueBean");
 
         firstdate = new Date();
@@ -205,7 +206,7 @@ public class QueueBean implements UserDao {
         JsonObject queryDetails = new JsonObject();
         String dateStr;
 
-        String dateStartFromBase = "20190101";
+        String dateStartFromBase = "20210101";
         seconddate = new Date();
         dateStr = dateStartFromBase + "-" + format.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
@@ -223,18 +224,21 @@ public class QueueBean implements UserDao {
         StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
 
-        Boolean existInTable = false;
+        System.out.print("получили ответ от сервера");
+        boolean existInTable = false;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(Study bS:studiesFromRestApi){
             existInTable = false;
             for(BitServerStudy bBSS:studiesFromTableBitServer){
-                if(bS.getOrthancId().equals(bBSS.getSid())){
+                if (bS.getOrthancId().equals(bBSS.getSid())) {
                     existInTable = true;
+                    break;
                 }
             }
             if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getDate(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","","Не описан");//,"","",null,"",null,"");
+                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getDate(),
+                        bS.getModality(), new Date(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","",0);
                 addStudyInBitServerStudyTable(buf);
             }
         }
@@ -282,8 +286,42 @@ public class QueueBean implements UserDao {
         return conn;
     }
 
+    public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
+        StringBuilder sb = null ;
+        try {
+            sb = new StringBuilder();
+            HttpURLConnection conn = makeGetConnection(apiUrl);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sb;
+    }
+
+    private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
+        HttpURLConnection conn  = null;
+        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
+        URL url = new URL(fulladdress+apiUrl);
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("GET");
+        if(authentication != null){
+            conn.setRequestProperty("Authorization", "Basic " + authentication);
+        }
+        conn.getResponseMessage();
+        return conn;
+    }
+
     private ArrayList<Study> getStudiesFromJson(String data) {
-        System.out.println(data);
+        //System.out.println(data);
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
@@ -299,21 +337,23 @@ public class QueueBean implements UserDao {
             String parentPatientID = studyData.get("ParentPatient").getAsString();
             String studyId = studyData.get("ID").getAsString();
             JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
-            String patientBirthDate = "N/A";
+            //String patientBirthDate = "N/A";
             String patientSex = "N/A";
             String patientName = "N/A";
             String patientId = "N/A";
-            String patientDobString = null;
+            String patientDobString = "N/A";
             Date patientDob = null;
 
             if (parentPatientDetails.has("PatientBirthDate")) {
                 patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
             }
 
-            try {
-                patientDob = format.parse(patientDobString);
-            } catch (Exception e) {
-                System.out.println("Errot to transfer date");
+            if(!patientDobString.equals("")){
+                try {
+                    patientDob = format.parse(patientDobString);
+                } catch (Exception e) {
+                    System.out.println("Errot to transfer date 1  "+parentPatientDetails);
+                }
             }
 
             if (parentPatientDetails.has("PatientSex")) {
@@ -327,6 +367,7 @@ public class QueueBean implements UserDao {
             if (parentPatientDetails.has("PatientID")) {
                 patientId = parentPatientDetails.get("PatientID").getAsString();
             }
+
             String accessionNumber = "N/A";
             if (studyDetails.has("AccessionNumber")) {
                 accessionNumber = studyDetails.get("AccessionNumber").getAsString();
@@ -343,7 +384,7 @@ public class QueueBean implements UserDao {
                 assert studyDate != null;
                 studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
-                System.out.println("Errot to transfer date");
+                System.out.println("Errot to transfer date 2");
             }
 
             try {
@@ -351,7 +392,7 @@ public class QueueBean implements UserDao {
                 assert studyDate != null;
                 studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
-                System.out.println("Errot to transfer date");
+                System.out.println("Errot to transfer date 3");
             }
 
             String studyDescription = "N/A";
@@ -359,7 +400,23 @@ public class QueueBean implements UserDao {
                 studyDescription = studyDetails.get("StudyDescription").getAsString();
             }
 
-            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            String studyModality = "N/A";
+            if (studyData.has("Series")) {
+                JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
+                String bufSerie = SeriesArray.get(0).getAsString();
+                StringBuilder sb = makeGetConnectionAndStringBuilder("/series/"+bufSerie);
+                JsonParser parserJsonSerie = new JsonParser();
+                JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
+                JsonObject serieMainDicomTags = null;
+                if (serie.has("MainDicomTags")) {
+                    serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
+                }
+                if (serieMainDicomTags.has("Modality")) {
+                    studyModality = serieMainDicomTags.get("Modality").getAsString();
+                    System.out.println(studyId);
+                }
+            }
+            Study studyObj = new Study(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }
         return studyList;
@@ -369,8 +426,8 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().executeScript("PF('statusDialog').show()");
         JsonObject query = new JsonObject();
         JsonObject queryDetails = new JsonObject();
-        queryDetails.addProperty("PatientName", "Hello");
-        queryDetails.addProperty("0010-1001", "World");
+        queryDetails.addProperty("PatientName", "ANONIM");
+        queryDetails.addProperty("0010-1001", "ANONIM");
         query.add("Replace", queryDetails);
         JsonArray queryArray = new JsonArray();
         queryArray.add("StudyDescription");
@@ -380,15 +437,15 @@ public class QueueBean implements UserDao {
         query.addProperty("DicomVersion","2017c");
         int i = 0;
         for(BitServerStudy bufStudy:selectedVisibleStudies){
-            if(!bufStudy.getStatus().equals("Отправлен на описание")) {
+            if((bufStudy.getStatus()!=1)&(bufStudy.getStatus()!=2)) {
                 StringBuilder sb = makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
                 JsonParser parserJson = new JsonParser();
                 JsonObject studies = (JsonObject) parserJson.parse(sb.toString());
                 bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
-                bufStudy.setStatus("Отправлен на описание");
+                bufStudy.setStatus(1);
                 bufStudy.setDatesent(new Date());
                 bufStudy.setUsergroupwhosees(selectedUserGroup);
-                bufStudy.setUserwhosent(currentUser);
+                bufStudy.setUserwhosent(currentUser.getUid().toString());
                 updateStudyInBitServerStudyTable(bufStudy);
                 i++;
             }else{
@@ -427,9 +484,6 @@ public class QueueBean implements UserDao {
             Path path = Paths.get(study.getResult());
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
-            System.out.println("path.toString() "+path.toString());
-            System.out.println("uri = "+Paths.get(study.getResult()).toUri().toString());
-            System.out.println("url = "+Paths.get(study.getResult()).toUri().toURL());
             return DefaultStreamedContent.builder()
                     .name(study.getPatientname()+"-"+study.getSdescription()+"."+extension)
                     .contentType("image/jpg")

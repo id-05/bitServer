@@ -102,21 +102,31 @@
                             <h:outputText value="#{bitServerStudy.sdescription}"/>
                         </p:column>
 
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
                         <p:column exportable="false" style="align-content: center; width:450px">
                             <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
                                              styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px"
                                              disabled="#{!not empty bitServerStudy.anamnes}">
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
                             <p:commandButton styleClass="rounded-button ui-button-help" icon="pi pi-eye" process="@this " style="margin-right: 10px"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
                                              actionListener="#{queueremoteBean.redirectToOsimis(bitServerStudy.anonimstudyid)}">
                             </p:commandButton>
 
                             <p:commandButton style="margin-right: 10px" icon="pi pi-pencil"
                                              styleClass="rounded-button"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
                                              oncomplete="PF('sidebar').show()" actionListener="#{queueremoteBean.lockedStudy}">
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                                             <p:confirm header="Внимание" message="Вы собираетесь взять это исследование на диагностику.
+                                             Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                             Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                             Срок блокировки исследования 24ч. После истечения этого времени, исследование будет автоматически разблокировано." />
                             </p:commandButton>
                         </p:column>
 
@@ -126,6 +136,18 @@
                               widgetVar="manageAnamnes" responsive="true">
                         <p:outputLabel value="#{queueremoteBean.selectedVisibleStudy.anamnes}" escape="false" style="word-break: break-all; width: 400px"/>
                     </p:dialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                        <f:facet name="message">
+                            <h:outputText value="Are you sure?" />
+                            <br />
+                            <h:outputText value="After line break" />
+                        </f:facet>
+
+                        <label for="nobutton" class="p-col-fixed" style="width:250px; font-size: large">Продолжить?  </label>
+                        <p:commandButton id="nobutton" value="Нет" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                        <p:commandButton value="Да" type="button" styleClass="ui-confirmdialog-yes" />
+                    </p:confirmDialog>
 
                     <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="100">
                         <h3>Описание исследования</h3>

@@ -13,14 +13,17 @@ public class BitServerStudy {
     private Long id;
     private String sid;
     private String shortid;
+    private String modality;
     private String sdescription;
     private Date sdate;
+    private Date dateaddinbase;
     private String patientname;
     private Date patientbirthdate;
     private String patientsex;
     private String anamnes;
     private String result;
-    private String status;
+    private int status;
+    private String rustatus;
     private String anonimstudyid;
     private String userwhosent;
     private Date datesent;
@@ -28,15 +31,14 @@ public class BitServerStudy {
     private Date dateresult;
     private String usergroupwhosees;
     private boolean typeresult;
-    private boolean locked;
 
-
-
-    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, String status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
+    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
         this.shortid = shortid;
         this.sdescription = sdescription;
         this.sdate = sdate;
+        this.modality = modality;
+        this.dateaddinbase = dateaddinbase;
         this.patientname = patientname;
         this.patientbirthdate = patientbirthdate;
         this.patientsex = patientsex;
@@ -57,14 +59,6 @@ public class BitServerStudy {
 
     public void setTyperesult(boolean typeresult) {
         this.typeresult = typeresult;
-    }
-
-    public boolean isLocked() {
-        return locked;
-    }
-
-    public void setLocked(boolean locked) {
-        this.locked = locked;
     }
 
     public void setId(Long id) {
@@ -91,6 +85,14 @@ public class BitServerStudy {
         this.shortid = shortid;
     }
 
+    public String getModality() {
+        return modality;
+    }
+
+    public void setModality(String modality) {
+        this.modality = modality;
+    }
+
     public String getSdescription() {
         return sdescription;
     }
@@ -105,6 +107,14 @@ public class BitServerStudy {
 
     public void setSdate(Date sdate) {
         this.sdate = sdate;
+    }
+
+    public Date getDateaddinbase() {
+        return dateaddinbase;
+    }
+
+    public void setDateaddinbase(Date dateaddinbase) {
+        this.dateaddinbase = dateaddinbase;
     }
 
     public String getPatientname() {
@@ -147,12 +157,32 @@ public class BitServerStudy {
         this.result = result;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getRustatus() {
+        switch (status){
+            case 0: this.rustatus = "Не описан";
+                break;
+            case 1: this.rustatus = "Отправлен на описание";
+                break;
+            case 2: this.rustatus = "Описан";
+                break;
+            case 3: this.rustatus = "Заблокирован для описания";
+                break;
+            default: break;
+        }
+        return rustatus;
+    }
+
+    public void setRustatus(String rustatus) {
+
+        this.rustatus = rustatus;
     }
 
     public String getAnonimstudyid() {

@@ -350,7 +350,7 @@ public class SearchBean {
             if(studyDetails.has("StudyDescription")){
                 studyDescription=studyDetails.get("StudyDescription").getAsString();
             }
-            Study studyObj = new Study(studyDescription, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            Study studyObj = new Study(studyDescription, "", studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
                 Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);

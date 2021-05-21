@@ -10,6 +10,7 @@ import ru.CustomOrthancWebMorda.beans.dao.Users;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -24,11 +25,11 @@ import java.util.*;
 import static ru.CustomOrthancWebMorda.beans.MainBean.info;
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
-@ManagedBean(name = "queueremoteBean", eager = false)
-@SessionScoped
+@ManagedBean(name = "queueremoteBean", eager = true)
+@RequestScoped
 public class QueueremoteBean implements UserDao {
 
-    private static List<String> selectedModaliti = new ArrayList<>();;
+    private static List<String> selectedModaliti = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
     private BitServerStudy selectedVisibleStudy;
     public List<Usergroup> usergroupList;
@@ -36,8 +37,15 @@ public class QueueremoteBean implements UserDao {
     public Users currentUser;
     public String currentUserId;
     private UploadedFile resultFile;
-    private String bufResult;
     public static String authentication;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public UploadedFile getResultFile() {
         return resultFile;
@@ -67,7 +75,7 @@ public class QueueremoteBean implements UserDao {
     public void init() {
         selectedVisibleStudy = new BitServerStudy();
         HttpSession session = SessionUtils.getSession();
-        currentUserId = session.getAttribute("username").toString();
+        currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         System.out.println("QueueremoteBean");
         usergroupList = getActiveBitServerUsergroupList();
@@ -77,14 +85,14 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void dataoutput() {
-        currentUser = getUserById(currentUserId);
         visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getGroupUser());
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
     public void addResult() throws IOException {
-        selectedVisibleStudy.setStatus("Описан");
+        selectedVisibleStudy.setStatus(2);
         selectedVisibleStudy.setUserwhodiagnost(currentUserId);
+        System.out.println(new Date());
         selectedVisibleStudy.setDateresult(new Date());
         if(resultFile!=null){
             Path folder = Paths.get(MainBean.pathToSaveResult);
@@ -102,7 +110,7 @@ public class QueueremoteBean implements UserDao {
         }else{
             selectedVisibleStudy.setTyperesult(false);
         }
-        selectedVisibleStudy.setLocked(false);
+        //selectedVisibleStudy.setLocked(false);
         //удаление исследования из орфанк
         deleteStudyFromOrthanc(selectedVisibleStudy);
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
