@@ -7,6 +7,8 @@ import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 import ru.CustomOrthancWebMorda.beans.dao.Usergroup;
 import ru.CustomOrthancWebMorda.beans.dao.Users;
+import ru.CustomOrthancWebMorda.beans.util.OrthancRestApi;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -26,10 +28,10 @@ import static ru.CustomOrthancWebMorda.beans.MainBean.info;
 import static ru.CustomOrthancWebMorda.beans.MainBean.mainServer;
 
 @ManagedBean(name = "queueremoteBean", eager = true)
-@RequestScoped
+@SessionScoped
 public class QueueremoteBean implements UserDao {
 
-    private static List<String> selectedModaliti = new ArrayList<>();
+    //private static List<String> selectedModaliti = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
     private BitServerStudy selectedVisibleStudy;
     public List<Usergroup> usergroupList;
@@ -37,7 +39,7 @@ public class QueueremoteBean implements UserDao {
     public Users currentUser;
     public String currentUserId;
     private UploadedFile resultFile;
-    public static String authentication;
+    private OrthancRestApi connection;
 
     public Users getCurrentUser() {
         return currentUser;
@@ -80,6 +82,7 @@ public class QueueremoteBean implements UserDao {
         System.out.println("QueueremoteBean");
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
+        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         dataoutput();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
@@ -92,7 +95,7 @@ public class QueueremoteBean implements UserDao {
     public void addResult() throws IOException {
         selectedVisibleStudy.setStatus(2);
         selectedVisibleStudy.setUserwhodiagnost(currentUserId);
-        System.out.println(new Date());
+        System.out.println("sid = "+selectedVisibleStudy.getSid());
         selectedVisibleStudy.setDateresult(new Date());
         if(resultFile!=null){
             Path folder = Paths.get(MainBean.pathToSaveResult);
@@ -112,25 +115,11 @@ public class QueueremoteBean implements UserDao {
         }
         //selectedVisibleStudy.setLocked(false);
         //удаление исследования из орфанк
-        deleteStudyFromOrthanc(selectedVisibleStudy);
+        connection.deleteStudyFromOrthanc(selectedVisibleStudy);
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('sidebar').hide()");
         showMessage("Информация","Заключение было прикреплено к исследованию! Статус исследования был изменен на 'Описано'",info);
         dataoutput();
-    }
-
-    public void deleteStudyFromOrthanc(BitServerStudy study) throws IOException {
-        String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
-        URL url = new URL(fulladdress + "/studies/" + study.getAnonimstudyid());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("DELETE");
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin() + ":" + mainServer.getPassword()).getBytes());
-        if(this.authentication != null){
-            conn.setRequestProperty("Authorization", "Basic " + this.authentication);
-        }
-        conn.getResponseMessage();
-        conn.disconnect();
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {

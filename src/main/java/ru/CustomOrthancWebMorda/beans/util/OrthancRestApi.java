@@ -1,6 +1,9 @@
-package ru.CustomOrthancWebMorda.beans;
+package ru.CustomOrthancWebMorda.beans.util;
+
+import ru.CustomOrthancWebMorda.beans.dao.BitServerStudy;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -96,6 +99,20 @@ public class OrthancRestApi {
         os.flush();
         conn.getResponseMessage();
         return conn;
+    }
+
+    public void deleteStudyFromOrthanc(BitServerStudy study) throws IOException {
+        String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
+        URL url = new URL(fulladdress + "/studies/" + study.getAnonimstudyid());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("DELETE");
+        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin() + ":" + mainServer.getPassword()).getBytes());
+        if(this.authentication != null){
+            conn.setRequestProperty("Authorization", "Basic " + this.authentication);
+        }
+        conn.getResponseMessage();
+        conn.disconnect();
     }
 
 }

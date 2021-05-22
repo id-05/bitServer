@@ -121,12 +121,13 @@
                             <p:commandButton style="margin-right: 10px" icon="pi pi-pencil"
                                              styleClass="rounded-button"
                                              disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
-                                             oncomplete="PF('sidebar').show()" actionListener="#{queueremoteBean.lockedStudy}">
-                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                                             oncomplete="PF('sidebar').show()"
+                                             actionListener="#{queueremoteBean.lockedStudy}">
                                              <p:confirm header="Внимание" message="Вы собираетесь взять это исследование на диагностику.
                                              Оно будет заблокировано и не доступно для анализа другим пользователям.
                                              Вы не сможете приступить к другим исследованиям пока не опишите это.
                                              Срок блокировки исследования 24ч. После истечения этого времени, исследование будет автоматически разблокировано." />
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                         </p:column>
 
