@@ -49,6 +49,7 @@ public class QueueBean implements UserDao {
     public String selectedUserGroup;
     public List<String> usergroupListRuName;
     public Users currentUser;
+    OrthancRestApi connection;
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
@@ -155,7 +156,7 @@ public class QueueBean implements UserDao {
         //currentUser = session.getAttribute("userid").toString();
         currentUser = getUserById(session.getAttribute("userid").toString());
         System.out.println("QueueBean");
-
+        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         firstdate = new Date();
         seconddate = new Date();
         selectedModaliti.clear();
@@ -206,7 +207,7 @@ public class QueueBean implements UserDao {
         JsonObject queryDetails = new JsonObject();
         String dateStr;
 
-        String dateStartFromBase = "20210101";
+        String dateStartFromBase = "20190101";
         seconddate = new Date();
         dateStr = dateStartFromBase + "-" + format.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
@@ -221,7 +222,7 @@ public class QueueBean implements UserDao {
 
    //     {"Level":"Studies","CaseSensitive":false,"Expand":true,"Limit":0,"Query":{"StudyDate":"20210101-20210516","PatientID":"*","Modality":"CR\\CT\\MR\\NM\\PT\\US\\XA\\CR\\MG\\DX\\"}}
 
-        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
 
         System.out.print("получили ответ от сервера");
@@ -245,79 +246,6 @@ public class QueueBean implements UserDao {
 
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
-    }
-
-    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
-        StringBuilder sb = null;
-        try {
-            sb = new StringBuilder();
-            HttpURLConnection conn = makePostConnection(apiUrl, post);
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                int i = output.indexOf("}");
-                sb.append(output);
-            }
-            conn.disconnect();
-            conn.getResponseMessage();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sb;
-    }
-
-    public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
-        String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
-        HttpURLConnection conn = null;
-        URL url = new URL(fulladdress + apiUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin() + ":" + mainServer.getPassword()).getBytes());
-        if (authentication != null) {
-            conn.setRequestProperty("Authorization", "Basic " + authentication);
-        }
-        OutputStream os = conn.getOutputStream();
-        os.write(post.getBytes());
-        os.flush();
-        conn.getResponseMessage();
-        return conn;
-    }
-
-    public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
-        StringBuilder sb = null ;
-        try {
-            sb = new StringBuilder();
-            HttpURLConnection conn = makeGetConnection(apiUrl);
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            conn.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sb;
-    }
-
-    private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
-        HttpURLConnection conn  = null;
-        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
-        URL url = new URL(fulladdress+apiUrl);
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("GET");
-        if(authentication != null){
-            conn.setRequestProperty("Authorization", "Basic " + authentication);
-        }
-        conn.getResponseMessage();
-        return conn;
     }
 
     private ArrayList<Study> getStudiesFromJson(String data) {
@@ -404,7 +332,7 @@ public class QueueBean implements UserDao {
             if (studyData.has("Series")) {
                 JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
                 String bufSerie = SeriesArray.get(0).getAsString();
-                StringBuilder sb = makeGetConnectionAndStringBuilder("/series/"+bufSerie);
+                StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
                 JsonParser parserJsonSerie = new JsonParser();
                 JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
                 JsonObject serieMainDicomTags = null;
@@ -438,7 +366,7 @@ public class QueueBean implements UserDao {
         int i = 0;
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             if((bufStudy.getStatus()!=1)&(bufStudy.getStatus()!=2)) {
-                StringBuilder sb = makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
+                StringBuilder sb = connection.makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
                 JsonParser parserJson = new JsonParser();
                 JsonObject studies = (JsonObject) parserJson.parse(sb.toString());
                 bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
