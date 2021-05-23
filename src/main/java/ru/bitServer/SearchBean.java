@@ -5,9 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dicom.Patient;
-import ru.bitServer.dicom.Study;
-
+import ru.bitServer.dicom.OrthancPatient;
+import ru.bitServer.dicom.OrthancStudy;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -37,7 +36,7 @@ public class SearchBean {
     public String searchName;
     private static String searchDate;
     public static int searchType = 1;//имя пациента
-    public static ArrayList<Patient> patients = new ArrayList<>();
+    public static ArrayList<OrthancPatient> patients = new ArrayList<>();
     public static int seachCount;
     //private final JsonParser parserJson = new JsonParser();
     private final SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
@@ -87,11 +86,11 @@ public class SearchBean {
         this.seachCount = seachCount;
     }
 
-    public ArrayList<Patient> getPatients() {
+    public ArrayList<OrthancPatient> getPatients() {
         return patients;
     }
 
-    public void setPatients(ArrayList<Patient> patients) {
+    public void setPatients(ArrayList<OrthancPatient> patients) {
         this.patients = patients;
     }
 
@@ -218,7 +217,7 @@ public class SearchBean {
         //System.out.println(sb);
         String buf = sb.toString();
         getPatientsFromJson(buf);
-        patients.sort(Comparator.comparing(Patient::getName));
+        patients.sort(Comparator.comparing(OrthancPatient::getName));
         seachCount = patients.size();
         PrimeFaces.current().ajax().update(":seachform:dt-patients");
     }
@@ -284,7 +283,7 @@ public class SearchBean {
     }
 
     private void getPatientsFromJson(String data){
-        HashMap<String, Patient> patientMap = new HashMap<>();
+        HashMap<String, OrthancPatient> patientMap = new HashMap<>();
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
@@ -350,10 +349,10 @@ public class SearchBean {
             if(studyDetails.has("StudyDescription")){
                 studyDescription=studyDetails.get("StudyDescription").getAsString();
             }
-            Study studyObj = new Study(studyDescription, "", studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            OrthancStudy studyObj = new OrthancStudy(studyDescription, "", studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
-                Patient patient = new Patient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);
+                OrthancPatient patient = new OrthancPatient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);
                 patient.addStudy(studyObj);
                 patientMap.put(parentPatientID, patient);
                 switch (searchType){
@@ -373,7 +372,7 @@ public class SearchBean {
                     default:break;
                 }
             }else {
-                Patient patient = patientMap.get(parentPatientID);
+                OrthancPatient patient = patientMap.get(parentPatientID);
                 patient.addStudy(studyObj);
                 int buf = patient.getStudyCount();
                 patient.setStudyCount(buf+1);

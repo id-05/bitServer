@@ -2,7 +2,7 @@ package ru.bitServer.dicom;
 
 import com.google.gson.JsonArray;
 
-public class Serie {
+public class OrthancSerie {
 
     private String serieDescription;
     private int nbInstances;
@@ -35,17 +35,17 @@ public class Serie {
         return this.seriesNumber;
     }
 
-    public Serie(){
+    public OrthancSerie(){
 
     }
 
-    public Serie(String seriesDescription, String seriesNumber, String serieId) {
+    public OrthancSerie(String seriesDescription, String seriesNumber, String serieId) {
         this.serieDescription = seriesDescription;
         this.id = serieId;
         this.seriesNumber=seriesNumber;
     }
 
-    public Serie(String seriesDescription, String seriesNumber, JsonArray instances, int size, String serieId) {
+    public OrthancSerie(String seriesDescription, String seriesNumber, JsonArray instances, int size, String serieId) {
         this.serieDescription = seriesDescription;
         this.instances = instances;
         this.nbInstances = size;

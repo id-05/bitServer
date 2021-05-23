@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Study {
+public class OrthancStudy {
 
     private String studyDescription;
     private Date   date;
@@ -17,7 +17,7 @@ public class Study {
     private String PatientName;
     private String PatientSex;
     private Date PatientBirthDate;
-    private List<Serie> Series;
+    private List<OrthancSerie> series;
 
     public String getShortId() {
         return ShortId;
@@ -51,15 +51,15 @@ public class Study {
         PatientBirthDate = patientBirthDate;
     }
 
-    public Study(String s, String s1, String s2) {
+    public OrthancStudy(String s, String s1, String s2) {
     }
 
-    public List<Serie> getSeries() {
-        return Series;
+    public List<OrthancSerie> getSeries() {
+        return series;
     }
 
-    public void setSeries(List<Serie> series) {
-        Series = series;
+    public void setSeries(List<OrthancSerie> series) {
+        this.series = series;
     }
 
 
@@ -79,7 +79,7 @@ public class Study {
         this.modality = modality;
     }
 
-    public Study(String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+    public OrthancStudy(String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
         this.studyDescription = studyDescription;
         this.date = date;
         this.modality = modality;
@@ -91,18 +91,18 @@ public class Study {
         this.StudyOrthancId = StudyOrthancId;
         SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
         this.studyDateToStr = format.format(date);
-        this.Series = new ArrayList<>();
+        this.series = new ArrayList<>();
     }
     
 
-    public Study(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
+    public OrthancStudy(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
         this.studyDescription = studyDescription;
         this.date = studyDateObject;
         this.accession = accessionNumber;
         this.StudyOrthancId = studyId;
         SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
         this.studyDateToStr = format.format(date);
-        this.Series = new ArrayList<>();
+        this.series = new ArrayList<>();
     }
 
     public String getStudyDescription() {

@@ -12,7 +12,7 @@ import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
-import ru.bitServer.dicom.Study;
+import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 
@@ -41,7 +41,7 @@ public class QueueBean implements UserDao {
     public int typeSeach = 0;
     private static List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-    public ArrayList<Study> studiesFromRestApi = new ArrayList<>();
+    public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
     private List<BitServerStudy> selectedVisibleStudies;
@@ -229,7 +229,7 @@ public class QueueBean implements UserDao {
         boolean existInTable = false;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
-        for(Study bS:studiesFromRestApi){
+        for(OrthancStudy bS:studiesFromRestApi){
             existInTable = false;
             for(BitServerStudy bBSS:studiesFromTableBitServer){
                 if (bS.getOrthancId().equals(bBSS.getSid())) {
@@ -248,11 +248,11 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-    private ArrayList<Study> getStudiesFromJson(String data) {
+    private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
-        ArrayList<Study> studyList = new ArrayList<>();
+        ArrayList<OrthancStudy> studyList = new ArrayList<>();
         studyList.clear();
 
         while (studiesIterator.hasNext()) {
@@ -342,7 +342,7 @@ public class QueueBean implements UserDao {
                     System.out.println(studyId);
                 }
             }
-            Study studyObj = new Study(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            OrthancStudy studyObj = new OrthancStudy(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }
         return studyList;

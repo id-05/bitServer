@@ -2,14 +2,14 @@ package ru.bitServer.dicom;
 
 import java.util.HashMap;
 
-public class Patient {
+public class OrthancPatient {
 
     public String name;
     private String patientId;
     private String orthancID;
     private String birthDate;
     private String sex;
-    private HashMap<String, Study> childStudies;
+    private HashMap<String, OrthancStudy> childStudies;
     private int studyCount;
 
     public int getStudyCount() {
@@ -20,15 +20,15 @@ public class Patient {
         this.studyCount = studyCount;
     }
 
-    public HashMap<String, Study> getChildStudies() {
+    public HashMap<String, OrthancStudy> getChildStudies() {
         return childStudies;
     }
 
-    public void setChildStudies(HashMap<String, Study> childStudies) {
+    public void setChildStudies(HashMap<String, OrthancStudy> childStudies) {
         this.childStudies = childStudies;
     }
 
-    public Patient(String name, String patientId, String birthDate, String sex, String orthancID, int studyCount) {
+    public OrthancPatient(String name, String patientId, String birthDate, String sex, String orthancID, int studyCount) {
         this.name = name;
         this.patientId = patientId;
         this.orthancID = orthancID;
@@ -57,7 +57,7 @@ public class Patient {
         return this.sex;
     }
 
-    public void addStudy(Study study) {
+    public void addStudy(OrthancStudy study) {
         if(childStudies==null) {
             childStudies= new HashMap<>();
         }

@@ -78,7 +78,11 @@
         </dependency>
 
 
-
+        <dependency>
+            <groupId>dcm4che</groupId>
+            <artifactId>dcm4che-imageio</artifactId>
+            <version>2.0.24</version>
+        </dependency>
 
     </dependencies>
 
@@ -90,6 +94,21 @@
             <name>PrimeFaces Maven Repository</name>
             <url>http://repository.primefaces.org</url>
             <layout>default</layout>
+        </repository>
+
+        <repository>
+            <id>dcm4che</id>
+            <name>dcm4che Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
+        </repository>
+        <repository>
+            <id>java.net</id>
+            <name>java.net Repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+        <repository>
+            <id>weasis</id>
+            <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url>
         </repository>
     </repositories>
 

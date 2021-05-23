@@ -9,6 +9,7 @@
         <webroots>
           <root url="file://$MODULE_DIR$/webapp" relative="/" />
         </webroots>
+        <sourceRoots />
       </configuration>
     </facet>
     <facet type="hibernate" name="Hibernate">
@@ -21,7 +22,9 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="bitServer" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
@@ -67,5 +70,9 @@
     <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-runtime:3.0.7" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.staxex:stax-ex:1.8" level="project" />
     <orderEntry type="library" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.15" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-imageio:2.0.24" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-core:2.0.24" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-image:2.0.24" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
   </component>
 </module>
