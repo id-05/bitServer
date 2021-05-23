@@ -71,6 +71,13 @@
             <version>8.0.25</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.4.31.Final</version>
+        </dependency>
+
+
 
 
     </dependencies>

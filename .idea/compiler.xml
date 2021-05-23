@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CustomOrthancWebMorda" />
+        <module name="bitServer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="CustomOrthancWebMorda" target="8" />
+      <module name="bitServer" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

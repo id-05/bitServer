@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+            <script type="text/javascript">
+                //<![CDATA[
+                function dateTemplateFunc(date) {
+                    return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+                }
+
+                //]]>
+            </script>
+
+            <style type="text/css">
+                .value {
+                    font-weight: bold;
+                }
+            </style>
+
+
+        <h:form id="seachform">
+
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="homePage" icon="pi pi-backward"/>
+
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+
+            <p:panel id="panel1" header="Поиск" footer="Результатов поиска: #{searchBean.seachCount}">
+                <div style="align-content: center">
+                    <p:card style="margin-bottom: 2em">
+
+                        <div class="p-grid">
+                            <p:panelGrid columns="2" layout="grid">
+                                <p:selectOneMenu id="longItemLabel" value="#{searchBean.searchType}">
+                                    <f:selectItem itemLabel="Имя пациента" itemValue="1"/>
+                                    <f:selectItem itemLabel="ID пациента" itemValue="0"/>
+                                    <p:ajax event="change" listener="#{searchBean.onTypeSearchSelect}"/>
+                                </p:selectOneMenu>
+                                <p:inputText id="searchId" style="alignment: left; width: 300px" value="#{searchBean.searchId}">
+                                    <p:ajax event="change"/>
+                                </p:inputText>
+                            </p:panelGrid>
+                        </div>
+
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
+                            <p:outputLabel style="font-size: large" value="Дата исследования:"/>
+                            <p:selectOneButton id="oneButton" value="#{searchBean.searchDate}" style="margin-left: 1em; margin-right: 1em">
+                                <f:selectItem itemLabel="Сегодня" itemValue="today" />
+                                <f:selectItem itemLabel="Вчера" itemValue="yesterday"/>
+                                <f:selectItem itemLabel="Точная дата" itemValue="targetdate"/>
+                                <f:selectItem itemLabel="Диапазон" itemValue="range"/>
+                                <p:ajax event="change" />
+                            </p:selectOneButton>
+                            <p:datePicker id="firstDate" value="#{searchBean.firstdate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                <p:ajax event="dateSelect" listener="#{searchBean.firstDateSelect}"/>
+                            </p:datePicker>
+                            <p:datePicker id="secondDate" value="#{searchBean.seconddate}" showIcon="true" style="margin-left: 1em; margin-right: 1em">
+                                <p:ajax event="dateSelect" listener="#{searchBean.secondDateSelect}"/>
+                            </p:datePicker>
+                        </div>
+
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
+                            <p:selectManyButton value="#{searchBean.selectedModaliti}">
+                                <f:selectItem itemLabel="CR" itemValue="CR"/>
+                                <f:selectItem itemLabel="CT" itemValue="CT"/>
+                                <f:selectItem itemLabel="MR" itemValue="MR"/>
+                                <f:selectItem itemLabel="NM" itemValue="NM"/>
+                                <f:selectItem itemLabel="PT" itemValue="PT"/>
+                                <f:selectItem itemLabel="US" itemValue="US"/>
+                                <f:selectItem itemLabel="XA" itemValue="XA"/>
+                                <f:selectItem itemLabel="MG" itemValue="MG"/>
+                                <f:selectItem itemLabel="DX" itemValue="DX"/>
+                                <p:ajax event="change"/>
+                            </p:selectManyButton>
+                        </div>
+
+                        <div class="p-m-2">
+                            <p:commandButton class="p-mb-2" value="Поиск" immediate="true" icon="pi pi-search" actionListener="#{searchBean.seach}"
+                                             update="@(form)"
+                                             styleClass="ui-button-success" style="margin-right: .5rem">
+                            </p:commandButton>
+                        </div>
+                    </p:card>
+
+                </div>
+            </p:panel>
+
+            <p:dataScroller  id="dt-patients" value="#{searchBean.patients}" var="patient" chunkSize="10">
+                <f:facet name="header">
+                    Результаты поиска
+                </f:facet>
+
+                <p:accordionPanel activeIndex="-1">
+                    <p:tab title="#{patient.name}">
+
+                        <div class="p-d-flex">
+                            <div class="p-col-1; p-mb-2 p-mr-2">
+                                <p:card style="width: 25rem; margin-bottom: 2em">
+                                    <f:facet name="title">
+                                        <i class="pi pi-user"> </i>
+                                    </f:facet>
+
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
+                                        <p:outputLabel id="birthday" type="text" value="#{patient.patientBirthDate}"/>
+                                        <p:tooltip for="birthday" value="Дата рождения" showEffect="clip" hideEffect="clip" />
+                                    </div>
+
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
+                                        <p:outputLabel id="lastname" type="text" value="#{patient.patientId}"/>
+                                        <p:tooltip for="lastname" value="ID Исследования" showEffect="clip" hideEffect="clip" />
+                                    </div>
+
+                                    <div class="p-col; p-text-bold; p-mb-2 p-mr-2">
+                                        <p:outputLabel id="male" type="text" value="#{patient.patientSex}"/>
+                                        <p:tooltip for="male" value="Пол" showEffect="clip" hideEffect="clip" />
+                                    </div>
+
+                                </p:card>
+                            </div>
+
+
+                            <div class="p-col-1; p-mb-2 p-mr-2">
+                                <p:card style="width: 25rem; margin-bottom: 2em">
+                                    <f:facet name="title">
+                                        <p:outputLabel type="text" value="Всего иcследований:  #{patient.studyCount}" />
+                                    </f:facet>
+                                    <p:commandButton action="#{searchBean.redirectPatientPanel(patient.patientOrthancId)}" value="Открыть"/>
+                                </p:card>
+                            </div>
+
+                        </div>
+                    </p:tab>
+                </p:accordionPanel>
+            </p:dataScroller>
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

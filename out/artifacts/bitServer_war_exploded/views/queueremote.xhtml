@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style type="text/css">
+            .value {
+                font-weight: bold;
+            }
+
+            .ui-datatable.home {
+                border : none;
+            }
+
+            .ui-datatable2 .ui-datatable-data td{
+                border: none;
+            }
+
+            .my_text
+            {
+                font-family:    Arial, Helvetica, sans-serif;
+                font-weight: bold;
+            }
+
+        </style>
+
+
+        <h:form id="seachform" enctype="multipart/form-data">
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="remoteuser" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
+
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+                <div style="align-content: center">
+                    <p:toolbar>
+                        <p:toolbarGroup align="right">
+                            <p:commandButton value="Обновить" actionListener="#{queueremoteBean.dataoutput}"
+                                             process="@this" update="searchgrowl"
+                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{queueremoteBean.visibleStudiesList}"
+                                 reflow="true" styleClass="borderless"
+                                 emptyMessage="Нет записей для отображения"
+                                 rowKey="#{bitServerStudy.sid}" paginator="true"
+                                 rows="25" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Исследования</span>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.shortid}"/>
+                        </p:column>
+
+                        <p:column headerText="Пол"  style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientsex}"/>
+
+                        </p:column>
+
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdescription}"/>
+                        </p:column>
+
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
+                        <p:column exportable="false" style="align-content: center; width:450px">
+                            <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                                             styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px"
+                                             disabled="#{!not empty bitServerStudy.anamnes}">
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+
+                            <p:commandButton styleClass="rounded-button ui-button-help" icon="pi pi-eye" process="@this " style="margin-right: 10px"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
+                                             actionListener="#{queueremoteBean.redirectToOsimis(bitServerStudy.anonimstudyid)}">
+                            </p:commandButton>
+
+                            <p:commandButton style="margin-right: 10px" icon="pi pi-pencil"
+                                             styleClass="rounded-button"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
+                                             oncomplete="PF('sidebar').show()"
+                                             actionListener="#{queueremoteBean.lockedStudy}">
+                                             <p:confirm header="Внимание" message="Вы собираетесь взять это исследование на диагностику.
+                                             Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                             Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                             Срок блокировки исследования 24ч. После истечения этого времени, исследование будет автоматически разблокировано." />
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                              widgetVar="manageAnamnes" responsive="true">
+                        <p:outputLabel value="#{queueremoteBean.selectedVisibleStudy.anamnes}" escape="false" style="word-break: break-all; width: 400px"/>
+                    </p:dialog>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+                        <f:facet name="message">
+                            <h:outputText value="Are you sure?" />
+                            <br />
+                            <h:outputText value="After line break" />
+                        </f:facet>
+
+                        <label for="nobutton" class="p-col-fixed" style="width:250px; font-size: large">Продолжить?  </label>
+                        <p:commandButton id="nobutton" value="Нет" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                        <p:commandButton value="Да" type="button" styleClass="ui-confirmdialog-yes" />
+                    </p:confirmDialog>
+
+                    <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="100">
+                        <h3>Описание исследования</h3>
+
+                        <div class="p-d-flex p-flex-column" style="margin-top: 10px">
+                            <div class="my_text" style="color: crimson; margin-bottom: 5px">Внимание! Пока это окно открыто, другие пользователи не видят данного исследования и не могут взять его на описание!</div>
+                            <div class="my_text" style="color: crimson; margin-bottom: 20px">После того, как вы нажмете "Сохранить" - результат отправится заказчику и вы больше не сможете просматривать это исследование!</div>
+                        </div>
+
+                        <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
+                            <b>Загрузить готовый файл:</b>
+                        </p:divider>
+
+                        <p:fileUpload widgetVar="uploadResultFile"
+                                      skinSimple="true"
+                                      mode="advanced"
+                                      multiple="false"
+                                      label="Обзор"
+                                      uploadLabel="Сохранить и закрыть"
+                                      cancelLabel="Отмена"
+                                      dragDropSupport="true"
+                                      fileLimit="1"
+                                      update="@this :seachform:editorcomponent searchgrowl"
+                                      sizeLimit="10240000" allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
+                                      invalidSizeMessage="Maximum file size allowed is 10 MB"
+                                      invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
+                                      listener="#{queueremoteBean.handleFileUpload}"/>
+
+                        <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
+                            <b>Ввести вручную:</b>
+                        </p:divider>
+
+                        <p:textEditor widgetVar="editor" id="editorcomponent" disabled="#{not empty queueremoteBean.resultFile.fileName}" secure="false" value="#{queueremoteBean.selectedVisibleStudy.result}" height="200" placeholder="Enter your content">
+                            <f:facet name="toolbar">
+                                 <span class="ql-formats">
+                                    <button class="ql-bold"></button>
+                                    <button class="ql-italic"></button>
+                                    <button class="ql-underline"></button>
+                                    <button class="ql-strike"></button>
+                                </span>
+                                <span class="ql-formats">
+                                    <select class="ql-font"></select>
+                                    <select class="ql-size"></select>
+                                </span>
+                            </f:facet>
+                        </p:textEditor>
+
+                        <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
+                            <b>Сохранение результата:</b>
+                        </p:divider>
+                       
+                        <div>
+                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueremoteBean.addResult}"
+                                             update=":seachform searchgrowl">
+                            </p:commandButton>
+
+                            <span style="padding: 20px;"> </span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('sidebar').hide()"
+                                             class="ui-button-secondary" update=":seachform">
+                            </p:commandButton>
+                        </div>
+                        
+                    </p:sidebar>
+
+                </div>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

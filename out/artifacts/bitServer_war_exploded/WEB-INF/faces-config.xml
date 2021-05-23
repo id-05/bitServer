@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+    http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+
+        <navigation-case>
+            <from-outcome>queue</from-outcome>
+            <to-view-id>/views/queue.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>queueremote</from-outcome>
+            <to-view-id>/views/queueremote.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>autorisePage</from-outcome>
+            <to-view-id>/views/login.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>homePage</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>searchPage</from-outcome>
+            <to-view-id>/views/search.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>patientPage</from-outcome>
+            <to-view-id>/views/patientinfo.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>adminPage</from-outcome>
+            <to-view-id>/views/admin.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>seriePage</from-outcome>
+            <to-view-id>/views/serie.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_orthanc</from-outcome>
+            <to-view-id>/views/settings_orthanc.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_bitserver</from-outcome>
+            <to-view-id>/views/settings_bitserver.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>localuser</from-outcome>
+            <to-view-id>/views/localuser.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>remoteuser</from-outcome>
+            <to-view-id>/views/remoteuser.xhtml</to-view-id>
+        </navigation-case>
+        
+    </navigation-rule>
+</faces-config>

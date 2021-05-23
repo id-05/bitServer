@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="patientinfo">
+            <p:menubar>
+                <p:menuitem value="Назад" action="#{serieBean.backpressed}" icon="pi pi-backward"/>
+                <p:menuitem value="Удалить пациента из базы" disabled="true" outcome="searchPage" icon="pi pi-trash"/>
+                <p:menuitem value="Скачать" outcome="searchPage" disabled="true" icon="pi pi-download"/>
+                <f:facet name="options">
+                    <div class="ui-input-icon-left p-mr-2">
+                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <div class="p-d-flex">
+                <div class="p-col-1; p-mb-2 p-mr-2">
+                    <p:card style="width: 35rem; margin-bottom: 2em">
+                        <f:facet name="title" style="margin: 20px">
+                            <i class="pi pi-id-card"> </i>
+                        </f:facet>
+
+                        <div class="p-field p-grid" style="margin-left: 20px">
+                            <label for="fio" class="p-col-fixed" style="width:150px">ФИО: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="fio" type="text" value="#{serieBean.currentPatient.name}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid" style="margin-left: 20px">
+                            <label for="bd" class="p-col-fixed" style="width:150px">Дата рождения: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="bd" type="text" value="#{serieBean.currentPatient.patientBirthDate}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid" style="margin-left: 20px">
+                            <label for="pid" class="p-col-fixed" style="width:150px">ID: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="pid" type="text" value="#{serieBean.currentPatient.patientId}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid" style="margin-left: 20px">
+                            <label for="sex" class="p-col-fixed" style="width:150px">ПОЛ: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="sex" type="text" value="#{serieBean.currentPatient.patientSex}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="studyName" class="p-col-fixed" style="width:150px; margin-left: 20px">Название исследования: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="studyName" type="text" value="#{serieBean.currentStudy.studyDescription}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="studyDate" class="p-col-fixed" style="width:150px; margin-left: 20px">Дата исследования: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="studyDate" type="text" value="#{serieBean.currentStudy.studyDateToStr}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="anamnez" class="p-col-fixed" style="width:150px; margin-left: 20px">Анамнез: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="anamnez" type="text" value="test"/>
+                            </div>
+                        </div>
+
+                    </p:card>
+                </div>
+
+                <div class="p-col">
+                    <p:card style="margin-bottom: 2em">
+                        <f:facet name="title">
+                            <i class="pi pi-list"> </i>
+                        </f:facet>
+
+                        <p:dataTable var="serie" value="#{serieBean.serieList}"
+                                     selectionMode="single"
+                                     selection="#{serieBean.bufSerie}"
+                                     rowKey="#{serie.serieDescription}"
+                                     id="customerTable">
+                        <p:ajax event="rowSelect" listener="#{serieBean.redirectToOsimis}"/>
+
+                        <p:column headerText="Название серии"  style="text-align: center">
+                            <h:outputText value="#{serie.serieDescription}" />
+                        </p:column>
+
+                        <p:column headerText="Число снимков"  style="text-align: center">
+                            <h:outputText value="#{serie.instancesCount}"/>
+                        </p:column>
+                        </p:dataTable>
+                    </p:card>
+
+                    <p:card style="margin-bottom: 2em">
+                        <f:facet name="title">
+                            <i class="">Заключение:</i>
+                        </f:facet>
+
+                        <p:textEditor secure="false" widgetVar="editor1" value=" " height="300"  />
+
+                    </p:card>
+
+                </div>
+
+            </div>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>
