@@ -1,6 +1,5 @@
 <component name="libraryTable">
-  <library name="Hibernate 5.4.11-5.4.11" type="hibernate">
-    <properties version="5.4.11" />
+  <library name="Hibernate 5.4.11-5.4.11">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/classmate-1.5.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/dom4j-2.1.1.jar!/" />

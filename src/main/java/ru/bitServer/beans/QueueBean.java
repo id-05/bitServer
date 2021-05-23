@@ -41,7 +41,6 @@ public class QueueBean implements UserDao {
     public int typeSeach = 0;
     private static List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-    public static String authentication;
     public ArrayList<Study> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
