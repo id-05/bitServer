@@ -181,30 +181,6 @@ public class SettingsBean {
                 "f:close()";
         StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
         System.out.println("out settings = "+stringBuilder);
-//
-//        StringBuilder stringBuilder = new StringBuilder();
-//            boolean resultOpenFile =false;
-//            try (FileInputStream fin = new FileInputStream(fileSettingPath)) {
-//                int i = -1;
-//                while ((i = fin.read()) != -1) {
-//                    stringBuilder.append((char) i);
-//                }
-//                resultOpenFile = true;
-//            } catch (IOException ex) {
-//                System.out.println(ex.getMessage());
-//                resultOpenFile = false;
-//            }
-
-        //парсинг файла настроек
-//        StringBuilder stringBuilderBuf = new StringBuilder();
-//        assert stringBuilder != null;
-//        String buf = stringBuilder.toString();
-//        String[] words = buf.split("\n");
-//        for (String word : words) {
-//            if(truestring(word)){
-//              stringBuilderBuf.append(word);
-//            }
-//        }
         json = new JsonSettings(stringBuilder.toString());
         users = json.getUsers();
         dicomNode = json.getDicomNode();

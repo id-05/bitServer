@@ -155,10 +155,6 @@ public class SettingBitServerBean implements UserDao {
             }
         initNewUser();
         initNewUsergroup();
-//        bitServerDBresources = getBitServerResource("address");
-//        externalAddress = bitServerDBresources.getRvalue();
-
-
         bitServerDBresourcesList = getAllBitServerResource();
         for(BitServerDBresources buf:bitServerDBresourcesList){
             switch (buf.getRname()){
