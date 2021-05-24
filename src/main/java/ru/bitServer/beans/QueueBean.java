@@ -28,8 +28,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static ru.bitServer.beans.MainBean.info;
-import static ru.bitServer.beans.MainBean.mainServer;
+import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean", eager = false)
 @SessionScoped
@@ -44,7 +43,7 @@ public class QueueBean implements UserDao {
     public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
-    private List<BitServerStudy> selectedVisibleStudies;
+    private List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     private BitServerStudy selectedVisibleStudy;
     public List<Usergroup> usergroupList;
     public String selectedUserGroup;
@@ -193,6 +192,9 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
+        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+        PrimeFaces.current().ajax().update(":seachform:send-button");
+        selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
@@ -378,11 +380,13 @@ public class QueueBean implements UserDao {
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" уже было отправлено ранее!",info);
             }
         }
-        showMessage("Внимание","Всего отправлено: "+i,info);
-        selectedVisibleStudies = null;
+        showMessage("Внимание","Всего отправлено: " + i,info);
+        //selectedVisibleStudies = null;
+        selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows()");
+        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+        PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }
@@ -402,7 +406,7 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
@@ -419,5 +423,24 @@ public class QueueBean implements UserDao {
             PrimeFaces.current().executeScript("PF('sidebar').show()");
             return null;
         }
+    }
+
+    public void comebackStudy() throws IOException {
+        System.out.println(selectedVisibleStudy.getPatientname());
+        for(BitServerStudy bufStudy:selectedVisibleStudies){
+            if(!bufStudy.getUsergroupwhosees().equals("")){
+                System.out.println("in circl "+bufStudy.getPatientname());
+                bufStudy.setUsergroupwhosees("");
+                bufStudy.setStatus(0);
+                updateStudyInBitServerStudyTable(bufStudy);
+                connection.deleteStudyFromOrthanc(bufStudy);
+            }
+        }
+        selectedVisibleStudies.clear();
+        dataoutput();
+        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+        PrimeFaces.current().executeScript("window.location.reload();");
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        PrimeFaces.current().ajax().update(":seachform:send-button");
     }
 }

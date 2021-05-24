@@ -22,8 +22,8 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import static ru.bitServer.beans.MainBean.info;
-import static ru.bitServer.beans.MainBean.mainServer;
+
+import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueremoteBean", eager = true)
 @SessionScoped
@@ -125,7 +125,7 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('http://192.168.1.58:8042/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
@@ -145,6 +145,16 @@ public class QueueremoteBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:editorcomponent");
         PrimeFaces.current().ajax().update(":seachform:selectfilename");
         System.out.println("запись обрабатываемся!");
+    }
+
+    public void getStudyToDiag(){
+        selectedVisibleStudy.setStatus(3);
+        selectedVisibleStudy.setDatablock(new Date());
+        selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
+        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        currentUser.setHasBlockStudy(true);
+        currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
+        updateUser(currentUser);
     }
 }
 

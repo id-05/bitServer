@@ -121,12 +121,7 @@
                             <p:commandButton style="margin-right: 10px" icon="pi pi-pencil"
                                              styleClass="rounded-button"
                                              disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
-                                             oncomplete="PF('sidebar').show()"
-                                             actionListener="#{queueremoteBean.lockedStudy}">
-                                             <p:confirm header="Внимание" message="Вы собираетесь взять это исследование на диагностику.
-                                             Оно будет заблокировано и не доступно для анализа другим пользователям.
-                                             Вы не сможете приступить к другим исследованиям пока не опишите это.
-                                             Срок блокировки исследования 24ч. После истечения этого времени, исследование будет автоматически разблокировано." />
+                                             oncomplete="PF('confirmtogetstudy').show()">
                                              <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                         </p:column>
@@ -136,6 +131,30 @@
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
                         <p:outputLabel value="#{queueremoteBean.selectedVisibleStudy.anamnes}" escape="false" style="word-break: break-all; width: 400px"/>
+                    </p:dialog>
+
+                    <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
+                              widgetVar="confirmtogetstudy" responsive="true">
+                        <p:card style="width: 25rem; margin-bottom: 2em">
+                            <f:facet name="title">
+                                Внимание, вы собиретесь взять исследование на описание!
+                            </f:facet>
+
+                            <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                Срок блокировки исследования #{mainBean.timeOnWork} часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
+
+                        </p:card>
+                        <div class="p-d-flex p-jc-between">
+                            <div class="p-mr-2">
+                                <p:commandButton value="Отказаться" oncomplete="PF('confirmtogetstudy').hide()"/>
+                            </div>
+
+                            <div class="p-mr-2">
+                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="PF('confirmtogetstudy').hide()"/>
+                            </div>
+                        </div>
+
                     </p:dialog>
 
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">

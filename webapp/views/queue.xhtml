@@ -129,6 +129,7 @@
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table"
                                  emptyMessage="Нет записей для отображения"
+
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
                         <f:facet name="header">
@@ -171,6 +172,10 @@
                             <h:outputText value="#{bitServerStudy.rustatus}"/>
                         </p:column>
 
+                        <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
+                        </p:column>
+
                         <p:column exportable="false" style="align-content: center; ">
 
                             <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
@@ -200,6 +205,14 @@
 
                         </p:column>
                     </p:dataTable>
+
+                    <p:contextMenu for="dt-studys">
+                        <p:menuitem value="Отозвать с описания" update="dt-studys"
+                                    action="#{queueBean.comebackStudy}"
+                                    disabled="#{not empty bitServerStudy.usergroupwhosees}"/>
+                        <p:menuitem value="Пометить как описанное" update="dt-studys"
+                                    disabled="#{!not empty bitServerStudy.result}"/>
+                    </p:contextMenu>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">

@@ -2,7 +2,7 @@ package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.BitServerDBresources;
+import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 
@@ -27,14 +27,23 @@ public class SettingBitServerBean implements UserDao {
     public List<String> usergroupListRuName;
     public List<Usergroup> selectedUsergroups;
     public Usergroup selectedUsergroup;
-    public String externalAddress;
+    public String osimisAddress;
+    public String orthancAddress;
     public String orthancWebPort;
     public String orthancLogin;
     public String orthancPassword;
     public String orthancPathToJson;
     public String orthancPathToResultFile;
-    public BitServerDBresources bitServerDBresources;
-    public List<BitServerDBresources> bitServerDBresourcesList = new ArrayList<>();
+    //public BitServerResources bitServerResources;
+    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+
+    public String getOsimisAddress() {
+        return osimisAddress;
+    }
+
+    public void setOsimisAddress(String osimisAddress) {
+        this.osimisAddress = osimisAddress;
+    }
 
     public String getOrthancWebPort() {
         return orthancWebPort;
@@ -76,12 +85,12 @@ public class SettingBitServerBean implements UserDao {
         this.orthancPathToResultFile = orthancPathToResultFile;
     }
 
-    public String getExternalAddress() {
-        return externalAddress;
+    public String getOrthancAddress() {
+        return orthancAddress;
     }
 
-    public void setExternalAddress(String externalAddress) {
-        this.externalAddress = externalAddress;
+    public void setOrthancAddress(String orthancAddress) {
+        this.orthancAddress = orthancAddress;
     }
 
     public List<String> getUsergroupListRuName() {
@@ -155,10 +164,10 @@ public class SettingBitServerBean implements UserDao {
             }
         initNewUser();
         initNewUsergroup();
-        bitServerDBresourcesList = getAllBitServerResource();
-        for(BitServerDBresources buf:bitServerDBresourcesList){
+        bitServerResourcesList = getAllBitServerResource();
+        for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
-                case "address": externalAddress = buf.getRvalue();
+                case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
                 case "port": orthancWebPort = buf.getRvalue();
                     break;
@@ -170,15 +179,17 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "pathtoresultfile": orthancPathToResultFile = buf.getRvalue();
                     break;
+                case "addressforosimis": osimisAddress = buf.getRvalue();
+                    break;
             }
         }
 
     }
 
     public void saveParam(){
-        for(BitServerDBresources buf:bitServerDBresourcesList){
+        for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
-                case "address": buf.setRvalue(externalAddress);
+                case "orthancaddress": buf.setRvalue(orthancAddress);
                     break;
                 case "port": buf.setRvalue(orthancWebPort);
                     break;
@@ -189,6 +200,8 @@ public class SettingBitServerBean implements UserDao {
                 case "pathtojson": buf.setRvalue(orthancPathToJson);
                     break;
                 case "pathtoresultfile": buf.setRvalue(orthancPathToResultFile);
+                    break;
+                case "addressforosimis": buf.setRvalue(osimisAddress);
                     break;
             }
             updateBitServiceDBresource(buf);

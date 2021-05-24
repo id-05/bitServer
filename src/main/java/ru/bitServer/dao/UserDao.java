@@ -139,34 +139,34 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default BitServerDBresources getBitServerResource(String uname) {
+    public default BitServerResources getBitServerResource(String uname) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        String hql = "FROM BitServerDBresources U WHERE U.rname = '" + uname + "'";
+        String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
         System.out.println("hql = " + hql);
         Query query = session.createQuery(hql);
-        List<BitServerDBresources> results = query.list();
+        List<BitServerResources> results = query.list();
 
         if (results.size() > 0) {
-            Iterator<BitServerDBresources> it = results.iterator();
-            return  (BitServerDBresources) it.next();
+            Iterator<BitServerResources> it = results.iterator();
+            return  (BitServerResources) it.next();
         }
         return null;
     }
 
-    public default List<BitServerDBresources> getAllBitServerResource() {
+    public default List<BitServerResources> getAllBitServerResource() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<BitServerDBresources> criteriaQuery = builder.createQuery(BitServerDBresources.class);
-        Root<BitServerDBresources> root = criteriaQuery.from(BitServerDBresources.class);
+        CriteriaQuery<BitServerResources> criteriaQuery = builder.createQuery(BitServerResources.class);
+        Root<BitServerResources> root = criteriaQuery.from(BitServerResources.class);
         criteriaQuery.select(root);
-        Query<BitServerDBresources> BitServerDBresources = session.createQuery(criteriaQuery);
+        Query<BitServerResources> BitServerDBresources = session.createQuery(criteriaQuery);
         return BitServerDBresources.list();
     }
 
-    public default void updateBitServiceDBresource(BitServerDBresources bitServerDBresources) {
+    public default void updateBitServiceDBresource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.update(bitServerDBresources);
+        session.update(bitServerResources);
         transaction.commit();
         session.close();
     }

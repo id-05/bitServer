@@ -31,6 +31,8 @@ public class BitServerStudy {
     private Date dateresult;
     private String usergroupwhosees;
     private boolean typeresult;
+    private Date datablock;
+    private int userwhoblock;
 
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
@@ -51,6 +53,22 @@ public class BitServerStudy {
 //        this.userwhodiagnost = userwhodiagnost;
 //        this.dateresult = dateresult;
 //        this.usergroupwhosees = usergroupwhosees;
+    }
+
+    public int getUserwhoblock() {
+        return userwhoblock;
+    }
+
+    public void setUserwhoblock(int userwhoblock) {
+        this.userwhoblock = userwhoblock;
+    }
+
+    public Date getDatablock() {
+        return datablock;
+    }
+
+    public void setDatablock(Date datablock) {
+        this.datablock = datablock;
     }
 
     public boolean isTyperesult() {

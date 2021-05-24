@@ -6,6 +6,8 @@ import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
+import ru.bitServer.dao.BitServerResources;
+import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;
 
 import javax.annotation.PostConstruct;
@@ -18,13 +20,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @ManagedBean(name = "mainBean", eager = true)
 @SessionScoped
-public class MainBean {
+public class MainBean implements UserDao {
 
     public static OrthancServer mainServer;
-    public static String pathToSaveResult = "D://results//";
+    public static String pathToSaveResult;// = "D://results//";
+    public static String osimisAddress;// = "D://results//";
     public String totalStudy = "0";
     public String totalPatient = "0";
     public String totalSize = "0";
@@ -34,9 +38,19 @@ public class MainBean {
     public String selectTheme;
     public ArrayList<String> themeList;
     public String versionInfo;
+    public int timeOnWork;
     public static FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     public static FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
+    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+
+    public int getTimeOnWork() {
+        return timeOnWork;
+    }
+
+    public void setTimeOnWork(int timeOnWork) {
+        this.timeOnWork = timeOnWork;
+    }
 
     public String getVersionInfo() {
         return versionInfo;
@@ -97,6 +111,7 @@ public class MainBean {
     @PostConstruct
     public void init() {
         versionInfo = "1.1";
+        timeOnWork = 24;
 
 
         model = new DefaultDashboardModel();
@@ -110,12 +125,32 @@ public class MainBean {
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        mainServer.setIpaddress("192.168.1.58");////setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
-        mainServer.setPort("8042");//setPort("8142");
-        mainServer.setLogin("doctor");
-        mainServer.setPassword("doctor");
+        bitServerResourcesList = getAllBitServerResource();
+        for(BitServerResources buf: bitServerResourcesList){
+            switch (buf.getRname()){
+                case "orthancaddress": mainServer.setIpaddress(buf.getRvalue());
+                    break;
+                case "port": mainServer.setPort(buf.getRvalue());
+                    break;
+                case "login": mainServer.setLogin(buf.getRvalue());
+                    break;
+                case "password": mainServer.setPassword(buf.getRvalue());
+                    break;
+                case "pathtojson": mainServer.setPathToJson(buf.getRvalue());
+                    break;
+                case "pathtoresultfile": pathToSaveResult = buf.getRvalue();
+                    break;
+                case "addressforosimis": osimisAddress = buf.getRvalue();
+                    break;
+            }
+        }
+
+        //mainServer.setIpaddress("192.168.1.58");////setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
+        //mainServer.setPort("8042");//setPort("8142");
+        //mainServer.setLogin("doctor");
+        //mainServer.setPassword("doctor");
         //mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
-         mainServer.setPathToJson("/etc/orthanc/");
+        // mainServer.setPathToJson("/etc/orthanc/");
         try {
             StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
             JsonParser parser = new JsonParser();

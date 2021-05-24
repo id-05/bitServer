@@ -31,15 +31,15 @@
                     <p:outputPanel>
 
                         <p:divider align="left" type="dashed">
-                            <b>Внешний адрес этого сервера</b>
+                            <b>Адрес orthanc сервера</b>
                         </p:divider>
                         <p class="p-m-0">
                             <p:inplace editor="true" >
-                                <p:inputText value="#{settingBitServerBean.externalAddress}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:inputText value="#{settingBitServerBean.orthancAddress}" required="true" label="text" style="margin-bottom: 50px"/>
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Адрес по которому данный сервер, доступен пользователям из сети интерне</div>
+                        <div class="p-text-capitalize">Адрес orthanc сервера</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Порт RESTAPI</b>
@@ -91,7 +91,16 @@
                         </p>
                         <div class="p-text-capitalize">В этом каталоге будут размещены файлы с результати анализов, прикрепляемые пользователями</div>
 
-
+                        <p:divider align="left" type="dashed">
+                            <b>Адрес для доступа к OSIMIS</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.osimisAddress}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <div class="p-text-capitalize">Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http://указанный_адрес/osimis-viewer/app/index.html?"</div>
 
                     </p:outputPanel>
                 </p:tab>
