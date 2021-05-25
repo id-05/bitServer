@@ -38,7 +38,7 @@ public class MainBean implements UserDao {
     public String selectTheme;
     public ArrayList<String> themeList;
     public String versionInfo;
-    public int timeOnWork;
+    public static int timeOnWork;
     public static FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     public static FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;

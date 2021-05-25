@@ -163,7 +163,7 @@ public interface UserDao {
         return BitServerDBresources.list();
     }
 
-    public default void updateBitServiceDBresource(BitServerResources bitServerResources) {
+    public default void updateBitServiceResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(bitServerResources);
@@ -221,6 +221,31 @@ public interface UserDao {
         return results;
     }
 
+    public default List<BitServerStudy> getMyStudy(Users currentUser) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        Query query = null;
+        String hql= "from BitServerStudy  where status=:pstatus and userwhodiagnost=:puser";
+        query = session.createQuery(hql);
+        query.setParameter("pstatus", 2);
+        query.setParameter("puser", currentUser.getUid().toString());
+        List<BitServerStudy> results = query.list();
+        session.close();
+        return results;
+    }
+
+    public default List<BitServerStudy> getAllHasResultStudies() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        Query query = null;
+        String hql= "from BitServerStudy  where status=:pstatus";
+        query = session.createQuery(hql);
+        query.setParameter("pstatus", 2);
+        List<BitServerStudy> results = query.list();
+        session.close();
+        return results;
+    }
+
     public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
@@ -232,6 +257,21 @@ public interface UserDao {
         List<BitServerStudy> results = query.list();
         session.close();
         return results;
+    }
+
+    public default BitServerStudy getStudyById(String studyid){
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM BitServerStudy U WHERE U.id = '" + studyid + "'";
+        Query query = session.createQuery(hql);
+        List<BitServerStudy> results = query.list();
+
+        if (results.size() > 0) {
+            Iterator<BitServerStudy> it = results.iterator();
+            return (BitServerStudy) it.next();
+        }else{
+            BitServerStudy bitServerStudy = new BitServerStudy();
+            return bitServerStudy;
+        }
     }
 
     public default List<BitServerStudy> getAllBitServerStudy() {

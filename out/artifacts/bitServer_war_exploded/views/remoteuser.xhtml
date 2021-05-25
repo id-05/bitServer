@@ -21,14 +21,16 @@
             width: 200px;
         }
 
-        .ui-dashboard-column {
-            width: 220px;
+        .ui-dashboard-column.mycolumn::before {
+            width: 440px;
         }
+
+
     </style>
 
 
     <h:body>
-        <h:form id="form">
+        <h:form id="remoteform">
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
             <div class="card">
                 <p:menubar>
@@ -44,11 +46,79 @@
             </div>
         </h:form>
 
-        <div class="card">
+
             <h:form>
 
+                <p:dashboard id="board" model="#{remoteDashboard.model}">
+
+                    <p:ajax event="reorder" listener="#{remoteDashboard.handleReorder}" update=":remoteform:growlMessageId"/>
+
+                    <p:panel id="current" header="Текущая задача" style="width: 280px">
+                        <div class="p-field p-grid">
+                            <label for="countblock" class="p-col-fixed" style="width:180px">Заблокированно: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="countblock" value="#{remoteDashboard.countBlock}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="timeleft" class="p-col-fixed" style="width:180px">Время на описание:</label>
+                            <div class="p-col">
+                                <p:outputLabel id="timeleft" value="#{remoteDashboard.timeLeft}">
+                                    <f:convertDateTime dateStyle="full" timeZone="GMT+0" pattern="h:mm"  />
+                                </p:outputLabel>
+                            </div>
+                        </div>
+
+                    </p:panel>
+
+                    <p:panel id="mystatistics" header="Ваша статистика" style="width: 280px">
+
+                        <div class="p-field p-grid">
+                            <label for="countToday" class="p-col-fixed" style="width:180px">Сегодня описано: </label>
+                            <div class="p-col">
+                                <p:outputLabel id="countToday" value="#{remoteDashboard.countToday}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="countWeek" class="p-col-fixed" style="width:180px">На этой неделе:</label>
+                            <div class="p-col">
+                                <p:outputLabel id="countWeek" value="#{remoteDashboard.countWeek}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="countMounth" class="p-col-fixed" style="width:180px">В этом месяце:</label>
+                            <div class="p-col">
+                                <p:outputLabel id="countMounth" value="#{remoteDashboard.countMounth}"/>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-grid">
+                            <label for="countAll" class="p-col-fixed" style="width:180px">Всего:</label>
+                            <div class="p-col">
+                                <p:outputLabel id="countAll" value="#{remoteDashboard.countAll}"/>
+
+                            </div>
+                        </div>
+
+                    </p:panel>
+
+                    <p:panel id="serverstatistics" header="Статистика сервера" style="width: 800px; height: 400px;">
+                        <p:chart type="line" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
+
+                        <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}">
+                            <f:selectItem itemLabel="Неделя" itemValue="week" />
+                            <f:selectItem itemLabel="Месяц" itemValue="mounth"/>
+                            <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update="@form"/>
+                        </p:selectOneMenu>
+
+                    </p:panel>
+
+                </p:dashboard>
+
             </h:form>
-        </div>
 
     </h:body>
 </f:view>

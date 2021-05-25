@@ -73,11 +73,11 @@ public class QueueremoteBean implements UserDao {
 
     @PostConstruct
     public void init() {
+        System.out.println("QueueremoteBean");
         selectedVisibleStudy = new BitServerStudy();
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-        System.out.println("QueueremoteBean");
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());

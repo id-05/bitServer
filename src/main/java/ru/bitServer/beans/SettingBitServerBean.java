@@ -204,7 +204,7 @@ public class SettingBitServerBean implements UserDao {
                 case "addressforosimis": buf.setRvalue(osimisAddress);
                     break;
             }
-            updateBitServiceDBresource(buf);
+            updateBitServiceResource(buf);
         }
         //bitServerDBresources.setRvalue(externalAddress);
     }
