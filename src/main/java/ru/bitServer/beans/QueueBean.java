@@ -227,7 +227,6 @@ public class QueueBean implements UserDao {
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
 
-        System.out.print("получили ответ от сервера");
         boolean existInTable = false;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
@@ -341,11 +340,12 @@ public class QueueBean implements UserDao {
                 }
                 if (serieMainDicomTags.has("Modality")) {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
-                    System.out.println(studyId);
+                    //System.out.println(studyId);
                 }
             }
             OrthancStudy studyObj = new OrthancStudy(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
+            System.out.println(studyObj.getPatientBirthDate()+"  "+studyObj.getShortId());
         }
         return studyList;
     }

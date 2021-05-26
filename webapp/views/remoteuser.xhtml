@@ -107,12 +107,18 @@
 
                     <p:panel id="serverstatistics" header="Статистика сервера" style="width: 800px; height: 400px;">
                         <p:chart type="line" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
+                        <div class="p-d-flex">
+                            <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}" style="width: 100px">
+                                <f:selectItem itemLabel="Неделя" itemValue="week" />
+                                <f:selectItem itemLabel="Месяц" itemValue="mounth"/>
+                                <f:selectItem itemLabel="Год" itemValue="year"/>
+                                <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update="@form"/>
+                            </p:selectOneMenu>
+                        </div>
 
-                        <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}">
-                            <f:selectItem itemLabel="Неделя" itemValue="week" />
-                            <f:selectItem itemLabel="Месяц" itemValue="mounth"/>
-                            <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update="@form"/>
-                        </p:selectOneMenu>
+                        <h:inputHidden id="txt" value="#{remoteDashboard. sliderDate}"/>
+                        <p:slider for="txt" range="false"/>
+
 
                     </p:panel>
 

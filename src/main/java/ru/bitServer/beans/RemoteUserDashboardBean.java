@@ -49,7 +49,16 @@ public class RemoteUserDashboardBean implements UserDao {
     private List<BitServerStudy> myStudies = new ArrayList<>();
     private List<BitServerStudy> allHasResultStudies = new ArrayList<>();
     public LineChartModel lineModel;
-    private String typeChart;
+    private String typeChart = "week";
+    private int sliderDate = 50;
+
+    public int getSliderDate() {
+        return sliderDate;
+    }
+
+    public void setSliderDate(int slidaerDate) {
+        this.sliderDate = slidaerDate;
+    }
 
     public String getTypeChart() {
         return typeChart;
@@ -148,6 +157,9 @@ public class RemoteUserDashboardBean implements UserDao {
         myStudies = getMyStudy(currentUser);
 
         allHasResultStudies = getAllBitServerStudy();
+        allHasResultStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
+
+
         //allHasResultStudies = getAllHasResultStudies();
 
         countAll = myStudies.size();
@@ -186,8 +198,10 @@ public class RemoteUserDashboardBean implements UserDao {
             }
         }
 
-        lineModel = initModelForWeek();
-        preInitMoel();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -1);
+        lineModel = initModel(cal,"MM.yyyy");
+        preInitModel();
 
         model = new DefaultDashboardModel();
 
@@ -204,7 +218,7 @@ public class RemoteUserDashboardBean implements UserDao {
         model.addColumn(column3);
     }
 
-    public void preInitMoel(){
+    public void preInitModel(){
         lineModel.setTitle("Исследования");
         lineModel.setLegendPosition("e");
         lineModel.setShowPointLabels(true);
@@ -212,83 +226,70 @@ public class RemoteUserDashboardBean implements UserDao {
     }
 
     public void chartOutput(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -1);
+        //Date bufDate = cal.getTime();
+        lineModel.clear();
         switch (typeChart){
             case "week":{
-                lineModel.clear();
-                lineModel = initModelForWeek();
-                preInitMoel();
+                cal.add(Calendar.DATE, -7);
+                lineModel = initModel(cal,"dd.MM");
+                preInitModel();
                 PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
             }
             break;
             case "mounth":{
-                lineModel.clear();
-                lineModel = initModelForMounth();
-                preInitMoel();
+                cal.add(Calendar.MONTH, -1);
+                lineModel = initModel(cal,"dd.MM");
+                preInitModel();
                 PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
             }
             break;
             case "year":{
-
+                cal.add(Calendar.YEAR, -1);
+                lineModel = initModel(cal,"MM.yyyy");
+                preInitModel();
+                PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
             }
             break;
         }
     }
 
-    private LineChartModel initModelForWeek() {
+    private LineChartModel initModel(Calendar cal, String pattern) {
+        Calendar calend = Calendar.getInstance();
+        calend.add(Calendar.YEAR, -1);
+        Date endDate = calend.getTime();
+
         LineChartModel bufModel = new LineChartModel();
         ChartSeries bufSeries = new ChartSeries();
         bufSeries.setLabel("Всего на описание");
-        Map<String, Integer> resultMap = new HashMap<>();
-        DateFormat formatter = new SimpleDateFormat("dd.MM");
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -7);
+        Map<Long, Integer> resultMap = new TreeMap<>();
+        DateFormat formatter = new SimpleDateFormat(pattern);
         Date refDate =  cal.getTime();
         for(BitServerStudy bufStudy:allHasResultStudies){
-            if(bufStudy.getDateresult().after(refDate)){
-                    String bufDate = formatter.format(bufStudy.getDatesent()); //.getDateresult());
-                    Integer bufCount = resultMap.get(bufDate);
-                    if(bufCount==null){
-                        resultMap.put(bufDate,1);
-                    }else{
-                        bufCount = bufCount+1;
-                        resultMap.replace(bufDate,bufCount);
-                    }
-            }
-        }
-        bufSeries.setLabel("Всего на описание");
-        for(Map.Entry<String, Integer> item : resultMap.entrySet()){
-            bufSeries.set(item.getKey(),  item.getValue());
-
-                System.out.println(item.getKey()+  "  " + item.getValue());
-        }
-        bufModel.addSeries(bufSeries);
-        return bufModel;
-    }
-
-    private LineChartModel initModelForMounth() {
-        LineChartModel bufModel = new LineChartModel();
-        ChartSeries bufSeries = new ChartSeries();
-        bufSeries.setLabel("Всего на описание");
-        Map<String, Integer> resultMap = new HashMap<>();
-        DateFormat formatter = new SimpleDateFormat("dd.MM");
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -1);
-        Date refDate =  cal.getTime();
-        for(BitServerStudy bufStudy:allHasResultStudies){
-            if(bufStudy.getDateresult().after(refDate)){
-                String bufDate = formatter.format(bufStudy.getDatesent()); //.getDateresult());
-                Integer bufCount = resultMap.get(bufDate);
+            if(bufStudy.getSdate().after(refDate)&&(bufStudy.getSdate().before(endDate))){
+                System.out.println("sdate = "+bufStudy.getSdate());
+                long bufDatemillis = 0;
+                try {
+                   bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Integer bufCount = resultMap.get(bufDatemillis);
                 if(bufCount==null){
-                    resultMap.put(bufDate,1);
+                    resultMap.put(bufDatemillis,1);
                 }else{
-                    bufCount = bufCount+1;
-                    resultMap.replace(bufDate,bufCount);
+                    bufCount = bufCount + 1;
+                    resultMap.replace(bufDatemillis,bufCount);
                 }
             }
         }
         bufSeries.setLabel("Всего на описание");
-        for(Map.Entry<String, Integer> item : resultMap.entrySet()){
-            bufSeries.set(item.getKey(),  item.getValue());
+        for(Map.Entry<Long, Integer> item : resultMap.entrySet()){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(item.getKey());
+            Date bufDate = calendar.getTime();
+            bufSeries.set(formatter.format(bufDate),  item.getValue());
         }
         bufModel.addSeries(bufSeries);
         return bufModel;
