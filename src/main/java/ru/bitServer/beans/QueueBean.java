@@ -169,8 +169,6 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("CR");
         selectedModaliti.add("MG");
         selectedModaliti.add("DX");
-        firstdate = new Date();
-        seconddate = new Date();
         readStudyFromDB();
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
@@ -180,14 +178,12 @@ public class QueueBean implements UserDao {
     public Boolean firstDateSelect() {
         filtrDate = "targetdate";
         dataoutput();
-        PrimeFaces.current().ajax().update(":seachform");
         return true;
     }
 
     public Boolean secondDateSelect() {
         filtrDate = "range";
         dataoutput();
-        PrimeFaces.current().ajax().update(":seachform");
         return true;
     }
 

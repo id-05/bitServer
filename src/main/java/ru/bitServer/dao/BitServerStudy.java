@@ -35,6 +35,7 @@ public class BitServerStudy {
     private boolean typeresult;
     private Date datablock;
     private int userwhoblock;
+    private String statusstyle;
 
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
@@ -200,6 +201,25 @@ public class BitServerStudy {
             default: break;
         }
         return rustatus;
+    }
+
+    public void setStatusstyle(String statusstyle) {
+        this.statusstyle = statusstyle;
+    }
+
+    public String getStatusstyle() {
+        switch (status){
+            case 0: this.statusstyle = "noresult";
+                break;
+            case 1: this.statusstyle = "inprocess";
+                break;
+            case 2: this.statusstyle = "yesresult";
+                break;
+            case 3: this.statusstyle = "inprocess";
+                break;
+            default: break;
+        }
+        return statusstyle;
     }
 
     public void setRustatus(String rustatus) {

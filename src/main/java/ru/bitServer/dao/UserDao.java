@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -187,7 +188,10 @@ public interface UserDao {
                 seconddate = Date.from(yesterday);
                 break;
             case "targetdate":
-                seconddate = firstdate;
+                Calendar cal = Calendar.getInstance();
+                cal.set(Integer.parseInt(new SimpleDateFormat("yyyy").format(firstdate)), Integer.parseInt(new SimpleDateFormat("MM").format(firstdate))-1
+                        ,Integer.parseInt(new SimpleDateFormat("dd").format(firstdate)),23,59);
+                seconddate = cal.getTime();
                 break;
         }
         Query query = null;
@@ -210,6 +214,9 @@ public interface UserDao {
             }else{
                 String hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
                 query = session.createQuery(hql);
+                System.out.println("hql "+hql);
+                System.out.println("date1 "+firstdate.toString());
+                System.out.println("date2 "+seconddate.toString());
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);

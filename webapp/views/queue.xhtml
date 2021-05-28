@@ -44,6 +44,23 @@
 
             }
 
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: .3px; }
+            .product-badge.status-yesresult {
+                background: #C8E6C9;
+                color: #256029; }
+            .product-badge.status-noresult {
+                background: #FFCDD2;
+                color: #C63737; }
+            .product-badge.status-inprocess {
+                background: #FEEDAF;
+                color: #8A5340; }
+
         </style>
 
         <h:form id="seachform">
@@ -61,7 +78,7 @@
             </p:menubar>
 
 
-            <p:panel id="panel1" header="Фильтр" >
+            <p:panel id="panel1" widgetVar="panelVar" header="Фильтр" >
                 <div style="align-content: center">
                     <p:card style="margin-bottom: 2em">
                         <div class="p-grid">
@@ -82,7 +99,7 @@
                             </p:selectOneButton>
                         </div>
 
-                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
+                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
                             <label for="dateStudySelector" class="p-col-fixed" style="width:250px; font-size: large">Дата исследования:</label>
                             <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px">
                                 <f:selectItem itemLabel="Сегодня " itemValue="today" />
@@ -92,12 +109,15 @@
                                 <f:selectItem itemLabel=" Все" itemValue="all"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
-                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-top: 10px; margin-left: 1em; margin-right: 1em">
-                                <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}"/>
+
+                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true">
+                                <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}" update=":seachform:dateStudySelector"/>
                             </p:datePicker>
-                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true" style="margin-top: 10px; margin-left: 1em; margin-right: 1em">
-                                <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}"/>
+
+                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true">
+                                <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}" update=":seachform:dateStudySelector"/>
                             </p:datePicker>
+
                         </div>
                     </p:card>
 
@@ -146,6 +166,11 @@
 
                         <p:column selectionMode="multiple" exportable="false" style="width:20px;"> </p:column>
 
+                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center">
+                            <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
+                                          value="#{bitServerStudy.rustatus}"/>
+                        </p:column>
+
                         <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
                             <h:outputText value="#{bitServerStudy.shortid}"/>
                         </p:column>
@@ -166,10 +191,6 @@
 
                         <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
                             <h:outputText value="#{bitServerStudy.modality}"/>
-                        </p:column>
-
-                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center">
-                            <h:outputText value="#{bitServerStudy.rustatus}"/>
                         </p:column>
 
                         <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center">

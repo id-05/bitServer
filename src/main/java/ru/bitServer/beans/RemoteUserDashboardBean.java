@@ -7,26 +7,20 @@ import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.chart.*;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.line.LineChartDataSet;
-import org.primefaces.model.charts.line.LineChartOptions;
-import org.primefaces.model.charts.optionconfig.title.Title;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
-import javax.ejb.Local;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
@@ -34,7 +28,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 
 @ManagedBean(name = "remoteDashboard", eager = true)
-@RequestScoped
+@SessionScoped
 public class RemoteUserDashboardBean implements UserDao {
 
     private DashboardModel model;
@@ -49,8 +43,16 @@ public class RemoteUserDashboardBean implements UserDao {
     private List<BitServerStudy> myStudies = new ArrayList<>();
     private List<BitServerStudy> allHasResultStudies = new ArrayList<>();
     public LineChartModel lineModel;
-    private String typeChart = "week";
+    private String typeChart = "mounth";
     private int sliderDate = 50;
+    private Long minDate;
+    private Long maxDate;
+    private int delta = 86400000;
+    private int maxDateCount;
+    public Date firstdate;
+    public Date seconddate;
+
+    DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 
     public int getSliderDate() {
         return sliderDate;
@@ -140,6 +142,22 @@ public class RemoteUserDashboardBean implements UserDao {
         this.lineModel = lineModel;
     }
 
+    public Date getFirstdate() {
+        return firstdate;
+    }
+
+    public void setFirstdate(Date firstdate) {
+        this.firstdate = firstdate;
+    }
+
+    public Date getSeconddate() {
+        return seconddate;
+    }
+
+    public void setSeconddate(Date seconddate) {
+        this.seconddate = seconddate;
+    }
+
     @PostConstruct
     public void init() {
 
@@ -158,9 +176,10 @@ public class RemoteUserDashboardBean implements UserDao {
 
         allHasResultStudies = getAllBitServerStudy();
         allHasResultStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-
-
-        //allHasResultStudies = getAllHasResultStudies();
+        firstdate = allHasResultStudies.get(0).getSdate();
+        seconddate = allHasResultStudies.get(allHasResultStudies.size()-1).getSdate();
+        //maxDateCount = (int) ((maxDate - minDate)/delta);
+        PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
 
         countAll = myStudies.size();
 
@@ -200,6 +219,7 @@ public class RemoteUserDashboardBean implements UserDao {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -1);
+        //chartOutput();
         lineModel = initModel(cal,"MM.yyyy");
         preInitModel();
 
@@ -225,29 +245,30 @@ public class RemoteUserDashboardBean implements UserDao {
         lineModel.getAxes().put(AxisType.X, new CategoryAxis("Time Period"));
     }
 
+    public Boolean dateSelect() {
+        chartOutput();
+        return true;
+    }
+
     public void chartOutput(){
+        System.out.println("cartoutput");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -1);
+        //cal.add(Calendar.YEAR, -1);
         //Date bufDate = cal.getTime();
         lineModel.clear();
         switch (typeChart){
-            case "week":{
-                cal.add(Calendar.DATE, -7);
-                lineModel = initModel(cal,"dd.MM");
-                preInitModel();
-                PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
-            }
-            break;
+
+
             case "mounth":{
                 cal.add(Calendar.MONTH, -1);
-                lineModel = initModel(cal,"dd.MM");
+                lineModel = initModel(cal,"MM.yyyy");
                 preInitModel();
                 PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
             }
             break;
             case "year":{
                 cal.add(Calendar.YEAR, -1);
-                lineModel = initModel(cal,"MM.yyyy");
+                lineModel = initModel(cal,"yyyy");
                 preInitModel();
                 PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
             }
@@ -256,19 +277,16 @@ public class RemoteUserDashboardBean implements UserDao {
     }
 
     private LineChartModel initModel(Calendar cal, String pattern) {
-        Calendar calend = Calendar.getInstance();
-        calend.add(Calendar.YEAR, -1);
-        Date endDate = calend.getTime();
-
+        //Calendar calend = Calendar.getInstance();
+        Date endDate = seconddate;//calend.getTime();
         LineChartModel bufModel = new LineChartModel();
         ChartSeries bufSeries = new ChartSeries();
         bufSeries.setLabel("Всего на описание");
         Map<Long, Integer> resultMap = new TreeMap<>();
         DateFormat formatter = new SimpleDateFormat(pattern);
-        Date refDate =  cal.getTime();
+        Date refDate =  firstdate;//cal.getTime();
         for(BitServerStudy bufStudy:allHasResultStudies){
-            if(bufStudy.getSdate().after(refDate)&&(bufStudy.getSdate().before(endDate))){
-                System.out.println("sdate = "+bufStudy.getSdate());
+            if(bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))){
                 long bufDatemillis = 0;
                 try {
                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();

@@ -16,20 +16,16 @@
         </f:facet>
     </h:head>
     <style type="text/css">
-        .ui-panel, div.ui-state-hover {
+        .ui-panel{
             margin: 10px;
             width: 200px;
         }
-
-        .ui-dashboard-column.mycolumn::before {
-            width: 440px;
-        }
-
 
     </style>
 
 
     <h:body>
+
         <h:form id="remoteform">
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
             <div class="card">
@@ -47,7 +43,7 @@
         </h:form>
 
 
-            <h:form>
+            <h:form id="db">
 
                 <p:dashboard id="board" model="#{remoteDashboard.model}">
 
@@ -106,22 +102,25 @@
                     </p:panel>
 
                     <p:panel id="serverstatistics" header="Статистика сервера" style="width: 800px; height: 400px;">
-                        <p:chart type="line" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
-                        <div class="p-d-flex">
-                            <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}" style="width: 100px">
-                                <f:selectItem itemLabel="Неделя" itemValue="week" />
+                        <p:chart type="line" id="chart1" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
+
+                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
+                            <label for="dateSTART" class="p-col-fixed">C :</label>
+                            <p:datePicker id="dateSTART" value="#{remoteDashboard.firstdate}">
+                                <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
+                            </p:datePicker>
+                            <label for="dateSTOP" class="p-col-fixed">ПО :</label>
+                            <p:datePicker id="dateSTOP" value="#{remoteDashboard.seconddate}">
+                                <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
+                            </p:datePicker>
+                            <label for="option" class="p-col-fixed">Интервалы :</label>
+                            <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}">
                                 <f:selectItem itemLabel="Месяц" itemValue="mounth"/>
                                 <f:selectItem itemLabel="Год" itemValue="year"/>
-                                <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update="@form"/>
+                                <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update=":db:chart1"/>
                             </p:selectOneMenu>
                         </div>
-
-                        <h:inputHidden id="txt" value="#{remoteDashboard. sliderDate}"/>
-                        <p:slider for="txt" range="false"/>
-
-
                     </p:panel>
-
                 </p:dashboard>
 
             </h:form>
