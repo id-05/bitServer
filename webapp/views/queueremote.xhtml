@@ -137,7 +137,7 @@
                               widgetVar="confirmtogetstudy" responsive="true">
                         <p:card style="width: 25rem; margin-bottom: 2em">
                             <f:facet name="title">
-                                Внимание, вы собиретесь взять исследование на описание!
+                                Внимание, вы собираетесь взять исследование на описание!
                             </f:facet>
 
                             <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
@@ -151,7 +151,7 @@
                             </div>
 
                             <div class="p-mr-2">
-                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="PF('confirmtogetstudy').hide()"/>
+                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="PF('confirmtogetstudy').hide() PF('sidebar').show()"/>
                             </div>
                         </div>
 

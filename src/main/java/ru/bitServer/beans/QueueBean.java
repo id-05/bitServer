@@ -422,30 +422,10 @@ public class QueueBean implements UserDao {
         idArray.add(study.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
         InputStream inputStream = conn.getInputStream();
-        //File tempFile = File. createTempFile("temp", ".zip");
-        File tempFile = new File("D:/results/"+study.getPatientname()+"-"+study.getSdescription()+".zip");
-
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        int bytesRead = -1;
-        byte[] buffer = new byte[1024];
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            fos.write(buffer, 0, bytesRead);
-        }
-        fos.close();
-        inputStream.close();
-        conn.disconnect();
-//        conn.disconnect();
         return DefaultStreamedContent.builder()
                 .name(study.getPatientname()+"-"+study.getSdescription()+"."+"zip")
                 .contentType("application/zip")
-                .stream(() -> {
-                    try {
-                        return new FileInputStream(tempFile);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                })
+                .stream(() -> inputStream)
                 .build();
     }
 

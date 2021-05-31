@@ -224,7 +224,7 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
-                            <p:commandButton icon="pi pi-download" update=":seachform"
+                            <p:commandButton ajax="false" icon="pi pi-download" update=":seachform"
                                              styleClass="rounded-button" process="@this">
                                 <p:fileDownload value="#{queueBean.getResult2(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
