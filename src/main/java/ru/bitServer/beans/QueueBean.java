@@ -15,14 +15,16 @@ import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -31,7 +33,7 @@ import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class QueueBean implements UserDao {
 
     public String filtrDate = "today";
@@ -49,7 +51,7 @@ public class QueueBean implements UserDao {
     public String selectedUserGroup;
     public List<String> usergroupListRuName;
     public Users currentUser;
-    OrthancRestApi connection;
+    public OrthancRestApi connection;
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
@@ -151,7 +153,7 @@ public class QueueBean implements UserDao {
 
     @PostConstruct
     public void init() {
-
+        selectedVisibleStudy = new BitServerStudy();
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         System.out.println("QueueBean");
@@ -169,7 +171,7 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("CR");
         selectedModaliti.add("MG");
         selectedModaliti.add("DX");
-        readStudyFromDB();
+        //readStudyFromDB();
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
@@ -204,22 +206,17 @@ public class QueueBean implements UserDao {
         query.addProperty("Limit", 0);
         JsonObject queryDetails = new JsonObject();
         String dateStr;
-
         String dateStartFromBase = "20190101";
         seconddate = new Date();
         dateStr = dateStartFromBase + "-" + format.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
-
         StringBuilder modalities = new StringBuilder();
         for (String buf : selectedModaliti) {
             modalities.append(buf).append("\\");
         }
         queryDetails.addProperty("Modality", modalities.toString());
         query.add("Query", queryDetails);
-
-   //     {"Level":"Studies","CaseSensitive":false,"Expand":true,"Limit":0,"Query":{"StudyDate":"20210101-20210516","PatientID":"*","Modality":"CR\\CT\\MR\\NM\\PT\\US\\XA\\CR\\MG\\DX\\"}}
-
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
 
@@ -275,7 +272,7 @@ public class QueueBean implements UserDao {
                 try {
                     patientDob = format.parse(patientDobString);
                 } catch (Exception e) {
-                    System.out.println("Errot to transfer date 1  "+parentPatientDetails);
+                    System.out.println("Error to transfer date 1  "+parentPatientDetails);
                 }
             }
 
@@ -336,12 +333,10 @@ public class QueueBean implements UserDao {
                 }
                 if (serieMainDicomTags.has("Modality")) {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
-                    //System.out.println(studyId);
                 }
             }
             OrthancStudy studyObj = new OrthancStudy(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
-            System.out.println(studyObj.getPatientBirthDate()+"  "+studyObj.getShortId());
         }
         return studyList;
     }
@@ -421,8 +416,63 @@ public class QueueBean implements UserDao {
         }
     }
 
+    public StreamedContent getResult2(BitServerStudy study) throws Exception {
+        String url="/tools/create-archive";
+        JsonArray idArray = new JsonArray();
+        idArray.add(study.getSid());
+        HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        //File tempFile = File. createTempFile("temp", ".zip");
+        File tempFile = new File("D:/results/"+study.getPatientname()+"-"+study.getSdescription()+".zip");
+
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        int bytesRead = -1;
+        byte[] buffer = new byte[1024];
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            fos.write(buffer, 0, bytesRead);
+        }
+        fos.close();
+        inputStream.close();
+        conn.disconnect();
+//        conn.disconnect();
+        return DefaultStreamedContent.builder()
+                .name(study.getPatientname()+"-"+study.getSdescription()+"."+"zip")
+                .contentType("application/zip")
+                .stream(() -> {
+                    try {
+                        return new FileInputStream(tempFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
+                .build();
+    }
+
+    public void downloadStudy() throws Exception {
+
+        for(BitServerStudy bufStudy:selectedVisibleStudies){
+            File f = new File("D:/results/"+bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+".zip");
+            System.out.println("скачать исследование "+bufStudy.getSid());
+            String url="/tools/create-archive";
+            JsonArray idArray = new JsonArray();
+            idArray.add(bufStudy.getSid());
+            HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+            InputStream is = conn.getInputStream();
+            FileOutputStream fos = new FileOutputStream(f);
+            int bytesRead = -1;
+            byte[] buffer = new byte[1024];
+            while ((bytesRead = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+            fos.close();
+            is.close();
+            conn.disconnect();
+        }
+        selectedVisibleStudies.clear();
+    }
+
     public void comebackStudy() throws IOException {
-        System.out.println(selectedVisibleStudy.getPatientname());
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             if(!bufStudy.getUsergroupwhosees().equals("")){
                 System.out.println("in circl "+bufStudy.getPatientname());

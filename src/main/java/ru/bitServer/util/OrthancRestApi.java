@@ -97,7 +97,6 @@ public class OrthancRestApi {
         OutputStream os = conn.getOutputStream();
         os.write(post.getBytes());
         os.flush();
-        conn.getResponseMessage();
         return conn;
     }
 

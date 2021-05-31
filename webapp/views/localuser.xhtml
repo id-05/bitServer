@@ -33,12 +33,15 @@
             <div class="card">
                 <p:menubar>
                     <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
-                    <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
                     <f:facet name="options">
-                        <div class="ui-input-icon-left p-mr-2">
-                            <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                            <div align="right">Комплексные решения в области рентгенологии</div>
+
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton value="Справка" icon="pi pi-question-circle"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton value="Выйти" icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
                         </div>
+
                     </f:facet>
                 </p:menubar>
             </div>

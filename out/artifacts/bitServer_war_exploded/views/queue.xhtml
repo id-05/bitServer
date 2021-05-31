@@ -224,20 +224,37 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
+                            <p:commandButton icon="pi pi-download" update=":seachform"
+                                             styleClass="rounded-button" process="@this">
+                                <p:fileDownload value="#{queueBean.getResult2(bitServerStudy)}"/>
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+
                         </p:column>
                     </p:dataTable>
 
                     <p:contextMenu for="dt-studys">
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
                                     action="#{queueBean.comebackStudy}"
-                                    disabled="#{not empty bitServerStudy.usergroupwhosees}"/>
+                                    disabled="#{bitServerStudy.usergroupwhosees == ''}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
-                                    disabled="#{!not empty bitServerStudy.result}"/>
+                                    disabled="#{not empty bitServerStudy.result}"/>
+                        <p:menuitem value="Скачать DICOM-архив" update="dt-studys"
+                                    action="#{queueBean.downloadStudy}"/>
                     </p:contextMenu>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
-                            <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="6" style="width: 300px;"/>
+                            <div class="p-d-flex p-flex-column">
+                                <div class="p-mb-2">Укажите здесь например:</div>
+                                <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                                <div class="p-mb-2">- причина обращения за обследованием</div>
+                                <div class="p-mb-2">- текущее состояние пациента</div>
+                                <div class="p-mb-2">- информация об удаленных у пациента органах</div>
+                                <div class="p-mb-2">- другая важная информация</div>
+                            </div>
+                            <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                             autoResize="false"/>
 
                             <f:facet name="footer">
 

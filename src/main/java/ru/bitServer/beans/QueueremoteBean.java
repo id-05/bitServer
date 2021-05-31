@@ -155,6 +155,7 @@ public class QueueremoteBean implements UserDao {
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
+        PrimeFaces.current().executeScript("PF('sidebar').show()");
     }
 }
 
