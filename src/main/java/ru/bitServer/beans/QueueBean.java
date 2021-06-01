@@ -197,6 +197,10 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
+    public void addDicomOnServer(){
+        System.out.println("add dicom");
+    }
+
     public void readStudyFromDB() {
         selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
@@ -429,27 +433,19 @@ public class QueueBean implements UserDao {
                 .build();
     }
 
-    public void downloadStudy() throws Exception {
-
-        for(BitServerStudy bufStudy:selectedVisibleStudies){
-            File f = new File("D:/results/"+bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+".zip");
-            System.out.println("скачать исследование "+bufStudy.getSid());
+    public StreamedContent downloadStudy() throws Exception {
+        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
             String url="/tools/create-archive";
             JsonArray idArray = new JsonArray();
             idArray.add(bufStudy.getSid());
             HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
-            InputStream is = conn.getInputStream();
-            FileOutputStream fos = new FileOutputStream(f);
-            int bytesRead = -1;
-            byte[] buffer = new byte[1024];
-            while ((bytesRead = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
-            }
-            fos.close();
-            is.close();
-            conn.disconnect();
-        }
-        selectedVisibleStudies.clear();
+            InputStream inputStream = conn.getInputStream();
+            return DefaultStreamedContent.builder()
+                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"."+"zip")
+                    .contentType("application/zip")
+                    .stream(() -> inputStream)
+                    .build();
+
     }
 
     public void comebackStudy() throws IOException {

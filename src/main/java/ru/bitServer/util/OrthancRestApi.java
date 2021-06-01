@@ -114,4 +114,28 @@ public class OrthancRestApi {
         conn.disconnect();
     }
 
+    public HttpURLConnection sendDicom(String apiUrl, byte[] post) {
+        HttpURLConnection conn =null;
+        try {
+            String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
+            URL url=new URL(fulladdress+apiUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            if(this.authentication != null){
+                conn.setRequestProperty("Authorization", "Basic " + this.authentication);
+            }
+            conn.setRequestProperty("content-length", Integer.toString(post.length));
+            conn.setRequestProperty("content-type", "application/dicom");
+            OutputStream os = conn.getOutputStream();
+            os.write(post);
+            os.flush();
+            conn.getResponseMessage();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+        return conn;
+    }
+
 }

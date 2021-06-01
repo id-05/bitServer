@@ -139,6 +139,10 @@
 
                         </p:toolbarGroup>
                         <p:toolbarGroup align="right">
+                            <p:commandButton value="Добавить DICOM-данные" actionListener="#{queueBean.addDicomOnServer}"
+                                             process="@this" update="searchgrowl" style="margin-right: 10px"
+                                             icon="pi pi-upload" styleClass="ui-button-success" ajax="false"/>
+
                             <p:commandButton value="Обновить" actionListener="#{queueBean.readStudyFromDB}"
                                              process="@this" update="searchgrowl"
                                              icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
@@ -224,23 +228,20 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
 
-                            <p:commandButton ajax="false" icon="pi pi-download" update=":seachform"
-                                             styleClass="rounded-button" process="@this">
-                                <p:fileDownload value="#{queueBean.getResult2(bitServerStudy)}"/>
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-                            </p:commandButton>
-
                         </p:column>
                     </p:dataTable>
 
                     <p:contextMenu for="dt-studys">
+
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
                                     action="#{queueBean.comebackStudy}"
                                     disabled="#{bitServerStudy.usergroupwhosees == ''}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
                                     disabled="#{not empty bitServerStudy.result}"/>
-                        <p:menuitem value="Скачать DICOM-архив" update="dt-studys"
-                                    action="#{queueBean.downloadStudy}"/>
+                        <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
+                            <p:fileDownload value="#{queueBean.downloadStudy()}"/>
+                        </p:menuitem>
+
                     </p:contextMenu>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
