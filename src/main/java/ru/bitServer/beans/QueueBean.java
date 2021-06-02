@@ -5,8 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.FilesUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
@@ -18,13 +21,11 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -52,6 +53,7 @@ public class QueueBean implements UserDao {
     public List<String> usergroupListRuName;
     public Users currentUser;
     public OrthancRestApi connection;
+    public int uploadCount;
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
@@ -197,8 +199,22 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-    public void addDicomOnServer(){
-        System.out.println("add dicom");
+
+//    public void handleFilesUpload(FilesUploadEvent event) {
+//        for (UploadedFile f : event.getFiles().getFiles()) {
+//            System.out.println("print in files "+f.getFileName());
+//        }
+//    }
+
+    public void handleFileUpload(FileUploadEvent event) throws IOException {
+        UploadedFile f = event.getFile();
+        System.out.println("print in file  "+f.getFileName());
+        HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
+        conn.disconnect();
+    }
+
+    public void uploadCompleted(){
+        System.out.println("completed");
     }
 
     public void readStudyFromDB() {

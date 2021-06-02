@@ -90,7 +90,7 @@ public class QueueremoteBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-    public void addResult() throws IOException {
+    public void addResult(BitServerStudy selectedVisibleStudy,UploadedFile resultFile) throws IOException {
         selectedVisibleStudy.setStatus(2);
         selectedVisibleStudy.setUserwhodiagnost(currentUserId);
         System.out.println("sid = "+selectedVisibleStudy.getSid());
@@ -133,7 +133,7 @@ public class QueueremoteBean implements UserDao {
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             resultFile = event.getFile();
-            addResult();
+            addResult(selectedVisibleStudy,resultFile);
         }
     }
 

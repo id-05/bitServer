@@ -44,6 +44,12 @@
 
             }
 
+            .fileupload-content {
+                overflow: auto;
+                height: 300px;
+
+            }
+
             .product-badge {
                 border-radius: 2px;
                 padding: .25em .5rem;
@@ -110,7 +116,7 @@
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
 
-                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true">
+                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-right: 10px">
                                 <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}" update=":seachform:dateStudySelector"/>
                             </p:datePicker>
 
@@ -139,15 +145,50 @@
 
                         </p:toolbarGroup>
                         <p:toolbarGroup align="right">
-                            <p:commandButton value="Добавить DICOM-данные" actionListener="#{queueBean.addDicomOnServer}"
-                                             process="@this" update="searchgrowl" style="margin-right: 10px"
-                                             icon="pi pi-upload" styleClass="ui-button-success" ajax="false"/>
+                            <p:commandButton value="Загрузка DICOM на сервер"
+                                             oncomplete="PF('addDICOM').show()"
+                                             update=":seachform:addDialog"
+                                             style="margin-right: 10px"
+                                             icon="pi pi-upload" styleClass="ui-button-success" />
 
                             <p:commandButton value="Обновить" actionListener="#{queueBean.readStudyFromDB}"
                                              process="@this" update="searchgrowl"
                                              icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
                         </p:toolbarGroup>
                     </p:toolbar>
+
+                    <p:dialog id="addDialog" header="Перетащите на это окно папку с DICOM файлами" showEffect="fade" modal="true"
+                              widgetVar="addDICOM" responsive="true">
+
+                        <p:fileUpload  mode="advanced"
+                                       widgetVar="fUpload"
+                                       fileUploadListener="#{queueBean.handleFileUpload}"
+                                       sequential="true"
+                                       styleClass="fileupload-content"
+                                       update = "@this"
+                                       oncomplete="isFileListEmpty(PF('fUpload'), uploadsFinished);"
+                                       dragDropSupport="true"
+                                       skinSimple="true"
+                                       sizeLimit="10000000"
+                                       label="Выбрать"
+                                       uploadLabel="Зазрузить"
+                                       cancelLabel="Отмена"
+                                       multiple="true"
+                                       invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
+                                       allowTypes="/(\.|\/)(dcm)$/"/>
+
+                        <p:outputLabel>Всего загружено файлов: #{queueBean.uploadCount}</p:outputLabel>
+                    </p:dialog>
+
+                    <p:remoteCommand name="uploadsFinished" actionListener="#{queueBean.uploadCompleted()}" />
+                    <script type="text/javascript">
+                        function isFileListEmpty(fileupload, finished) {
+                            if (fileupload.files.length === 0) {
+                                   // finished();
+                                    //эта часть кода не работает, оставил для себя в качестве примера работы с js
+                            }
+                        }
+                    </script>
 
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
@@ -243,6 +284,8 @@
                         </p:menuitem>
 
                     </p:contextMenu>
+
+
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">

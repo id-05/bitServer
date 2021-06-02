@@ -122,6 +122,7 @@ public class OrthancRestApi {
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
+            authentication = Base64.getEncoder().encodeToString((login+":"+password).getBytes());
             if(this.authentication != null){
                 conn.setRequestProperty("Authorization", "Basic " + this.authentication);
             }
@@ -131,8 +132,8 @@ public class OrthancRestApi {
             os.write(post);
             os.flush();
             conn.getResponseMessage();
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return conn;
