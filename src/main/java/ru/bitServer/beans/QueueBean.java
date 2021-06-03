@@ -55,6 +55,10 @@ public class QueueBean implements UserDao {
     public OrthancRestApi connection;
     public int uploadCount;
 
+    public int getUploadCount() {
+        return uploadCount;
+    }
+
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
         for(Usergroup bufgroup:usergroupList){
@@ -199,18 +203,13 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-
-//    public void handleFilesUpload(FilesUploadEvent event) {
-//        for (UploadedFile f : event.getFiles().getFiles()) {
-//            System.out.println("print in files "+f.getFileName());
-//        }
-//    }
-
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile f = event.getFile();
         System.out.println("print in file  "+f.getFileName());
         HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
         conn.disconnect();
+        uploadCount++;
+        PrimeFaces.current().ajax().update(":addDICOM");
     }
 
     public void uploadCompleted(){

@@ -56,7 +56,7 @@ public interface UserDao {
     public default void saveNewUsergroup(Usergroup usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.save(usergroup);
+        session.saveOrUpdate(usergroup);
         transaction.commit();
         session.close();
     }
@@ -70,6 +70,7 @@ public interface UserDao {
     }
 
     public default void updateUsergroup(Usergroup usergroup) {
+        System.out.println("test selected in dao = "+usergroup.getRuName());
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(usergroup);
@@ -88,12 +89,12 @@ public interface UserDao {
     }
 
     public default List<Usergroup> getActiveBitServerUsergroupList() {
-        String hql= "from Usergroup where status=:status and gType=:gtype";
+        String hql= "from Usergroup where status=:status";
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Query query = session.createQuery(hql);
         query = session.createQuery(hql);
         query.setParameter("status", "active");
-        query.setParameter("gtype", "alienuser");
+        //query.setParameter("gtype", "alienuser");
         List<Usergroup> results = query.list();
         session.close();
         return results;

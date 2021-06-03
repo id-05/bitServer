@@ -11,9 +11,26 @@ public class Usergroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String gType;
     private String ruName;
+    private String ruContragent;
+    private boolean downloadTrue;
     private String status;
+
+    public String getRuContragent() {
+        return ruContragent;
+    }
+
+    public void setRuContragent(String ruContragent) {
+        this.ruContragent = ruContragent;
+    }
+
+    public boolean isDownloadTrue() {
+        return downloadTrue;
+    }
+
+    public void setDownloadTrue(boolean downloadTrue) {
+        this.downloadTrue = downloadTrue;
+    }
 
     public String getStatus() {
         return status;
@@ -31,13 +48,6 @@ public class Usergroup {
         this.id = id;
     }
 
-    public String getgType() {
-        return gType;
-    }
-
-    public void setgType(String gType) {
-        this.gType = gType;
-    }
 
     public String getRuName() {
         return ruName;
@@ -52,9 +62,10 @@ public class Usergroup {
 
     }
 
-    public Usergroup(String gName, String ruName, String status){
-        this.gType = gName;
+    public Usergroup(String ruContragent, String ruName, String status, boolean downloadTrue){
         this.ruName = ruName;
+        this.ruContragent = ruContragent;
+        this.downloadTrue = downloadTrue;
         this.status = status;
     }
 }

@@ -65,9 +65,10 @@ public class Users {
         this.groupUser = groupUser;
     }
 
-    public Users(String uname, String password) {
+    public Users(String uname, String password, boolean bool) {
         this.uname = uname;
         this.password = password;
+        this.hasBlockStudy = bool;
     }
 
     public boolean isHasBlockStudy() {
@@ -146,7 +147,7 @@ public class Users {
 
     }
 
-    public Users(String login, String Password, String Name, String Middlename, String Family, String Role, String Group){
+    public Users(String login, String Password, String Name, String Middlename, String Family, String Role, String Group, boolean bool){
         this.uname = login;
         this.password = Password;
         this.ruName = Name;
@@ -154,5 +155,6 @@ public class Users {
         this.ruFamily = Family;
         this.role = Role;
         this.groupUser = Group;
+        this.hasBlockStudy = bool;
     }
 }

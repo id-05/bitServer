@@ -217,21 +217,22 @@ public class SettingBitServerBean implements UserDao {
         selectedUsergroup = new Usergroup();
     }
 
-    public void AddNewUser(){
+    public void addNewUser(){
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getGroupUser().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
         {
             boolean verifiUnical = true;
             for(Users bufUser:usersList){
-                if(bufUser.getUname().equals(selectedUser.getUname())){
+                if (bufUser.getUname().equals(selectedUser.getUname())) {
                     verifiUnical = false;
+                    break;
                 }
             }
             if(verifiUnical) {
                 usersList.add(new Users(selectedUser.getUname(), selectedUser.getPassword(),
                         selectedUser.getRuName(), selectedUser.getRuMiddleName(),
-                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getGroupUser()));
+                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getGroupUser(),false));
                 saveNewUser(selectedUser);
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
@@ -241,6 +242,7 @@ public class SettingBitServerBean implements UserDao {
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }
+            selectedUser = new Users();
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
@@ -254,8 +256,8 @@ public class SettingBitServerBean implements UserDao {
         PrimeFaces.current().ajax().update(":form:accord:dt-users");
     }
 
-    public void AddNewUsergroup(){
-        if((selectedUsergroup.getgType()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
+    public void addNewUsergroup(){
+        if((selectedUsergroup.getRuContragent()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
         {
             boolean verifiUnical = true;
             for(Usergroup bufUsergroup:usergroupList){
@@ -264,10 +266,11 @@ public class SettingBitServerBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-                usergroupList.add(new Usergroup(selectedUsergroup.getgType(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus()));
+                usergroupList.add(new Usergroup(selectedUsergroup.getRuContragent(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus(),selectedUsergroup.isDownloadTrue()));
                 saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
+                initNewUsergroup();
             }else{
                 updateUsergroup(selectedUsergroup);
                 usergroupList = getBitServerUsergroupList();

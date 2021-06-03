@@ -157,16 +157,14 @@
                         </p:toolbarGroup>
                     </p:toolbar>
 
-                    <p:dialog id="addDialog" header="Перетащите на это окно папку с DICOM файлами" showEffect="fade" modal="true"
+                    <p:dialog id="addDialog" header="Окно загрузки DICOM-данных вручную" showEffect="fade" modal="true"
                               widgetVar="addDICOM" responsive="true">
 
                         <p:fileUpload  mode="advanced"
                                        widgetVar="fUpload"
-                                       fileUploadListener="#{queueBean.handleFileUpload}"
+                                       listener="#{queueBean.handleFileUpload}"
                                        sequential="true"
                                        styleClass="fileupload-content"
-                                       update = "@this"
-                                       oncomplete="isFileListEmpty(PF('fUpload'), uploadsFinished);"
                                        dragDropSupport="true"
                                        skinSimple="true"
                                        sizeLimit="10000000"
@@ -176,18 +174,16 @@
                                        multiple="true"
                                        invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
                                        allowTypes="/(\.|\/)(dcm)$/"/>
+
+                        <div class="p-text-bold" style="width: 40rem">
+                            <p:outputLabel style="color: crimson">Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
+                                Используйте этот способ, для корректной загрузки всех вложенных каталогов.
+                                После завершения процесса загрузки, просто закройте это окно.</p:outputLabel>
+                        </div>
+
+
+
                     </p:dialog>
-
-                    <p:remoteCommand name="uploadsFinished" actionListener="#{queueBean.uploadCompleted()}" />
-                    <script type="text/javascript">
-                        function isFileListEmpty(fileupload, finished) {
-                            if (fileupload.files.length === 0) {
-                                   // finished();
-                                    //эта часть кода не работает, оставил для себя в качестве примера работы с js
-                            }
-                        }
-                    </script>
-
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table"

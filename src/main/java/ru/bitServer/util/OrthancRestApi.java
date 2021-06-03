@@ -1,7 +1,6 @@
 package ru.bitServer.util;
 
 import ru.bitServer.dao.BitServerStudy;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,8 +8,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
-
-import static ru.bitServer.beans.MainBean.mainServer;
 
 public class OrthancRestApi {
 
@@ -101,12 +98,12 @@ public class OrthancRestApi {
     }
 
     public void deleteStudyFromOrthanc(BitServerStudy study) throws IOException {
-        String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
+        String fulladdress = "http://" + ipaddress + ":" + port;
         URL url = new URL(fulladdress + "/studies/" + study.getAnonimstudyid());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("DELETE");
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin() + ":" + mainServer.getPassword()).getBytes());
+        authentication = Base64.getEncoder().encodeToString((login + ":" + password).getBytes());
         if(this.authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + this.authentication);
         }
@@ -117,7 +114,7 @@ public class OrthancRestApi {
     public HttpURLConnection sendDicom(String apiUrl, byte[] post) {
         HttpURLConnection conn =null;
         try {
-            String fulladdress = "http://" + mainServer.getIpaddress() + ":" + mainServer.getPort();
+            String fulladdress = "http://" + ipaddress + ":" + port;
             URL url=new URL(fulladdress+apiUrl);
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
