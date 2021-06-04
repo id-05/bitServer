@@ -234,6 +234,7 @@ public class SettingBitServerBean implements UserDao {
                         selectedUser.getRuName(), selectedUser.getRuMiddleName(),
                         selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getGroupUser(),false));
                 saveNewUser(selectedUser);
+                usersList = getBitServerUserList();
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }else{
@@ -242,7 +243,6 @@ public class SettingBitServerBean implements UserDao {
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }
-            selectedUser = new Users();
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
@@ -270,7 +270,7 @@ public class SettingBitServerBean implements UserDao {
                 saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
-                initNewUsergroup();
+                usergroupList = getBitServerUsergroupList();
             }else{
                 updateUsergroup(selectedUsergroup);
                 usergroupList = getBitServerUsergroupList();

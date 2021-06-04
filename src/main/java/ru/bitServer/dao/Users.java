@@ -17,7 +17,9 @@ public class Users {
     private String ruMiddleName;
     private String ruFamily;
     private String role;
-    private String groupUser;
+
+
+    private String ugroup;
     private String uTheme;
     private String blockStudy;
     private boolean hasBlockStudy;
@@ -57,12 +59,12 @@ public class Users {
         this.role = role;
     }
 
-    public String getGroupUser() {
-        return groupUser;
+    public String getUgroup() {
+        return ugroup;
     }
 
-    public void setGroupUser(String groupUser) {
-        this.groupUser = groupUser;
+    public void setUgroup(String ugroup) {
+        this.ugroup = ugroup;
     }
 
     public Users(String uname, String password, boolean bool) {
@@ -154,7 +156,7 @@ public class Users {
         this.ruMiddleName = Middlename;
         this.ruFamily = Family;
         this.role = Role;
-        this.groupUser = Group;
+        this.ugroup = Group;
         this.hasBlockStudy = bool;
     }
 }

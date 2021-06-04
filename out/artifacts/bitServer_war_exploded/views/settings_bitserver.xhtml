@@ -44,7 +44,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Адрес orthanc сервера</div>
+                        <div>Адрес orthanc сервера</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Порт RESTAPI</b>
@@ -55,7 +55,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Порт для доступа к RESTAPI Orthanc</div>
+                        <div >Порт для доступа к RESTAPI Orthanc</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Логин и пароль для доступа к Orthanc</b>
@@ -72,7 +72,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
+                        <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу orthanc.json</b>
@@ -83,7 +83,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Данный файл используется для настройки сервера Orthanc</div>
+                        <div >Данный файл используется для настройки сервера Orthanc</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Каталог хранения файлов результатов анализа</b>
@@ -94,7 +94,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
+                        <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Адрес для доступа к OSIMIS</b>
@@ -105,7 +105,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <div class="p-text-capitalize">Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http://указанный_адрес/osimis-viewer/app/index.html?"</div>
+                        <div >Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http://указанный_адрес/osimis-viewer/app/index.html?"</div>
 
                     </p:outputPanel>
                 </p:tab>
@@ -221,9 +221,9 @@
                                          onclick="PF('deleteUserDialog').hide()"/>
                     </p:dialog>
                         <div class="p-d-flex"></div>
-                        <div class="p-text-capitalize">Списко зарегистрированных пользователей.</div>
+                        <div >Списко зарегистрированных пользователей.</div>
                         <br></br>
-                        <div class="p-text-capitalize"> </div>
+                        <div > </div>
                         <div ><strong>Администратор</strong> - имеет доступ к настройкам системы</div>
                         <div ><strong>Локальный пользователь</strong> - видит все исследования, вместе с ПД</div>
                         <div ><strong>Удаленный пользователь</strong> - видит только исследования отправленные на диагностику в его группу, без ПД</div>
