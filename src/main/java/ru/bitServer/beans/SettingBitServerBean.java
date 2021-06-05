@@ -159,9 +159,6 @@ public class SettingBitServerBean implements UserDao {
         System.out.println("settingBitServerBean page");
         usersList = getBitServerUserList();
         usergroupList = getBitServerUsergroupList();
-            for(Usergroup buf:usergroupList){
-                System.out.println("buf "+buf.getRuName());
-            }
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
@@ -218,7 +215,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
-        if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getGroupUser().equals(""))
+        if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
         {
@@ -232,7 +229,7 @@ public class SettingBitServerBean implements UserDao {
             if(verifiUnical) {
                 usersList.add(new Users(selectedUser.getUname(), selectedUser.getPassword(),
                         selectedUser.getRuName(), selectedUser.getRuMiddleName(),
-                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getGroupUser(),false));
+                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getUgroup(),false));
                 saveNewUser(selectedUser);
                 usersList = getBitServerUserList();
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");

@@ -86,7 +86,7 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void dataoutput() {
-        visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getGroupUser());
+        visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getUgroup());
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 

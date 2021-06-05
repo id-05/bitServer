@@ -44,6 +44,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div>Адрес orthanc сервера</div>
 
                         <p:divider align="left" type="dashed">
@@ -55,6 +56,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div >Порт для доступа к RESTAPI Orthanc</div>
 
                         <p:divider align="left" type="dashed">
@@ -72,6 +74,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
 
                         <p:divider align="left" type="dashed">
@@ -83,6 +86,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div >Данный файл используется для настройки сервера Orthanc</div>
 
                         <p:divider align="left" type="dashed">
@@ -94,6 +98,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
 
                         <p:divider align="left" type="dashed">
@@ -105,6 +110,7 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
+                        <br></br>
                         <div >Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http://указанный_адрес/osimis-viewer/app/index.html?"</div>
 
                     </p:outputPanel>
@@ -143,8 +149,8 @@
                             <h:outputText value="#{users.role}"/>
                         </p:column>
 
-                        <p:column headerText="Группа пользователей" sortBy="#{users.groupUser}" style="text-align: center">
-                            <h:outputText value="#{users.groupUser}"/>
+                        <p:column headerText="Группа пользователей" sortBy="#{users.ugroup}" style="text-align: center">
+                            <h:outputText value="#{users.ugroup}"/>
                         </p:column>
 
                         <p:column exportable="false">
@@ -188,9 +194,8 @@
                                 <f:selectItem itemLabel="Клиент" itemValue="client"/>
                             </p:selectOneMenu>
 
-
                             <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
-                            <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.groupUser}" dynamic="true">
+                            <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
                                 <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
                             </p:selectOneMenu>
                         </p:panelGrid>
