@@ -47,22 +47,20 @@
 
             <p:dialog id="about" showEffect="fade" modal="true"
                       widgetVar="about" responsive="true">
-                <p:card style="width: 25rem; margin-bottom: 2em">
-                    <p:graphicImage name="/resources/images/logo.jpg" library="bitServer"/>
-
+                            <p:graphicImage name="logo.jpg" library="images"/>
                     <p align="justify">Информация о разработчике. Ссылки на руководство пользователя</p>
-
-                </p:card>
             </p:dialog>
+
+
+            <div class="card">
+                <h5>GraphicText</h5>
+                <p:graphicImage value="#{clientBean.graphicText}"/>
+            </div>
+
         </h:form>
 
 
-        <h:form id="clientform">
 
-
-
-
-        </h:form>
 
     </h:body>
 </f:view>

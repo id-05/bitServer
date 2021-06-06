@@ -205,7 +205,7 @@ public class QueueBean implements UserDao {
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile f = event.getFile();
-        System.out.println("print in file  "+f.getFileName());
+        //System.out.println("print in file  "+f.getFileName());
         HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
         conn.disconnect();
         uploadCount++;
