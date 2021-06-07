@@ -5,10 +5,10 @@ import java.util.HashMap;
 public class OrthancPatient {
 
     public String name;
-    private String patientId;
-    private String orthancID;
-    private String birthDate;
-    private String sex;
+    private final String patientId;
+    private final String orthancID;
+    private final String birthDate;
+    private final String sex;
     private HashMap<String, OrthancStudy> childStudies;
     private int studyCount;
 
@@ -58,8 +58,8 @@ public class OrthancPatient {
     }
 
     public void addStudy(OrthancStudy study) {
-        if(childStudies==null) {
-            childStudies= new HashMap<>();
+        if(childStudies == null) {
+            childStudies = new HashMap<>();
         }
         childStudies.put(study.getOrthancId(), study);
     }

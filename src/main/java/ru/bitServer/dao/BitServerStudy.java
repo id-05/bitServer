@@ -5,8 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
-import java.util.TimeZone;
-
 
 @Entity
 public class BitServerStudy {
@@ -50,12 +48,6 @@ public class BitServerStudy {
         this.anamnes = anamnes;
         this.result = result;
         this.status = status;
-//        this.anonimstudyid = anonimstudyid;
-//        this.userwhosent = userwhosent;
-//        this.datesent = datesent;
-//        this.userwhodiagnost = userwhodiagnost;
-//        this.dateresult = dateresult;
-//        this.usergroupwhosees = usergroupwhosees;
     }
 
     public int getUserwhoblock() {
@@ -147,12 +139,10 @@ public class BitServerStudy {
     }
 
     public Date getPatientbirthdate() {
-        //patientbirthdate.setTimeZone(TimeZone.getTimeZone("CEST"))
         return patientbirthdate;
     }
 
     public void setPatientbirthdate(Date patientbirthdate) {
-        //patientbirthdate.setTimeZone(TimeZone.getTimeZone("CEST"));
         this.patientbirthdate = patientbirthdate;
     }
 

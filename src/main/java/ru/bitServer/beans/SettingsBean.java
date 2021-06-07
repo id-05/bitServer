@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import static ru.bitServer.beans.MainBean.mainServer;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -9,7 +8,6 @@ import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -23,10 +21,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
-//eager -  Если данный параметр равен “true“, то MB создаётся до первого запроса данного бина.
-// С другой стороны, если “eager = false“, то происходит, так называемая,
-// “ленивая” инициализация, при которой бин создаётся только после запроса.
-@ManagedBean(name = "settingsBean", eager = false)
+@ManagedBean(name = "settingsBean")
 @SessionScoped
 public class SettingsBean {
     public static String authentication;
@@ -166,10 +161,10 @@ public class SettingsBean {
         selectedUser = new OrthancWebUser("","");
         selectedDicomModality = new DicomModaliti("","","","","");
         loadConfig();
-        List<OrthancWebUser> webUsers;// = new ArrayList<>();
+        List<OrthancWebUser> webUsers;
         webUsers = getWebUserFromJson(users.toString());
         this.webUsers = webUsers;
-        List<DicomModaliti> dicomModalities;// = new ArrayList<>();;
+        List<DicomModaliti> dicomModalities;
         dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         this.dicomModalities = dicomModalities;
     }
@@ -250,8 +245,6 @@ public class SettingsBean {
         locale = json.getLocale();
         pluginsFolder = json.getPluginsFolder();
     }
-
-
 
     public void saveConfig() throws IOException {
         JsonObject jsonOb = new JsonObject();

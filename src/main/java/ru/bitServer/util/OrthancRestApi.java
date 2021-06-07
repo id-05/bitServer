@@ -12,11 +12,10 @@ import java.util.Base64;
 public class OrthancRestApi {
 
     private String authentication;
-    private String ipaddress;
-    private String port;
-    private String login;
-    private String password;
-
+    private final String ipaddress;
+    private final String port;
+    private final String login;
+    private final String password;
 
     public OrthancRestApi(String ipaddress, String port, String login, String password){
         this.ipaddress = ipaddress;
@@ -26,7 +25,7 @@ public class OrthancRestApi {
     }
 
     public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
-        StringBuilder stringBuilder = null ;
+        StringBuilder stringBuilder;
         try {
             stringBuilder = new StringBuilder();
             HttpURLConnection conn = makeGetConnection(apiUrl);
@@ -45,7 +44,7 @@ public class OrthancRestApi {
     }
 
     private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
-        HttpURLConnection conn  = null;
+        HttpURLConnection conn;
         String fulladdress = "http://"+ ipaddress+":"+ port;
         URL url = new URL(fulladdress+apiUrl);
         authentication = Base64.getEncoder().encodeToString((login+":"+password).getBytes());
@@ -60,7 +59,7 @@ public class OrthancRestApi {
     }
 
     public StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
-        StringBuilder sb = null;
+        StringBuilder sb;
         try {
             sb = new StringBuilder();
             HttpURLConnection conn = makePostConnection(apiUrl, post);
@@ -82,7 +81,7 @@ public class OrthancRestApi {
 
     public HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
         String fulladdress = "http://" + ipaddress + ":" + port;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         URL url = new URL(fulladdress + apiUrl);
         conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);

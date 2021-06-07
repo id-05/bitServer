@@ -17,8 +17,6 @@ public class Users {
     private String ruMiddleName;
     private String ruFamily;
     private String role;
-
-
     private String ugroup;
     private String uTheme;
     private String blockStudy;

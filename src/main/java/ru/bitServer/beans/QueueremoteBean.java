@@ -4,7 +4,6 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
-import ru.bitServer.beans.MainBean;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
@@ -21,14 +20,12 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueremoteBean", eager = true)
 @SessionScoped
 public class QueueremoteBean implements UserDao {
 
-    //private static List<String> selectedModaliti = new ArrayList<>();
     private List<BitServerStudy> visibleStudiesList;
     private BitServerStudy selectedVisibleStudy;
     public List<Usergroup> usergroupList;
@@ -138,8 +135,6 @@ public class QueueremoteBean implements UserDao {
 
     public void lockedStudy(){
         resultFile = null;
-        //selectedVisibleStudy.setLocked(true);
-        //updateStudyInBitServerStudyTable(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
         PrimeFaces.current().ajax().update(":seachform:editorcomponent");
         PrimeFaces.current().ajax().update(":seachform:selectfilename");

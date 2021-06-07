@@ -45,10 +45,6 @@ public class RemoteUserDashboardBean implements UserDao {
     public LineChartModel lineModel;
     private String typeChart = "mounth";
     private int sliderDate = 50;
-    private Long minDate;
-    private Long maxDate;
-    private int delta = 86400000;
-    private int maxDateCount;
     public Date firstdate;
     public Date seconddate;
 
@@ -178,7 +174,6 @@ public class RemoteUserDashboardBean implements UserDao {
         allHasResultStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
         firstdate = allHasResultStudies.get(0).getSdate();
         seconddate = allHasResultStudies.get(allHasResultStudies.size()-1).getSdate();
-        //maxDateCount = (int) ((maxDate - minDate)/delta);
         PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
 
         countAll = myStudies.size();
@@ -253,11 +248,8 @@ public class RemoteUserDashboardBean implements UserDao {
     public void chartOutput(){
         System.out.println("cartoutput");
         Calendar cal = Calendar.getInstance();
-        //cal.add(Calendar.YEAR, -1);
-        //Date bufDate = cal.getTime();
         lineModel.clear();
         switch (typeChart){
-
 
             case "mounth":{
                 cal.add(Calendar.MONTH, -1);

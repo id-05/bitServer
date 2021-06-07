@@ -1,12 +1,9 @@
 package ru.bitServer.beans;
 
-
-
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -14,7 +11,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
 
 @ManagedBean(name = "autoriseBean", eager = false)
 @SessionScoped

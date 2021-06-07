@@ -9,17 +9,12 @@ import org.primefaces.model.DefaultDashboardModel;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;
-
+import ru.bitServer.util.OrthancRestApi;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @ManagedBean(name = "mainBean", eager = true)
@@ -27,13 +22,12 @@ import java.util.List;
 public class MainBean implements UserDao {
 
     public static OrthancServer mainServer;
-    public static String pathToSaveResult;// = "D://results//";
-    public static String osimisAddress;// = "D://results//";
+    public static String pathToSaveResult;
+    public static String osimisAddress;
     public String totalStudy = "0";
     public String totalPatient = "0";
     public String totalSize = "0";
     public DashboardModel model;
-    public static String authentication;
     public String buffer;
     public String selectTheme;
     public ArrayList<String> themeList;
@@ -43,13 +37,14 @@ public class MainBean implements UserDao {
     public static FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    public OrthancRestApi connection;
 
     public int getTimeOnWork() {
         return timeOnWork;
     }
 
     public void setTimeOnWork(int timeOnWork) {
-        this.timeOnWork = timeOnWork;
+        MainBean.timeOnWork = timeOnWork;
     }
 
     public String getVersionInfo() {
@@ -152,7 +147,8 @@ public class MainBean implements UserDao {
         //mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
         // mainServer.setPathToJson("/etc/orthanc/");
         try {
-            StringBuilder sb = makeGetConnectionAndStringBuilder("/statistics");
+            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");
             JsonParser parser = new JsonParser();
             JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
             mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
@@ -160,16 +156,12 @@ public class MainBean implements UserDao {
             mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
             mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
             mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
-
             totalStudy = String.valueOf(mainServer.getCountStudies());
             totalPatient = String.valueOf(mainServer.getCountPatients());
             totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
-
-
         }catch (Exception e){
-            System.out.println(e.getMessage().toString());
+            System.out.println(e.getMessage());
         }
-
         themeList = themeListinit();
         selectTheme = themeList.get(1);
     }
@@ -184,42 +176,6 @@ public class MainBean implements UserDao {
         themeList.add("luna-green");
         themeList.add("luna-pink");
         return themeList;
-    }
-
-
-
-    public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
-        StringBuilder sb = null ;
-        try {
-            sb = new StringBuilder();
-            HttpURLConnection conn = makeGetConnection(apiUrl);
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            conn.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sb;
-    }
-
-    private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
-        HttpURLConnection conn  = null;
-        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
-        URL url = new URL(fulladdress+apiUrl);
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("GET");
-        if(authentication != null){
-            conn.setRequestProperty("Authorization", "Basic " + authentication);
-        }
-        conn.getResponseMessage();
-        return conn;
     }
 
     public DashboardModel getModel() {

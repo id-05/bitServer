@@ -7,9 +7,6 @@ public class Usergroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-
-    @JoinColumn(name = "id")
     private Long id;
     private String ruName;
     private String ruContragent;

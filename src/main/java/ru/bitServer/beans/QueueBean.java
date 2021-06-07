@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.FilesUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -54,10 +53,6 @@ public class QueueBean implements UserDao {
     public Users currentUser;
     public OrthancRestApi connection;
     public int uploadCount;
-
-    public int getUploadCount() {
-        return uploadCount;
-    }
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
@@ -177,7 +172,6 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("CR");
         selectedModaliti.add("MG");
         selectedModaliti.add("DX");
-        //readStudyFromDB();
         usergroupList = getActiveBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
@@ -205,15 +199,10 @@ public class QueueBean implements UserDao {
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile f = event.getFile();
-        //System.out.println("print in file  "+f.getFileName());
         HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
         conn.disconnect();
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
-    }
-
-    public void uploadCompleted(){
-        System.out.println("completed");
     }
 
     public void readStudyFromDB() {
@@ -266,7 +255,6 @@ public class QueueBean implements UserDao {
         JsonArray studies = (JsonArray) parserJson.parse(data);
         Iterator<JsonElement> studiesIterator = studies.iterator();
         ArrayList<OrthancStudy> studyList = new ArrayList<>();
-        studyList.clear();
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
@@ -283,6 +271,7 @@ public class QueueBean implements UserDao {
             String patientDobString = "N/A";
             Date patientDob = null;
 
+            assert parentPatientDetails != null;
             if (parentPatientDetails.has("PatientBirthDate")) {
                 patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
             }
@@ -391,7 +380,6 @@ public class QueueBean implements UserDao {
             }
         }
         showMessage("Внимание","Всего отправлено: " + i,info);
-        //selectedVisibleStudies = null;
         selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");

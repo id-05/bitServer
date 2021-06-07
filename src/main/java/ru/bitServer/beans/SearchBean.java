@@ -7,6 +7,8 @@ import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.OrthancPatient;
 import ru.bitServer.dicom.OrthancStudy;
+import ru.bitServer.util.OrthancRestApi;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -22,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
 import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "searchBean", eager = true)
@@ -30,15 +31,12 @@ import static ru.bitServer.beans.MainBean.mainServer;
 public class SearchBean {
 
     public static String authentication;
-    //public static String fulladdress = "http://127.0.0.1:8042";////"http://185.59.139.156:8142";//"http://"+mainServer.getIpaddress()+":"+ mainServer.getPort();//"
-    //public static String fulladdress = "http://"+MainBean.mainServer.getIpaddress()+":"+MainBean.mainServer.getPort();
     public String searchId;
     public String searchName;
     private String searchDate;
-    public int searchType = 1;//имя пациента
+    public int searchType = 1;
     public ArrayList<OrthancPatient> patients = new ArrayList<>();
     public int seachCount;
-    //private final JsonParser parserJson = new JsonParser();
     private final SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
     public Date firstdate;
     public Date seconddate;
@@ -130,13 +128,10 @@ public class SearchBean {
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
-    public void SeachBean(String myArg){}
-
     @PostConstruct
     public void init() {
         searchDate = "today";
         System.out.println("seach");
-        //FacesContext facesContext = FacesContext.getCurrentInstance();
         firstdate = new Date();
         seconddate = new Date();
         selectedModaliti.clear();
@@ -152,7 +147,7 @@ public class SearchBean {
         selectedModaliti.add("DX");
     }
 
-    public void seach() throws IOException {
+    public void seach() {
         System.out.println("seach start");
         JsonObject query=new JsonObject();
         query.addProperty("Level", "Studies");
@@ -208,13 +203,10 @@ public class SearchBean {
         queryDetails.addProperty("Modality", modalities.toString());
         query.add("Query", queryDetails);
         System.out.println(query.toString());
-        //PrimeFaces.current().executeScript("alert('"+query.toString()+"');");
         System.out.println(query.toString());
-        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/find",query.toString());
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find",query.toString());
         assert sb != null;
-        //PrimeFaces.current().executeScript("alert('"+sb.toString()+"');");
-        System.out.println(sb.toString());
-        //System.out.println(sb);
         String buf = sb.toString();
         getPatientsFromJson(buf);
         patients.sort(Comparator.comparing(OrthancPatient::getName));
@@ -241,45 +233,6 @@ public class SearchBean {
     public void onTypeSearchSelect(){
         searchId = null;
         PrimeFaces.current().ajax().update(":seachform");
-    }
-
-    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
-        StringBuilder sb =null;
-        try {
-            sb=new StringBuilder();
-            HttpURLConnection conn = makePostConnection(apiUrl, post);
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                int i = output.indexOf("}");
-                    sb.append(output);
-            }
-            conn.disconnect();
-            conn.getResponseMessage();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sb;
-    }
-
-    public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
-        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
-        HttpURLConnection conn = null ;
-        URL url = new URL(fulladdress+apiUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        if(authentication != null){
-            conn.setRequestProperty("Authorization", "Basic " + authentication);
-        }
-        OutputStream os = conn.getOutputStream();
-        os.write(post.getBytes());
-        os.flush();
-        conn.getResponseMessage();
-        return conn;
     }
 
     private void getPatientsFromJson(String data){

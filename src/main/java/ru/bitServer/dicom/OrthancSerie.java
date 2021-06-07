@@ -54,4 +54,4 @@ public class OrthancSerie {
         this.instancesCount = instances.size();
 
     }
-    }
+}

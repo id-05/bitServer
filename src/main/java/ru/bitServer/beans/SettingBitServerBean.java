@@ -5,7 +5,6 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -13,8 +12,6 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
 @ManagedBean(name = "settingBitServerBean", eager = false)

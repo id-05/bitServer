@@ -93,7 +93,6 @@ public class OrthancStudy {
         this.studyDateToStr = format.format(date);
         this.series = new ArrayList<>();
     }
-    
 
     public OrthancStudy(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
         this.studyDescription = studyDescription;

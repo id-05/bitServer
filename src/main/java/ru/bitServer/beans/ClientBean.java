@@ -1,19 +1,11 @@
 package ru.bitServer.beans;
 
-
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
-import org.dcm4che3.io.DicomInputStream;
-
-
-import org.dcm4che3.imageio.plugins.dcm.*;
-import org.dcm4che3.data.Tag;
-import org.dcm4che3.io.DicomOutputStream;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -25,7 +17,6 @@ import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
 import java.util.Iterator;
-
 
 @ManagedBean(name = "clientBean", eager = true)
 @SessionScoped
@@ -40,7 +31,6 @@ public class ClientBean {
 
 //            ImageIO.write(bufferedImg, "dcm", os);
         outputJpegImage(bufferedImg, "D:\\dicom\\dicom.jpg");
-
 
     }
 
