@@ -1,4 +1,4 @@
-package ru.bitServer;
+package ru.bitServer.beans;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -34,15 +34,15 @@ public class SearchBean {
     //public static String fulladdress = "http://"+MainBean.mainServer.getIpaddress()+":"+MainBean.mainServer.getPort();
     public String searchId;
     public String searchName;
-    private static String searchDate;
-    public static int searchType = 1;//имя пациента
-    public static ArrayList<OrthancPatient> patients = new ArrayList<>();
-    public static int seachCount;
+    private String searchDate;
+    public int searchType = 1;//имя пациента
+    public ArrayList<OrthancPatient> patients = new ArrayList<>();
+    public int seachCount;
     //private final JsonParser parserJson = new JsonParser();
     private final SimpleDateFormat format =new SimpleDateFormat("yyyyMMdd");
-    public static Date firstdate;
-    public static Date seconddate;
-    private static List<String> selectedModaliti = new ArrayList<>();
+    public Date firstdate;
+    public Date seconddate;
+    private List<String> selectedModaliti = new ArrayList<>();
     public String bufferRequest;
 
     public String getBufferRequest() {
@@ -59,7 +59,7 @@ public class SearchBean {
     }
 
     public void setSelectedModaliti(List<String> selectedModaliti) {
-        SearchBean.selectedModaliti = selectedModaliti;
+        this.selectedModaliti = selectedModaliti;
     }
 
     public Date getFirstdate() {
@@ -67,7 +67,7 @@ public class SearchBean {
     }
 
     public void setFirstdate(Date firstdate) {
-        SearchBean.firstdate = firstdate;
+        this.firstdate = firstdate;
     }
 
     public Date getSeconddate() {

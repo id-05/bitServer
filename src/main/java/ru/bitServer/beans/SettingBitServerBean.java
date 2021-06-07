@@ -13,6 +13,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
@@ -94,7 +95,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public List<String> getUsergroupListRuName() {
-        usergroupListRuName = new ArrayList<String>();
+        usergroupListRuName = new ArrayList<>();
         for(Usergroup bufgroup:usergroupList){
             usergroupListRuName.add(bufgroup.getRuName());
         }
@@ -215,6 +216,9 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
+
+
+
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))

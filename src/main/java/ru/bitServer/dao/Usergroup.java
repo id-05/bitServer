@@ -1,15 +1,15 @@
 package ru.bitServer.dao;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Usergroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+
+    @JoinColumn(name = "id")
     private Long id;
     private String ruName;
     private String ruContragent;

@@ -11,7 +11,6 @@ import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
