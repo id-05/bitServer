@@ -155,8 +155,9 @@ public class SettingBitServerBean implements UserDao {
     @PostConstruct
     public void init(){
         System.out.println("settingBitServerBean page");
-        usersList = getBitServerUserList();
         usergroupList = getBitServerUsergroupList();
+        usersList = prepareUserList();
+
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
@@ -181,6 +182,47 @@ public class SettingBitServerBean implements UserDao {
 
     }
 
+    public List<Users> prepareUserList(){
+        usersList = getBitServerUserList();
+        for (Users users : usersList) {
+            int buf = Integer.parseInt(users.getUgroup());
+            users.setUgroup(getVisibleNameOfGroup(buf));
+            switch (users.getRole()){
+                case "admin": {
+                    users.setRole("Администратор");
+                    break;
+                }
+
+                case "localuser": {
+                    users.setRole("Локальный пользователь");
+                    break;
+                }
+
+                case "remoteuser": {
+                    users.setRole("Удаленный пользователь");
+                    break;
+                }
+
+                case "client": {
+                    users.setRole("Клиент");
+                    break;
+                }
+            }
+        }
+        return usersList;
+    }
+
+    public String getVisibleNameOfGroup(int i){
+        String buf = null;
+        for(Usergroup bufgroup:usergroupList){
+            if(bufgroup.getId()==i){
+                buf = bufgroup.getRuName();
+                break;
+            }
+        }
+        return buf;
+    }
+
     public void saveParam(){
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
@@ -201,7 +243,6 @@ public class SettingBitServerBean implements UserDao {
             }
             updateBitServiceResource(buf);
         }
-        //bitServerDBresources.setRvalue(externalAddress);
     }
 
     public void initNewUser() {
@@ -213,8 +254,6 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
-
-
 
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
@@ -228,22 +267,59 @@ public class SettingBitServerBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-                usersList.add(new Users(selectedUser.getUname(), selectedUser.getPassword(),
-                        selectedUser.getRuName(), selectedUser.getRuMiddleName(),
-                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getUgroup(),false));
-                saveNewUser(selectedUser);
-                usersList = getBitServerUserList();
+//                usersList.add(new Users(selectedUser.getUname(), selectedUser.getPassword(),
+//                        selectedUser.getRuName(), selectedUser.getRuMiddleName(),
+//                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getUgroup(),false));
+                Users bufUser = getRealUserForBase(selectedUser);
+                saveNewUser(bufUser);
+                usersList = prepareUserList();
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }else{
-                updateUser(selectedUser);
-                usersList = getBitServerUserList();
+                Users bufUser = getRealUserForBase(selectedUser);
+                updateUser(bufUser);
+                usersList = prepareUserList();
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-users");
             }
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
+    }
+
+    public Users getRealUserForBase(Users sourseUser){
+        for(Usergroup bufgroup:usergroupList){
+            if(bufgroup.getRuName().equals(sourseUser.getUgroup())){
+                sourseUser.setUgroup(String.valueOf(bufgroup.getId()));
+                //break;
+            }
+            String buf = null;
+            switch (sourseUser.getRole()){
+                case "Администратор": {
+                    buf = "admin";
+                    break;
+                }
+
+                case "Локальный пользователь": {
+                    buf = "localuser";
+                    break;
+                }
+
+                case "Удаленный пользователь": {
+                    buf = "remoteuser";
+                    break;
+                }
+
+                case "Клиент": {
+                    buf = "client";
+                    break;
+                }
+            }
+            if(buf!=null) {
+                sourseUser.setRole(buf);
+            }
+        }
+        return sourseUser;
     }
 
     public void deleteUserSetting() {
@@ -281,10 +357,15 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void deleteUsergroupSetting() {
-        deleteUsergroup(selectedUsergroup);
-        usergroupList.remove(selectedUsergroup);
-        selectedUsergroup = new Usergroup();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
-        PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
+        try {
+            deleteUsergroup(selectedUsergroup);
+            usergroupList.remove(selectedUsergroup);
+            selectedUsergroup = new Usergroup();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
+            PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
+        }catch (Exception e){
+            PrimeFaces.current().executeScript("PF('errorDeleteUsergroupDialog').show()");
+            System.out.println("error delete = "+e.getMessage());
+        }
     }
 }

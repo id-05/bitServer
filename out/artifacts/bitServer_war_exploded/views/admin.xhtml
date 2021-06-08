@@ -6,7 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html"
-      xmlns:b = "http://java.sun.com/jsf/composite/mycomponent">
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
 
 <f:view>
     <h:head>
@@ -48,16 +48,23 @@
                         <p:menuitem value="luna-green" actionListener="#{autoriseBean.setTheme('luna-green')}" process="@this"/>
                         <p:menuitem value="luna-pink" actionListener="#{autoriseBean.setTheme('luna-pink')}" process="@this"/>
                     </p:submenu>
-                    <p:menuitem style="margin-right: 5px" value="Выйти" actionListener="#{autoriseBean.logout}" icon="pi pi-sign-out"/>
 
                     <f:facet name="options">
-                        <div class="ui-input-icon-left p-mr-2">
-                            <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                            <div align="right">Комплексные решения в области рентгенологии</div>
+
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
                         </div>
+
                     </f:facet>
                 </p:menubar>
             </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
 
         </h:form>
 

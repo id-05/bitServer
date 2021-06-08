@@ -20,6 +20,7 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -29,18 +30,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean", eager = false)
-@ViewScoped
+@SessionScoped
 public class QueueBean implements UserDao {
 
     public String filtrDate = "today";
     public Date firstdate;
     public Date seconddate;
     public int typeSeach = 0;
-    private static List<String> selectedModaliti = new ArrayList<>();
+    private List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
@@ -82,12 +82,12 @@ public class QueueBean implements UserDao {
         this.usergroupList = usergroupList;
     }
 
-    public static List<String> getSelectedModaliti() {
+    public List<String> getSelectedModaliti() {
         return selectedModaliti;
     }
 
-    public static void setSelectedModaliti(List<String> selectedModaliti) {
-        QueueBean.selectedModaliti = selectedModaliti;
+    public void setSelectedModaliti(List<String> selectedModaliti) {
+        this.selectedModaliti = selectedModaliti;
     }
 
     public List<BitServerStudy> getVisibleStudiesList() {
@@ -190,6 +190,7 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
+        System.out.println("filtrDate = "+ filtrDate);
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
@@ -206,6 +207,7 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
+        System.out.println("read study from db");
         selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
@@ -245,7 +247,6 @@ public class QueueBean implements UserDao {
                 addStudyInBitServerStudyTable(buf);
             }
         }
-
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
@@ -454,7 +455,7 @@ public class QueueBean implements UserDao {
     public void comebackStudy() throws IOException {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             if(!bufStudy.getUsergroupwhosees().equals("")){
-                System.out.println("in circl "+bufStudy.getPatientname());
+                //System.out.println("in circl "+bufStudy.getPatientname());
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
                 updateStudyInBitServerStudyTable(bufStudy);

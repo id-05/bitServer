@@ -5,6 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
       xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
@@ -46,14 +47,8 @@
                 </p:menubar>
             </div>
 
-            <p:dialog id="about" showEffect="fade" modal="true"
-                      widgetVar="about" responsive="true">
-                <p:card style="width: 25rem; margin-bottom: 2em">
-                    <p:graphicImage name="/resources/images/logo.jpg" library="bitServer"/>
-
-                    <p align="justify">Информация о разработчике. Ссылки на руководство пользователя</p>
-
-                </p:card>
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
             </p:dialog>
 
         </h:form>

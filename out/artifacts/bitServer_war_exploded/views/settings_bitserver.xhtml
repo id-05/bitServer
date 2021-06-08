@@ -188,10 +188,10 @@
 
                             <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
                             <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
-                                <f:selectItem itemLabel="Администратор" itemValue="admin"/>
-                                <f:selectItem itemLabel="Локальный пользователь" itemValue="localuser"/>
-                                <f:selectItem itemLabel="Удаленный пользователь" itemValue="remoteuser"/>
-                                <f:selectItem itemLabel="Клиент" itemValue="client"/>
+                                <f:selectItem itemLabel="Администратор" itemValue="Администратор"/>
+                                <f:selectItem itemLabel="Локальный пользователь" itemValue="Локальный пользователь"/>
+                                <f:selectItem itemLabel="Удаленный пользователь" itemValue="Удаленный пользователь"/>
+                                <f:selectItem itemLabel="Клиент" itemValue="Клиент"/>
                             </p:selectOneMenu>
 
                             <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
@@ -225,6 +225,7 @@
                         <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('deleteUserDialog').hide()"/>
                     </p:dialog>
+
                         <div class="p-d-flex"></div>
                         <div >Списко зарегистрированных пользователей.</div>
                         <br></br>
@@ -331,7 +332,13 @@
                                          onclick="PF('deleteUsergroupDialog').hide()"/>
                     </p:dialog>
 
+                        <p:dialog widgetVar="errorDeleteUsergroupDialog" showEffect="fade" width="300"
+                                  header="При удалении возникла ошибка! Скорее всего в группе есть активные пользователи!
+                                                Удалить её невозможно!" message="Ошибка" severity="warn">
+                        </p:dialog>
+
                     <div>Списко зарегистрированных групп пользователей, группа "Локальные пользователи" - недоступна для изменения.</div>
+
                     </p:outputPanel>
                 </p:tab>
             </p:accordionPanel>

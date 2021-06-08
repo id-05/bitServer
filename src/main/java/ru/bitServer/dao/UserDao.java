@@ -70,7 +70,6 @@ public interface UserDao {
     }
 
     public default void updateUsergroup(Usergroup usergroup) {
-        System.out.println("test selected in dao = "+usergroup.getRuName());
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(usergroup);
@@ -143,7 +142,6 @@ public interface UserDao {
     public default BitServerResources getBitServerResource(String uname) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
-        System.out.println("hql = " + hql);
         Query query = session.createQuery(hql);
         List<BitServerResources> results = query.list();
 
@@ -173,6 +171,8 @@ public interface UserDao {
     }
 
     public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
+        System.out.println("state = "+state+" dataseachtype = "+dateSeachType+"  firstdate = "+firstdate.toString()+"  seconddate = "+seconddate.toString() );
+
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
