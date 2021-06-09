@@ -25,6 +25,12 @@
         body{
             /* background-color: RGB(128,128,128);  Цвет фона веб-страницы */
         }
+
+        .fileupload-content {
+            overflow: auto;
+            height: 400px;
+        }
+
     </style>
 
 
@@ -63,6 +69,7 @@
             <p:card style="background-color: darkgray; margin-bottom: 2em; margin-top: 2em">
                 <p:commandButton value="Назад" actionListener="#{clientBean.onPreviewClick}" rendered="#{clientBean.skip}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
                 <p:commandButton value="Далее" actionListener="#{clientBean.onNextClick}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
+
                 <div class="p-d-flex p-jc-center">
 
 
@@ -80,28 +87,28 @@
                             Анамнез и дополнительная информация
                         </f:facet>
                         <div class="p-d-flex p-flex-column">
-                            <div class="p-mb-2">Укажите здесь например:</div>
-                            <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
-                            <div class="p-mb-2">- причина обращения за обследованием</div>
-                            <div class="p-mb-2">- текущее состояние пациента</div>
-                            <div class="p-mb-2">- информация об удаленных у пациента органах</div>
-                            <div class="p-mb-2">- другая важная информация</div>
+                            <div class="p-mb-2" style="margin-left: 10px">Укажите здесь например:</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- причина обращения за обследованием</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- текущее состояние пациента</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- информация об удаленных у пациента органах</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- другая важная информация</div>
                         </div>
                         <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
                                          autoResize="false"/>
                     </p:card>
 
-                    <p:card rendered="#{clientBean.selectcard(2)}" >
+                    <p:card rendered="#{clientBean.selectcard(2)}">
                         <f:facet name="title">
                             Файлы исследования
                         </f:facet>
+                        <p:outputPanel showEffect="fade" modal="true">
                         <p:fileUpload  mode="advanced"
                                        widgetVar="fUpload"
-                                       listener="#{queueBean.handleFileUpload}"
+                                       listener="#{clientBean.handleFileUpload}"
                                        sequential="true"
                                        styleClass="fileupload-content"
                                        dragDropSupport="true"
-
                                        sizeLimit="10000000"
                                        label="Выбрать"
                                        uploadLabel="Зазрузить"
@@ -109,8 +116,10 @@
                                        multiple="true"
                                        invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
                                        allowTypes="/(\.|\/)(dcm)$/"/>
-
+                        </p:outputPanel>
                         <div style="width: 40rem">
+                            <p:outputLabel id="count">Всего выбрано: #{clientBean.uploadCount} </p:outputLabel>
+                            <br></br>
                         <p:outputLabel>Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
                             Используйте этот способ, для корректной загрузки всех вложенных каталогов.</p:outputLabel>
                         </div>

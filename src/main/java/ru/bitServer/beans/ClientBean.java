@@ -4,8 +4,10 @@ import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
@@ -23,8 +25,10 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -37,6 +41,16 @@ public class ClientBean implements UserDao {
     String currentStudyName;
     DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH:mm");
     Users currentUser;
+    ArrayList<byte[]> listUploadFile = new ArrayList<>();
+    int uploadCount = 0;
+
+    public int getUploadCount() {
+        return uploadCount;
+    }
+
+    public void setUploadCount(int uploadCount) {
+        this.uploadCount = uploadCount;
+    }
 
     public int getActiveStep() {
         return activeStep;
@@ -182,5 +196,15 @@ public class ClientBean implements UserDao {
         if(i==activeStep)
             return true;
         else return false;
+    }
+
+    public void handleFileUpload(FileUploadEvent event) throws IOException {
+        UploadedFile f = event.getFile();
+        listUploadFile.add(f.getContent());
+
+//        HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
+//        conn.disconnect();
+        uploadCount++;
+        PrimeFaces.current().ajax().update(":stepbystep:count");
     }
 }
