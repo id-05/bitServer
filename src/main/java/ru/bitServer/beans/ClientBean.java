@@ -3,34 +3,75 @@ package ru.bitServer.beans;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
+import ru.bitServer.dao.UserDao;
+import ru.bitServer.dao.Usergroup;
+import ru.bitServer.dao.Users;
+import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 @ManagedBean(name = "clientBean", eager = true)
 @SessionScoped
-public class ClientBean {
+public class ClientBean implements UserDao {
+
+    boolean skip;
+    int activeStep = 0;
+    String currentStudyName;
+    DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH:mm");
+    Users currentUser;
+
+    public int getActiveStep() {
+        return activeStep;
+    }
+
+    public void setActiveStep(int activeStep) {
+        this.activeStep = activeStep;
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public String getCurrentStudyName() {
+        return currentStudyName;
+    }
+
+    public void setCurrentStudyName(String currentStudyName) {
+        this.currentStudyName = currentStudyName;
+    }
 
     @PostConstruct
     public void init() {
-        System.out.println("client bean");
-        //        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        File file = new File("D:\\dicom\\IM11.dcm");
-        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(file);
-
-//            ImageIO.write(bufferedImg, "dcm", os);
-        outputJpegImage(bufferedImg, "D:\\dicom\\dicom.jpg");
+        HttpSession session = SessionUtils.getSession();
+        currentUser = getUserById(session.getAttribute("userid").toString());
+        Usergroup usergroup = getUsergroupById(currentUser.getUgroup());
+        //currentStudyName = usergroup.getRuName()+"_"+formatter.format(new Date());
+//        System.out.println("client bean");
+//        File file = new File("D:\\dicom\\IM11.dcm");
+//        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(file);
+//        outputJpegImage(bufferedImg, "D:\\dicom\\dicom.jpg");
 
     }
 
@@ -118,5 +159,28 @@ public class ClientBean {
             e.printStackTrace();
         }
         System.out.println("Output: " + outputPath);
+    }
+
+    public void onPreviewClick() {
+        if(activeStep>0)
+            activeStep--;
+        if(activeStep==0)
+                skip = false;
+        //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+        PrimeFaces.current().ajax().update("stepbystep");
+    }
+
+    public void onNextClick() {
+       if(activeStep<3)
+            activeStep++;
+       skip = true;
+       //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+       PrimeFaces.current().ajax().update("stepbystep");
+    }
+
+    public boolean selectcard(int i){
+        if(i==activeStep)
+            return true;
+        else return false;
     }
 }

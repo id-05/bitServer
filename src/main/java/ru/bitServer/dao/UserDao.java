@@ -129,6 +129,21 @@ public interface UserDao {
         }
     }
 
+    public default Usergroup getUsergroupById(String groupid){
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM Usergroup U WHERE U.id = '" + groupid + "'";
+        Query query = session.createQuery(hql);
+        List<Usergroup> results = query.list();
+
+        if (results.size() > 0) {
+            Iterator<Usergroup> it = results.iterator();
+            return (Usergroup) it.next();
+        }else{
+            Usergroup usergroup = new Usergroup();
+            return usergroup;
+        }
+    }
+
     public default List<Users> getBitServerUserList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
