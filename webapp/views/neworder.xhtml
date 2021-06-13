@@ -6,6 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
+
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
 
 <f:view>
@@ -108,6 +109,7 @@
                                        listener="#{clientBean.handleFileUpload}"
                                        sequential="true"
                                        styleClass="fileupload-content"
+                                       auto="true"
                                        dragDropSupport="true"
                                        sizeLimit="10000000"
                                        label="Выбрать"
@@ -116,10 +118,25 @@
                                        multiple="true"
                                        invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
                                        allowTypes="/(\.|\/)(dcm)$/"/>
+                            <f:facet name="options">
+                                <div class="p-mr-2 p-as-center">
+                                    <div class="p-d-flex">
+                                        <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                    </div>
+                                </div>
+                            </f:facet>
                         </p:outputPanel>
-                        <div style="width: 40rem">
-                            <p:outputLabel id="count">Всего выбрано: #{clientBean.uploadCount} </p:outputLabel>
-                            <br></br>
+
+                        <div style="width: 40rem" >
+                            <div class="p-text-bold">
+                                <p:outputLabel id="count">Всего выбрано: #{clientBean.uploadCount}
+                                    <p:commandButton icon="pi pi-trash"  actionListener="#{autoriseBean.clearfileList()}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                </p:outputLabel>
+
+                            </div>
+
+                                <br></br>
                         <p:outputLabel>Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
                             Используйте этот способ, для корректной загрузки всех вложенных каталогов.</p:outputLabel>
                         </div>

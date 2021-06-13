@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+
 @ManagedBean(name = "clientBean", eager = true)
 @SessionScoped
 public class ClientBean implements UserDao {
@@ -43,6 +44,7 @@ public class ClientBean implements UserDao {
     Users currentUser;
     ArrayList<byte[]> listUploadFile = new ArrayList<>();
     int uploadCount = 0;
+    ArrayList<UploadedFile> files = new ArrayList<>();
 
     public int getUploadCount() {
         return uploadCount;
@@ -201,10 +203,31 @@ public class ClientBean implements UserDao {
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile f = event.getFile();
         listUploadFile.add(f.getContent());
-
 //        HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
 //        conn.disconnect();
         uploadCount++;
         PrimeFaces.current().ajax().update(":stepbystep:count");
     }
+
+    public void clearfileList(){
+
+    }
+
+    public void oncomplete(){
+        System.out.println("oncomplete");
+    }
+
+    public void onadd(){
+        System.out.println("onadd");
+    }
+
+    public void onupload(){
+        System.out.println("onupload");
+    }
+
+    public void onstart(){
+        System.out.println("onstart(");
+    }
+
+
 }
