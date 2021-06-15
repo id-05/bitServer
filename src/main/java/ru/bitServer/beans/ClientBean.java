@@ -12,6 +12,7 @@ import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -31,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 
 @ManagedBean(name = "clientBean", eager = true)
@@ -203,14 +206,24 @@ public class ClientBean implements UserDao {
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile f = event.getFile();
         listUploadFile.add(f.getContent());
-//        HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
-//        conn.disconnect();
         uploadCount++;
         PrimeFaces.current().ajax().update(":stepbystep:count");
     }
 
     public void clearfileList(){
+        listUploadFile.clear();
+        uploadCount = 0;
+        PrimeFaces.current().ajax().update(":stepbystep:count");
+    }
 
+    public void aprove(){
+        PrimeFaces.current().executeScript("PF('statusDialog').show()");
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        for(byte[] bufInstance:listUploadFile){
+            HttpURLConnection conn = connection.sendDicom("/instances", bufInstance);
+            conn.disconnect();
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
 
     public void oncomplete(){
@@ -228,6 +241,5 @@ public class ClientBean implements UserDao {
     public void onstart(){
         System.out.println("onstart(");
     }
-
 
 }

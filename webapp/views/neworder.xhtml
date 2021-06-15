@@ -131,7 +131,7 @@
                         <div style="width: 40rem" >
                             <div class="p-text-bold">
                                 <p:outputLabel id="count">Всего выбрано: #{clientBean.uploadCount}
-                                    <p:commandButton icon="pi pi-trash"  actionListener="#{autoriseBean.clearfileList()}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                    <p:commandButton icon="pi pi-trash"  actionListener="#{clientBean.clearfileList()}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 </p:outputLabel>
 
                             </div>
@@ -143,13 +143,21 @@
                     </p:card>
 
                     <p:card rendered="#{clientBean.selectcard(3)}" style="margin-bottom: 2em; margin-top: 4em">
-                        <f:facet name="title">
-                            Подтверждение
-                        </f:facet>
+                        <p:panel header="Подтверждение" style="width: 800px">
+                            <p class="p-m-0">
+                               Нажимая кнопку подтвердить - вы соглашаетесь с условиями работы платформы.
+                               Прикрепленные вами данные, будут обезличены и отправлены на сервер для описания.
+                            </p>
+                            <p:commandButton style="margin-top: 40px" value="Подтвердить"
+                                             onclick="PF('statusDialog').show()"
+                                             process="@this"
+                                             actionListener="#{clientBean.aprove()}"/>
+                        </p:panel>
+                        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                            <p:graphicImage value="/resources/images/upload.gif" />
+                        </p:dialog>
                     </p:card>
-
                 </div>
-
 
             </p:card>
         </h:form>
