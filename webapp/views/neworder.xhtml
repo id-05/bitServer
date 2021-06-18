@@ -69,7 +69,7 @@
 
             <p:card style="background-color: darkgray; margin-bottom: 2em; margin-top: 2em">
                 <p:commandButton value="Назад" actionListener="#{clientBean.onPreviewClick}" rendered="#{clientBean.skip}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
-                <p:commandButton value="Далее" actionListener="#{clientBean.onNextClick}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
+                <p:commandButton value="Далее" actionListener="#{clientBean.onNextClick}" rendered="#{clientBean.skipNext}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
 
                 <div class="p-d-flex p-jc-center">
 
@@ -78,7 +78,7 @@
                         <f:facet name="title">
                             Название исследования
                         </f:facet>
-                        <p:inputText value="#{clientBean.currentStudyName}"/>
+                        <p:inputText value="#{clientBean.currentStudyName}" style="width: 400px"/>
                         <p>Укажите здесь название исследования. Если вы оставите поле пустым, то по умолчанию название назначится как "Название вашей организации" + "Время создания".
                         Мы рекомендуем не менять такой принцип. Так же рекомендуем не указывать здесь персональные данные пациентов и т.п. информацию.</p>
                     </p:card>
@@ -95,7 +95,7 @@
                             <div class="p-mb-2" style="margin-left: 10px">- информация об удаленных у пациента органах</div>
                             <div class="p-mb-2" style="margin-left: 10px">- другая важная информация</div>
                         </div>
-                        <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                        <p:inputTextarea value="#{clientBean.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
                                          autoResize="false"/>
                     </p:card>
 

@@ -9,6 +9,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
+import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
@@ -26,6 +27,7 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import static jdk.internal.org.objectweb.asm.commons.Method.getMethod;
 import static ru.bitServer.beans.MainBean.mainServer;
 
 
@@ -41,6 +44,7 @@ import static ru.bitServer.beans.MainBean.mainServer;
 public class ClientBean implements UserDao {
 
     boolean skip;
+    boolean skipNext = true;
     int activeStep = 0;
     String currentStudyName;
     DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH:mm");
@@ -48,6 +52,15 @@ public class ClientBean implements UserDao {
     ArrayList<byte[]> listUploadFile = new ArrayList<>();
     int uploadCount = 0;
     ArrayList<UploadedFile> files = new ArrayList<>();
+    String anamnes;
+
+    public String getAnamnes() {
+        return anamnes;
+    }
+
+    public void setAnamnes(String anamnes) {
+        this.anamnes = anamnes;
+    }
 
     public int getUploadCount() {
         return uploadCount;
@@ -81,11 +94,16 @@ public class ClientBean implements UserDao {
         this.currentStudyName = currentStudyName;
     }
 
+    public boolean isSkipNext() {
+        return skipNext;
+    }
+
     @PostConstruct
     public void init() {
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         Usergroup usergroup = getUsergroupById(currentUser.getUgroup());
+        anamnes = "";
         //currentStudyName = usergroup.getRuName()+"_"+formatter.format(new Date());
 //        System.out.println("client bean");
 //        File file = new File("D:\\dicom\\IM11.dcm");
@@ -185,14 +203,43 @@ public class ClientBean implements UserDao {
             activeStep--;
         if(activeStep==0)
                 skip = false;
+        if(activeStep <3)
+            skipNext = true;
         //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update("stepbystep");
     }
 
-    public void onNextClick() {
+    public void onNextClick() throws NoSuchMethodException {
        if(activeStep<3)
-            activeStep++;
-       skip = true;
+       {
+           switch (activeStep){
+               case 0:{
+                   skip = true;
+                   activeStep++;
+                   break;
+               }
+
+               case 1:{
+                   if(!anamnes.equals("")){
+                       activeStep++;
+                       if (activeStep==3){
+                           skipNext = false;
+                       }
+                   }
+                   break;
+               }
+
+               case 2:{
+                   if(uploadCount>0){
+                       activeStep++;
+                       skipNext = false;
+                   }
+                   break;
+               }
+           }
+
+       }
+
        //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
        PrimeFaces.current().ajax().update("stepbystep");
     }
@@ -216,13 +263,21 @@ public class ClientBean implements UserDao {
         PrimeFaces.current().ajax().update(":stepbystep:count");
     }
 
-    public void aprove(){
+    public void aprove() throws IOException {
         PrimeFaces.current().executeScript("PF('statusDialog').show()");
         OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         for(byte[] bufInstance:listUploadFile){
             HttpURLConnection conn = connection.sendDicom("/instances", bufInstance);
+            String buf = conn.getResponseMessage();
+            System.out.println(buf);
             conn.disconnect();
         }
+
+        BitServerStudy newStudy = new BitServerStudy();
+        newStudy.setAnamnes(anamnes);
+        //newStudy.
+        //addStudyInBitServerStudyTable(newStudy);
+
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
 
