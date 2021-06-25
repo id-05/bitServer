@@ -238,15 +238,21 @@
                         <p:column exportable="false" style="align-content: center; ">
 
                             <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                                             id="anamnes"
                                              styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+                            <p:tooltip for="anamnes" value="Анамнез"/>
 
-                            <p:commandButton style="margin-right: 10px" styleClass="rounded-button ui-button-help" icon="pi pi-eye" process="@this"
+                            <p:commandButton id="viewinosimis"
+                                             style="margin-right: 10px" styleClass="rounded-button ui-button-help"
+                                             icon="pi pi-eye" process="@this"
                                              actionListener="#{queueBean.redirectToOsimis(bitServerStudy.sid)}">
                             </p:commandButton>
+                            <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
 
-                            <p:commandButton ajax="false" style="margin-right: 10px"
+                            <p:commandButton id="result"
+                                             ajax="false" style="margin-right: 10px"
                                              styleClass="edit-button rounded-button ui-button-success"
                                              icon="pi pi-file"
                                              update=":seachform:sidebar"
@@ -254,13 +260,16 @@
                                 <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+                            <p:tooltip for="result" value="Результат/Описание"/>
 
-                            <p:commandButton icon="pi pi-pencil" update=":seachform"
+                            <p:commandButton id="gettowork"
+                                             icon="pi pi-pencil" update=":seachform"
                                              onclick="PF('sidebar').show()"
                                              styleClass="rounded-button" process="@this"
                                              disabled="#{not empty bitServerStudy.result}">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+                            <p:tooltip for="gettowork" value="Взять на описание"/>
 
                         </p:column>
                     </p:dataTable>
