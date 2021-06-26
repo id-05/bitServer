@@ -86,11 +86,13 @@ public class QueueremoteBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
-    public void addResult(BitServerStudy selectedVisibleStudy,UploadedFile resultFile) throws IOException {
+    public void addResult(BitServerStudy selectedVisibleStudy, UploadedFile resultFile) throws IOException {
         selectedVisibleStudy.setStatus(2);
         selectedVisibleStudy.setUserwhodiagnost(currentUserId);
         System.out.println("sid = "+selectedVisibleStudy.getSid());
         selectedVisibleStudy.setDateresult(new Date());
+        currentUser.setHasBlockStudy(false);
+        updateUser(currentUser);
         if(resultFile!=null){
             Path folder = Paths.get(MainBean.pathToSaveResult);
             String extension = FilenameUtils.getExtension(resultFile.getFileName());
@@ -100,7 +102,7 @@ public class QueueremoteBean implements UserDao {
                 input.read(buffer, 0, buffer.length);
                 output.write(buffer, 0, buffer.length);
             }catch (Exception e){
-                System.out.println("e = "+e.getMessage());
+                System.out.println("ошибка сохранения файла = "+e.getMessage());
             }
             selectedVisibleStudy.setTyperesult(true);
             selectedVisibleStudy.setResult(folder.toString()+"\\" + selectedVisibleStudy.getSid() + "." + extension);

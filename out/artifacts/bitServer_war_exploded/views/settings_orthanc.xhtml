@@ -21,9 +21,11 @@
                 <p:menuitem style="margin-right: 5px" value="Отменить изменения" icon="pi pi-replay" actionListener="#{settingsBean.restoreBackup()}" process="@this" update="form, growl"/>
 
                 <f:facet name="options">
-                    <div class="ui-input-icon-left p-mr-2">
-                        <div align="right">ООО "Бит-Сервис" г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
-                        <div align="right">Комплексные решения в области рентгенологии</div>
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
                     </div>
                 </f:facet>
             </p:menubar>
@@ -43,7 +45,7 @@
 
             </p:dialog>
 
-            <p:accordionPanel widgetVar="serverSettings" id="accordion">
+            <p:accordionPanel widgetVar="serverSettings" id="accordion" activeIndex="-1">
             <p:tab title="Основные настройки">
 
                 <p:divider align="left" type="dashed">

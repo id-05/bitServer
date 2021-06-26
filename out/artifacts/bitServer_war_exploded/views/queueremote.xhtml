@@ -133,7 +133,19 @@
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
-                        <p:outputLabel value="#{queueremoteBean.selectedVisibleStudy.anamnes}" escape="false" style="word-break: break-all; width: 400px"/>
+                        <p:inputTextarea value="#{queueremoteBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                         autoResize="false" disabled="true"/>
+
+                        <f:facet name="footer">
+
+                            <span style="padding: 20px;"> </span>
+
+                            <p:commandButton value="Закрыть" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
+                                             class="ui-button-secondary" update="dialogStudyAnamnes">
+                                <p:resetInput target="dialogStudyAnamnes"/>
+                            </p:commandButton>
+
+                        </f:facet>
                     </p:dialog>
 
                     <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
@@ -150,11 +162,11 @@
                         </p:card>
                         <div class="p-d-flex p-jc-between">
                             <div class="p-mr-2">
-                                <p:commandButton value="Отказаться" oncomplete="PF('confirmtogetstudy').hide()"/>
+                                <p:commandButton value="Отказаться" onclick="PF('confirmtogetstudy').hide()"/>
                             </div>
 
                             <div class="p-mr-2">
-                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="PF('confirmtogetstudy').hide() PF('sidebar').show()"/>
+                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="PF('confirmtogetstudy').hide()"/>
                             </div>
                         </div>
 

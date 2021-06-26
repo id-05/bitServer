@@ -85,16 +85,16 @@ public class AutoriseBean implements UserDao {
             }
             switch (currentUser.getRole()){
                 case "localuser":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/views/localuser.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
                     break;
                 case "remoteuser":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/views/remoteuser.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
                         break;
                 case "admin":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/views/admin.xhtml");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
                         break;
                 case "client":
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("/views/client.xhtml");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/client.xhtml");
                     break;
                 default:
                         break;
@@ -108,7 +108,7 @@ public class AutoriseBean implements UserDao {
     public void logout() throws IOException {
         HttpSession session = SessionUtils.getSession();
         session.invalidate();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/views/login.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/login.xhtml");
     }
 
     public static void showMessage(String title, String note, FacesMessage.Severity type) {

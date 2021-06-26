@@ -186,11 +186,8 @@ public interface UserDao {
     }
 
     public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
-        System.out.println("state = "+state+" dataseachtype = "+dateSeachType+"  firstdate = "+firstdate.toString()+"  seconddate = "+seconddate.toString() );
-
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-
         switch (dateSeachType){
             case "today":
                 firstdate = new Date();

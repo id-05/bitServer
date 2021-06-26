@@ -190,7 +190,7 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        System.out.println("filtrDate = "+ filtrDate);
+        //System.out.println("filtrDate = "+ filtrDate);
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
@@ -207,7 +207,7 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        System.out.println("read study from db");
+        //System.out.println("read study from db");
         selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
@@ -352,6 +352,7 @@ public class QueueBean implements UserDao {
 
     public void sendToAgent(){
         PrimeFaces.current().executeScript("PF('statusDialog').show()");
+        System.out.println("selected user group = "+selectedUserGroup);
         JsonObject query = new JsonObject();
         JsonObject queryDetails = new JsonObject();
         queryDetails.addProperty("PatientName", "ANONIM");
@@ -377,7 +378,7 @@ public class QueueBean implements UserDao {
                 updateStudyInBitServerStudyTable(bufStudy);
                 i++;
             }else{
-                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" уже было отправлено ранее!",info);
+                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
             }
         }
         showMessage("Внимание","Всего отправлено: " + i,info);
@@ -385,7 +386,7 @@ public class QueueBean implements UserDao {
         dataoutput();
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        PrimeFaces.current().executeScript("window.location.reload();");
+        //PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }
@@ -405,7 +406,7 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
@@ -455,7 +456,6 @@ public class QueueBean implements UserDao {
     public void comebackStudy() throws IOException {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             if(!bufStudy.getUsergroupwhosees().equals("")){
-                //System.out.println("in circl "+bufStudy.getPatientname());
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
                 updateStudyInBitServerStudyTable(bufStudy);
@@ -465,7 +465,21 @@ public class QueueBean implements UserDao {
         selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        PrimeFaces.current().executeScript("window.location.reload();");
+        //PrimeFaces.current().executeScript("window.location.reload();");
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        PrimeFaces.current().ajax().update(":seachform:send-button");
+    }
+
+    public void markAsHasResult() throws IOException {
+        for(BitServerStudy bufStudy:selectedVisibleStudies){
+            bufStudy.setUsergroupwhosees("");
+            bufStudy.setStatus(2);
+            updateStudyInBitServerStudyTable(bufStudy);
+        }
+        selectedVisibleStudies.clear();
+        dataoutput();
+        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
+        //PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }

@@ -280,6 +280,7 @@
                                     action="#{queueBean.comebackStudy}"
                                     disabled="#{bitServerStudy.usergroupwhosees == ''}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
+                                    action="#{queueBean.markAsHasResult}"
                                     disabled="#{not empty bitServerStudy.result}"/>
                         <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
