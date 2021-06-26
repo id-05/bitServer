@@ -197,9 +197,11 @@
                             </p:selectOneMenu>
 
                             <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
+
                             <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
                                 <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
                             </p:selectOneMenu>
+
                         </p:panelGrid>
 
                         <f:facet name="footer">

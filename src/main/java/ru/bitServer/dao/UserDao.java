@@ -266,6 +266,7 @@ public interface UserDao {
     }
 
     public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
+        System.out.println("usergroup = "+usergroup);
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         Query query = null;

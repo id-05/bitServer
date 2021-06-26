@@ -291,8 +291,8 @@ public class SettingBitServerBean implements UserDao {
         for(Usergroup bufgroup:usergroupList){
             if(bufgroup.getRuName().equals(sourseUser.getUgroup())){
                 sourseUser.setUgroup(String.valueOf(bufgroup.getId()));
-                //break;
             }
+
             String buf = null;
             switch (sourseUser.getRole()){
                 case "Администратор": {

@@ -134,16 +134,11 @@
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
                         <p:inputTextarea value="#{queueremoteBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
-                                         autoResize="false" disabled="true"/>
+                                         autoResize="false" inputmode="auto"/>
 
                         <f:facet name="footer">
 
                             <span style="padding: 20px;"> </span>
-
-                            <p:commandButton value="Закрыть" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
-                                             class="ui-button-secondary" update="dialogStudyAnamnes">
-                                <p:resetInput target="dialogStudyAnamnes"/>
-                            </p:commandButton>
 
                         </f:facet>
                     </p:dialog>
@@ -196,20 +191,20 @@
                             <b>Загрузить готовый файл:</b>
                         </p:divider>
 
-                        <p:fileUpload widgetVar="uploadResultFile"
-                                      skinSimple="true"
-                                      mode="advanced"
-                                      multiple="false"
-                                      label="Обзор"
-                                      uploadLabel="Сохранить и закрыть"
-                                      cancelLabel="Отмена"
-                                      dragDropSupport="true"
-                                      fileLimit="1"
-                                      update="@this :seachform:editorcomponent searchgrowl"
-                                      sizeLimit="10240000" allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
-                                      invalidSizeMessage="Maximum file size allowed is 10 MB"
-                                      invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
-                                      listener="#{queueremoteBean.handleFileUpload}"/>
+                        <p:fileUpload  mode="advanced"
+                                       widgetVar="fUpload"
+                                       listener="#{queueremoteBean.handleFileUpload}"
+                                       sequential="true"
+                                       styleClass="fileupload-content"
+                                       dragDropSupport="true"
+                                       skinSimple="true"
+                                       sizeLimit="10000000"
+                                       label="Выбрать"
+                                       uploadLabel="Зазрузить"
+                                       cancelLabel="Отмена"
+                                       multiple="true"
+                                       invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
+                                       allowTypes="/(\.|\/)(dcm)$/"/>
 
                         <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
                             <b>Ввести вручную:</b>

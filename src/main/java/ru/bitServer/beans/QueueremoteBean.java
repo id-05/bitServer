@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
-@ManagedBean(name = "queueremoteBean", eager = true)
+@ManagedBean(name = "queueremoteBean", eager = false)
 @SessionScoped
 public class QueueremoteBean implements UserDao {
 
@@ -127,21 +127,26 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        this.resultFile = null;
+        //this.resultFile = null;
+        System.out.println("Вход");
+
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
-            resultFile = event.getFile();
-            addResult(selectedVisibleStudy,resultFile);
+            //resultFile = event.getFile();
+            System.out.println("перед add куыгде");
+            addResult(selectedVisibleStudy, file);
+        }else{
+            System.out.println("Возникла ошибка в выборе или типе файла!");
         }
     }
-
-    public void lockedStudy(){
-        resultFile = null;
-        PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
-        PrimeFaces.current().ajax().update(":seachform:editorcomponent");
-        PrimeFaces.current().ajax().update(":seachform:selectfilename");
-        System.out.println("запись обрабатываемся!");
-    }
+//
+//    public void lockedStudy(){
+//        resultFile = null;
+//        PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
+//        PrimeFaces.current().ajax().update(":seachform:editorcomponent");
+//        PrimeFaces.current().ajax().update(":seachform:selectfilename");
+//        System.out.println("запись обрабатываемся!");
+//    }
 
     public void getStudyToDiag(){
         selectedVisibleStudy.setStatus(3);

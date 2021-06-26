@@ -190,17 +190,29 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        //System.out.println("filtrDate = "+ filtrDate);
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
+        visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
+    public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){
+        List<Usergroup> bufUserGroupList = getUsergroupList();
+        for(int i = 0; i<sourceList.size()-1; i++){
+            for(Usergroup bufGroup:bufUserGroupList) {
+                if(sourceList.get(i).getUsergroupwhosees().equals(bufGroup.getId().toString())){
+                    sourceList.get(i).setUsergroupwhosees(bufGroup.getRuName());
+                }
+            }
+        }
+        return sourceList;
+    }
+
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        UploadedFile f = event.getFile();
-        HttpURLConnection conn = connection.sendDicom("/instances", f.getContent());
+        UploadedFile file = event.getFile();
+        HttpURLConnection conn = connection.sendDicom("/instances", file.getContent());
         conn.disconnect();
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
@@ -351,8 +363,8 @@ public class QueueBean implements UserDao {
     }
 
     public void sendToAgent(){
-        PrimeFaces.current().executeScript("PF('statusDialog').show()");
-        System.out.println("selected user group = "+selectedUserGroup);
+        //PrimeFaces.current().executeScript("PF('statusDialog').show()");
+        //System.out.println("selected user group = "+selectedUserGroup);
         JsonObject query = new JsonObject();
         JsonObject queryDetails = new JsonObject();
         queryDetails.addProperty("PatientName", "ANONIM");
@@ -373,7 +385,7 @@ public class QueueBean implements UserDao {
                 bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
                 bufStudy.setStatus(1);
                 bufStudy.setDatesent(new Date());
-                bufStudy.setUsergroupwhosees(selectedUserGroup);
+                bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
                 bufStudy.setUserwhosent(currentUser.getUid().toString());
                 updateStudyInBitServerStudyTable(bufStudy);
                 i++;
@@ -391,6 +403,18 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }
 
+    public String getUserGroupId(String groupName){
+        String buf = "";
+        List<Usergroup> bufUserGroupList = getUsergroupList();
+        for(Usergroup bufGroup:bufUserGroupList){
+            if(groupName.equals(bufGroup.getRuName())){
+                buf = bufGroup.getId().toString();
+                break;
+            }
+        }
+        return buf;
+    }
+
     public void addAnamnes(){
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
     }
@@ -406,7 +430,7 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
