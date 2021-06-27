@@ -24,6 +24,16 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>ruresults</from-outcome>
+            <to-view-id>/views/remoteuserresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>rucurtask</from-outcome>
+            <to-view-id>/views/remoteusercurrenttask.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>client</from-outcome>
             <to-view-id>/views/client.xhtml</to-view-id>
         </navigation-case>

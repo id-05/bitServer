@@ -200,10 +200,12 @@ public class QueueBean implements UserDao {
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){
         List<Usergroup> bufUserGroupList = getUsergroupList();
-        for(int i = 0; i<sourceList.size()-1; i++){
-            for(Usergroup bufGroup:bufUserGroupList) {
-                if(sourceList.get(i).getUsergroupwhosees().equals(bufGroup.getId().toString())){
-                    sourceList.get(i).setUsergroupwhosees(bufGroup.getRuName());
+        for(int i = 0; i<sourceList.size(); i++){
+            if(sourceList.get(i).getUsergroupwhosees()!=null) {
+                for (Usergroup bufGroup : bufUserGroupList) {
+                    if (sourceList.get(i).getUsergroupwhosees().equals(bufGroup.getId().toString())) {
+                        sourceList.get(i).setUsergroupwhosees(bufGroup.getRuName());
+                    }
                 }
             }
         }

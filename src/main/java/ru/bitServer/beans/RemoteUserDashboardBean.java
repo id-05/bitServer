@@ -16,6 +16,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
@@ -28,7 +29,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 
 @ManagedBean(name = "remoteDashboard", eager = true)
-@SessionScoped
+@ViewScoped
 public class RemoteUserDashboardBean implements UserDao {
 
     private DashboardModel model;
@@ -47,6 +48,14 @@ public class RemoteUserDashboardBean implements UserDao {
     private int sliderDate = 50;
     public Date firstdate;
     public Date seconddate;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 
@@ -156,7 +165,7 @@ public class RemoteUserDashboardBean implements UserDao {
 
     @PostConstruct
     public void init() {
-
+        System.out.println("remote user dashboard");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         if(currentUser.isHasBlockStudy()){

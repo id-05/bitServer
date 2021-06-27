@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
@@ -23,7 +24,7 @@ import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueremoteBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class QueueremoteBean implements UserDao {
 
     private List<BitServerStudy> visibleStudiesList;
@@ -123,7 +124,8 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        //PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
@@ -148,7 +150,7 @@ public class QueueremoteBean implements UserDao {
 //        System.out.println("запись обрабатываемся!");
 //    }
 
-    public void getStudyToDiag(){
+    public void getStudyToDiag() throws IOException {
         selectedVisibleStudy.setStatus(3);
         selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
@@ -156,7 +158,7 @@ public class QueueremoteBean implements UserDao {
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
-        PrimeFaces.current().executeScript("PF('sidebar').show()");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteusercurrenttask.xhtml");
     }
 }
 

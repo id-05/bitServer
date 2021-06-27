@@ -266,7 +266,6 @@ public interface UserDao {
     }
 
     public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
-        System.out.println("usergroup = "+usergroup);
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         Query query = null;
@@ -274,6 +273,20 @@ public interface UserDao {
         query = session.createQuery(hql);
         query.setParameter("pgroup", usergroup);
         query.setParameter("pstatus", 1);
+        List<BitServerStudy> results = query.list();
+        session.close();
+        return results;
+    }
+
+    public default List<BitServerStudy> getMyBitServerStudy(Users requestUser) {
+        System.out.println("requestuser "+requestUser.getUid());
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        Query query = null;
+        String hql= "from BitServerStudy  where userwhodiagnost=:userid";
+        System.out.println("hql = "+hql);
+        query = session.createQuery(hql);
+        query.setParameter("userid", requestUser.getUid());
         List<BitServerStudy> results = query.list();
         session.close();
         return results;

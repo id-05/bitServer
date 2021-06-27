@@ -264,7 +264,8 @@
                             <p:tooltip for="result" value="Результат/Описание"/>
 
                             <p:commandButton id="gettowork"
-                                             icon="pi pi-pencil" update=":seachform"
+                                             icon="pi pi-pencil"
+                                             update=":seachform"
                                              onclick="PF('sidebar').show()"
                                              styleClass="rounded-button" process="@this"
                                              disabled="#{not empty bitServerStudy.result}">
