@@ -3,10 +3,7 @@ package ru.bitServer.util;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import ru.bitServer.dao.BitServerStudy;
-import ru.bitServer.dao.BitServerResources;
-import ru.bitServer.dao.Usergroup;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.*;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
@@ -21,6 +18,7 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(Usergroup.class);
                 configuration.addAnnotatedClass(BitServerResources.class);
                 configuration.addAnnotatedClass(BitServerStudy.class);
+                configuration.addAnnotatedClass(BitServerScheduler.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 

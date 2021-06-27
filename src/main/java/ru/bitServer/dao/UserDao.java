@@ -333,4 +333,38 @@ public interface UserDao {
         session.close();
     }
 
+    public default void saveNewRule(BitServerScheduler rule) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.saveOrUpdate(rule);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteRule(BitServerScheduler rule) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(rule);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void updateRule(BitServerScheduler rule) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(rule);
+        transaction.commit();
+        session.close();
+    }
+
+    public default List<BitServerScheduler> getAllBitServerSheduler() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BitServerScheduler> criteriaQuery = builder.createQuery(BitServerScheduler.class);
+        Root<BitServerScheduler> root = criteriaQuery.from(BitServerScheduler.class);
+        criteriaQuery.select(root);
+        Query<BitServerScheduler> query = session.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
+
 }
