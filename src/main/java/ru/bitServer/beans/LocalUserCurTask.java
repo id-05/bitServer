@@ -8,6 +8,7 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -24,14 +25,23 @@ import java.util.List;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-@ManagedBean(name = "rucurrenttaskBean", eager = false)
+@ManagedBean(name = "lucurrenttaskBean", eager = false)
 @SessionScoped
-public class RemoteUserCurTask implements UserDao {
+public class LocalUserCurTask implements UserDao {
+
     public Users currentUser;
     public String currentUserId;
     public BitServerStudy currentStudy;
     public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
     private OrthancRestApi connection;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public BitServerStudy getCurrentStudy() {
         return currentStudy;
@@ -51,7 +61,7 @@ public class RemoteUserCurTask implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("rucurrenttaskBean");
+        System.out.println("lucurrenttaskBean");
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
@@ -98,6 +108,6 @@ public class RemoteUserCurTask implements UserDao {
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy);
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
     }
 }

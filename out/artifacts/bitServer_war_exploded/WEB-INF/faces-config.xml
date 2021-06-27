@@ -19,6 +19,16 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>luresults</from-outcome>
+            <to-view-id>/views/localuserresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>lucurtask</from-outcome>
+            <to-view-id>/views/localusercurrenttask.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>queueremote</from-outcome>
             <to-view-id>/views/queueremote.xhtml</to-view-id>
         </navigation-case>

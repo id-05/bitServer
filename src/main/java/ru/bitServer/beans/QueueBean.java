@@ -33,7 +33,7 @@ import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class QueueBean implements UserDao {
 
     public String filtrDate = "today";
@@ -53,6 +53,14 @@ public class QueueBean implements UserDao {
     public Users currentUser;
     public OrthancRestApi connection;
     public int uploadCount;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
@@ -508,5 +516,16 @@ public class QueueBean implements UserDao {
         //PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
+    }
+
+    public void getStudyToDiag() throws IOException {
+        selectedVisibleStudy.setStatus(3);
+        selectedVisibleStudy.setDatablock(new Date());
+        selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
+        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        currentUser.setHasBlockStudy(true);
+        currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
+        updateUser(currentUser);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
     }
 }

@@ -22,9 +22,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-@ManagedBean(name = "ruresultsBean", eager = false)
+import static ru.bitServer.beans.MainBean.mainServer;
+import static ru.bitServer.beans.MainBean.osimisAddress;
+
+@ManagedBean(name = "luresultsBean", eager = false)
 @ViewScoped
-public class RemoteUserResults implements UserDao {
+public class LocalUserResults implements UserDao {
 
     private Users currentUser;
     private String currentUserId;
@@ -66,7 +69,7 @@ public class RemoteUserResults implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("ruresultsBean");
+        System.out.println("luresultsBean");
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
@@ -87,7 +90,7 @@ public class RemoteUserResults implements UserDao {
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
             return DefaultStreamedContent.builder()
-                    .name(study.getAnonimstudyid()+"-"+study.getSdescription()+"."+extension)
+                    .name(study.getPatientname()+"-"+study.getSdescription()+"."+extension)
                     .contentType("image/jpg")
                     .stream(() -> inputStream)
                     .build();
@@ -95,4 +98,9 @@ public class RemoteUserResults implements UserDao {
             return null;
         }
     }
+
+    public void redirectToOsimis(String sid) {
+        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+    }
 }
+

@@ -256,7 +256,7 @@
                                              ajax="false" style="margin-right: 10px"
                                              styleClass="edit-button rounded-button ui-button-success"
                                              icon="pi pi-file"
-                                             update=":seachform:sidebar"
+
                                              disabled="#{!not empty bitServerStudy.result}">
                                 <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
@@ -265,10 +265,9 @@
 
                             <p:commandButton id="gettowork"
                                              icon="pi pi-pencil"
-                                             update=":seachform"
-                                             onclick="PF('sidebar').show()"
                                              styleClass="rounded-button" process="@this"
-                                             disabled="#{not empty bitServerStudy.result}">
+                                             disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result or bitServerStudy.status == 1}"
+                                             oncomplete="PF('confirmtogetstudy').show()">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip for="gettowork" value="Взять на описание"/>
@@ -289,8 +288,6 @@
                         </p:menuitem>
 
                     </p:contextMenu>
-
-
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
@@ -322,50 +319,29 @@
                         </f:facet>
                     </p:dialog>
 
-                    <p:dialog id="aboutDialog" showEffect="fade" modal="true" widgetVar="aboutDialog" responsive="true">
-                        <b:about/>
-                    </p:dialog>
-
-                    <p:sidebar widgetVar="sidebar" fullScreen="true" baseZIndex="100">
-                        <h3>Описание исследования</h3>
-
-                        <div class="p-d-flex p-flex-column" style="margin-top: 10px">
-                            <div class="my_text" style="color: crimson; margin-bottom: 5px">Внимание! Пока это окно открыто, другие пользователи не видят данного исследования и не могут взять его на описание!</div>
-                            <div class="my_text" style="color: crimson; margin-bottom: 20px">После того, как вы нажмете "Сохранить" - результат отправится заказчику и вы больше не сможете просматривать это исследование!</div>
-                        </div>
-
-                        <p:textEditor widgetVar="editor" id="editorcomponent" secure="false" value="#{queueBean.selectedVisibleStudy.result}" height="200" placeholder="Enter your content">
-                            <f:facet name="toolbar">
-                                 <span class="ql-formats">
-                                    <button class="ql-bold"></button>
-                                    <button class="ql-italic"></button>
-                                    <button class="ql-underline"></button>
-                                    <button class="ql-strike"></button>
-                                </span>
-                                <span class="ql-formats">
-                                    <select class="ql-font"></select>
-                                    <select class="ql-size"></select>
-                                </span>
+                    <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
+                              widgetVar="confirmtogetstudy" responsive="true">
+                        <p:card style="width: 25rem; margin-bottom: 2em">
+                            <f:facet name="title">
+                                Внимание, вы собираетесь взять исследование на описание!
                             </f:facet>
-                        </p:textEditor>
 
-                        <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
-                            <b>Сохранение результата:</b>
-                        </p:divider>
+                            <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                Срок блокировки исследования #{mainBean.timeOnWork} часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
 
-                        <div>
-                            <p:commandButton value="Сохранить" icon="pi pi-check"
-                                             update=":seachform searchgrowl">
-                            </p:commandButton>
+                        </p:card>
+                        <div class="p-d-flex p-jc-between">
+                            <div class="p-mr-2">
+                                <p:commandButton value="Отказаться" onclick="PF('confirmtogetstudy').hide()"/>
+                            </div>
 
-                            <span style="padding: 20px;"> </span>
-
-                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('sidebar').hide()"
-                                             class="ui-button-secondary" update=":seachform">
-                            </p:commandButton>
+                            <div class="p-mr-2">
+                                <p:commandButton value="Согласиться" action="#{queueBean.getStudyToDiag}"/>
+                            </div>
                         </div>
 
-                    </p:sidebar>
+                    </p:dialog>
 
                 </div>
             </p:panel>

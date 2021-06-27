@@ -27,11 +27,11 @@
 
     <h:body>
 
-        <h:form id="remoteform">
+        <h:form id="localform">
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
             <div class="card">
                 <p:menubar>
-                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="remoteuser" icon="pi pi-backward"/>
+                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="localuser" icon="pi pi-backward"/>
                     <f:facet name="options">
 
                         <div class="p-mr-2 p-as-center">
@@ -50,12 +50,13 @@
         </h:form>
 
 
-        <h:form id="rumyresults">
+        <h:form id="lumyresults">
 
-            <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{ruresultsBean.visibleStudiesList}"
-                         reflow="true" styleClass="borderless"
-                         emptyMessage="Нет записей для отображения"
-                         rowKey="#{bitServerStudy.sid}">
+            <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{luresultsBean.visibleStudiesList}"
+                         reflow="true" styleClass="products-table"
+                         rowKey="#{bitServerStudy.sid}" paginator="true"
+                         paginatorPosition="bottom"
+                         emptyMessage="Нет записей для отображения">
                 <f:facet name="header">
                     <div class="products-table-header">
                         <span style="font-weight: bold">Ваши описания</span>
@@ -72,12 +73,12 @@
                     <h:outputText value="#{bitServerStudy.shortid}"/>
                 </p:column>
 
-                <p:column headerText="Пол"  style="text-align: center">
-                    <h:outputText value="#{bitServerStudy.patientsex}"/>
+                <p:column headerText="Пациент" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.patientname}"/>
                 </p:column>
 
-                <p:column headerText="Дата рождения" style="text-align: center">
-                    <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                <p:column headerText="Дата" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.sdate}">
                         <f:convertDateTime pattern="dd.MM.yyyy" />
                     </h:outputText>
                 </p:column>
@@ -91,15 +92,43 @@
                 </p:column>
 
                 <p:column exportable="false" style="align-content: center; ">
+
+                    <p:commandButton icon="pi pi-id-card" oncomplete="PF('manageAnamnes').show()"
+                                     id="anamnes"
+                                     styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px">
+                        <f:setPropertyActionListener value="#{bitServerStudy}" target="#{luresultsBean.selectedVisibleStudy}"/>
+                    </p:commandButton>
+                    <p:tooltip for="anamnes" value="Анамнез"/>
+
+                    <p:commandButton id="viewinosimis"
+                                     style="margin-right: 10px" styleClass="rounded-button ui-button-help"
+                                     icon="pi pi-eye" process="@this"
+                                     actionListener="#{luresultsBean.redirectToOsimis(bitServerStudy.sid)}">
+                    </p:commandButton>
+                    <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
+
                     <p:commandButton id="result"
                                      ajax="false" style="margin-right: 10px"
                                      styleClass="edit-button rounded-button ui-button-success"
                                      icon="pi pi-file">
-                        <p:fileDownload value="#{ruresultsBean.getResult(bitServerStudy)}"/>
+                        <p:fileDownload value="#{luresultsBean.getResult(bitServerStudy)}"/>
                     </p:commandButton>
                     <p:tooltip for="result" value="Результат/Описание"/>
+
                 </p:column>
             </p:dataTable>
+
+            <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                      widgetVar="manageAnamnes" responsive="true">
+                <p:inputTextarea value="#{luresultsBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                 autoResize="false" inputmode="auto"/>
+
+                <f:facet name="footer">
+
+                    <span style="padding: 20px;"> </span>
+
+                </f:facet>
+            </p:dialog>
 
         </h:form>
 
