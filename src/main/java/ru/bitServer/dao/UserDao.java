@@ -87,17 +87,20 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default List<Usergroup> getActiveBitServerUsergroupList() {
-        String hql= "from Usergroup where status=:status";
+    public default List<Usergroup> getRealBitServerUsergroupList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Query query = session.createQuery(hql);
+        Transaction transaction = session.beginTransaction();
+        Query query = null;
+        String hql= "from Usergroup  where forlocal=:forgroup and status=:pstatus";
         query = session.createQuery(hql);
-        query.setParameter("status", "active");
-        //query.setParameter("gtype", "alienuser");
+        query.setParameter("pstatus", "active");
+        query.setParameter("forgroup", false);
         List<Usergroup> results = query.list();
         session.close();
         return results;
     }
+
+
 
     public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();

@@ -20,7 +20,6 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -180,7 +179,7 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("CR");
         selectedModaliti.add("MG");
         selectedModaliti.add("DX");
-        usergroupList = getActiveBitServerUsergroupList();
+        usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
@@ -255,17 +254,18 @@ public class QueueBean implements UserDao {
         boolean existInTable = false;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
-        for(OrthancStudy bS:studiesFromRestApi){
+        for(OrthancStudy bufStudy:studiesFromRestApi){
             existInTable = false;
             for(BitServerStudy bBSS:studiesFromTableBitServer){
-                if (bS.getOrthancId().equals(bBSS.getSid())) {
+                if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
                     existInTable = true;
                     break;
                 }
             }
             if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bS.getOrthancId(), bS.getShortId(), bS.getStudyDescription(), bS.getDate(),
-                        bS.getModality(), new Date(), bS.getPatientName(), bS.getPatientBirthDate(), bS.getPatientSex(), "","",0);
+                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
                 addStudyInBitServerStudyTable(buf);
             }
         }
@@ -281,6 +281,7 @@ public class QueueBean implements UserDao {
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
+            System.out.println("studyData = "+studyData);
             JsonObject parentPatientDetails = null;
             if (studyData.has("PatientMainDicomTags")) {
                 parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
@@ -351,6 +352,11 @@ public class QueueBean implements UserDao {
                 studyDescription = studyDetails.get("StudyDescription").getAsString();
             }
 
+            String studyInstitutionName = "N/A";
+            if (studyDetails.has("InstitutionName")) {
+                studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
+            }
+
             String studyModality = "N/A";
             if (studyData.has("Series")) {
                 JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
@@ -366,7 +372,7 @@ public class QueueBean implements UserDao {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
                 }
             }
-            OrthancStudy studyObj = new OrthancStudy(studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }
         return studyList;

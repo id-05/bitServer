@@ -302,7 +302,13 @@ public class SearchBean {
             if(studyDetails.has("StudyDescription")){
                 studyDescription=studyDetails.get("StudyDescription").getAsString();
             }
-            OrthancStudy studyObj = new OrthancStudy(studyDescription, "", studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+
+            String studyInstitutionName = "N/A";
+            if (studyDetails.has("InstitutionName")) {
+                studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
+            }
+
+            OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, "", studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
 
             if(!patientMap.containsKey(parentPatientID)) {
                 OrthancPatient patient = new OrthancPatient(patientName,patientId,patientBirthDate,patientSex,parentPatientID,1);

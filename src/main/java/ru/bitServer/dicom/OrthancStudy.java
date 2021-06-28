@@ -16,8 +16,17 @@ public class OrthancStudy {
     private String studyDateToStr;
     private String PatientName;
     private String PatientSex;
+    private String InstitutionName;
     private Date PatientBirthDate;
     private List<OrthancSerie> series;
+
+    public String getInstitutionName() {
+        return InstitutionName;
+    }
+
+    public void setInstitutionName(String institutionName) {
+        InstitutionName = institutionName;
+    }
 
     public String getShortId() {
         return ShortId;
@@ -79,7 +88,8 @@ public class OrthancStudy {
         this.modality = modality;
     }
 
-    public OrthancStudy(String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+    public OrthancStudy(String InstitutionName, String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+        this.InstitutionName = InstitutionName;
         this.studyDescription = studyDescription;
         this.date = date;
         this.modality = modality;

@@ -78,11 +78,11 @@ public class AutoriseBean implements UserDao {
         if (currentUser.getUname()!=null) {
             HttpSession session = SessionUtils.getSession();
             session.setAttribute("userid", currentUser.getUid());
-            if(!currentUser.getuTheme().equals("")){
-            currentuserTheme = currentUser.getuTheme();
-            }else{
+         //   if(!currentUser.getuTheme().equals("")){
+         //   currentuserTheme = currentUser.getuTheme();
+         //   }else{
                 currentuserTheme = "saga";
-            }
+        //    }
             switch (currentUser.getRole()){
                 case "localuser":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");

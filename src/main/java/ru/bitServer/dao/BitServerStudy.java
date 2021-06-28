@@ -15,6 +15,7 @@ public class BitServerStudy {
     private String shortid;
     private String modality;
     private String sdescription;
+    private String source;
     private Date sdate;
     private Date dateaddinbase;
     private String patientname;
@@ -35,10 +36,11 @@ public class BitServerStudy {
     private int userwhoblock;
     private String statusstyle;
 
-    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
+    public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         this.sid = sid;
         this.shortid = shortid;
         this.sdescription = sdescription;
+        this.source = source;
         this.sdate = sdate;
         this.modality = modality;
         this.dateaddinbase = dateaddinbase;
@@ -112,6 +114,14 @@ public class BitServerStudy {
 
     public void setSdescription(String sdescription) {
         this.sdescription = sdescription;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public Date getSdate() {

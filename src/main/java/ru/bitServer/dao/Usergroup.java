@@ -12,6 +12,15 @@ public class Usergroup {
     private String ruContragent;
     private boolean downloadTrue;
     private String status;
+    private boolean forlocal;
+
+    public boolean isForlocal() {
+        return forlocal;
+    }
+
+    public void setForlocal(boolean forlocal) {
+        this.forlocal = forlocal;
+    }
 
     public String getRuContragent() {
         return ruContragent;
@@ -59,10 +68,11 @@ public class Usergroup {
 
     }
 
-    public Usergroup(String ruContragent, String ruName, String status, boolean downloadTrue){
+    public Usergroup(String ruContragent, String ruName, String status, boolean downloadTrue, boolean forlocal){
         this.ruName = ruName;
         this.ruContragent = ruContragent;
         this.downloadTrue = downloadTrue;
+        this.forlocal = forlocal;
         this.status = status;
     }
 }

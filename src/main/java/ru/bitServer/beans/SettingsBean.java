@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 @ManagedBean(name = "settingsBean")
-@SessionScoped
+@ViewScoped
 public class SettingsBean {
     public static String authentication;
     public String ServerName;

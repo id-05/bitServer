@@ -197,7 +197,6 @@
                             </p:selectOneMenu>
 
                             <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
-
                             <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
                                 <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
                             </p:selectOneMenu>
@@ -206,7 +205,7 @@
 
                         <f:facet name="footer">
 
-                            <p:commandButton value="Сохранить" icon="pi pi-check" onclick="" actionListener="#{settingBitServerBean.addNewUser}"
+                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUser}"
                                              update=":form:growl2">
                                 <p:resetInput target="dialogNewUser"/>
                             </p:commandButton>
@@ -273,6 +272,10 @@
                                     <p:selectBooleanCheckbox value="#{usergroup.downloadTrue}" disabled="true"/>
                                 </p:column>
 
+                                <p:column headerText="Локальные пользователи" sortBy="#{usergroup.forlocal}" style="text-align: center">
+                                    <p:selectBooleanCheckbox value="#{usergroup.forlocal}" disabled="true"/>
+                                </p:column>
+
                                 <p:column headerText="Статус" sortBy="#{usergroup.status}" style="text-align: center">
                                     <h:outputText value="#{usergroup.status}"/>
                                 </p:column>
@@ -302,6 +305,9 @@
 
                             <p:outputLabel for="download" style="margin-right: .5rem">Разрешить скачивание DICOM-данных</p:outputLabel>
                             <p:selectBooleanCheckbox id="download" value="#{settingBitServerBean.selectedUsergroup.downloadTrue}"/>
+
+                            <p:outputLabel for="local" style="margin-right: .5rem">Для локальных пользователей</p:outputLabel>
+                            <p:selectBooleanCheckbox id="local" value="#{settingBitServerBean.selectedUsergroup.forlocal}"/>
 
                             <p:outputLabel for="status" style="margin-right: .5rem">Статус</p:outputLabel>
                             <p:selectOneMenu id="status" value="#{settingBitServerBean.selectedUsergroup.status}">
@@ -344,7 +350,7 @@
                             </div>
                         </p:dialog>
 
-                    <div>Списко зарегистрированных групп пользователей, группа "Локальные пользователи" - недоступна для изменения.</div>
+                    <div>Списко зарегистрированных групп пользователей, признак "Для локальных пользователей" - означает что группа не будет попадать в списки для отправки.</div>
 
                     </p:outputPanel>
                 </p:tab>

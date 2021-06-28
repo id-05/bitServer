@@ -9,13 +9,14 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.List;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
 @ManagedBean(name = "settingBitServerBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class SettingBitServerBean implements UserDao {
 
     public List<Users> usersList;
@@ -254,7 +255,6 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
-
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
@@ -340,7 +340,7 @@ public class SettingBitServerBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-                usergroupList.add(new Usergroup(selectedUsergroup.getRuContragent(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus(),selectedUsergroup.isDownloadTrue()));
+                usergroupList.add(new Usergroup(selectedUsergroup.getRuContragent(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus(),selectedUsergroup.isDownloadTrue(),selectedUsergroup.isForlocal()));
                 saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
