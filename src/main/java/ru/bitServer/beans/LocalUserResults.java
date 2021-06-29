@@ -87,6 +87,7 @@ public class LocalUserResults implements UserDao {
     public StreamedContent getResult(BitServerStudy study) throws IOException {
         if(study.isTyperesult()){
             Path path = Paths.get(study.getResult());
+            System.out.println(path.toString());
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
             return DefaultStreamedContent.builder()
@@ -100,7 +101,9 @@ public class LocalUserResults implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('https://"+
+                mainServer.getLogin()+":"+mainServer.getPassword()+"@"+
+                osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 }
 

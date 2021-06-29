@@ -54,7 +54,7 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>autorisePage</from-outcome>
+            <from-outcome>login</from-outcome>
             <to-view-id>/views/login.xhtml</to-view-id>
         </navigation-case>
 

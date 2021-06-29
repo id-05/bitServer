@@ -237,9 +237,13 @@
 
                         <p:column exportable="false" style="align-content: center; ">
 
-                            <p:commandButton icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                            <p:commandButton icon="pi pi-id-card"
+                                             update=":seachform:dialogStudyAnamnes"
+                                             oncomplete="PF('manageAnamnes').show()"
                                              id="anamnes"
-                                             styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px">
+                                             styleClass="rounded-button ui-button-warning"
+                                             process="@this"
+                                             style="margin-right: 10px">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip for="anamnes" value="Анамнез"/>

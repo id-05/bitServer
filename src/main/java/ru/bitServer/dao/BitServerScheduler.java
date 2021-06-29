@@ -14,7 +14,7 @@ public class BitServerScheduler {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long schedulerid;
     private int usercreateid;
-    private int destinationgroup;
+    private String destinationgroup;
     private String timecondition;
     private String source;
     private Date time;
@@ -44,11 +44,11 @@ public class BitServerScheduler {
         this.usercreateid = usercreateid;
     }
 
-    public int getDestinationgroup() {
+    public String getDestinationgroup() {
         return destinationgroup;
     }
 
-    public void setDestinationgroup(int destinationgroup) {
+    public void setDestinationgroup(String destinationgroup) {
         this.destinationgroup = destinationgroup;
     }
 
@@ -80,7 +80,7 @@ public class BitServerScheduler {
 
     }
 
-    public BitServerScheduler(int uservreatedid, int destinationgroup, String timecondition, String source, Date time, String modality){
+    public BitServerScheduler(int uservreatedid, String destinationgroup, String timecondition, String source, Date time, String modality){
         this.usercreateid = uservreatedid;
         this.destinationgroup = destinationgroup;
         this.timecondition = timecondition;

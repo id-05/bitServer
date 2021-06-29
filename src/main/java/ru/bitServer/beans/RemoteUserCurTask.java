@@ -11,6 +11,7 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.FileOutputStream;
@@ -25,7 +26,7 @@ import java.util.List;
 import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "rucurrenttaskBean", eager = false)
-@SessionScoped
+@ViewScoped
 public class RemoteUserCurTask implements UserDao {
     public Users currentUser;
     public String currentUserId;

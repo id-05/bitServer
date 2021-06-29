@@ -14,8 +14,6 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -181,9 +179,15 @@ public class RemoteUserDashboardBean implements UserDao {
 
         allHasResultStudies = getAllBitServerStudy();
         allHasResultStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-        firstdate = allHasResultStudies.get(0).getSdate();
-        seconddate = allHasResultStudies.get(allHasResultStudies.size()-1).getSdate();
-        PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
+        try {
+            firstdate = allHasResultStudies.get(0).getSdate();
+            seconddate = allHasResultStudies.get(allHasResultStudies.size() - 1).getSdate();
+        }catch (Exception e){
+            System.out.println("error = "+e.getMessage());
+            firstdate = new Date();
+            seconddate = new Date();
+        }
+            PrimeFaces.current().ajax().update(":remoteform:serverstatistics");
 
         countAll = myStudies.size();
 

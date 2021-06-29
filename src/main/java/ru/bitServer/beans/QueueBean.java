@@ -460,7 +460,7 @@ public class QueueBean implements UserDao {
                     .stream(() -> inputStream)
                     .build();
         }else{
-            PrimeFaces.current().executeScript("PF('sidebar').show()");
+            //PrimeFaces.current().executeScript("PF('sidebar').show()");
             return null;
         }
     }
