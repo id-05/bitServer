@@ -1,10 +1,9 @@
 package ru.bitServer.dao;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -17,7 +16,8 @@ public class BitServerScheduler {
     private String destinationgroup;
     private String timecondition;
     private String source;
-    private Date time;
+    private int clock;
+    private int minute;
     private String modality;
 
     public String getModality() {
@@ -68,24 +68,33 @@ public class BitServerScheduler {
         this.source = source;
     }
 
-    public Date getTime() {
-        return time;
+    public int getClock() {
+        return clock;
     }
 
-    public void setTime(Date time) {
-        this.time = time;
+    public void setClock(int clock) {
+        this.clock = clock;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
     }
 
     public BitServerScheduler(){
 
     }
 
-    public BitServerScheduler(int uservreatedid, String destinationgroup, String timecondition, String source, Date time, String modality){
+    public BitServerScheduler(int uservreatedid, String destinationgroup, String timecondition, String source, int clock, int minute, String modality){
         this.usercreateid = uservreatedid;
         this.destinationgroup = destinationgroup;
         this.timecondition = timecondition;
         this.source = source;
-        this.time = time;
+        this.clock = clock;
+        this.minute = minute;
         this.modality = modality;
     }
 

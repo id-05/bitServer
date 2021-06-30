@@ -156,5 +156,6 @@
     <orderEntry type="library" name="Maven: org.dcm4che.tool:dcm4che-tool-jpg2dcm:3.3.8" level="project" />
     <orderEntry type="library" name="Maven: com.sun.media:jai_imageio:1.2-pre-dr-b04" level="project" />
     <orderEntry type="library" name="Maven: com.sun.media:clibwrapper_jiio:1.2-pre-dr-b04" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-java8:5.1.0.Final" level="project" />
   </component>
 </module>

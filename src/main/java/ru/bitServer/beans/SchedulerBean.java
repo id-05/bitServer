@@ -10,6 +10,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.time.LocalTime;
 import java.util.*;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
@@ -30,7 +31,7 @@ public class SchedulerBean implements UserDao {
     public List<Usergroup> usergroupList;
     List<String> usergroupListRuName = new ArrayList<>();
     Usergroup selectedgroup;
-    Date selectedtime;
+    LocalTime selectedtime;
     List<BitServerScheduler> selectedRules = new ArrayList<>();
 
     public List<BitServerScheduler> getSelectedRules() {
@@ -49,11 +50,11 @@ public class SchedulerBean implements UserDao {
         this.selectedgroup = selectedgroup;
     }
 
-    public Date getSelectedtime() {
+    public LocalTime getSelectedtime() {
         return selectedtime;
     }
 
-    public void setSelectedtime(Date selectedtime) {
+    public void setSelectedtime(LocalTime selectedtime) {
         this.selectedtime = selectedtime;
     }
 
@@ -165,9 +166,9 @@ public class SchedulerBean implements UserDao {
         Set<String> set = new LinkedHashSet<>(buflist);
         sourcelist.addAll(set);
         usergroupList = getRealBitServerUsergroupList();
-        selectedtime = new Date();
+        selectedtime = LocalTime.now();
         selectedRule = new BitServerScheduler();
-        selectedRule.setTime(selectedtime);
+        //selectedRule.setTime(selectedtime);
     }
 
     public void initNewRule() {
@@ -176,38 +177,41 @@ public class SchedulerBean implements UserDao {
     }
 
     public void addNewRule(){
-        selectedRule.setTime(selectedtime);
+        //selectedRule.setTime(selectedtime);
         //selectedRule.setModality(selectedmodality);
-        System.out.println("modality = "+selectedRule.getModality());
+        selectedRule.setMinute(selectedtime.getMinute());
+        selectedRule.setClock(selectedtime.getHour());
+        System.out.println("time = "+selectedtime.getHour()+":"+selectedtime.getMinute());
 
         if(!selectedRule.getModality().equals(""))
         {
             boolean verifiunical = true;
-            for(BitServerScheduler bufRule:bufRules){
-                if(selectedRule.getTime().equals(bufRule.getTime())){
-                    verifiunical = false;
-                    break;
-                }
+//            for(BitServerScheduler bufRule:bufRules){
+//                if(selectedRule.getTime().equals(bufRule.getTime()))
+//                {
+//                    verifiunical = false;
+//                    break;
+//                }
+//            }
+
+            if(verifiunical) {
+                System.out.println("unical");
+                BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
+                visibleRules.add(bufRule);
+                //visibleRules.add(new BitServerScheduler(currentUserId, destinationgroup, selectedRule.getTimecondition(), selectedRule.getSource(), selectedRule.getTime(), selectedRule.getModality()));
+                saveNewRule(bufRule);
+                visibleRules = getAllBitServerSheduler();
+                PrimeFaces.current().executeScript("PF('manageRuleDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:dt-rules");
+            }else{
+                System.out.println("ununical");
+                BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
+                updateRule(bufRule);
+
+                visibleRules = getAllBitServerSheduler();
+                PrimeFaces.current().executeScript("PF('manageRuleDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:dt-rules");
             }
-
-               if(verifiunical) {
-                   System.out.println("unical");
-                    BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
-                    visibleRules.add(bufRule);
-                    //visibleRules.add(new BitServerScheduler(currentUserId, destinationgroup, selectedRule.getTimecondition(), selectedRule.getSource(), selectedRule.getTime(), selectedRule.getModality()));
-                    saveNewRule(bufRule);
-                    visibleRules = getAllBitServerSheduler();
-                    PrimeFaces.current().executeScript("PF('manageRuleDialog').hide()");
-                   PrimeFaces.current().ajax().update(":form:dt-rules");
-               }else{
-                   System.out.println("ununical");
-                    BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
-                    updateRule(bufRule);
-
-                   visibleRules = getAllBitServerSheduler();
-                   PrimeFaces.current().executeScript("PF('manageRuleDialog').hide()");
-                   PrimeFaces.current().ajax().update(":form:dt-rules");
-               }
 
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!", FacesMessage.SEVERITY_ERROR);
