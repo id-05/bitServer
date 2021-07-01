@@ -72,16 +72,20 @@
                     </p:column>
 
                     <p:column exportable="false">
+
                         <p:commandButton icon="pi pi-pencil" update=":form:manage-rule-content"
                                          oncomplete="PF('manageRuleDialog').show()" style="margin-right: 10px"
-                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this"
+                                         action="#{schedulerBean.setTimeToDialog}">
                             <f:setPropertyActionListener value="#{bitServerScheduler}" target="#{schedulerBean.selectedRule}"/>
 
                         </p:commandButton>
+
                         <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                         oncomplete="PF('deleteRuleDialog').show()">
+                                         oncomplete="PF('deleteRuleDialog').show()" >
                             <f:setPropertyActionListener value="#{bitServerScheduler}" target="#{schedulerBean.selectedRule}"/>
                         </p:commandButton>
+
                     </p:column>
 
                 </p:dataTable>
@@ -105,14 +109,12 @@
                         <p:outputLabel for="rule" style="margin-right: .5rem">Условие</p:outputLabel>
                         <p:selectOneMenu id="rule" value="#{schedulerBean.selectedRule.timecondition}" effect="fold">
                             <f:selectItem itemLabel="Выберите" itemValue=""/>
-                            <f:selectItem itemLabel="После" itemValue="after"/>
-                            <f:selectItem itemLabel="До" itemValue="before"/>
+                            <f:selectItem itemLabel="После" itemValue="После"/>
+                            <f:selectItem itemLabel="До" itemValue="До"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="time" style="margin-right: .5rem">Время</p:outputLabel>
-                        <p:datePicker id="time" value="#{schedulerBean.selectedtime}" timeOnly="true" pattern="HH:mm">
-                            <p:ajax event="dateSelect" listener="#{schedulerBean.timeselect}" />
-                        </p:datePicker>
+                        <p:datePicker id="time" value="#{schedulerBean.selectedtime}" timeOnly="true" pattern="HH:mm"/>
 
                         <p:outputLabel for="ugroup" style="margin-right: .5rem">Направлять в</p:outputLabel>
                         <p:selectOneMenu id="ugroup" value="#{schedulerBean.selectedRule.destinationgroup}" dynamic="true">

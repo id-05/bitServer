@@ -519,7 +519,6 @@ public class QueueBean implements UserDao {
         selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        //PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }

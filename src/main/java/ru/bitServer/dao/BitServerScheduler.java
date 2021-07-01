@@ -16,8 +16,8 @@ public class BitServerScheduler {
     private String destinationgroup;
     private String timecondition;
     private String source;
-    private int clock;
-    private int minute;
+    private String clock;
+    private String minute;
     private String modality;
 
     public String getModality() {
@@ -68,19 +68,19 @@ public class BitServerScheduler {
         this.source = source;
     }
 
-    public int getClock() {
+    public String getClock() {
         return clock;
     }
 
-    public void setClock(int clock) {
+    public void setClock(String clock) {
         this.clock = clock;
     }
 
-    public int getMinute() {
+    public String getMinute() {
         return minute;
     }
 
-    public void setMinute(int minute) {
+    public void setMinute(String minute) {
         this.minute = minute;
     }
 
@@ -88,7 +88,7 @@ public class BitServerScheduler {
 
     }
 
-    public BitServerScheduler(int uservreatedid, String destinationgroup, String timecondition, String source, int clock, int minute, String modality){
+    public BitServerScheduler(int uservreatedid, String destinationgroup, String timecondition, String source, String clock, String minute, String modality){
         this.usercreateid = uservreatedid;
         this.destinationgroup = destinationgroup;
         this.timecondition = timecondition;
