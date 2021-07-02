@@ -136,7 +136,7 @@
                             </p:dialog>
                             <p:commandButton id="send-button" value="Отправить на описание в:"
                                              icon="pi pi-send" action="#{queueBean.sendToAgent}"
-                                             styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy()}"
+                                             styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
                                              onclick="PF('statusDialog').show()"
                                              update="searchgrowl"
                                              style="margin-right: 5px">
@@ -269,7 +269,9 @@
                             <p:commandButton id="gettowork"
                                              icon="pi pi-pencil"
                                              styleClass="rounded-button" process="@this"
-                                             disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result or bitServerStudy.status == 1}"
+                                             disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
+                                                            or bitServerStudy.status == 1 or bitServerStudy.status == 3
+                                                                or queueBean.currentUser.role == 'onlyview'}"
                                              oncomplete="PF('confirmtogetstudy').show()">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
@@ -282,10 +284,10 @@
 
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
                                     action="#{queueBean.comebackStudy}"
-                                    disabled="#{bitServerStudy.usergroupwhosees == ''}"/>
+                                    disabled="#{bitServerStudy.usergroupwhosees == '' or queueBean.currentUser.role == 'onlyview'}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
                                     action="#{queueBean.markAsHasResult}"
-                                    disabled="#{not empty bitServerStudy.result}"/>
+                                    disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
                         <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
                         </p:menuitem>

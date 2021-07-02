@@ -208,6 +208,12 @@ public class SettingBitServerBean implements UserDao {
                     users.setRole("Клиент");
                     break;
                 }
+
+                case "onlyview": {
+                    users.setRole("Локальный только просмотр");
+                    break;
+                }
+
             }
         }
         return usersList;
@@ -312,6 +318,11 @@ public class SettingBitServerBean implements UserDao {
 
                 case "Клиент": {
                     buf = "client";
+                    break;
+                }
+
+                case "Локальный только просмотр": {
+                    buf = "onlyview";
                     break;
                 }
             }

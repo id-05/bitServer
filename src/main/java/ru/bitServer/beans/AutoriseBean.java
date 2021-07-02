@@ -96,6 +96,9 @@ public class AutoriseBean implements UserDao {
                 case "client":
                     FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/client.xhtml");
                     break;
+                case "onlyview":
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
+                    break;
                 default:
                         break;
             }

@@ -192,6 +192,7 @@
                             <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
                                 <f:selectItem itemLabel="Администратор" itemValue="Администратор"/>
                                 <f:selectItem itemLabel="Локальный пользователь" itemValue="Локальный пользователь"/>
+                                <f:selectItem itemLabel="Локальный только просмотр" itemValue="Локальный только просмотр"/>
                                 <f:selectItem itemLabel="Удаленный пользователь" itemValue="Удаленный пользователь"/>
                                 <f:selectItem itemLabel="Клиент" itemValue="Клиент"/>
                             </p:selectOneMenu>
@@ -235,6 +236,7 @@
                         <div > </div>
                         <div ><strong>Администратор</strong> - имеет доступ к настройкам системы</div>
                         <div ><strong>Локальный пользователь</strong> - видит все исследования, вместе с ПД</div>
+                        <div ><strong>Локальный только просмотр</strong> - видит все исследования, вместе с ПД, но не может отправлять и брать на анализ</div>
                         <div ><strong>Удаленный пользователь</strong> - видит только исследования отправленные на диагностику в его группу, без ПД</div>
                         <div ><strong>Клиент</strong> - может загружать исследования и видит результаты только загруженных им исследований</div>
                     </p:outputPanel>
