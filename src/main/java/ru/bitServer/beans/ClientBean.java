@@ -1,27 +1,21 @@
 package ru.bitServer.beans;
 
-import com.google.common.io.ByteStreams;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
-import org.dcm4che3.imageio.plugins.dcm.DicomImageReader;
 import org.dcm4che3.io.DicomInputStream;
-//import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam
-
 import org.dcm4che3.io.DicomOutputStream;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
-import org.primefaces.shaded.commons.io.IOUtils;
 import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -41,7 +35,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
@@ -109,14 +102,7 @@ public class ClientBean implements UserDao {
     public void init() {
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
-        Usergroup usergroup = getUsergroupById(currentUser.getUgroup());
         anamnes = "";
-        //currentStudyName = usergroup.getRuName()+"_"+formatter.format(new Date());
-//        System.out.println("client bean");
-//        File file = new File("D:\\dicom\\IM11.dcm");
-//        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(file);
-//        outputJpegImage(bufferedImg, "D:\\dicom\\dicom.jpg");
-
     }
 
     public StreamedContent getDicomimage(){
@@ -212,7 +198,6 @@ public class ClientBean implements UserDao {
                 skip = false;
         if(activeStep <3)
             skipNext = true;
-        //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update("stepbystep");
     }
 
@@ -246,8 +231,6 @@ public class ClientBean implements UserDao {
            }
 
        }
-
-       //PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
        PrimeFaces.current().ajax().update("stepbystep");
     }
 
@@ -289,14 +272,9 @@ public class ClientBean implements UserDao {
             attributes.setString(Tag.PatientName,VR.PN,"test");
             attributes.setString(Tag.PatientID,VR.PN,"0123456789");
 
-            //Let's modify the patient name tag
-            //attrs.setString(Tag.PatientName,VR.PN, newPatientName);
-
-
             byte[] bufInstance2 = new byte[bufInstance.length];
             DicomOutputStream dos = new DicomOutputStream(new File("D://dicom/buf.dcm"));
             dos.writeDataset(fmi, attributes);
-            //dos.close();
 
             File f = new File("D://dicom/buf.dcm");
             DicomInputStream din2 = new DicomInputStream(f);
@@ -318,9 +296,6 @@ public class ClientBean implements UserDao {
 
         BitServerStudy newStudy = new BitServerStudy();
         newStudy.setAnamnes(anamnes);
-        //newStudy.
-        //addStudyInBitServerStudyTable(newStudy);
-
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
 

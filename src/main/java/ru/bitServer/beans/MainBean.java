@@ -108,7 +108,6 @@ public class MainBean implements UserDao {
         versionInfo = "1.1";
         timeOnWork = 24;
 
-
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
         //DashboardColumn column2 = new DefaultDashboardColumn();
@@ -139,13 +138,6 @@ public class MainBean implements UserDao {
                     break;
             }
         }
-
-        //mainServer.setIpaddress("192.168.1.58");////setIpaddress("192.168.0.6");//setIpaddress("185.59.139.156");
-        //mainServer.setPort("8042");//setPort("8142");
-        //mainServer.setLogin("doctor");
-        //mainServer.setPassword("doctor");
-        //mainServer.setPathToJson("C:\\Program Files\\Orthanc Server\\Configuration\\");
-        // mainServer.setPathToJson("/etc/orthanc/");
         try {
             connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");

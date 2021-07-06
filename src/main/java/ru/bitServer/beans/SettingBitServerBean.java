@@ -8,7 +8,6 @@ import ru.bitServer.dao.Users;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ public class SettingBitServerBean implements UserDao {
     public String orthancPassword;
     public String orthancPathToJson;
     public String orthancPathToResultFile;
-    //public BitServerResources bitServerResources;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
 
     public String getOsimisAddress() {
@@ -273,9 +271,6 @@ public class SettingBitServerBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-//                usersList.add(new Users(selectedUser.getUname(), selectedUser.getPassword(),
-//                        selectedUser.getRuName(), selectedUser.getRuMiddleName(),
-//                        selectedUser.getRuFamily(), selectedUser.getRole(), selectedUser.getUgroup(),false));
                 Users bufUser = getRealUserForBase(selectedUser);
                 saveNewUser(bufUser);
                 usersList = prepareUserList();

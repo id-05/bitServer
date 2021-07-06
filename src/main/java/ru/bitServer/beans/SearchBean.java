@@ -8,18 +8,12 @@ import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.OrthancPatient;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -30,7 +24,6 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @SessionScoped
 public class SearchBean {
 
-    public static String authentication;
     public String searchId;
     public String searchName;
     private String searchDate;

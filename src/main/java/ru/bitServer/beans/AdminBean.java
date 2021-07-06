@@ -30,11 +30,6 @@ import java.util.Map;
 @RequestScoped
 public class AdminBean {
     public String buf = "buffer";
-    private Map<String, Patient> patientMap;
-    private Map<String, Study> studyMap;
-    private Map<String, Series> seriesMap;
-    private Map<String, Instance> instanceMap;
-
     public String getBuf() {
         return buf;
     }

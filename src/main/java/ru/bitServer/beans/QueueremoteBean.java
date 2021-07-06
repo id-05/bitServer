@@ -13,7 +13,6 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -124,31 +123,19 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        //PrimeFaces.current().executeScript("window.open('http://"+osimisAddress+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
         PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        //this.resultFile = null;
         System.out.println("Вход");
-
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
-            //resultFile = event.getFile();
             System.out.println("перед add куыгде");
             addResult(selectedVisibleStudy, file);
         }else{
             System.out.println("Возникла ошибка в выборе или типе файла!");
         }
     }
-//
-//    public void lockedStudy(){
-//        resultFile = null;
-//        PrimeFaces.current().executeScript("PF('uploadResultFile').reset()");
-//        PrimeFaces.current().ajax().update(":seachform:editorcomponent");
-//        PrimeFaces.current().ajax().update(":seachform:selectfilename");
-//        System.out.println("запись обрабатываемся!");
-//    }
 
     public void getStudyToDiag() throws IOException {
         selectedVisibleStudy.setStatus(3);

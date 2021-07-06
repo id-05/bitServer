@@ -11,7 +11,6 @@ import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;

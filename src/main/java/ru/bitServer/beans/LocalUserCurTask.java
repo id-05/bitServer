@@ -8,10 +8,8 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;

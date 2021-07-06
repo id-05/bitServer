@@ -228,7 +228,6 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        //System.out.println("read study from db");
         selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
@@ -379,8 +378,6 @@ public class QueueBean implements UserDao {
     }
 
     public void sendToAgent(){
-        //PrimeFaces.current().executeScript("PF('statusDialog').show()");
-        //System.out.println("selected user group = "+selectedUserGroup);
         JsonObject query = new JsonObject();
         JsonObject queryDetails = new JsonObject();
         queryDetails.addProperty("PatientName", "ANONIM");
@@ -505,7 +502,6 @@ public class QueueBean implements UserDao {
         selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        //PrimeFaces.current().executeScript("window.location.reload();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }

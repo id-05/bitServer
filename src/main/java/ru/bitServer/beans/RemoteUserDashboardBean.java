@@ -227,7 +227,6 @@ public class RemoteUserDashboardBean implements UserDao {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -1);
-        //chartOutput();
         lineModel = initModel(cal,"MM.yyyy");
         preInitModel();
 
