@@ -49,6 +49,7 @@
                         <br></br>
                         <div>Адрес orthanc сервера</div>
 
+                        <br></br>
                         <p:divider align="left" type="dashed">
                             <b>Порт RESTAPI</b>
                         </p:divider>
@@ -61,6 +62,7 @@
                         <br></br>
                         <div >Порт для доступа к RESTAPI Orthanc</div>
 
+                        <br></br>
                         <p:divider align="left" type="dashed">
                             <b>Логин и пароль для доступа к Orthanc</b>
                         </p:divider>
@@ -79,6 +81,7 @@
                         <br></br>
                         <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
 
+                        <br></br>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу orthanc.json</b>
                         </p:divider>
@@ -91,6 +94,7 @@
                         <br></br>
                         <div >Данный файл используется для настройки сервера Orthanc</div>
 
+                        <br></br>
                         <p:divider align="left" type="dashed">
                             <b>Каталог хранения файлов результатов анализа</b>
                         </p:divider>
@@ -103,6 +107,22 @@
                         <br></br>
                         <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
 
+                        <br></br>
+                        <p:divider align="left" type="dashed">
+                            <b>Дата начала синхронизации с Orthanc</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:datePicker id="syncdate" value="#{settingBitServerBean.syncdate}" showIcon="true" style="margin-right: 10px">
+                                    <p:ajax event="dateSelect" listener="#{settingBitServerBean.setsyncdate}" />
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </p:datePicker>
+                            </p:inplace>
+                        </p>
+                        <br></br>
+                        <div >Исследования сделанные позднее этой даты, будут автоматически добавляться в Orthanc</div>
+
+                        <br></br>
                         <p:divider align="left" type="dashed">
                             <b>Адрес для доступа к OSIMIS</b>
                         </p:divider>
@@ -119,116 +139,116 @@
                 </p:tab>
                 <p:tab title="Пользователи">
                     <p:outputPanel>
-                    <p:toolbar>
-                        <p:toolbarGroup>
-                            <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUser}"
-                                             update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
-                                             styleClass="ui-button-success" style="margin-right: .5rem">
-                                <p:resetInput target="dialogNewUser"/>
-                            </p:commandButton>
-                        </p:toolbarGroup>
-                    </p:toolbar>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUser}"
+                                                 update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
 
-                    <p:dataTable id="dt-users" widgetVar="dtUsers" var="users" value="#{settingBitServerBean.usersList}"
-                                 reflow="true" styleClass="users-table"
-                                 emptyMessage="Нет записей для отображения"
-                                 selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
-                                 rows="10" rowSelectMode="add" >
+                        <p:dataTable id="dt-users" widgetVar="dtUsers" var="users" value="#{settingBitServerBean.usersList}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
+                                     rows="10" rowSelectMode="add" >
 
-                        <p:column headerText="ФИО" sortBy="#{users.ruFamily}" style="text-align: center">
-                            <h:outputText value="#{users.ruFamily} #{users.ruName} #{users.ruMiddleName}" />
-                        </p:column>
+                            <p:column headerText="ФИО" sortBy="#{users.ruFamily}" style="text-align: center">
+                                <h:outputText value="#{users.ruFamily} #{users.ruName} #{users.ruMiddleName}" />
+                            </p:column>
 
-                        <p:column headerText="Логин" sortBy="#{users.uname}" style="text-align: center">
-                            <h:outputText value="#{users.uname}" />
-                        </p:column>
+                            <p:column headerText="Логин" sortBy="#{users.uname}" style="text-align: center">
+                                <h:outputText value="#{users.uname}" />
+                            </p:column>
 
-                        <p:column headerText="Пароль" sortBy="#{users.password}" style="text-align: center">
-                            <h:outputText value="#{users.password}"/>
-                        </p:column>
+                            <p:column headerText="Пароль" sortBy="#{users.password}" style="text-align: center">
+                                <h:outputText value="#{users.password}"/>
+                            </p:column>
 
-                        <p:column headerText="Роль" sortBy="#{users.role}" style="text-align: center">
-                            <h:outputText value="#{users.role}"/>
-                        </p:column>
+                            <p:column headerText="Роль" sortBy="#{users.role}" style="text-align: center">
+                                <h:outputText value="#{users.role}"/>
+                            </p:column>
 
-                        <p:column headerText="Группа пользователей" sortBy="#{users.ugroup}" style="text-align: center">
-                            <h:outputText value="#{users.ugroup}"/>
-                        </p:column>
+                            <p:column headerText="Группа пользователей" sortBy="#{users.ugroup}" style="text-align: center">
+                                <h:outputText value="#{users.ugroup}"/>
+                            </p:column>
 
-                        <p:column exportable="false">
-                            <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
-                                             oncomplete="PF('manageUserDialog').show()" style="margin-right: 10px"
-                                             styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
-                                <p:resetInput target=":form:accord:manage-user-content"/>
-                            </p:commandButton>
-                            <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                             oncomplete="PF('deleteUserDialog').show()">
-                                <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
-                            </p:commandButton>
-                        </p:column>
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
+                                                 oncomplete="PF('manageUserDialog').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
+                                    <p:resetInput target=":form:accord:manage-user-content"/>
+                                </p:commandButton>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUserDialog').show()">
+                                    <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
+                                </p:commandButton>
+                            </p:column>
 
-                    </p:dataTable>
+                        </p:dataTable>
 
-                    <p:dialog id="dialogNewUser" header="Пользователь" showEffect="fade" modal="true"
-                              widgetVar="manageUserDialog" responsive="true">
-                        <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
-                            <p:outputLabel for="family" style="margin-right: .5rem">Фамилия</p:outputLabel>
-                            <p:inputText id="family" value="#{settingBitServerBean.selectedUser.ruFamily}" />
+                        <p:dialog id="dialogNewUser" header="Пользователь" showEffect="fade" modal="true"
+                                  widgetVar="manageUserDialog" responsive="true">
+                            <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="family" style="margin-right: .5rem">Фамилия</p:outputLabel>
+                                <p:inputText id="family" value="#{settingBitServerBean.selectedUser.ruFamily}" />
 
-                            <p:outputLabel for="name" style="margin-right: .5rem">Имя</p:outputLabel>
-                            <p:inputText id="name" value="#{settingBitServerBean.selectedUser.ruName}" />
+                                <p:outputLabel for="name" style="margin-right: .5rem">Имя</p:outputLabel>
+                                <p:inputText id="name" value="#{settingBitServerBean.selectedUser.ruName}" />
 
-                            <p:outputLabel for="midlename" style="margin-right: .5rem">Отчество</p:outputLabel>
-                            <p:inputText id="midlename" value="#{settingBitServerBean.selectedUser.ruMiddleName}" />
+                                <p:outputLabel for="midlename" style="margin-right: .5rem">Отчество</p:outputLabel>
+                                <p:inputText id="midlename" value="#{settingBitServerBean.selectedUser.ruMiddleName}" />
 
-                            <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
-                            <p:inputText id="login" value="#{settingBitServerBean.selectedUser.uname}" />
+                                <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                                <p:inputText id="login" value="#{settingBitServerBean.selectedUser.uname}" />
 
-                            <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
-                            <p:inputText id="pass" value="#{settingBitServerBean.selectedUser.password}" />
+                                <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                                <p:inputText id="pass" value="#{settingBitServerBean.selectedUser.password}" />
 
-                            <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
-                            <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
-                                <f:selectItem itemLabel="Администратор" itemValue="Администратор"/>
-                                <f:selectItem itemLabel="Локальный пользователь" itemValue="Локальный пользователь"/>
-                                <f:selectItem itemLabel="Локальный только просмотр" itemValue="Локальный только просмотр"/>
-                                <f:selectItem itemLabel="Удаленный пользователь" itemValue="Удаленный пользователь"/>
-                                <f:selectItem itemLabel="Клиент" itemValue="Клиент"/>
-                            </p:selectOneMenu>
+                                <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
+                                <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
+                                    <f:selectItem itemLabel="Администратор" itemValue="Администратор"/>
+                                    <f:selectItem itemLabel="Локальный пользователь" itemValue="Локальный пользователь"/>
+                                    <f:selectItem itemLabel="Локальный только просмотр" itemValue="Локальный только просмотр"/>
+                                    <f:selectItem itemLabel="Удаленный пользователь" itemValue="Удаленный пользователь"/>
+                                    <f:selectItem itemLabel="Клиент" itemValue="Клиент"/>
+                                </p:selectOneMenu>
 
-                            <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
-                            <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
-                                <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
-                            </p:selectOneMenu>
+                                <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
+                                <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
+                                    <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
+                                </p:selectOneMenu>
 
-                        </p:panelGrid>
+                            </p:panelGrid>
 
-                        <f:facet name="footer">
+                            <f:facet name="footer">
 
-                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUser}"
-                                             update=":form:growl2">
-                                <p:resetInput target="dialogNewUser"/>
-                            </p:commandButton>
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUser}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
 
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewUser">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                                  message="Удалить пользователя?" header="Удалить пользователя?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUserSetting}"
+                                             oncomplete="PF('deleteUserDialog').hide()"/>
                             <span style="padding: 20px;">&nbsp;</span>
-
-                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
-                                             class="ui-button-secondary" update="dialogNewUser">
-                                <p:resetInput target="dialogNewUser"/>
-                            </p:commandButton>
-
-                        </f:facet>
-                    </p:dialog>
-
-                    <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
-                              message="Удалить пользователя?" header="Удалить пользователя?" severity="warn">
-                        <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUserSetting}"
-                                         oncomplete="PF('deleteUserDialog').hide()"/>
-                        <span style="padding: 20px;">&nbsp;</span>
-                        <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                         onclick="PF('deleteUserDialog').hide()"/>
-                    </p:dialog>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteUserDialog').hide()"/>
+                        </p:dialog>
 
                         <div class="p-d-flex"></div>
                         <div >Список зарегистрированных пользователей.</div>
@@ -245,104 +265,104 @@
                 <p:tab title="Группы пользователей">
                     <p:outputPanel>
 
-                            <p:toolbar>
-                                <p:toolbarGroup>
-                                    <p:commandButton value="Новая группа" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUsergroup}"
-                                                     update="dialogNewUsergroup" oncomplete="PF('manageUsergroupDialog').show()"
-                                                     styleClass="ui-button-success" style="margin-right: .5rem">
-                                        <p:resetInput target="dialogNewUsergroup"/>
-                                    </p:commandButton>
-                                </p:toolbarGroup>
-                            </p:toolbar>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новая группа" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUsergroup}"
+                                                 update="dialogNewUsergroup" oncomplete="PF('manageUsergroupDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
 
-                            <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup"
-                                         var="usergroup" value="#{settingBitServerBean.usergroupList}"
-                                         reflow="true" styleClass="usergroup-table"
-                                         emptyMessage="Нет записей для отображения"
-                                         selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
-                                         rows="10" rowSelectMode="add" >
+                        <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup"
+                                     var="usergroup" value="#{settingBitServerBean.usergroupList}"
+                                     reflow="true" styleClass="usergroup-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
+                                     rows="10" rowSelectMode="add" >
 
-                                <p:column headerText="Название группы" sortBy="#{usergroup.ruName}" style="text-align: center">
-                                    <h:outputText value="#{usergroup.ruName}" />
-                                </p:column>
+                            <p:column headerText="Название группы" sortBy="#{usergroup.ruName}" style="text-align: center">
+                                <h:outputText value="#{usergroup.ruName}" />
+                            </p:column>
 
-                                <p:column headerText="Контрагент" sortBy="#{usergroup.ruContragent}" style="text-align: center">
-                                    <h:outputText value="#{usergroup.ruContragent}" />
-                                </p:column>
+                            <p:column headerText="Контрагент" sortBy="#{usergroup.ruContragent}" style="text-align: center">
+                                <h:outputText value="#{usergroup.ruContragent}" />
+                            </p:column>
 
-                                <p:column headerText="Разрешено скачивать исследования" sortBy="#{usergroup.downloadTrue}" style="text-align: center">
-                                    <p:selectBooleanCheckbox value="#{usergroup.downloadTrue}" disabled="true"/>
-                                </p:column>
+                            <p:column headerText="Разрешено скачивать исследования" sortBy="#{usergroup.downloadTrue}" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{usergroup.downloadTrue}" disabled="true"/>
+                            </p:column>
 
-                                <p:column headerText="Локальные пользователи" sortBy="#{usergroup.forlocal}" style="text-align: center">
-                                    <p:selectBooleanCheckbox value="#{usergroup.forlocal}" disabled="true"/>
-                                </p:column>
+                            <p:column headerText="Локальные пользователи" sortBy="#{usergroup.forlocal}" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{usergroup.forlocal}" disabled="true"/>
+                            </p:column>
 
-                                <p:column headerText="Статус" sortBy="#{usergroup.status}" style="text-align: center">
-                                    <h:outputText value="#{usergroup.status}"/>
-                                </p:column>
+                            <p:column headerText="Статус" sortBy="#{usergroup.status}" style="text-align: center">
+                                <h:outputText value="#{usergroup.status}"/>
+                            </p:column>
 
-                                <p:column exportable="false">
-                                    <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-usergroup-content"
-                                                     oncomplete="PF('manageUsergroupDialog').show()"
-                                                     styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
-                                        <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
-                                        <p:resetInput target=":form:accord:manage-usergroup-content"/>
-                                    </p:commandButton>
-                                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                                     oncomplete="PF('deleteUsergroupDialog').show()">
-                                        <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
-                                    </p:commandButton>
-                                </p:column>
-                            </p:dataTable>
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-usergroup-content"
+                                                 oncomplete="PF('manageUsergroupDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
+                                    <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
+                                    <p:resetInput target=":form:accord:manage-usergroup-content"/>
+                                </p:commandButton>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUsergroupDialog').show()">
+                                    <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
 
-                    <p:dialog id="dialogNewUsergroup" header="Группа" showEffect="fade" modal="true"
-                              widgetVar="manageUsergroupDialog" responsive="true">
-                        <p:panelGrid id="manage-usergroup-content" class="ui-fluid" columns="2">
-                            <p:outputLabel for="groupname" style="margin-right: .5rem">Название</p:outputLabel>
-                            <p:inputText id="groupname" value="#{settingBitServerBean.selectedUsergroup.ruName}" />
+                        <p:dialog id="dialogNewUsergroup" header="Группа" showEffect="fade" modal="true"
+                                  widgetVar="manageUsergroupDialog" responsive="true">
+                            <p:panelGrid id="manage-usergroup-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="groupname" style="margin-right: .5rem">Название</p:outputLabel>
+                                <p:inputText id="groupname" value="#{settingBitServerBean.selectedUsergroup.ruName}" />
 
-                            <p:outputLabel for="contragent" style="margin-right: .5rem">Контрагент</p:outputLabel>
-                            <p:inputText id="contragent" value="#{settingBitServerBean.selectedUsergroup.ruContragent}" />
+                                <p:outputLabel for="contragent" style="margin-right: .5rem">Контрагент</p:outputLabel>
+                                <p:inputText id="contragent" value="#{settingBitServerBean.selectedUsergroup.ruContragent}" />
 
-                            <p:outputLabel for="download" style="margin-right: .5rem">Разрешить скачивание DICOM-данных</p:outputLabel>
-                            <p:selectBooleanCheckbox id="download" value="#{settingBitServerBean.selectedUsergroup.downloadTrue}"/>
+                                <p:outputLabel for="download" style="margin-right: .5rem">Разрешить скачивание DICOM-данных</p:outputLabel>
+                                <p:selectBooleanCheckbox id="download" value="#{settingBitServerBean.selectedUsergroup.downloadTrue}"/>
 
-                            <p:outputLabel for="local" style="margin-right: .5rem">Для локальных пользователей</p:outputLabel>
-                            <p:selectBooleanCheckbox id="local" value="#{settingBitServerBean.selectedUsergroup.forlocal}"/>
+                                <p:outputLabel for="local" style="margin-right: .5rem">Для локальных пользователей</p:outputLabel>
+                                <p:selectBooleanCheckbox id="local" value="#{settingBitServerBean.selectedUsergroup.forlocal}"/>
 
-                            <p:outputLabel for="status" style="margin-right: .5rem">Статус</p:outputLabel>
-                            <p:selectOneMenu id="status" value="#{settingBitServerBean.selectedUsergroup.status}">
-                                <f:selectItem itemLabel="Активна" itemValue="active"/>
-                                <f:selectItem itemLabel="Неактивна" itemValue="inactive"/>
-                            </p:selectOneMenu>
-                        </p:panelGrid>
+                                <p:outputLabel for="status" style="margin-right: .5rem">Статус</p:outputLabel>
+                                <p:selectOneMenu id="status" value="#{settingBitServerBean.selectedUsergroup.status}">
+                                    <f:selectItem itemLabel="Активна" itemValue="active"/>
+                                    <f:selectItem itemLabel="Неактивна" itemValue="inactive"/>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
 
-                        <f:facet name="footer">
+                            <f:facet name="footer">
 
-                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUsergroup}"
-                                             update=":form:growl2">
-                                <p:resetInput target="dialogNewUsergroup"/>
-                            </p:commandButton>
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUsergroup}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
 
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUsergroupDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewUsergroup">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteUsergroupDialog" showEffect="fade" width="300"
+                                  message="Удалить группу?" header="Удалить группу?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUsergroupSetting}"
+                                             oncomplete="PF('deleteUsergroupDialog').hide()"/>
                             <span style="padding: 20px;">&nbsp;</span>
-
-                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUsergroupDialog').hide()"
-                                             class="ui-button-secondary" update="dialogNewUsergroup">
-                                <p:resetInput target="dialogNewUsergroup"/>
-                            </p:commandButton>
-
-                        </f:facet>
-                    </p:dialog>
-
-                    <p:dialog widgetVar="deleteUsergroupDialog" showEffect="fade" width="300"
-                              message="Удалить группу?" header="Удалить группу?" severity="warn">
-                        <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUsergroupSetting}"
-                                         oncomplete="PF('deleteUsergroupDialog').hide()"/>
-                        <span style="padding: 20px;">&nbsp;</span>
-                        <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                         onclick="PF('deleteUsergroupDialog').hide()"/>
-                    </p:dialog>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteUsergroupDialog').hide()"/>
+                        </p:dialog>
 
                         <p:dialog widgetVar="errorDeleteUsergroupDialog" showEffect="fade" width="300"
                                   header="Внимание!" message="Ошибка" severity="warn">
@@ -352,7 +372,7 @@
                             </div>
                         </p:dialog>
 
-                    <div>Списко зарегистрированных групп пользователей, признак "Для локальных пользователей" - означает что группа не будет попадать в списки для отправки.</div>
+                        <div>Списко зарегистрированных групп пользователей, признак "Для локальных пользователей" - означает что группа не будет попадать в списки для отправки.</div>
 
                     </p:outputPanel>
                 </p:tab>

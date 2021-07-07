@@ -10,7 +10,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
@@ -33,6 +35,15 @@ public class SettingBitServerBean implements UserDao {
     public String orthancPathToJson;
     public String orthancPathToResultFile;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    public Date syncdate;
+
+    public Date getSyncdate() {
+        return syncdate;
+    }
+
+    public void setSyncdate(Date syncdate) {
+        this.syncdate = syncdate;
+    }
 
     public String getOsimisAddress() {
         return osimisAddress;
@@ -152,11 +163,17 @@ public class SettingBitServerBean implements UserDao {
 
 
     @PostConstruct
-    public void init(){
+    public void init() {
         System.out.println("settingBitServerBean page");
         usergroupList = getBitServerUsergroupList();
         usersList = prepareUserList();
-
+        BitServerResources bufResources = getBitServerResource("syncdata");
+        String bufDate = bufResources.getRvalue();
+        try {
+            syncdate = format.parse(bufDate);
+        }catch (Exception e){
+            System.out.println("Ошибка преобразования даты "+e.getMessage());
+        }
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
@@ -373,5 +390,9 @@ public class SettingBitServerBean implements UserDao {
             PrimeFaces.current().executeScript("PF('errorDeleteUsergroupDialog').show()");
             System.out.println("error delete = "+e.getMessage());
         }
+    }
+
+    public void setsyncdate(){
+        System.out.println("asdqwe");
     }
 }
