@@ -167,13 +167,6 @@ public class SettingBitServerBean implements UserDao {
         System.out.println("settingBitServerBean page");
         usergroupList = getBitServerUsergroupList();
         usersList = prepareUserList();
-        BitServerResources bufResources = getBitServerResource("syncdata");
-        String bufDate = bufResources.getRvalue();
-        try {
-            syncdate = format.parse(bufDate);
-        }catch (Exception e){
-            System.out.println("Ошибка преобразования даты "+e.getMessage());
-        }
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
@@ -192,6 +185,14 @@ public class SettingBitServerBean implements UserDao {
                 case "pathtoresultfile": orthancPathToResultFile = buf.getRvalue();
                     break;
                 case "addressforosimis": osimisAddress = buf.getRvalue();
+                    break;
+                case "syncdate": {
+                    try {
+                        syncdate = format.parse(buf.getRvalue());
+                    }catch (Exception e){
+                        System.out.println("Ошибка преобразования даты "+e.getMessage());
+                    }
+                }
                     break;
             }
         }
@@ -261,6 +262,9 @@ public class SettingBitServerBean implements UserDao {
                 case "pathtoresultfile": buf.setRvalue(orthancPathToResultFile);
                     break;
                 case "addressforosimis": buf.setRvalue(osimisAddress);
+                    break;
+                case "syncdate": buf.setRvalue(format.format(syncdate));
+
                     break;
             }
             updateBitServiceResource(buf);

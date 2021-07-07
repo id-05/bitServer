@@ -114,9 +114,9 @@
                         <p class="p-m-0">
                             <p:inplace editor="true" >
                                 <p:datePicker id="syncdate" value="#{settingBitServerBean.syncdate}" showIcon="true" style="margin-right: 10px">
-                                    <p:ajax event="dateSelect" listener="#{settingBitServerBean.setsyncdate}" />
                                     <f:convertDateTime pattern="dd.MM.yyyy" />
                                 </p:datePicker>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}" />
                             </p:inplace>
                         </p>
                         <br></br>
