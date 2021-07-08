@@ -189,6 +189,7 @@ public class SettingBitServerBean implements UserDao {
                 case "syncdate": {
                     try {
                         syncdate = format.parse(buf.getRvalue());
+
                     }catch (Exception e){
                         System.out.println("Ошибка преобразования даты "+e.getMessage());
                     }

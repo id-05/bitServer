@@ -13,11 +13,16 @@
     <h:form>
 
         <br></br>
-        <div class="p-text-bold" align="left">Ваша статистика:</div>
+        <div class="p-text-bold" align="left">Ваша статистика:
+            #{cc.attrs.usernameLabel} :
+            <h:inputText id = "username" value = "#{cc.attrs.usernameValue}" />
+        </div>
         <br></br>
+
         <br></br>
         <div class="p-text-bold" align="left"> usernameLabel </div>
         <br></br>
+
     </h:form>
 </composite:implementation>
 </html>

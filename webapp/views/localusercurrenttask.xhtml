@@ -105,6 +105,15 @@
                     </p:commandButton>
                     <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
 
+                    <p:commandButton id="uploadresult"
+                                     style="margin-right: 10px" styleClass="rounded-button ui-button-danger"
+                                     icon="pi pi-upload" process="@this"
+                                     oncomplete="PF('addResult').show()"
+                                     update=":lucurrenttask:addResult"
+                                     >
+                    </p:commandButton>
+                    <p:tooltip for="uploadresult" value="Загрузить файл результата"/>
+
                 </p:column>
             </p:dataTable>
 
@@ -128,26 +137,43 @@
                 </f:facet>
             </p:dialog>
 
-            <p:divider align="center" type="dashed" style="margin-top: 20px; margin-bottom: 30px">
-                <b>Загрузить готовый файл:</b>
-            </p:divider>
+            <p:dialog id="addResult" header="Окно загрузки файла описания" showEffect="fade" modal="true"
+                      widgetVar="addResult" responsive="true">
 
-            <p:fileUpload  mode="advanced"
-                           widgetVar="fUpload"
-                           listener="#{lucurrenttaskBean.handleFileUpload}"
-                           sequential="true"
-                           styleClass="fileupload-content"
-                           dragDropSupport="true"
-                           skinSimple="true"
-                           sizeLimit="10000000"
-                           label="Выбрать"
-                           uploadLabel="Зазрузить и Сохранить"
-                           cancelLabel="Отмена"
-                           multiple="true"
-                           allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
-                           invalidSizeMessage="Maximum file size allowed is 10 MB"
-                           invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
-            />
+                <p:fileUpload  mode="advanced"
+                               widgetVar="fUpload"
+                               listener="#{lucurrenttaskBean.handleFileUpload}"
+                               sequential="true"
+                               styleClass="fileupload-content"
+                               dragDropSupport="true"
+                               skinSimple="true"
+                               sizeLimit="10000000"
+                               label="Выбрать"
+                               uploadLabel="Зазрузить и Сохранить"
+                               cancelLabel="Отмена"
+                               multiple="true"
+                               allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
+                               invalidSizeMessage="Maximum file size allowed is 10 MB"
+                               invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
+                />
+                <br></br>
+                <div class="p-text-bold" style="width: 40rem">
+                    <p:outputLabel style="color: crimson">После того как вы нажмете кнопку "Зазрузить и Сохранить", выбранный файл результата, будет прикреплен к исследованию,
+                    а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>
+                </div>
+            </p:dialog>
+
+            <p:dialog id="editorResult" header="Окно редактора описания" showEffect="fade" modal="true"
+                      widgetVar="editorResult" responsive="true">
+
+
+                <br></br>
+                <div class="p-text-bold" style="width: 40rem">
+                    <p:outputLabel style="color: crimson">После того как вы нажмете кнопку "Сохранить", указанное вами описание в текстовом виде, будет прикреплен к исследованию,
+                        а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими прав
+                        ами</p:outputLabel>
+                </div>
+            </p:dialog>
 
         </h:form>
 
