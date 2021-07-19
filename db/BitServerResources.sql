@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июн 04 2021 г., 11:42
--- Версия сервера: 10.3.27-MariaDB-0+deb10u1
+-- Время создания: Июл 12 2021 г., 08:36
+-- Версия сервера: 10.3.29-MariaDB-0+deb10u1
 -- Версия PHP: 7.3.27-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -45,7 +45,11 @@ INSERT INTO `BitServerResources` (`id`, `rname`, `rvalue`) VALUES
 (33, 'password', 'doctor'),
 (34, 'pathtojson', '/etc/orthanc/'),
 (35, 'pathtoresultfile', 'D:\\results\\'),
-(36, 'addressforosimis', '192.168.1.58:8042');
+(36, 'addressforosimis', 'bit-service.org/viewer/'),
+(37, 'telegramtoken', '1430429781:AAHiPqkgLC4zbgSACgjGr2NKTVnQva3bjqA'),
+(38, 'telegramchatid', '-1001262597226'),
+(39, 'demontimerupdate', '5'),
+(40, 'syncdate', '2021-07-25');
 
 --
 -- Индексы сохранённых таблиц
@@ -65,7 +69,7 @@ ALTER TABLE `BitServerResources`
 -- AUTO_INCREMENT для таблицы `BitServerResources`
 --
 ALTER TABLE `BitServerResources`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

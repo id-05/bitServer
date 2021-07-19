@@ -33,6 +33,15 @@ public class LocalUserCurTask implements UserDao {
     public BitServerStudy currentStudy;
     public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
     private OrthancRestApi connection;
+    private String resulttext;
+
+    public String getResulttext() {
+        return resulttext;
+    }
+
+    public void setResulttext(String resulttext) {
+        this.resulttext = resulttext;
+    }
 
     public Users getCurrentUser() {
         return currentUser;

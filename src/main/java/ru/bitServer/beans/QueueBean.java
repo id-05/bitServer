@@ -52,6 +52,15 @@ public class QueueBean implements UserDao {
     public Users currentUser;
     public OrthancRestApi connection;
     public int uploadCount;
+    public String freespace;
+
+    public String getFreespace() {
+        return freespace;
+    }
+
+    public void setFreespace(String freespace) {
+        this.freespace = freespace;
+    }
 
     public Users getCurrentUser() {
         return currentUser;
@@ -181,7 +190,9 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("DX");
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+//        File bufFile = new File("C:/");
+//        double bufDouble = (bufFile.getFreeSpace() / (double)bufFile.getTotalSpace());
+//        freespace = (int)(100 - bufDouble*100)+" %";
     }
 
     public Boolean firstDateSelect() {

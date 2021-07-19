@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июн 04 2021 г., 11:44
--- Версия сервера: 10.3.27-MariaDB-0+deb10u1
+-- Время создания: Июл 12 2021 г., 08:40
+-- Версия сервера: 10.3.29-MariaDB-0+deb10u1
 -- Версия PHP: 7.3.27-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -36,7 +36,7 @@ CREATE TABLE `Users` (
   `ruMiddleName` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `ruFamily` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `role` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `groupUser` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ugroup` int(5) NOT NULL,
   `uTheme` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `hasBlockStudy` tinyint(1) NOT NULL DEFAULT 0,
   `blockStudy` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -49,12 +49,11 @@ CREATE TABLE `Users` (
 -- Дамп данных таблицы `Users`
 --
 
-INSERT INTO `Users` (`uid`, `uname`, `password`, `ruName`, `ruMiddleName`, `ruFamily`, `role`, `groupUser`, `uTheme`, `hasBlockStudy`, `blockStudy`, `successStudyCount`, `returnStudyCount`, `rating`) VALUES
-(17, '6', '6', '6', '6', '6', 'admin', 'Собственные работники', 'saga', 0, '', 0, 0, '0'),
-(27, '7', '7', '7', '1', '7', 'localuser', 'Админы', '', 0, '', 0, 0, '0'),
-(28, '8', '8', '8', '8', '8', 'remoteuser', 'Собственные работники', '', 1, '3', 0, 0, '0'),
-(30, '9', '9', '9', '9', '9', 'client', 'Клиенты', NULL, 0, NULL, 0, 0, '0'),
-(35, '1', '1', '1', '1', '1', 'localuser', 'Клиенты', NULL, 0, NULL, 0, 0, '0');
+INSERT INTO `Users` (`uid`, `uname`, `password`, `ruName`, `ruMiddleName`, `ruFamily`, `role`, `ugroup`, `uTheme`, `hasBlockStudy`, `blockStudy`, `successStudyCount`, `returnStudyCount`, `rating`) VALUES
+(40, 'admin', 'admin', 'm', 'in', 'ad', 'admin', 1, 'saga', 0, NULL, 0, 0, '0'),
+(41, 'local', 'local', 'c', 'al', 'lo', 'localuser', 1, NULL, 1, '5', 0, 0, '0'),
+(42, 'remote', 'remote', 'mo', 'te', 're', 'remoteuser', 38, NULL, 0, '0', 0, 0, '0'),
+(43, 'onlyview', 'onlyview', 'ко ', 'просмотр', 'Толь', 'onlyview', 1, NULL, 0, NULL, 0, 0, '0');
 
 --
 -- Индексы сохранённых таблиц
@@ -64,7 +63,8 @@ INSERT INTO `Users` (`uid`, `uname`, `password`, `ruName`, `ruMiddleName`, `ruFa
 -- Индексы таблицы `Users`
 --
 ALTER TABLE `Users`
-  ADD PRIMARY KEY (`uid`);
+  ADD PRIMARY KEY (`uid`),
+  ADD KEY `ugroup` (`ugroup`);
 
 --
 -- AUTO_INCREMENT для сохранённых таблиц
@@ -74,7 +74,17 @@ ALTER TABLE `Users`
 -- AUTO_INCREMENT для таблицы `Users`
 --
 ALTER TABLE `Users`
-  MODIFY `uid` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `uid` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- Ограничения внешнего ключа сохраненных таблиц
+--
+
+--
+-- Ограничения внешнего ключа таблицы `Users`
+--
+ALTER TABLE `Users`
+  ADD CONSTRAINT `Users_ibfk_1` FOREIGN KEY (`ugroup`) REFERENCES `Usergroup` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -101,6 +101,43 @@ public class SettingsBean {
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
+    public String usedSpace;
+    public String totalSpace;
+    public String freeSpace;
+    public String directory;
+
+    public String getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(String directory) {
+        this.directory = directory;
+    }
+
+    public String getUsedSpace() {
+        return usedSpace;
+    }
+
+    public void setUsedSpace(String usedSpace) {
+        this.usedSpace = usedSpace;
+    }
+
+    public String getTotalSpace() {
+        return totalSpace;
+    }
+
+    public void setTotalSpace(String totalSpace) {
+        this.totalSpace = totalSpace;
+    }
+
+    public String getFreespace() {
+        return freeSpace;
+    }
+
+    public void setFreespace(String freespace) {
+        this.freeSpace = freespace;
+    }
+
     public List<OrthancWebUser> webUsers;
 
     public List<OrthancWebUser> selectedWebUsers;
@@ -155,6 +192,8 @@ public class SettingsBean {
 
     public JsonSettings json;
 
+
+
     @PostConstruct
     public void init() {
         System.out.println("settings");
@@ -167,6 +206,13 @@ public class SettingsBean {
         List<DicomModaliti> dicomModalities;
         dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         this.dicomModalities = dicomModalities;
+
+        File bufFile = new File(storageDirectory);
+        directory = storageDirectory;
+        totalSpace = (int) (bufFile.getTotalSpace()/ (double) (1024*1024*1024))+" Gb";
+        freeSpace = (int) (bufFile.getFreeSpace()/ (double) (1024*1024*1024))+" Gb";
+        double bufDouble = (bufFile.getFreeSpace() / (double )bufFile.getTotalSpace());
+        usedSpace = (100 - (int) (bufDouble * 100) ) + " %";
     }
 
     public void loadConfig(){

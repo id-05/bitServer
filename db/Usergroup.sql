@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июн 04 2021 г., 11:44
--- Версия сервера: 10.3.27-MariaDB-0+deb10u1
+-- Время создания: Июл 12 2021 г., 08:40
+-- Версия сервера: 10.3.29-MariaDB-0+deb10u1
 -- Версия PHP: 7.3.27-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -33,19 +33,19 @@ CREATE TABLE `Usergroup` (
   `ruName` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `ruContragent` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `downloadTrue` tinyint(1) NOT NULL DEFAULT 0
+  `downloadTrue` tinyint(1) NOT NULL DEFAULT 0,
+  `forlocal` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `Usergroup`
 --
 
-INSERT INTO `Usergroup` (`id`, `ruName`, `status`, `ruContragent`, `downloadTrue`) VALUES
-(1, 'Админы', 'active', 'БИТ-СЕРВИС', 1),
-(11, 'Клиенты', 'active', 'Рога и копыта', 1),
-(12, 'Работники Больниц', 'active', 'Разное', 1),
-(31, '2', 'active', '2', 1),
-(32, '3', 'active', '3', 0);
+INSERT INTO `Usergroup` (`id`, `ruName`, `status`, `ruContragent`, `downloadTrue`, `forlocal`) VALUES
+(1, 'Админы', 'active', 'БИТ-СЕРВИС', 1, 1),
+(38, 'Демо группа', 'active', 'Демо', 1, 0),
+(39, 'Воронеж', 'inactive', '\"ООО Воронеж\"', 1, 0),
+(40, 'Демо 2', 'active', '\"Демо 2\"', 1, 0);
 
 --
 -- Индексы сохранённых таблиц
@@ -65,7 +65,7 @@ ALTER TABLE `Usergroup`
 -- AUTO_INCREMENT для таблицы `Usergroup`
 --
 ALTER TABLE `Usergroup`
-  MODIFY `id` int(16) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(16) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

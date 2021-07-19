@@ -34,7 +34,6 @@ public class BitServerResources {
         this.id = id;
     }
 
-
     public Long getId() {
         return id;
     }
