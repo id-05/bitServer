@@ -216,12 +216,12 @@ public class SettingsBean {
     }
 
     public void loadConfig(){
-        System.out.println("loadconfig");
+        //System.out.println("loadconfig");
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+
                 "f:close()";
         StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        System.out.println("out settings = "+stringBuilder);
+        //System.out.println("out settings = "+stringBuilder);
         json = new JsonSettings(stringBuilder.toString());
         users = json.getUsers();
         dicomNode = json.getDicomNode();
@@ -451,7 +451,7 @@ public class SettingsBean {
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        System.out.println("authentication = "+authentication);
+        //System.out.println("authentication = "+authentication);
         if(authentication != null){
             conn.setRequestProperty("Authorization", "Basic " + authentication);
         }
@@ -471,7 +471,7 @@ public class SettingsBean {
         buf = buf0.replace("/","\\/");
         buf2 = buf.replace("\"","\\\"");
         result = buf2.replace(",",",\\n");
-        System.out.println("modifi = "+result);
+        //System.out.println("modifi = "+result);
         return result;
     }
 
@@ -574,7 +574,7 @@ public class SettingsBean {
         if((!selectedDicomModality.getDicomtitle().equals(""))&(!selectedDicomModality.getDicomname().equals(""))
                 &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
                 &(!selectedDicomModality.getDicomproperty().equals(""))) {
-            System.out.println("add new modaliti");
+            //System.out.println("add new modaliti");
             dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
                     selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
             PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
@@ -599,12 +599,10 @@ public class SettingsBean {
     }
 
     public void openNew() {
-        System.out.println("open new user");
         selectedUser = new OrthancWebUser("","");
     }
 
     public void openNewModaliti() {
-        System.out.println("open new modaliti");
         selectedDicomModality = new DicomModaliti("","","","","");
     }
 

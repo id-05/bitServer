@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+    <title>PrimeFaces Text Editors</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<h:body styleClass="bodyClass">
+    <h:form>
+        <h2>PrimeFaces &lt;pe:ckEditor /&gt;</h2>
+
+        <p:growl id="growlid" showDetail="true" showSummary="true" />
+
+        <pe:ckEditor id="ed"
+                     value="#{lucurrenttaskBean.resulttext}"
+                     height="400" width="800"
+                     toolbar="[ ['Cut','Copy','Paste','PasteText','PasteFromWord','-','SelectAll'],['Bold','Italic','Underline','-','RemoveFormat'],['NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft', 'JustifyCenter','JustifyRight','JustifyBlock'],'/',['Save'],['NewPage','Preview','Print'],['Link', 'Unlink'],['Image','Table','HorizontalRule','Smiley', 'SpecialChar','PageBreak'],['Find','Replace'],['Undo','Redo'],'/',['Styles', 'Format','Font','FontSize'],['TextColor','BGColor'],['Scayt']]">
+
+        </pe:ckEditor>
+
+        <br />
+
+    </h:form>
+</h:body>
+</html>

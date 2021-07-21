@@ -1,5 +1,6 @@
 package ru.bitServer.beans;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
@@ -118,5 +119,21 @@ public class LocalUserCurTask implements UserDao {
         connection.deleteStudyFromOrthanc(selectedVisibleStudy);
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
+    }
+
+    public void saveResult(){
+        System.out.print("save result");
+    }
+
+    public void changeResult(){
+
+        if(resulttext.contains("тест")){
+            resulttext = "тест";
+            System.out.println("yes contains");
+            //PrimeFaces.current().
+            //PrimeFaces.current().ajax().update(":lucurrenttask:editorResultDialogt:ed");
+        }
+
+        System.out.println(resulttext);
     }
 }

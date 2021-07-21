@@ -6,6 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:pe="http://primefaces.org/ui/extensions"
       xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
@@ -27,7 +28,7 @@
 
     <h:body>
 
-        <h:form id="remoteform">
+        <h:form id="localform">
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
             <div class="card">
                 <p:menubar>
@@ -172,31 +173,21 @@
                 </div>
             </p:dialog>
 
-            <p:dialog id="editorResult" header="Окно редактора описания" showEffect="fade" modal="true"
+            <p:dialog id="editorResultDialog" header="Окно редактора описания"
                       widgetVar="editorResult" responsive="true">
 
+                <pe:ckEditor id="ed"
+                             value="#{lucurrenttaskBean.resulttext}"
+                             height="400" width="800"
+                             toolbar="[ ['Cut','Copy','Paste','PasteText','PasteFromWord','-','SelectAll'],['Bold','Italic','Underline','-','RemoveFormat'],['JustifyLeft', 'JustifyCenter','JustifyRight','JustifyBlock'],['Save','Print'],['Undo','Redo'],'/',['Styles', 'Format','Font','FontSize']]">
+                    <p:ajax event="save" listener="#{lucurrenttaskBean.saveResult}"/>
+                    <p:ajax event="change" listener="#{lucurrenttaskBean.changeResult}"/>
+                </pe:ckEditor>
 
-                <p:textEditor widgetVar="editor2" value="#{lucurrenttaskBean.resulttext}" height="300" placeholder="Enter your content"
-                    secure="false">
-                    <f:facet name="toolbar">
-             <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-                        <span class="ql-formats">
-                <select class="ql-font"></select>
-                <select class="ql-size"></select>
-            </span>
-                    </f:facet>
-                </p:textEditor>
-
-
+                <br></br>
                 <div class="p-text-bold" style="width: 40rem">
                     <p:outputLabel style="color: #dc143c">После того как вы нажмете кнопку "Сохранить", указанное вами описание в текстовом виде, будет прикреплен к исследованию,
-                        а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими прав
-                        ами</p:outputLabel>
+                        а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>
                 </div>
             </p:dialog>
 

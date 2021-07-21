@@ -69,8 +69,8 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>patientPage</from-outcome>
-            <to-view-id>/views/patientinfo.xhtml</to-view-id>
+            <from-outcome>wordeditor</from-outcome>
+            <to-view-id>/views/wordeditor2.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
