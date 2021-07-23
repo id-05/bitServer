@@ -136,4 +136,14 @@ public class LocalUserCurTask implements UserDao {
 
         System.out.println(resulttext);
     }
+
+    public List<String> completeText(String query) {
+        String queryLowerCase = query.toLowerCase();
+        List<String> countryList = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            countryList.add("Строка "+i);
+        }
+        return countryList;
+    }
 }

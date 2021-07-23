@@ -173,16 +173,44 @@
                 </div>
             </p:dialog>
 
-            <p:dialog id="editorResultDialog" header="Окно редактора описания"
-                      widgetVar="editorResult" responsive="true">
+            <p:dialog id="editorResultDialog" header="Окно редактора описания" modal="false"
+                      widgetVar="editorResult" responsive="true" resizable="false" position="center center"
+                        onShow="PF('editorResult').initPosition()">
 
-                <pe:ckEditor id="ed"
-                             value="#{lucurrenttaskBean.resulttext}"
-                             height="400" width="800"
-                             toolbar="[ ['Cut','Copy','Paste','PasteText','PasteFromWord','-','SelectAll'],['Bold','Italic','Underline','-','RemoveFormat'],['JustifyLeft', 'JustifyCenter','JustifyRight','JustifyBlock'],['Save','Print'],['Undo','Redo'],'/',['Styles', 'Format','Font','FontSize']]">
-                    <p:ajax event="save" listener="#{lucurrenttaskBean.saveResult}"/>
-                    <p:ajax event="change" listener="#{lucurrenttaskBean.changeResult}"/>
-                </pe:ckEditor>
+                <h3 class="first">Описание</h3>
+                <p:textEditor widgetVar="editor1" value="#{lucurrenttaskBean.resulttext}" height="200" placeholder="Описание..." secure="false" >
+                    <f:facet name="toolbar">
+                         <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                    </f:facet>
+                </p:textEditor>
+                <p:autoComplete id="acSimple" value="#{lucurrenttaskBean.resulttext}"
+                                completeMethod="#{lucurrenttaskBean.completeText}" scrollHeight="250" style="width: 400px; height: 400px"/>
+
+                <h3 class="first">Заключение</h3>
+                <p:textEditor widgetVar="editor2" value="#{lucurrenttaskBean.resulttext}" height="100" placeholder="Заключение..." secure="false">
+                    <f:facet name="toolbar">
+                         <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                    </f:facet>
+                </p:textEditor>
+
 
                 <br></br>
                 <div class="p-text-bold" style="width: 40rem">
