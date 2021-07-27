@@ -4,8 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
 
 <f:view>
 
@@ -26,6 +27,7 @@
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                         </div>
@@ -137,6 +139,7 @@
 
                     </p:outputPanel>
                 </p:tab>
+
                 <p:tab title="Пользователи">
                     <p:outputPanel>
                         <p:toolbar>
@@ -377,6 +380,15 @@
                     </p:outputPanel>
                 </p:tab>
             </p:accordionPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+            </p:dialog>
+
         </h:form>
     </h:body>
 </f:view>

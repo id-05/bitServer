@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+
+    <h:head>
+        <title>Network Settings</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growl2" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Перезагрузить сетевую службу" icon="pi pi-refresh" actionListener="#{networkSettingsBean.resetAdapter}" process="@this" update="growl2"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+
+
+            <p:outputPanel>
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Добавить адаптер" immediate="true" icon="pi pi-plus" actionListener="#{networkSettingsBean.initNewAdapter}"
+                                         update="dialogNewAdapter" oncomplete="PF('manageAdapter').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target="dialogNewAdapter"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-adapters" widgetVar="dtAdapters" var="networkAdapter" value="#{networkSettingsBean.adapters}"
+                             reflow="true" styleClass="users-table"
+                             emptyMessage="Нет записей для отображения"
+                             selection="#{networkSettingsBean.adapters}" rowKey="#{NetworkAdapter.name}"
+                             rows="10" rowSelectMode="add" >
+
+                    <p:column headerText="Name" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.name}" />
+                    </p:column>
+
+                    <p:column headerText="IP" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.ipaddress}" />
+                    </p:column>
+
+                    <p:column headerText="MASK" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.mask}"/>
+                    </p:column>
+
+                    <p:column headerText="GATEWAY" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.gateway}"/>
+                    </p:column>
+
+                    <p:column headerText="DNS" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.dns}"/>
+                    </p:column>
+
+                    <p:column headerText="MODE" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.mode}"/>
+                    </p:column>
+
+                    <p:column headerText="AUTO" style="text-align: center">
+                        <h:outputText value="#{networkAdapter.automode}"/>
+                    </p:column>
+
+                    <p:column exportable="false">
+                        <p:commandButton icon="pi pi-pencil" update=":form:manage-adapter"
+                                         oncomplete="PF('manageAdapter').show()" style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{networkAdapter}" target="#{networkSettingsBean.selectedAdapter}"/>
+                            <p:resetInput target=":form:dt-adapters"/>
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                         oncomplete="PF('deleteAdapter').show()">
+                            <f:setPropertyActionListener value="#{networkAdapter}" target="#{networkSettingsBean.selectedAdapter}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:dialog id="dialogNewAdapter" header="Адаптер" showEffect="fade" modal="true"
+                          widgetVar="manageAdapter" responsive="true">
+                    <p:panelGrid id="manage-adapter" class="ui-fluid" columns="2">
+                        <p:outputLabel for="name" style="margin-right: .5rem">Name</p:outputLabel>
+                        <p:inputText id="name" value="#{networkSettingsBean.selectedAdapter.name}" />
+
+                        <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
+                        <p:inputMask id="ip" value="#{networkSettingsBean.selectedAdapter.ipaddress}" mask="[2][5][9].9[99].9[99].9[99]" size="20"/>
+
+                        <p:outputLabel for="mask" style="margin-right: .5rem">MASK</p:outputLabel>
+                        <p:inputMask id="mask" value="#{networkSettingsBean.selectedAdapter.mask}" mask="9[99].9[99].9[99].9[99" size="20"/>
+
+                        <p:outputLabel for="gateway" style="margin-right: .5rem">GATEWAY</p:outputLabel>
+                        <p:inputMask id="gateway" value="#{networkSettingsBean.selectedAdapter.gateway}" mask="9[99].9[99].9[99].9[99" size="20"/>
+
+                        <p:outputLabel for="dns" style="margin-right: .5rem">DNS</p:outputLabel>
+                        <p:inputMask id="dns" value="#{networkSettingsBean.selectedAdapter.dns}" mask="9[99].9[99].9[99].9[99" size="20"/>
+
+                        <p:outputLabel for="mode" style="margin-right: .5rem">Mode</p:outputLabel>
+                        <p:selectOneMenu id="mode" value="#{networkSettingsBean.selectedAdapter.mode}">
+                            <f:selectItem itemLabel="DHCP" itemValue="dhcp"/>
+                            <f:selectItem itemLabel="Static" itemValue="static"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="automode" style="margin-right: .5rem">AutoMode</p:outputLabel>
+                        <p:selectOneMenu id="automode" value="#{networkSettingsBean.selectedAdapter.automode}">
+                            <f:selectItem itemLabel="Auto Start" itemValue="yes"/>
+                            <f:selectItem itemLabel="No Auto Start" itemValue="no"/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <f:facet name="footer">
+
+                        <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{networkSettingsBean.addNewAdapter}"
+                                         update=":form:growl2">
+                            <p:resetInput target="dialogNewAdapter"/>
+                        </p:commandButton>
+
+                        <span style="padding: 20px;">&nbsp;</span>
+
+                        <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAdapter').hide()"
+                                         class="ui-button-secondary" update="dialogNewAdapter">
+                            <p:resetInput target="dialogNewAdapter"/>
+                        </p:commandButton>
+
+                    </f:facet>
+                </p:dialog>
+
+                <p:dialog widgetVar="deleteAdapter" showEffect="fade" width="300"
+                          message="Удалить адаптер?" header="Удалить адаптер?" severity="warn">
+                    <p:commandButton value="Да" icon="pi pi-check" actionListener="#{networkSettingsBean.deleteAdapter}"
+                                     oncomplete="PF('deleteAdapter').hide()"/>
+                    <span style="padding: 20px;">&nbsp;</span>
+                    <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteAdapter').hide()"/>
+                </p:dialog>
+
+                <div class="p-d-flex"></div>
+                <div >Список зарегистрированных пользователей.</div>
+                <br></br>
+                <div > </div>
+                <div ><strong>Администратор</strong> - имеет доступ к настройкам системы</div>
+                <div ><strong>Локальный пользователь</strong> - видит все исследования, вместе с ПД</div>
+                <div ><strong>Локальный только просмотр</strong> - видит все исследования, вместе с ПД, но не может отправлять и брать на анализ</div>
+                <div ><strong>Удаленный пользователь</strong> - видит только исследования отправленные на диагностику в его группу, без ПД</div>
+                <div ><strong>Клиент</strong> - может загружать исследования и видит результаты только загруженных им исследований</div>
+            </p:outputPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>
