@@ -1,0 +1,73 @@
+package ru.bitServer.beans;
+
+import java.util.ArrayList;
+
+public class NetworkSettingsParcer {
+
+    public StringBuilder textSettings;
+
+    NetworkSettingsParcer(StringBuilder textSettings){
+        this.textSettings = textSettings;
+    }
+
+    public ArrayList<NetworkAdapter> getAdapterList(){
+        ArrayList<NetworkAdapter> adapterList = new ArrayList<>();
+        String[] strings = textSettings.toString().split("\n");
+        boolean firstteg = true;
+        NetworkAdapter bufAdapter = new NetworkAdapter();
+        for (String str : strings) {
+            if(str.contains("iface")){
+                if(!str.contains("lo")){
+
+                    String[] subStrings = str.split(" ");
+
+                    if (firstteg) {
+                        bufAdapter = new NetworkAdapter();
+                        bufAdapter.setName(subStrings[1]);
+                        bufAdapter.setMode(subStrings[3]);
+                        System.out.println("first "+subStrings[3]);
+                        firstteg = false;
+                    } else {
+                        adapterList.add(bufAdapter);
+                        bufAdapter = new NetworkAdapter();
+                        bufAdapter.setName(subStrings[1]);
+                        bufAdapter.setMode(subStrings[3]);
+                        System.out.println("no first "+subStrings[3]);
+                    }
+
+
+                }
+            }
+            if(str.contains("address")){
+                String[] subStrings = str.split(" ");
+                bufAdapter.setIpaddress(subStrings[1]);
+            }
+
+            if(str.contains("netmask")){
+                String[] subStrings = str.split(" ");
+                bufAdapter.setMask(subStrings[1]);
+            }
+
+            if(str.contains("gateway")){
+                String[] subStrings = str.split(" ");
+                bufAdapter.setGateway(subStrings[1]);
+            }
+
+            if(str.contains("dns")){
+                String[] subStrings = str.split(" ");
+                bufAdapter.setGateway(subStrings[1]);
+            }
+
+            if(str.contains("auto")){
+                String[] subStrings = str.split(" ");
+                if(subStrings[1].equals(bufAdapter.getName())){
+                    bufAdapter.setAutomode("yes");
+                }
+            }
+        }
+        adapterList.add(bufAdapter);
+
+
+        return adapterList;
+    }
+}
