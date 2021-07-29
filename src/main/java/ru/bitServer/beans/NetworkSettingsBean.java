@@ -7,13 +7,19 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import static ru.bitServer.beans.MainBean.info;
 
 @ManagedBean(name = "networkSettingsBean", eager = false)
 @ViewScoped
@@ -85,8 +91,10 @@ public class NetworkSettingsBean implements UserDao {
         adapters = settingsParcer.getAdapterList();
     }
 
-    public void resetAdapter(){
-        System.out.println("reset adapter");
+    public void resetAdapter() throws IOException {
+        showMessage("Внимание","Сетевой адаптер перезагружен!",FacesMessage.SEVERITY_INFO);
+        //systemctl restart networking
+        Runtime.getRuntime().exec("service networking restart");
     }
 
     public void addNewAdapter(){
@@ -104,9 +112,7 @@ public class NetworkSettingsBean implements UserDao {
                 adapters.add(selectedAdapter);
                 PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
                 PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
-                System.out.println("add new adapter");
             } else {
-
                 adapters.remove(selectedAdapter);
                 adapters.add(selectedAdapter);
                 adapters.sort(Comparator.comparing(NetworkAdapter::getName));
@@ -139,8 +145,58 @@ public class NetworkSettingsBean implements UserDao {
         System.out.println("onTabChange");
     }
 
+    public void onInputTextChange(){
+
+    }
+
+    public void saveSettingsCustomMode(){
+        try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
+        {
+            byte[] buffer = configFileText.getBytes();
+            fileOutputStream.write(buffer, 0, buffer.length);
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
+    }
+
     public void saveSettings(){
-        System.out.println("saveSettings");
+        StringBuilder bufStringBuilder = new StringBuilder();
+        bufStringBuilder.append("# This file describes the network interfaces available on your system\n");
+        bufStringBuilder.append("# and how to activate them. For more information, see interfaces(5).\n");
+        bufStringBuilder.append("\n");
+        bufStringBuilder.append("source /etc/network/interfaces.d/*\n");
+        bufStringBuilder.append("");
+        bufStringBuilder.append("# The loopback network interface\n");
+        bufStringBuilder.append("auto lo\n");
+        bufStringBuilder.append("iface lo inet loopback\n");
+        bufStringBuilder.append("\n");
+        for(NetworkAdapter bufAdapter:adapters){
+            bufStringBuilder.append("iface "+bufAdapter.getName()+" inet "+bufAdapter.getIpmode()+"\n");
+            bufStringBuilder.append("address "+bufAdapter.getIpaddress()+"\n");
+            bufStringBuilder.append("netmask "+bufAdapter.getMask()+"\n");
+            bufStringBuilder.append("gateway "+bufAdapter.getIpaddress()+"\n");
+            bufStringBuilder.append("auto "+bufAdapter.getName()+"\n");
+            bufStringBuilder.append("allow-hotplug "+bufAdapter.getName()+"\n");
+            bufStringBuilder.append("\n");
+        }
+
+        try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
+        {
+            byte[] buffer = bufStringBuilder.toString().getBytes();
+            fileOutputStream.write(buffer, 0, buffer.length);
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
+    }
+
+    public void showMessage(String title, String note, FacesMessage.Severity type) {
+        FacesMessage message = new FacesMessage(title, note);
+        message.setSeverity(type);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
 }

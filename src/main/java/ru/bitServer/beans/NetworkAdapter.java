@@ -6,9 +6,7 @@ public class NetworkAdapter {
     private String ipaddress;
     private String mask;
     private String gateway;
-    private String dns;
-    private String mode;
-    private String automode;
+    private String ipmode;
 
     public String getIpaddress() {
         return ipaddress;
@@ -34,14 +32,6 @@ public class NetworkAdapter {
         this.gateway = gateway;
     }
 
-    public String getDns() {
-        return dns;
-    }
-
-    public void setDns(String dns) {
-        this.dns = dns;
-    }
-
     public String getName() {
         return name;
     }
@@ -50,33 +40,23 @@ public class NetworkAdapter {
         this.name = name;
     }
 
-    public String getMode() {
-        return mode;
+    public String getIpmode() {
+        return ipmode;
     }
 
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
-
-    public String getAutomode() {
-        return automode;
-    }
-
-    public void setAutomode(String automode) {
-        this.automode = automode;
+    public void setIpmode(String ipmode) {
+        this.ipmode = ipmode;
     }
 
     public NetworkAdapter(){
 
     }
 
-    public NetworkAdapter(String name, String ipaddress, String mask, String gateway, String dns, String mode, String automode){
+    public NetworkAdapter(String name, String ipaddress, String mask, String gateway, String ipmode){
         this.name = name;
         this.ipaddress = ipaddress;
         this.mask = mask;
         this.gateway = gateway;
-        this.dns = dns;
-        this.mode = mode;
-        this.automode = automode;
+        this.ipmode = ipmode;
     }
 }

@@ -49,7 +49,8 @@
                                     <p:resetInput target="dialogNewAdapter"/>
                                 </p:commandButton>
 
-                                <p:commandButton value="Сохранить" styleClass="ui-button-success" immediate="true" actionListener="#{networkSettingsBean.saveSettings}"/>
+                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="form:growl2"
+                                                 immediate="true" actionListener="#{networkSettingsBean.saveSettings}"/>
                             </p:toolbarGroup>
                         </p:toolbar>
 
@@ -68,7 +69,7 @@
                             </p:column>
 
                             <p:column headerText="MODE" style="text-align: center">
-                                <h:outputText value="#{networkAdapter.mode}"/>
+                                <h:outputText value="#{networkAdapter.ipmode}"/>
                             </p:column>
 
 
@@ -105,19 +106,10 @@
                                 <p:outputLabel for="gateway" style="margin-right: .5rem">GATEWAY</p:outputLabel>
                                 <p:inputMask id="gateway" value="#{networkSettingsBean.selectedAdapter.gateway}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
 
-                                <p:outputLabel for="dns" style="margin-right: .5rem">DNS</p:outputLabel>
-                                <p:inputMask id="dns" value="#{networkSettingsBean.selectedAdapter.dns}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
-
-                                <p:outputLabel for="mode" style="margin-right: .5rem">Mode</p:outputLabel>
-                                <p:selectOneMenu id="mode" value="#{networkSettingsBean.selectedAdapter.mode}">
-                                    <f:selectItem itemLabel="DHCP" itemValue="dhcp"/>
-                                    <f:selectItem itemLabel="Static" itemValue="static"/>
-                                </p:selectOneMenu>
-
-                                <p:outputLabel for="automode" style="margin-right: .5rem">AutoMode</p:outputLabel>
-                                <p:selectOneMenu id="automode" value="#{networkSettingsBean.selectedAdapter.automode}">
-                                    <f:selectItem itemLabel="Auto Start" itemValue="yes"/>
-                                    <f:selectItem itemLabel="No Auto Start" itemValue="no"/>
+                                <p:outputLabel for="ipmode" style="margin-right: .5rem">Mode</p:outputLabel>
+                                <p:selectOneMenu id="ipmode" value="#{networkSettingsBean.selectedAdapter.ipmode}">
+                                    <f:selectItem itemLabel="dhcp" itemValue="dhcp"/>
+                                    <f:selectItem itemLabel="static" itemValue="static"/>
                                 </p:selectOneMenu>
 
                             </p:panelGrid>
@@ -156,11 +148,14 @@
                     <p:outputPanel>
                         <p:toolbar>
                             <p:toolbarGroup>
-                                <p:commandButton value="Сохранить" styleClass="ui-button-success" immediate="true" actionListener="#{networkSettingsBean.saveSettings}"/>
+                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="form:growl2"
+                                                 immediate="true" actionListener="#{networkSettingsBean.saveSettingsCustomMode}"/>
                             </p:toolbarGroup>
                         </p:toolbar>
 
-                        <p:inputTextarea rows="16" cols="133" value="#{networkSettingsBean.configFileText}"/>
+                        <p:inputTextarea rows="16" cols="133" value="#{networkSettingsBean.configFileText}">
+                            <p:ajax event="change" listener="#{networkSettingsBean.onInputTextChange}"/>
+                        </p:inputTextarea>
 
                     </p:outputPanel>
                 </p:tab>

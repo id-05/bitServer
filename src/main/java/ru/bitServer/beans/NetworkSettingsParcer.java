@@ -24,20 +24,29 @@ public class NetworkSettingsParcer {
                     if (firstteg) {
                         bufAdapter = new NetworkAdapter();
                         bufAdapter.setName(subStrings[1]);
-                        bufAdapter.setMode(subStrings[3]);
-                        System.out.println("first "+subStrings[3]);
+
+                        if(subStrings[3].contains("static")){
+                            bufAdapter.setIpmode("static");
+                        }
+                        if(subStrings[3].contains("dhcp")){
+                            bufAdapter.setIpmode("dhcp");
+                        }
+
                         firstteg = false;
                     } else {
                         adapterList.add(bufAdapter);
                         bufAdapter = new NetworkAdapter();
                         bufAdapter.setName(subStrings[1]);
-                        bufAdapter.setMode(subStrings[3]);
-                        System.out.println("no first "+subStrings[3]);
+                        if(subStrings[3].contains("static")){
+                            bufAdapter.setIpmode("static");
+                        }
+                        if(subStrings[3].contains("dhcp")){
+                            bufAdapter.setIpmode("dhcp");
+                        }
                     }
-
-
                 }
             }
+
             if(str.contains("address")){
                 String[] subStrings = str.split(" ");
                 bufAdapter.setIpaddress(subStrings[1]);
@@ -52,22 +61,8 @@ public class NetworkSettingsParcer {
                 String[] subStrings = str.split(" ");
                 bufAdapter.setGateway(subStrings[1]);
             }
-
-            if(str.contains("dns")){
-                String[] subStrings = str.split(" ");
-                bufAdapter.setGateway(subStrings[1]);
-            }
-
-            if(str.contains("auto")){
-                String[] subStrings = str.split(" ");
-                if(subStrings[1].equals(bufAdapter.getName())){
-                    bufAdapter.setAutomode("yes");
-                }
-            }
         }
         adapterList.add(bufAdapter);
-
-
         return adapterList;
     }
 }
