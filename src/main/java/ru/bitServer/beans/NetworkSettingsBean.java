@@ -176,7 +176,7 @@ public class NetworkSettingsBean implements UserDao {
             bufStringBuilder.append("iface "+bufAdapter.getName()+" inet "+bufAdapter.getIpmode()+"\n");
             bufStringBuilder.append("address "+bufAdapter.getIpaddress()+"\n");
             bufStringBuilder.append("netmask "+bufAdapter.getMask()+"\n");
-            bufStringBuilder.append("gateway "+bufAdapter.getIpaddress()+"\n");
+            bufStringBuilder.append("gateway "+bufAdapter.getGateway()+"\n");
             bufStringBuilder.append("auto "+bufAdapter.getName()+"\n");
             bufStringBuilder.append("allow-hotplug "+bufAdapter.getName()+"\n");
             bufStringBuilder.append("\n");
