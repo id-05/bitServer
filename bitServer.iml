@@ -44,6 +44,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Java EE 6-Java EE 6 (2)" level="project" />
     <orderEntry type="library" name="ckeditor" level="application" />
+    <orderEntry type="library" name="Maven: us.fatehi:schemacrawler:14.05.01" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.10" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:10.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.20" level="project" />

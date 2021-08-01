@@ -38,6 +38,8 @@
 
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-user" disabled="true" value="Вы вошли как: #{remoteDashboard.currentUser.ruFamily} #{remoteDashboard.currentUser.ruName} #{remoteDashboard.currentUser.ruMiddleName}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>

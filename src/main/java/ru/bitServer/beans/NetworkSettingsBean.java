@@ -6,16 +6,17 @@ import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
+import schemacrawler.utility.ProcessExecutor;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -91,10 +92,79 @@ public class NetworkSettingsBean implements UserDao {
         adapters = settingsParcer.getAdapterList();
     }
 
-    public void resetAdapter() throws IOException {
-        showMessage("Внимание","Сетевой адаптер перезагружен!",FacesMessage.SEVERITY_INFO);
+    public void resAdapter() throws InterruptedException, IOException {
+        showMessage("Внимание","Сетевой будет адаптер перезагружен!",FacesMessage.SEVERITY_INFO);
+
+//        List<String> commands = Arrays.asList("/bin/sh", "flick", "video", "-a", "start", "-p", "ios");
+//// or Arrays.asList("/bin/sh", "yourScript.sh");
+//
+//        ProcessExecutor output = new ProcessExecutor();
+//        output.setCommandLine(commands);
+
         //systemctl restart networking
-        Runtime.getRuntime().exec("service networking restart");
+       // Runtime.getRuntime().exec("./home/evv/netresetscript");
+
+
+//        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", /*...*/);
+//        pb.redirectErrorStream(true);
+//        Process p = pb.start();
+
+//        Process p;
+//        String s;
+//        try {
+//            p = Runtime.getRuntime().exec("service networking restart");
+//            BufferedReader br = new BufferedReader(
+//                    new InputStreamReader(p.getInputStream()));
+//            while ((s = br.readLine()) != null) {
+//               // System.out.println("line: " + s);
+//                showMessage("Внимание","line: " + s,FacesMessage.SEVERITY_INFO);
+//            }
+//            p.waitFor();
+//            //System.out.println ("exit: " + p.exitValue());
+//            showMessage("Внимание","exit: " + p.exitValue(),FacesMessage.SEVERITY_INFO);
+//            p.destroy();
+//        } catch (Exception e) {}
+
+
+        showMessage("Внимание","текущая директория:"+RunLinuxCommand("reboot"),FacesMessage.SEVERITY_INFO);
+        try {
+            Process proc = Runtime.getRuntime().exec("sudo ./home/evv/netresetscript");
+            proc.waitFor();
+        }catch (Exception e){
+            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+        }
+//
+//        ProcessBuilder pb = new ProcessBuilder("./home/evv/netresetscript");
+//        try {
+//            Process p;
+//            p = pb.start();
+//        } catch (IOException e) {
+//            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+//        }
+    }
+
+    public String RunLinuxCommand(String cmd) throws IOException {
+
+        String linuxCommandResult = "";
+        Process p = Runtime.getRuntime().exec(cmd);
+
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+        try {
+            while ((linuxCommandResult = stdInput.readLine()) != null) {
+
+                return linuxCommandResult;
+            }
+            while ((linuxCommandResult = stdError.readLine()) != null) {
+                return "";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+
+        return linuxCommandResult;
     }
 
     public void addNewAdapter(){

@@ -23,7 +23,7 @@
             <p:growl id="growl2" showDetail="true" />
             <p:menubar>
                 <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
-                <p:menuitem style="margin-right: 5px" value="Перезагрузить сетевую службу" icon="pi pi-refresh" actionListener="#{networkSettingsBean.resetAdapter}" process="@this" update="growl2"/>
+                <p:menuitem style="margin-right: 5px" value="Перезагрузить сетевую службу" icon="pi pi-refresh" actionListener="#{networkSettingsBean.resAdapter}" process="@this" update="growl2"/>
 
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
