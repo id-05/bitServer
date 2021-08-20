@@ -5,6 +5,7 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
       xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:P="http://java.sun.com/jsf/html">
 
 <f:view>
@@ -26,6 +27,7 @@
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                         </div>
@@ -157,6 +159,14 @@
                 <div ><strong>Обратите внимание, что правила применяются по старшинству, сверху вниз.</strong></div>
                 <div ><strong>Правило расположенное ниже по списку будет отброшено, если оно противоречит правилу выше по списку.</strong></div>
             </p:outputPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+            </p:dialog>
 
         </h:form>
     </h:body>

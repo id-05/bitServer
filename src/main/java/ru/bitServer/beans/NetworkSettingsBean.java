@@ -6,8 +6,6 @@ import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
-import schemacrawler.utility.ProcessExecutor;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -16,11 +14,9 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static ru.bitServer.beans.MainBean.info;
 
 @ManagedBean(name = "networkSettingsBean", eager = false)
 @ViewScoped
@@ -93,78 +89,37 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void resAdapter() throws InterruptedException, IOException {
-        showMessage("Внимание","Сетевой будет адаптер перезагружен!",FacesMessage.SEVERITY_INFO);
+        showMessage("Внимание","Сетевой адаптер будет перезагружен!",FacesMessage.SEVERITY_INFO);
 
-//        List<String> commands = Arrays.asList("/bin/sh", "flick", "video", "-a", "start", "-p", "ios");
-//// or Arrays.asList("/bin/sh", "yourScript.sh");
-//
-//        ProcessExecutor output = new ProcessExecutor();
-//        output.setCommandLine(commands);
-
-        //systemctl restart networking
-       // Runtime.getRuntime().exec("./home/evv/netresetscript");
-
-
-//        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", /*...*/);
-//        pb.redirectErrorStream(true);
-//        Process p = pb.start();
-
-//        Process p;
-//        String s;
-//        try {
-//            p = Runtime.getRuntime().exec("service networking restart");
-//            BufferedReader br = new BufferedReader(
-//                    new InputStreamReader(p.getInputStream()));
-//            while ((s = br.readLine()) != null) {
-//               // System.out.println("line: " + s);
-//                showMessage("Внимание","line: " + s,FacesMessage.SEVERITY_INFO);
-//            }
-//            p.waitFor();
-//            //System.out.println ("exit: " + p.exitValue());
-//            showMessage("Внимание","exit: " + p.exitValue(),FacesMessage.SEVERITY_INFO);
-//            p.destroy();
-//        } catch (Exception e) {}
-
-
-        showMessage("Внимание","текущая директория:"+RunLinuxCommand("reboot"),FacesMessage.SEVERITY_INFO);
         try {
-            Process proc = Runtime.getRuntime().exec("sudo ./home/evv/netresetscript");
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/netresetscript");
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
         }
-//
-//        ProcessBuilder pb = new ProcessBuilder("./home/evv/netresetscript");
-//        try {
-//            Process p;
-//            p = pb.start();
-//        } catch (IOException e) {
-//            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-//        }
     }
 
-    public String RunLinuxCommand(String cmd) throws IOException {
-
-        String linuxCommandResult = "";
-        Process p = Runtime.getRuntime().exec(cmd);
-
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+    public void serviceMode() throws InterruptedException, IOException {
+        showMessage("Внимание","Сервер переведен в сервисный режим!",FacesMessage.SEVERITY_INFO);
 
         try {
-            while ((linuxCommandResult = stdInput.readLine()) != null) {
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
+            proc.waitFor();
+        }catch (Exception e){
+            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+        }
+    }
 
-                return linuxCommandResult;
-            }
-            while ((linuxCommandResult = stdError.readLine()) != null) {
-                return "";
-            }
-        } catch (Exception e) {
-            return "";
+    public void normalMode() throws InterruptedException, IOException {
+        showMessage("Внимание","Сервер переведен в нормальный режим!",FacesMessage.SEVERITY_INFO);
+
+        try {
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/noneservicemode");
+            proc.waitFor();
+        }catch (Exception e){
+            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
         }
 
-        return linuxCommandResult;
     }
 
     public void addNewAdapter(){
@@ -243,13 +198,22 @@ public class NetworkSettingsBean implements UserDao {
         bufStringBuilder.append("iface lo inet loopback\n");
         bufStringBuilder.append("\n");
         for(NetworkAdapter bufAdapter:adapters){
-            bufStringBuilder.append("iface "+bufAdapter.getName()+" inet "+bufAdapter.getIpmode()+"\n");
-            bufStringBuilder.append("address "+bufAdapter.getIpaddress()+"\n");
-            bufStringBuilder.append("netmask "+bufAdapter.getMask()+"\n");
-            bufStringBuilder.append("gateway "+bufAdapter.getGateway()+"\n");
-            bufStringBuilder.append("auto "+bufAdapter.getName()+"\n");
-            bufStringBuilder.append("allow-hotplug "+bufAdapter.getName()+"\n");
-            bufStringBuilder.append("\n");
+            if(bufAdapter.getIpmode().equals("dhcp")){
+                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
+                bufStringBuilder.append("auto ").append(bufAdapter.getName()).append("\n");
+                bufStringBuilder.append("allow-hotplug ").append(bufAdapter.getName()).append("\n");
+                bufStringBuilder.append("\n");
+            }else {
+                bufStringBuilder.append("iface " + bufAdapter.getName() + " inet " + bufAdapter.getIpmode() + "\n");
+                bufStringBuilder.append("address " + bufAdapter.getIpaddress() + "\n");
+                bufStringBuilder.append("netmask " + bufAdapter.getMask() + "\n");
+                if(!bufAdapter.getGateway().equals("")) {
+                    bufStringBuilder.append("gateway " + bufAdapter.getGateway() + "\n");
+                }
+                bufStringBuilder.append("auto " + bufAdapter.getName() + "\n");
+                bufStringBuilder.append("allow-hotplug " + bufAdapter.getName() + "\n");
+                bufStringBuilder.append("\n");
+            }
         }
 
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))

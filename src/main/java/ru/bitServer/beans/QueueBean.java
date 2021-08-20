@@ -453,7 +453,14 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('https://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        String buf;
+        if(mainServer.getHttpmode().equals("true")){
+            buf = "https";
+        }else{
+            buf = "http";
+        }
+        System.out.println("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        PrimeFaces.current().executeScript("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {

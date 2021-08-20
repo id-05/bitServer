@@ -27,6 +27,7 @@ public class SettingBitServerBean implements UserDao {
     public List<String> usergroupListRuName;
     public List<Usergroup> selectedUsergroups;
     public Usergroup selectedUsergroup;
+    public String httpmode;
     public String osimisAddress;
     public String orthancAddress;
     public String orthancWebPort;
@@ -35,7 +36,24 @@ public class SettingBitServerBean implements UserDao {
     public String orthancPathToJson;
     public String orthancPathToResultFile;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    public String networksetpathfile;
     public Date syncdate;
+
+    public String getHttpmode() {
+        return httpmode;
+    }
+
+    public void setHttpmode(String httpmode) {
+        this.httpmode = httpmode;
+    }
+
+    public String getNetworksetpathfile() {
+        return networksetpathfile;
+    }
+
+    public void setNetworksetpathfile(String networksetpathfile) {
+        this.networksetpathfile = networksetpathfile;
+    }
 
     public Date getSyncdate() {
         return syncdate;
@@ -172,6 +190,8 @@ public class SettingBitServerBean implements UserDao {
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "httpmode": httpmode = buf.getRvalue();
+                    break;
                 case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
                 case "port": orthancWebPort = buf.getRvalue();
@@ -186,10 +206,11 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "addressforosimis": osimisAddress = buf.getRvalue();
                     break;
+                case "networksetpathfile": networksetpathfile= buf.getRvalue();
+                    break;
                 case "syncdate": {
                     try {
                         syncdate = format.parse(buf.getRvalue());
-
                     }catch (Exception e){
                         System.out.println("Ошибка преобразования даты "+e.getMessage());
                     }
@@ -197,7 +218,11 @@ public class SettingBitServerBean implements UserDao {
                     break;
             }
         }
+    }
 
+    public void changehttpmode(){
+        System.out.println("change http mode");
+        saveParam();
     }
 
     public List<Users> prepareUserList(){
@@ -250,6 +275,8 @@ public class SettingBitServerBean implements UserDao {
     public void saveParam(){
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "httpmode": buf.setRvalue(httpmode);
+                    break;
                 case "orthancaddress": buf.setRvalue(orthancAddress);
                     break;
                 case "port": buf.setRvalue(orthancWebPort);

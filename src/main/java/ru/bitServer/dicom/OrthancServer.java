@@ -3,6 +3,7 @@ package ru.bitServer.dicom;
 public class OrthancServer {
 
     public int id;
+    public String httpmode;
     public String ipaddress;
     public String port;
     public String login;
@@ -18,6 +19,14 @@ public class OrthancServer {
     public int CountSeries;
     public int CountStudies;
     public int TotalDiskSizeMB;
+
+    public String getHttpmode() {
+        return httpmode;
+    }
+
+    public void setHttpmode(String httpmode) {
+        this.httpmode = httpmode;
+    }
 
     public int getCountInstances() {
         return CountInstances;

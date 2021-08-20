@@ -122,6 +122,8 @@ public class MainBean implements UserDao {
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "httpmode": mainServer.setHttpmode(buf.getRvalue());
+                    break;
                 case "orthancaddress": mainServer.setIpaddress(buf.getRvalue());
                     break;
                 case "port": mainServer.setPort(buf.getRvalue());

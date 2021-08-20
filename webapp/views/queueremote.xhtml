@@ -57,15 +57,22 @@
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                         </div>
                     </div>
                 </f:facet>
             </p:menubar>
+
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>
             </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+            </p:dialog>
+
                 <div style="align-content: center">
                     <p:toolbar>
                         <p:toolbarGroup align="right">

@@ -135,7 +135,33 @@
                             </p:inplace>
                         </p>
                         <br></br>
-                        <div >Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http://указанный_адрес/osimis-viewer/app/index.html?"</div>
+                        <div >Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http(s)://указанный_адрес/osimis-viewer/app/index.html?"</div>
+
+                        <br></br>
+                        <p:divider align="left" type="dashed">
+                            <b>Путь к файлу сетевых настроек</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.networksetpathfile}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br></br>
+                        <div >Данный файл используется для настройки сетевых параметров</div>
+
+                        <br></br>
+                        <p:divider align="left" type="dashed">
+                            <b>Включить HTTPS</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.httpmode}">
+                                <p:ajax listener="#{settingBitServerBean.changehttpmode}" />
+                            </p:toggleSwitch>
+                        </p>
+                        <br></br>
+                        <div >Включите, если вы используете HTTPS на этом сервере.</div>
+
 
                     </p:outputPanel>
                 </p:tab>

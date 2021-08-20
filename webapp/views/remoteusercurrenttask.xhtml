@@ -36,6 +36,7 @@
 
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
@@ -44,20 +45,19 @@
                     </f:facet>
                 </p:menubar>
             </div>
+
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>
             </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+            </p:dialog>
+
         </h:form>
 
 
         <h:form id="rucurrenttask">
-
-            <h3>Описание исследования</h3>
-
-            <div class="p-d-flex p-flex-column" style="margin-top: 10px">
-                <div class="my_text" style="margin-bottom: 5px">Внимание! Вы заблокировали это задание для описания! Пока вы не сохраните результат, вам будут не доступны другие задания!</div>
-                <div class="my_text" style="margin-bottom: 20px">После того, как вы нажмете "Сохранить" - результат отправится заказчику и вы больше не сможете просматривать это исследование!</div>
-            </div>
 
             <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{rucurrenttaskBean.visibleStudiesList}"
                          reflow="true" styleClass="borderless"
@@ -66,6 +66,10 @@
                 <f:facet name="header">
                     <div class="products-table-header">
                         <span style="font-weight: bold">Информация об исследовании</span>
+                    </div>
+                    <div class="p-d-flex p-flex-column" style="margin-top: 10px">
+                        <div class="my_text" style="margin-bottom: 5px">Внимание! Вы заблокировали это задание для описания! Пока вы не сохраните результат, вам будут не доступны другие задания!</div>
+                        <div class="my_text" style="margin-bottom: 20px">После того, как вы нажмете "Сохранить" - результат отправится заказчику и вы больше не сможете просматривать это исследование!</div>
                     </div>
                 </f:facet>
 
