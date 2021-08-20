@@ -20,7 +20,5 @@
 - Прилоежние использует REST-API для работы с DICOM-сервером Orthanc, DICOM-сервер может быть утсновлен на одной машине с bitServer$
 - bitServer развертывается с помощью Tomcat;
 
-### Руководство пользователя
-
-# [Download Magnet Monitor Remote Viewer](https://github.com/id-05/bitServer/raw/master/Руководство пользователя.docx)
+### [Скачать руководство пользователя](https://github.com/id-05/bitServer/raw/master/Руководство_пользователя.docx)
 
