@@ -287,7 +287,7 @@
 
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
                                     action="#{queueBean.comebackStudy}"
-                                    disabled="#{bitServerStudy.usergroupwhosees == '' or queueBean.currentUser.role == 'onlyview'}"/>
+                                    disabled="#{not empty bitServerStudy.usergroupwhosees or queueBean.currentUser.role == 'onlyview'}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
                                     action="#{queueBean.markAsHasResult}"
                                     disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
@@ -312,19 +312,20 @@
 
                             <f:facet name="footer">
 
-                            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueBean.addAnamnes}"
-                                             update=":seachform">
-                                <p:resetInput target="dialogStudyAnamnes"/>
-                            </p:commandButton>
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueBean.addAnamnes}"
+                                                 update=":seachform">
+                                    <p:resetInput target="dialogStudyAnamnes"/>
+                                </p:commandButton>
 
-                            <span style="padding: 20px;"> </span>
+                                <span style="padding: 20px;"> </span>
 
-                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
-                                             class="ui-button-secondary" update="dialogStudyAnamnes">
-                                <p:resetInput target="dialogStudyAnamnes"/>
-                            </p:commandButton>
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
+                                                 class="ui-button-secondary" update="dialogStudyAnamnes">
+                                    <p:resetInput target="dialogStudyAnamnes"/>
+                                </p:commandButton>
 
-                        </f:facet>
+                            </f:facet>
+
                     </p:dialog>
 
                     <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"

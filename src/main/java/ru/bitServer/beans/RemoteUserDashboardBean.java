@@ -171,7 +171,7 @@ public class RemoteUserDashboardBean implements UserDao {
             countBlock = 1;
             Date nowDate = new Date();
             Date startLockDate = currentStudy.getDatablock();
-            long timestamp = (startLockDate.getTime()+ 3600000L * MainBean.timeOnWork) - nowDate.getTime();
+            long timestamp = (startLockDate.getTime() + 3600000L * MainBean.timeOnWork) - nowDate.getTime();
             timeLeft = new Date(timestamp);
         }
 

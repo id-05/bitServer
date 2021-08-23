@@ -255,7 +255,6 @@ public class SettingBitServerBean implements UserDao {
                     users.setRole("Локальный только просмотр");
                     break;
                 }
-
             }
         }
         return usersList;
@@ -292,7 +291,6 @@ public class SettingBitServerBean implements UserDao {
                 case "addressforosimis": buf.setRvalue(osimisAddress);
                     break;
                 case "syncdate": buf.setRvalue(format.format(syncdate));
-
                     break;
             }
             updateBitServiceResource(buf);

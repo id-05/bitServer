@@ -1,10 +1,6 @@
 package ru.bitServer.dao;
 
 import javax.persistence.*;
-import java.sql.Time;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 
 @Entity
 public class BitServerScheduler {
@@ -97,6 +93,4 @@ public class BitServerScheduler {
         this.minute = minute;
         this.modality = modality;
     }
-
-
 }

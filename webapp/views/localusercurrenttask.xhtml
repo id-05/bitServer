@@ -121,11 +121,12 @@
                     <p:tooltip for="uploadresult" value="Загрузить файл результата"/>
 
                     <p:commandButton id="writeresult"
+                                     rendered="false"
                                      style="margin-right: 10px" styleClass="rounded-button ui-button-danger"
                                      icon="pi pi-pencil" process="@this"
                                      oncomplete="PF('editorResult').show()"
                                      update=":lucurrenttask:addResult"
-                    >
+                                     >
                     </p:commandButton>
                     <p:tooltip for="writeresult" value="Ввести описание вручную"/>
 
@@ -142,6 +143,14 @@
 
             <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                       widgetVar="manageAnamnes" responsive="true">
+                <div class="p-d-flex p-flex-column">
+                    <div class="p-mb-2">Укажите здесь например:</div>
+                    <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                    <div class="p-mb-2">- причина обращения за обследованием</div>
+                    <div class="p-mb-2">- текущее состояние пациента</div>
+                    <div class="p-mb-2">- информация об удаленных у пациента органах</div>
+                    <div class="p-mb-2">- другая важная информация</div>
+                </div>
                 <p:inputTextarea value="#{lucurrenttaskBean.currentStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
                                  autoResize="false" inputmode="auto"/>
 
@@ -150,6 +159,7 @@
                     <span style="padding: 20px;"> </span>
 
                 </f:facet>
+
             </p:dialog>
 
             <p:dialog id="addResult" header="Окно загрузки файла описания" showEffect="fade" modal="true"

@@ -190,9 +190,6 @@ public class QueueBean implements UserDao {
         selectedModaliti.add("DX");
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
-//        File bufFile = new File("C:/");
-//        double bufDouble = (bufFile.getFreeSpace() / (double)bufFile.getTotalSpace());
-//        freespace = (int)(100 - bufDouble*100)+" %";
     }
 
     public Boolean firstDateSelect() {
@@ -246,10 +243,12 @@ public class QueueBean implements UserDao {
         query.addProperty("Expand", true);
         query.addProperty("Limit", 0);
         JsonObject queryDetails = new JsonObject();
-        String dateStr;
-        String dateStartFromBase = "20190101";
+
+        String bufStr = getBitServerResource("syncdate").getRvalue();
+        String dateStartFromBase = bufStr.replaceAll("-","");
+
         seconddate = new Date();
-        dateStr = dateStartFromBase + "-" + format.format(seconddate);
+        String dateStr = dateStartFromBase + "-" + format.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
         StringBuilder modalities = new StringBuilder();
@@ -417,6 +416,7 @@ public class QueueBean implements UserDao {
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
             }
         }
+
         showMessage("Внимание","Всего отправлено: " + i,info);
         selectedVisibleStudies.clear();
         dataoutput();
@@ -514,6 +514,10 @@ public class QueueBean implements UserDao {
                 bufStudy.setStatus(0);
                 updateStudyInBitServerStudyTable(bufStudy);
                 connection.deleteStudyFromOrthanc(bufStudy);
+                Users bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
+                bufUser.setHasBlockStudy(false);
+                bufUser.setBlockStudy("0");
+                updateUser(bufUser);
             }
         }
         selectedVisibleStudies.clear();
