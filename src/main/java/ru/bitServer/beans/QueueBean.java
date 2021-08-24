@@ -504,7 +504,6 @@ public class QueueBean implements UserDao {
                     .contentType("application/zip")
                     .stream(() -> inputStream)
                     .build();
-
     }
 
     public void comebackStudy() throws IOException {

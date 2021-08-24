@@ -1,10 +1,14 @@
 package ru.bitServer.beans;
 
+import com.google.gson.JsonArray;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -16,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,6 +37,15 @@ public class RemoteUserCurTask implements UserDao {
     public BitServerStudy currentStudy;
     public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
     private OrthancRestApi connection;
+    public Usergroup bufGroup;
+
+    public Usergroup getBufGroup() {
+        return bufGroup;
+    }
+
+    public void setBufGroup(Usergroup bufGroup) {
+        this.bufGroup = bufGroup;
+    }
 
     public BitServerStudy getCurrentStudy() {
         return currentStudy;
@@ -59,6 +73,7 @@ public class RemoteUserCurTask implements UserDao {
         visibleStudiesList.clear();
         visibleStudiesList.add(currentStudy);
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        bufGroup = getUsergroupById(currentUser.getUgroup());
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
@@ -100,4 +115,19 @@ public class RemoteUserCurTask implements UserDao {
         updateStudyInBitServerStudyTable(selectedVisibleStudy);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
     }
+
+    public StreamedContent downloadStudy() throws Exception {
+        BitServerStudy bufStudy = currentStudy;
+        String url="/tools/create-archive";
+        JsonArray idArray = new JsonArray();
+        idArray.add(bufStudy.getAnonimstudyid());
+        HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        return DefaultStreamedContent.builder()
+                .name("download"+"-"+bufStudy.getSdescription()+"."+"zip")
+                .contentType("application/zip")
+                .stream(() -> inputStream)
+                .build();
+    }
+
 }
