@@ -287,7 +287,6 @@ public class ClientBean implements UserDao {
 
             byte[] bytes = getBytesFromInputStream(din2);
 
-
             HttpURLConnection conn = connection.sendDicom("/instances", bytes);
             String buf = conn.getResponseMessage();
             System.out.println(buf);
@@ -297,6 +296,12 @@ public class ClientBean implements UserDao {
         BitServerStudy newStudy = new BitServerStudy();
         newStudy.setAnamnes(anamnes);
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+
+        clearfileList();
+        skip = false;
+        skipNext = true;
+        activeStep = 0;
+        PrimeFaces.current().ajax().update("stepbystep");
     }
 
     public static byte[] getBytesFromInputStream(InputStream is) throws IOException {

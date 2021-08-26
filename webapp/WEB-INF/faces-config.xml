@@ -14,6 +14,16 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>clientorders</from-outcome>
+            <to-view-id>/views/clientorders.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>clientresults</from-outcome>
+            <to-view-id>/views/clientresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>queue</from-outcome>
             <to-view-id>/views/queue.xhtml</to-view-id>
         </navigation-case>

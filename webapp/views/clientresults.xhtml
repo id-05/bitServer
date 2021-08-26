@@ -24,16 +24,13 @@
 
     </style>
 
-
     <h:body>
 
         <h:form id="remoteform">
             <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
             <div class="card">
                 <p:menubar>
-                    <p:menuitem style="margin-right: 5px" value="Новое исследование" outcome="neworder" icon="pi pi-plus"/>
-                    <p:menuitem style="margin-right: 5px" value="Ваши исследования" outcome="clientorders" icon="pi pi-bars"/>
-                    <p:menuitem style="margin-right: 5px" value="Результаты" outcome="clientresults" icon="pi pi-check-square"/>
+                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="client" icon="pi pi-backward"/>
                     <f:facet name="options">
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
@@ -49,28 +46,6 @@
                 <b:about/>
             </p:dialog>
 
-            <div class="ui-fluid p-formgrid p-grid">
-
-                <div class="p-col">
-                    <div class="p-d-flex p-jc-center">
-                        <p:graphicImage name="111.png" library="images"/>
-                    </div>
-
-                </div>
-
-                <div class="p-col">
-                    <div class="p-d-flex p-jc-center">
-                        <p:graphicImage name="222.png" library="images"/>
-                    </div>
-                </div>
-
-                <div class="p-col">
-                    <div class="p-d-flex p-jc-center">
-                        <p:graphicImage name="333.png" library="images"/>
-                    </div>
-                </div>
-
-            </div>
 
         </h:form>
 
