@@ -284,11 +284,13 @@
                             <p:column exportable="false">
                                 <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
                                                  oncomplete="PF('manageUserDialog').show()"
+                                                 style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
                                     <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
                                     <p:resetInput target=":form:accordion:manage-user-content"/>
                                 </p:commandButton>
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 style="margin-right: 10px"
                                                  oncomplete="PF('deleteUserDialog').show()">
                                     <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
                                 </p:commandButton>
@@ -381,11 +383,13 @@
                                 <p:column exportable="false">
                                     <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-modaliti-content"
                                                      oncomplete="PF('manageModalitiDialog').show()"
+                                                     style="margin-right: 10px"
                                                      styleClass="edit-button rounded-button ui-button-success" process="@this">
                                         <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
                                         <p:resetInput target=":form:accordion:manage-modaliti-content"/>
                                     </p:commandButton>
                                     <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                     style="margin-right: 10px"
                                                      oncomplete="PF('deleteModalitiDialog').show()">
                                         <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
                                     </p:commandButton>
@@ -403,7 +407,7 @@
                                     <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomname}" />
 
                                     <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
-                                    <p:inputText id="ip" value="#{settingsBean.selectedDicomModality.ip}" />
+                                    <p:inputMask id="ip" value="#{settingsBean.selectedDicomModality.ip}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
 
                                     <p:outputLabel for="dicomport" style="margin-right: .5rem">Port</p:outputLabel>
                                     <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomport}" />
@@ -415,7 +419,7 @@
 
                                 <f:facet name="footer" >
                                     <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewModaliti}"
-                                                     update="dialogNewModaliti">
+                                                     update="dialogNewModaliti, form:growl">
                                     <p:resetInput target="dialogNewModaliti"/>
 
                                     </p:commandButton>

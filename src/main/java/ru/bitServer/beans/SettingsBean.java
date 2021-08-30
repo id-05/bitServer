@@ -573,16 +573,18 @@ public class SettingsBean {
     public void AddNewModaliti(){
         if((!selectedDicomModality.getDicomtitle().equals(""))&(!selectedDicomModality.getDicomname().equals(""))
                 &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
-                &(!selectedDicomModality.getDicomproperty().equals(""))) {
-            //System.out.println("add new modaliti");
+                &(!selectedDicomModality.getDicomproperty().equals(""))&(!selectedDicomModality.getDicomtitle().contains("_"))) {
+
             dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
                     selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
             PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
         }else{
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Все поля должны быть заполнены!"));
+            showMessage("Внимание","Все поля должны быть заполнены! Не допустимо использование символа: '_' !",FacesMessage.SEVERITY_ERROR);
         }
     }
+
+
 
     public void deleteModaliti() {
         this.dicomModalities.remove(this.selectedDicomModality);
