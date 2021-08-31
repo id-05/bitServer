@@ -117,7 +117,7 @@ public class LocalUserCurTask implements UserDao {
             selectedVisibleStudy.setTyperesult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy);
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
     }
 

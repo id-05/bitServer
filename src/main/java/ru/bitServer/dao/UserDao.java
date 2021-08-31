@@ -188,6 +188,22 @@ public interface UserDao {
         session.close();
     }
 
+    public default void saveBitServiceResource(BitServerResources bitServerResources) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(bitServerResources);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteBitServiceResource(BitServerResources bitServerResources) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(bitServerResources);
+        transaction.commit();
+        session.close();
+    }
+
     public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
@@ -320,7 +336,7 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default void addStudyInBitServerStudyTable(BitServerStudy study) {
+    public default void addStudy(BitServerStudy study) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(study);
@@ -328,10 +344,18 @@ public interface UserDao {
         session.close();
     }
 
-    public default void updateStudyInBitServerStudyTable(BitServerStudy study) {
+    public default void updateStudy(BitServerStudy study) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(study);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteStudy(BitServerStudy study) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(study);
         transaction.commit();
         session.close();
     }

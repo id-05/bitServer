@@ -275,7 +275,7 @@ public class QueueBean implements UserDao {
                 BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
                         bufStudy.getInstitutionName(), bufStudy.getDate(),
                         bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
-                addStudyInBitServerStudyTable(buf);
+                addStudy(buf);
             }
         }
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
@@ -410,7 +410,7 @@ public class QueueBean implements UserDao {
                 bufStudy.setDatesent(new Date());
                 bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
                 bufStudy.setUserwhosent(currentUser.getUid().toString());
-                updateStudyInBitServerStudyTable(bufStudy);
+                updateStudy(bufStudy);
                 i++;
             }else{
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
@@ -439,7 +439,7 @@ public class QueueBean implements UserDao {
     }
 
     public void addAnamnes(){
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
     }
 
     public boolean hasSelectedStudy() {
@@ -511,7 +511,7 @@ public class QueueBean implements UserDao {
             if(!bufStudy.getUsergroupwhosees().equals("")){
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
-                updateStudyInBitServerStudyTable(bufStudy);
+                updateStudy(bufStudy);
                 connection.deleteStudyFromOrthanc(bufStudy);
                 Users bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
@@ -530,7 +530,7 @@ public class QueueBean implements UserDao {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             bufStudy.setUsergroupwhosees("");
             bufStudy.setStatus(2);
-            updateStudyInBitServerStudyTable(bufStudy);
+            updateStudy(bufStudy);
         }
         selectedVisibleStudies.clear();
         dataoutput();
@@ -543,7 +543,7 @@ public class QueueBean implements UserDao {
         selectedVisibleStudy.setStatus(3);
         selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);

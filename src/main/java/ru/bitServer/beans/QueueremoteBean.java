@@ -110,7 +110,7 @@ public class QueueremoteBean implements UserDao {
             selectedVisibleStudy.setTyperesult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy);
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('sidebar').hide()");
         showMessage("Информация","Заключение было прикреплено к исследованию! Статус исследования был изменен на 'Описано'",info);
         dataoutput();
@@ -141,7 +141,7 @@ public class QueueremoteBean implements UserDao {
         selectedVisibleStudy.setStatus(3);
         selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);

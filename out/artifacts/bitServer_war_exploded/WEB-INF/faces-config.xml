@@ -89,11 +89,6 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>seriePage</from-outcome>
-            <to-view-id>/views/serie.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
             <from-outcome>settings_orthanc</from-outcome>
             <to-view-id>/views/settings_orthanc.xhtml</to-view-id>
         </navigation-case>
@@ -106,6 +101,11 @@
         <navigation-case>
             <from-outcome>settings_network</from-outcome>
             <to-view-id>/views/settings_network.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_datebase</from-outcome>
+            <to-view-id>/views/settings_datebase.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>

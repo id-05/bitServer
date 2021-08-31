@@ -112,7 +112,7 @@ public class RemoteUserCurTask implements UserDao {
             selectedVisibleStudy.setTyperesult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy);
-        updateStudyInBitServerStudyTable(selectedVisibleStudy);
+        updateStudy(selectedVisibleStudy);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
     }
 
