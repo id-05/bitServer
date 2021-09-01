@@ -79,9 +79,13 @@ public class DateBaseBean implements UserDao {
     public void init() {
         System.out.println("datebase bean");
         selectedResource = new BitServerResources();
+        selectedStudy = new BitServerStudy();
         listResources = getAllBitServerResource();
         listStudys = getAllBitServerStudy();
-        selectedStudy = new BitServerStudy();
+    }
+
+    public void initNewResources(){
+        selectedResource = new BitServerResources();
     }
 
     public void addNewResource(){
@@ -119,8 +123,7 @@ public class DateBaseBean implements UserDao {
     }
 
     public void updateStudyInBase(){
-        if((selectedStudy.getId()!=null)&(!selectedStudy.getModality().equals(""))
-            &(true))
+        if((selectedStudy.getId() != null) & (!selectedStudy.getModality().equals("")))
         {
             updateStudy(selectedStudy);
             listStudys = getAllBitServerStudy();
@@ -135,10 +138,19 @@ public class DateBaseBean implements UserDao {
         deleteStudy(selectedStudy);
         listStudys.remove(selectedStudy);
         selectedStudy = new BitServerStudy();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Исследование удалено!"));
+        showMessage("Внимание!","Исследование удалено!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-study");
 
         //добавить удаление из базы Orthanc
+    }
 
+    public void deleteAllStudy(){
+        for(BitServerStudy bufStudy:listStudys){
+            deleteStudy(bufStudy);
+        }
+        listStudys.clear();
+        selectedStudy = new BitServerStudy();
+        showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);
+        PrimeFaces.current().ajax().update(":form:accord:dt-study");
     }
 }

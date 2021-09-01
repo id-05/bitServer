@@ -205,16 +205,19 @@
                             </p:column>
 
                             <p:column exportable="false">
+
                                 <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
                                                  oncomplete="PF('manageUserDialog').show()" style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
                                     <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
                                     <p:resetInput target=":form:accord:manage-user-content"/>
                                 </p:commandButton>
+
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                                  oncomplete="PF('deleteUserDialog').show()">
                                     <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
                                 </p:commandButton>
+
                             </p:column>
 
                         </p:dataTable>

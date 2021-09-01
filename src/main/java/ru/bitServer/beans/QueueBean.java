@@ -255,6 +255,8 @@ public class QueueBean implements UserDao {
         for (String buf : selectedModaliti) {
             modalities.append(buf).append("\\");
         }
+        //modalities = new StringBuilder();
+        //modalities.append("\\");
         queryDetails.addProperty("Modality", modalities.toString());
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());

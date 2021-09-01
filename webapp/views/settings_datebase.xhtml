@@ -41,7 +41,7 @@
 
                         <p:toolbar>
                             <p:toolbarGroup>
-                                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUser}"
+                                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{datebaseBean.initNewResources}"
                                                  update="dialogNewResource" oncomplete="PF('manageResourceDialog').show()"
                                                  styleClass="ui-button-success" style="margin-right: .5rem">
                                     <p:resetInput target="dialogNewResource"/>
@@ -66,16 +66,19 @@
                             </p:column>
 
                             <p:column exportable="false">
+
                                 <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-resource-content"
                                                  oncomplete="PF('manageResourceDialog').show()" style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
                                     <f:setPropertyActionListener value="#{resources}" target="#{datebaseBean.selectedResource}"/>
                                     <p:resetInput target=":form:accord:manage-resource-content"/>
                                 </p:commandButton>
+
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                                  oncomplete="PF('deleteResourceDialog').show()">
                                     <f:setPropertyActionListener value="#{resources}" target="#{datebaseBean.selectedResource}"/>
                                 </p:commandButton>
+
                             </p:column>
 
                         </p:dataTable>
@@ -100,7 +103,7 @@
 
                                 <span style="padding: 20px;">&nbsp;</span>
 
-                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageResourceDialog').hide()"
                                                  class="ui-button-secondary" update="dialogNewResource">
                                     <p:resetInput target="dialogNewResource"/>
                                 </p:commandButton>
@@ -122,6 +125,16 @@
 
                 <p:tab title="BitServerStudy">
                     <p:outputPanel>
+
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Delete all" immediate="true" icon="pi pi-trash" actionListener="#{datebaseBean.deleteAllStudy}"
+                                                 update=":form:accord:manage-study-content"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
                         <p:dataTable id="dt-study" widgetVar="dtStudy" var="study" value="#{datebaseBean.listStudys}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
@@ -131,7 +144,6 @@
                                      paginatorPosition="bottom"
                                      scrollable="true"
                                      tableStyle = "width: auto! important;"
-
                                      >
 
                             <p:column headerText="id" sortBy="#{study.id}" style="width: max-content">
@@ -234,19 +246,20 @@
                                 <h:outputText value="#{study.userwhodiagnost}" />
                             </p:column>
 
-
-
                             <p:column exportable="false">
+
                                 <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-study-content"
                                                  oncomplete="PF('manageStudyDialog').show()" style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
                                     <f:setPropertyActionListener value="#{study}" target="#{datebaseBean.selectedStudy}"/>
                                     <p:resetInput target=":form:accord:manage-study-content"/>
                                 </p:commandButton>
+
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                                  oncomplete="PF('deleteStudyDialog').show()">
                                     <f:setPropertyActionListener value="#{study}" target="#{datebaseBean.selectedStudy}"/>
                                 </p:commandButton>
+
                             </p:column>
 
                         </p:dataTable>
@@ -264,15 +277,13 @@
                                 <p:outputLabel for="source" style="margin-right: .5rem">source</p:outputLabel>
                                 <p:inputText id="source" value="#{datebaseBean.selectedStudy.source}" />
 
-
-
                             </p:panelGrid>
 
                             <f:facet name="footer">
 
                                 <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{datebaseBean.updateStudyInBase}"
                                                  update=":form:growl2">
-                                    <p:resetInput target="dialogNewResource"/>
+                                    <p:resetInput target="dialogUpdateStudy"/>
                                 </p:commandButton>
 
                                 <span style="padding: 20px;">&nbsp;</span>
@@ -288,11 +299,12 @@
                         <p:dialog widgetVar="deleteStudyDialog" showEffect="fade" width="300"
                                   message="Delete study?" header="Delete study?" severity="warn">
                             <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteStudyFromBase}"
-                                             oncomplete="PF('deleteStudyDialog').hide()"/>
+                                             oncomplete="PF('deleteStudyDialog').hide()" update=":form:growl2"/>
                             <span style="padding: 20px;">&nbsp;</span>
                             <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                              onclick="PF('deleteStudyDialog').hide()"/>
                         </p:dialog>
+
                     </p:outputPanel>
                 </p:tab>
 

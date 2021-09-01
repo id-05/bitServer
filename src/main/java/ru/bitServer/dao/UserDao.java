@@ -100,8 +100,6 @@ public interface UserDao {
         return results;
     }
 
-
-
     public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.uname = '" + ulogin + "' and U.password = '" + upassword + "'";
@@ -245,9 +243,9 @@ public interface UserDao {
             }else{
                 String hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
                 query = session.createQuery(hql);
-                System.out.println("hql "+hql);
-                System.out.println("date1 "+firstdate.toString());
-                System.out.println("date2 "+seconddate.toString());
+//                System.out.println("hql "+hql);
+//                System.out.println("date1 "+firstdate.toString());
+//                System.out.println("date2 "+seconddate.toString());
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);
@@ -298,12 +296,12 @@ public interface UserDao {
     }
 
     public default List<BitServerStudy> getMyBitServerStudy(Users requestUser) {
-        System.out.println("requestuser "+requestUser.getUid());
+        //System.out.println("requestuser "+requestUser.getUid());
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         Query query = null;
         String hql= "from BitServerStudy  where userwhodiagnost=:userid";
-        System.out.println("hql = "+hql);
+        //System.out.println("hql = "+hql);
         query = session.createQuery(hql);
         query.setParameter("userid", requestUser.getUid());
         List<BitServerStudy> results = query.list();
@@ -353,11 +351,14 @@ public interface UserDao {
     }
 
     public default void deleteStudy(BitServerStudy study) {
+        System.out.println("deleteStudy");
+        System.out.println("study "+study.getId());
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(study);
         transaction.commit();
         session.close();
+
     }
 
     public default void saveNewRule(BitServerScheduler rule) {
