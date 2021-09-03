@@ -194,10 +194,44 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteBitServiceResource(BitServerResources bitServerResources) {
+    public default void deleteBitServerResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(bitServerResources);
+        transaction.commit();
+        session.close();
+    }
+
+    public default List<BitServerModality> getAllBitServerModality() {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BitServerModality> criteriaQuery = builder.createQuery(BitServerModality.class);
+        Root<BitServerModality> root = criteriaQuery.from(BitServerModality.class);
+        criteriaQuery.select(root);
+        Query<BitServerModality> BitServerDBresources = session.createQuery(criteriaQuery);
+        return BitServerDBresources.list();
+    }
+
+    public default void updateBitServerModality(BitServerModality bitServerModality) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.update(bitServerModality);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void saveBitServerModality(BitServerModality bitServerModality) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.save(bitServerModality);
+        transaction.commit();
+        session.close();
+    }
+
+    public default void deleteBitServerModality(BitServerModality bitServerModality) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(bitServerModality);
         transaction.commit();
         session.close();
     }

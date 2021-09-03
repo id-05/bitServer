@@ -18,16 +18,32 @@ import static ru.bitServer.beans.AutoriseBean.showMessage;
 public class DateBaseBean implements UserDao {
 
     List<BitServerResources> listResources = new ArrayList<>();
-
     BitServerResources selectedResource;
 
     List<BitServerStudy> listStudys = new ArrayList<>();
-
     BitServerStudy selectedStudy;
 
     List<BitServerScheduler> listSchedulers = new ArrayList<>();
-
     BitServerScheduler selectedScheduler;
+
+    List<BitServerModality> listModalitys = new ArrayList<>();
+    BitServerModality selectedModality;
+
+    public List<BitServerModality> getListModalitys() {
+        return listModalitys;
+    }
+
+    public void setListModalitys(List<BitServerModality> listModalitys) {
+        this.listModalitys = listModalitys;
+    }
+
+    public BitServerModality getSelectedModality() {
+        return selectedModality;
+    }
+
+    public void setSelectedModality(BitServerModality selectedModality) {
+        this.selectedModality = selectedModality;
+    }
 
     public List<BitServerScheduler> getListSchedulers() {
         return listSchedulers;
@@ -84,12 +100,20 @@ public class DateBaseBean implements UserDao {
         listSchedulers = getAllBitServerSheduler();
         listResources = getAllBitServerResource();
         listStudys = getAllBitServerStudy();
+        listModalitys = getAllBitServerModality();
 
         selectedResource = new BitServerResources();
+
         if(listStudys.size()>0){
             selectedStudy = listStudys.get(0);
         }else{
             selectedStudy = new BitServerStudy();
+        }
+
+        if(listModalitys.size()>0){
+            selectedModality = listModalitys.get(0);
+        }else{
+            selectedModality = new BitServerModality();
         }
 
         if(listSchedulers.size()>0){
@@ -102,6 +126,10 @@ public class DateBaseBean implements UserDao {
 
     public void initNewResources(){
         selectedResource = new BitServerResources();
+    }
+
+    public void initNewModality(){
+        selectedModality = new BitServerModality();
     }
 
     public void addNewResource(){
@@ -127,6 +155,32 @@ public class DateBaseBean implements UserDao {
             }
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+    public void addNewModality(){
+        if(!selectedModality.getName().equals(""))
+        {
+            boolean verifiUnical = true;
+            for(BitServerModality bufModality:listModalitys){
+                if (bufModality.getName().equals(selectedModality.getName())) {
+                    verifiUnical = false;
+                    break;
+                }
+            }
+            if(verifiUnical) {
+                saveBitServerModality(selectedModality);
+                listModalitys = getAllBitServerModality();
+                PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accord:dt-modality");
+            }else{
+                updateBitServerModality(selectedModality);
+                listModalitys = getAllBitServerModality();
+                PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accord:dt-modality");
+            }
+        }else{
+            showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
         }
     }
 
@@ -165,11 +219,19 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteResource(){
-        deleteBitServiceResource(selectedResource);
+        deleteBitServerResource(selectedResource);
         listResources.remove(selectedResource);
         selectedResource = new BitServerResources();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ресурс удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
+    }
+
+    public void deleteModality(){
+        deleteBitServerModality(selectedModality);
+        listModalitys.remove(selectedModality);
+        selectedModality = new BitServerModality();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Модальность удалена!"));
+        PrimeFaces.current().ajax().update(":form:accord:dt-modality");
     }
 
     public void updateStudyInBase(){
