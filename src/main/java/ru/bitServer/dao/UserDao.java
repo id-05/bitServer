@@ -21,13 +21,13 @@ public interface UserDao {
 
     final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    public default void initialHibernate(){
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-    }
-
-    public default Users findById(long id) {
-        return (Users) HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Users.class, id);
-    }
+//    public default void initialHibernate(){
+//        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+//    }
+//
+//    public default Users findById(long id) {
+//        return (Users) HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Users.class, id);
+//    }
 
     public default void saveNewUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -277,9 +277,6 @@ public interface UserDao {
             }else{
                 String hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
                 query = session.createQuery(hql);
-//                System.out.println("hql "+hql);
-//                System.out.println("date1 "+firstdate.toString());
-//                System.out.println("date2 "+seconddate.toString());
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);

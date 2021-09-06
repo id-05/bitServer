@@ -10,10 +10,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
-import ru.bitServer.dao.BitServerStudy;
-import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Usergroup;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -177,17 +174,18 @@ public class QueueBean implements UserDao {
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         firstdate = new Date();
         seconddate = new Date();
-        selectedModaliti.clear();
-        selectedModaliti.add("CR");
-        selectedModaliti.add("CT");
-        selectedModaliti.add("MR");
-        selectedModaliti.add("NM");
-        selectedModaliti.add("PT");
-        selectedModaliti.add("US");
-        selectedModaliti.add("XA");
-        selectedModaliti.add("CR");
-        selectedModaliti.add("MG");
-        selectedModaliti.add("DX");
+
+//        selectedModaliti.clear();
+//        selectedModaliti.add("CR");
+//        selectedModaliti.add("CT");
+//        selectedModaliti.add("MR");
+//        selectedModaliti.add("NM");
+//        selectedModaliti.add("PT");
+//        selectedModaliti.add("US");
+//        selectedModaliti.add("XA");
+//        selectedModaliti.add("MG");
+//        selectedModaliti.add("DX");
+
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
     }
@@ -252,11 +250,12 @@ public class QueueBean implements UserDao {
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
         StringBuilder modalities = new StringBuilder();
-        for (String buf : selectedModaliti) {
-            modalities.append(buf).append("\\");
+
+        List<BitServerModality> modalityFromBase = getAllBitServerModality();
+        for(BitServerModality bufModality:modalityFromBase){
+            modalities.append(bufModality.getName()).append("\\");
         }
-        //modalities = new StringBuilder();
-        //modalities.append("\\");
+
         queryDetails.addProperty("Modality", modalities.toString());
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());

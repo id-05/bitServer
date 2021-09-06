@@ -52,8 +52,9 @@
                         <p:dataTable id="dt-resources" widgetVar="dtResources" var="resources" value="#{datebaseBean.listResources}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{datebaseBean.selectedResource}" rowKey="#{BitServerResources.rname}"
-                                     rows="10" selectionMode="single"
+                                     selection="#{datebaseBean.selectedResources}" rowKey="#{BitServerResources.rname}"
+                                     rows="10"
+                                     rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom">
 
@@ -139,8 +140,9 @@
                         <p:dataTable id="dt-study" widgetVar="dtStudy" var="study" value="#{datebaseBean.listStudys}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{datebaseBean.selectedStudy}" rowKey="#{BitServerStudy.sid}"
-                                     rows="10" selectionMode="single"
+                                     selection="#{datebaseBean.selectedStudys}" rowKey="#{BitServerStudy.sid}"
+                                     rows="10"
+                                     rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom"
                                      scrollable="true"
@@ -257,6 +259,7 @@
                                 </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-study-content"
                                                  oncomplete="PF('deleteStudyDialog').show()">
                                     <f:setPropertyActionListener value="#{study}" target="#{datebaseBean.selectedStudy}"/>
                                 </p:commandButton>
@@ -323,9 +326,9 @@
                         <p:dataTable id="dt-scheduler" widgetVar="dtScheduler" var="scheduler" value="#{datebaseBean.listSchedulers}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{datebaseBean.selectedScheduler}" rowKey="#{BitServerScheduler.schedulerid}"
+                                     selection="#{datebaseBean.selectedSchedulers}" rowKey="#{BitServerScheduler.schedulerid}"
                                      rows="10"
-                                     selectionMode="single"
+                                     rowSelectMode="add"
                                      paginator="true"
                                      paginatorAlwaysVisible="false"
                                      paginatorPosition="bottom">
@@ -348,6 +351,7 @@
                                 </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-scheduler-content"
                                                  oncomplete="PF('deleteSchedulerDialog').show()">
                                     <f:setPropertyActionListener value="#{scheduler}" target="#{datebaseBean.selectedScheduler}"/>
                                 </p:commandButton>
@@ -411,8 +415,9 @@
                         <p:dataTable id="dt-modality" widgetVar="dtModality" var="modality" value="#{datebaseBean.listModalitys}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{datebaseBean.selectedModality}" rowKey="#{BitServerModality.name}"
-                                     rows="10" selectionMode="single"
+                                     selection="#{datebaseBean.selectedModalitys}" rowKey="#{BitServerModality.name}"
+                                     rows="10"
+                                     rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom">
 
@@ -430,6 +435,7 @@
                                 </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-modality-content"
                                                  oncomplete="PF('deleteModalityDialog').show()">
                                     <f:setPropertyActionListener value="#{modality}" target="#{datebaseBean.selectedModality}"/>
                                 </p:commandButton>
@@ -472,20 +478,6 @@
                         </p:dialog>
                     </p:outputPanel>
                 </p:tab>
-
-                <p:tab title="Usergroup">
-                    <p:outputPanel>
-
-                    </p:outputPanel>
-                </p:tab>
-
-                <p:tab title="Users">
-                    <p:outputPanel>
-
-                    </p:outputPanel>
-                </p:tab>
-
-
 
             </p:accordionPanel>
 

@@ -19,15 +19,51 @@ public class DateBaseBean implements UserDao {
 
     List<BitServerResources> listResources = new ArrayList<>();
     BitServerResources selectedResource;
+    BitServerResources selectedResources;
 
     List<BitServerStudy> listStudys = new ArrayList<>();
     BitServerStudy selectedStudy;
+    BitServerStudy selectedStudys;
 
     List<BitServerScheduler> listSchedulers = new ArrayList<>();
     BitServerScheduler selectedScheduler;
+    BitServerScheduler selectedSchedulers;
 
     List<BitServerModality> listModalitys = new ArrayList<>();
     BitServerModality selectedModality;
+    BitServerModality selectedModalitys;
+
+    public BitServerModality getSelectedModalitys() {
+        return selectedModalitys;
+    }
+
+    public void setSelectedModalitys(BitServerModality selectedModalitys) {
+        this.selectedModalitys = selectedModalitys;
+    }
+
+    public BitServerScheduler getSelectedSchedulers() {
+        return selectedSchedulers;
+    }
+
+    public void setSelectedSchedulers(BitServerScheduler selectedSchedulers) {
+        this.selectedSchedulers = selectedSchedulers;
+    }
+
+    public BitServerStudy getSelectedStudys() {
+        return selectedStudys;
+    }
+
+    public void setSelectedStudys(BitServerStudy selectedStudys) {
+        this.selectedStudys = selectedStudys;
+    }
+
+    public BitServerResources getSelectedResources() {
+        return selectedResources;
+    }
+
+    public void setSelectedResources(BitServerResources selectedResources) {
+        this.selectedResources = selectedResources;
+    }
 
     public List<BitServerModality> getListModalitys() {
         return listModalitys;
@@ -104,23 +140,23 @@ public class DateBaseBean implements UserDao {
 
         selectedResource = new BitServerResources();
 
-        if(listStudys.size()>0){
-            selectedStudy = listStudys.get(0);
-        }else{
+//        if(listStudys.size()>0){
+//            selectedStudy = listStudys.get(0);
+//        }else{
             selectedStudy = new BitServerStudy();
-        }
+//        }
 
-        if(listModalitys.size()>0){
-            selectedModality = listModalitys.get(0);
-        }else{
+//        if(listModalitys.size()>0){
+//            selectedModality = listModalitys.get(0);
+//        }else{
             selectedModality = new BitServerModality();
-        }
+      //  }
 
-        if(listSchedulers.size()>0){
-            selectedScheduler = listSchedulers.get(0);
-        }else{
+//        if(listSchedulers.size()>0){
+//            selectedScheduler = listSchedulers.get(0);
+//        }else{
             selectedScheduler = new BitServerScheduler();
-        }
+ //       }
 
     }
 
@@ -227,10 +263,11 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteModality(){
+        System.out.println("выбрали: "+selectedModality.getName());
         deleteBitServerModality(selectedModality);
         listModalitys.remove(selectedModality);
         selectedModality = new BitServerModality();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Модальность удалена!"));
+        showMessage("Внимание!","Модальность удалена!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-modality");
     }
 

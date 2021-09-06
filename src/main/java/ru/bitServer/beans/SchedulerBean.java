@@ -143,15 +143,11 @@ public class SchedulerBean implements UserDao {
         visibleRules = getPrepareBitServiceScheduler();
         modalitylist.clear();
         modalitylist.add("Все");
-        modalitylist.add("CR");
-        modalitylist.add("CT");
-        modalitylist.add("MR");
-        modalitylist.add("NM");
-        modalitylist.add("PT");
-        modalitylist.add("US");
-        modalitylist.add("XA");
-        modalitylist.add("MG");
-        modalitylist.add("DX");
+        List<BitServerModality> modalityFromBase = getAllBitServerModality();
+        for(BitServerModality bufModality:modalityFromBase){
+            modalitylist.add(bufModality.getName());
+        }
+
         sourcelist.clear();
         sourcelist.add("Все");
         List<String> buflist = new ArrayList<>();

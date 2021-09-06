@@ -108,37 +108,49 @@ public class MainBean implements UserDao {
         versionInfo = "1.1";
         timeOnWork = 24;
 
-        model = new DefaultDashboardModel();
-        DashboardColumn column1 = new DefaultDashboardColumn();
+        //model = new DefaultDashboardModel();
+        //DashboardColumn column1 = new DefaultDashboardColumn();
         //DashboardColumn column2 = new DefaultDashboardColumn();
         //DashboardColumn column3 = new DefaultDashboardColumn();
-        column1.addWidget("sports");
-        model.addColumn(column1);
+        //column1.addWidget("sports");
+        //model.addColumn(column1);
         //model.addColumn(column2);
         //model.addColumn(column3);
 
         System.out.println("init main");
         mainServer = new OrthancServer();
-        bitServerResourcesList = getAllBitServerResource();
-        for(BitServerResources buf: bitServerResourcesList){
-            switch (buf.getRname()){
-                case "httpmode": mainServer.setHttpmode(buf.getRvalue());
-                    break;
-                case "orthancaddress": mainServer.setIpaddress(buf.getRvalue());
-                    break;
-                case "port": mainServer.setPort(buf.getRvalue());
-                    break;
-                case "login": mainServer.setLogin(buf.getRvalue());
-                    break;
-                case "password": mainServer.setPassword(buf.getRvalue());
-                    break;
-                case "pathtojson": mainServer.setPathToJson(buf.getRvalue());
-                    break;
-                case "pathtoresultfile": pathToSaveResult = buf.getRvalue();
-                    break;
-                case "addressforosimis": osimisAddress = buf.getRvalue();
-                    break;
+        try {
+            bitServerResourcesList = getAllBitServerResource();
+            for (BitServerResources buf : bitServerResourcesList) {
+                switch (buf.getRname()) {
+                    case "httpmode":
+                        mainServer.setHttpmode(buf.getRvalue());
+                        break;
+                    case "orthancaddress":
+                        mainServer.setIpaddress(buf.getRvalue());
+                        break;
+                    case "port":
+                        mainServer.setPort(buf.getRvalue());
+                        break;
+                    case "login":
+                        mainServer.setLogin(buf.getRvalue());
+                        break;
+                    case "password":
+                        mainServer.setPassword(buf.getRvalue());
+                        break;
+                    case "pathtojson":
+                        mainServer.setPathToJson(buf.getRvalue());
+                        break;
+                    case "pathtoresultfile":
+                        pathToSaveResult = buf.getRvalue();
+                        break;
+                    case "addressforosimis":
+                        osimisAddress = buf.getRvalue();
+                        break;
+                }
             }
+        }catch (Exception e){
+            System.out.println("Ошибка: "+e.getMessage());
         }
         try {
             connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
@@ -154,7 +166,7 @@ public class MainBean implements UserDao {
             totalPatient = String.valueOf(mainServer.getCountPatients());
             totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка: "+e.getMessage());
         }
         themeList = themeListinit();
         selectTheme = themeList.get(1);
