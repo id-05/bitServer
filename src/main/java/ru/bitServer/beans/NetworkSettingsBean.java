@@ -204,14 +204,16 @@ public class NetworkSettingsBean implements UserDao {
                 bufStringBuilder.append("allow-hotplug ").append(bufAdapter.getName()).append("\n");
                 bufStringBuilder.append("\n");
             }else {
-                bufStringBuilder.append("iface " + bufAdapter.getName() + " inet " + bufAdapter.getIpmode() + "\n");
-                bufStringBuilder.append("address " + bufAdapter.getIpaddress() + "\n");
-                bufStringBuilder.append("netmask " + bufAdapter.getMask() + "\n");
-                if(!bufAdapter.getGateway().equals("")) {
-                    bufStringBuilder.append("gateway " + bufAdapter.getGateway() + "\n");
+                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
+                bufStringBuilder.append("address ").append(bufAdapter.getIpaddress()).append("\n");
+                if(!bufAdapter.getMask().equals("")) {
+                    bufStringBuilder.append("netmask ").append(bufAdapter.getMask()).append("\n");
                 }
-                bufStringBuilder.append("auto " + bufAdapter.getName() + "\n");
-                bufStringBuilder.append("allow-hotplug " + bufAdapter.getName() + "\n");
+                if(!bufAdapter.getGateway().equals("")) {
+                    bufStringBuilder.append("gateway ").append(bufAdapter.getGateway()).append("\n");
+                }
+                bufStringBuilder.append("auto ").append(bufAdapter.getName()).append("\n");
+                bufStringBuilder.append("allow-hotplug ").append(bufAdapter.getName()).append("\n");
                 bufStringBuilder.append("\n");
             }
         }
