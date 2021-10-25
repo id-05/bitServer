@@ -15,8 +15,10 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -162,17 +164,28 @@ public class RemoteUserDashboardBean implements UserDao {
     }
 
     @PostConstruct
-    public void init() {
+    public void init()  {
         System.out.println("remote user dashboard");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
-        if(currentUser.isHasBlockStudy()){
-            currentStudy = getStudyById(currentUser.getBlockStudy());
-            countBlock = 1;
-            Date nowDate = new Date();
-            Date startLockDate = currentStudy.getDatablock();
-            long timestamp = (startLockDate.getTime() + 3600000L * MainBean.timeOnWork) - nowDate.getTime();
-            timeLeft = new Date(timestamp);
+        try {
+            if (currentUser.isHasBlockStudy()) {
+                currentStudy = getStudyById(currentUser.getBlockStudy());
+                countBlock = 1;
+                Date nowDate = new Date();
+                Date startLockDate = currentStudy.getDatablock();
+                long timestamp = (startLockDate.getTime() + 3600000L * MainBean.timeOnWork) - nowDate.getTime();
+                timeLeft = new Date(timestamp);
+            }
+        }catch (Exception e){
+            ExternalContext ec = FacesContext.getCurrentInstance()
+                    .getExternalContext();
+            try{
+                ec.redirect(ec.getRequestContextPath()
+                        + "/views/errorpage.xhtml");
+            }catch (Exception e2){
+                System.out.println(e2.getMessage().toString());
+            }
         }
 
         myStudies = getMyStudy(currentUser);

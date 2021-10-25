@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -196,32 +197,41 @@ public class SettingsBean {
 
     @PostConstruct
     public void init() {
-        System.out.println("settings");
-        selectedUser = new OrthancWebUser("","");
-        selectedDicomModality = new DicomModaliti("","","","","");
-        loadConfig();
-        List<OrthancWebUser> webUsers;
-        webUsers = getWebUserFromJson(users.toString());
-        this.webUsers = webUsers;
-        List<DicomModaliti> dicomModalities;
-        dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
-        this.dicomModalities = dicomModalities;
+        try {
+            System.out.println("settings");
+            selectedUser = new OrthancWebUser("", "");
+            selectedDicomModality = new DicomModaliti("", "", "", "", "");
+            loadConfig();
+            List<OrthancWebUser> webUsers;
+            webUsers = getWebUserFromJson(users.toString());
+            this.webUsers = webUsers;
+            List<DicomModaliti> dicomModalities;
+            dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
+            this.dicomModalities = dicomModalities;
 
-        File bufFile = new File(storageDirectory);
-        directory = storageDirectory;
-        totalSpace = (int) (bufFile.getTotalSpace()/ (double) (1024*1024*1024))+" Gb";
-        freeSpace = (int) (bufFile.getFreeSpace()/ (double) (1024*1024*1024))+" Gb";
-        double bufDouble = (bufFile.getFreeSpace() / (double )bufFile.getTotalSpace());
-        usedSpace = (100 - (int) (bufDouble * 100) ) + " %";
+            File bufFile = new File(storageDirectory);
+            directory = storageDirectory;
+            totalSpace = (int) (bufFile.getTotalSpace() / (double) (1024 * 1024 * 1024)) + " Gb";
+            freeSpace = (int) (bufFile.getFreeSpace() / (double) (1024 * 1024 * 1024)) + " Gb";
+            double bufDouble = (bufFile.getFreeSpace() / (double) bufFile.getTotalSpace());
+            usedSpace = (100 - (int) (bufDouble * 100)) + " %";
+        }catch (Exception e){
+            ExternalContext ec = FacesContext.getCurrentInstance()
+                    .getExternalContext();
+            try{
+                ec.redirect(ec.getRequestContextPath()
+                        + "/views/errorpage.xhtml");
+            }catch (Exception e2){
+                System.out.println(e2.getMessage().toString());
+            }
+        }
     }
 
     public void loadConfig(){
-        //System.out.println("loadconfig");
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+
                 "f:close()";
         StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        //System.out.println("out settings = "+stringBuilder);
         json = new JsonSettings(stringBuilder.toString());
         users = json.getUsers();
         dicomNode = json.getDicomNode();

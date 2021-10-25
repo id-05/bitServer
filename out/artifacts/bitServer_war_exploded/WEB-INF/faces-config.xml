@@ -24,6 +24,11 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>errorpage</from-outcome>
+            <to-view-id>/views/errorpage.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>queue</from-outcome>
             <to-view-id>/views/queue.xhtml</to-view-id>
         </navigation-case>

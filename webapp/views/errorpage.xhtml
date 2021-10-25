@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html">
+
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+    <style type="text/css">
+
+        .my_text
+        {
+            font-family:    Arial, Helvetica, sans-serif;
+        }
+
+        div.centercard
+        {
+            display: flex;
+            justify-content: center;
+            vertical-align: middle;
+            horiz-align: center;
+            vert-align: middle;
+        }
+
+        div.card
+        {
+            width: auto;
+        }
+
+        .my-block {
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .mycentr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .outer {
+            display: table;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .middle {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .inner {
+            margin-left: auto;
+            margin-right: auto;
+            width: 400px;
+        }
+
+
+    </style>
+
+    <h:body>
+
+        <h:form id="errorform">
+
+            <div class="centercard">
+                <p:growl id="growl" showDetail="true" />
+                <div>
+
+                    <div class="p-field p-grid">
+                    <span class="ui-float-label" style="margin-top: 200px">
+                        <p:graphicImage name="logo.png" library="images"/>
+                    </span>
+                    </div>
+
+                    <div class="p-field p-grid">
+                    <span class="ui-float-label" style="width: 400px; margin-top: 50px">
+                        <p:outputLabel value="В работе сервиса возникла ошибка, пожалуйста обратитесь к вашему системному администратору!"/>
+                    </span>
+                    </div>
+                </div>
+            </div>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>
