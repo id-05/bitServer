@@ -1,8 +1,5 @@
 package ru.bitServer.beans;
 
-import org.dcm4che3.imageio.plugins.dcm.*;
-import org.dcm4che3.data.Tag;
-import org.dcm4che3.io.DicomOutputStream;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -95,14 +92,14 @@ public class AdminBean {
         try {
             Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
             ImageReader reader = (ImageReader) iter.next();
-            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+           // DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
             ImageInputStream iis = ImageIO.createImageInputStream(dicomFile);
             reader.setInput(iis, false);
             //Returns a new Raster (rectangular array of pixels) containing the raw pixel data from the image stream
-            raster = reader.readRaster(0, param);
-            if (raster == null)
-                System.out.println("Error: couldn't read Dicom image!");
-            iis.close();
+//            raster = reader.readRaster(0, param);
+//            if (raster == null)
+//                System.out.println("Error: couldn't read Dicom image!");
+//            iis.close();
         }
         catch(Exception e) {
             System.out.println("Error: couldn't read dicom image! "+ e.getMessage());

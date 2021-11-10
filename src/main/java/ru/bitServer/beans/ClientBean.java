@@ -2,12 +2,12 @@ package ru.bitServer.beans;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Tag;
-import org.dcm4che3.data.VR;
-import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
-import org.dcm4che3.io.DicomInputStream;
-import org.dcm4che3.io.DicomOutputStream;
+//import org.dcm4che3.data.Attributes;
+//import org.dcm4che3.data.Tag;
+//import org.dcm4che3.data.VR;
+//import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
+//import org.dcm4che3.io.DicomInputStream;
+//import org.dcm4che3.io.DicomOutputStream;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -140,13 +140,13 @@ public class ClientBean implements UserDao {
         try {
             Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
             ImageReader reader = (ImageReader) iter.next();
-            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+            //DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
             ImageInputStream iis = ImageIO.createImageInputStream(dicomFile);
             reader.setInput(iis, false);
-            raster = reader.readRaster(0, param);
-            if (raster == null)
-                System.out.println("Error: couldn't read Dicom image!");
-            iis.close();
+//            raster = reader.readRaster(0, param);
+//            if (raster == null)
+//                System.out.println("Error: couldn't read Dicom image!");
+//            iis.close();
         }
         catch(Exception e) {
             System.out.println("Error: couldn't read dicom image! "+ e.getMessage());
@@ -259,38 +259,38 @@ public class ClientBean implements UserDao {
 
         for(byte[] bufInstance:listUploadFile){
 
-            DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(bufInstance));
-            Attributes attributes = din.readDataset(-1, -1);
-            Attributes fmi = din.readFileMetaInformation();
+//            DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(bufInstance));
+//            Attributes attributes = din.readDataset(-1, -1);
+//            Attributes fmi = din.readFileMetaInformation();
+//
+//            String PatientName = attributes.getString(Tag.PatientName, "");
+//            System.out.println(" PatientName = "+PatientName);
+//            String PatientID = attributes.getString(Tag.PatientID, "");
+//            System.out.println(" PatientName = "+PatientID);
+//
+//            VR vr = din.vr();
+//            attributes.setString(Tag.PatientName,VR.PN,"test");
+//            attributes.setString(Tag.PatientID,VR.PN,"0123456789");
+//
+//            byte[] bufInstance2 = new byte[bufInstance.length];
+//            DicomOutputStream dos = new DicomOutputStream(new File("D://dicom/buf.dcm"));
+//            dos.writeDataset(fmi, attributes);
+//
+//            File f = new File("D://dicom/buf.dcm");
+//            DicomInputStream din2 = new DicomInputStream(f);
+//
+//            Attributes attributes2 = din2.readDataset(-1, -1);
+//            String PatientName2 = attributes2.getString(Tag.PatientName, "");
+//            System.out.println(" PatientName = "+PatientName2);
+//            String PatientID2 = attributes2.getString(Tag.PatientID, "");
+//            System.out.println(" PatientName = "+PatientID2);
+//
+//            byte[] bytes = getBytesFromInputStream(din2);
 
-            String PatientName = attributes.getString(Tag.PatientName, "");
-            System.out.println(" PatientName = "+PatientName);
-            String PatientID = attributes.getString(Tag.PatientID, "");
-            System.out.println(" PatientName = "+PatientID);
-
-            VR vr = din.vr();
-            attributes.setString(Tag.PatientName,VR.PN,"test");
-            attributes.setString(Tag.PatientID,VR.PN,"0123456789");
-
-            byte[] bufInstance2 = new byte[bufInstance.length];
-            DicomOutputStream dos = new DicomOutputStream(new File("D://dicom/buf.dcm"));
-            dos.writeDataset(fmi, attributes);
-
-            File f = new File("D://dicom/buf.dcm");
-            DicomInputStream din2 = new DicomInputStream(f);
-
-            Attributes attributes2 = din2.readDataset(-1, -1);
-            String PatientName2 = attributes2.getString(Tag.PatientName, "");
-            System.out.println(" PatientName = "+PatientName2);
-            String PatientID2 = attributes2.getString(Tag.PatientID, "");
-            System.out.println(" PatientName = "+PatientID2);
-
-            byte[] bytes = getBytesFromInputStream(din2);
-
-            HttpURLConnection conn = connection.sendDicom("/instances", bytes);
-            String buf = conn.getResponseMessage();
-            System.out.println(buf);
-            conn.disconnect();
+           //// HttpURLConnection conn = connection.sendDicom("/instances", bytes);
+            //String buf = conn.getResponseMessage();
+            //System.out.println(buf);
+            //conn.disconnect();
         }
 
         BitServerStudy newStudy = new BitServerStudy();

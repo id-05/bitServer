@@ -295,6 +295,12 @@
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
                         </p:menuitem>
 
+                        <p:menuitem value="Отправить в ..." action="#{queueBean.chooseAETitle}">
+
+                                <p:ajax event="dialogReturn" listener="#{queueBean.onProductChosen}" />
+
+                        </p:menuitem>
+
                     </p:contextMenu>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"

@@ -79,6 +79,8 @@ public class OrthancRestApi {
         return sb;
     }
 
+    //StringBuilder sb=makePostConnectionAndStringBuilder("/modalities/" + aet + "/store", ids.toString());
+
     public HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
         String fulladdress = "http://" + ipaddress + ":" + port;
         HttpURLConnection conn;

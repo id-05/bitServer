@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -176,6 +177,8 @@ public class QueueBean implements UserDao {
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        System.out.println("refererr = "+referrer);
     }
 
     public Boolean firstDateSelect() {
@@ -448,8 +451,11 @@ public class QueueBean implements UserDao {
         }else{
             buf = "http";
         }
-        //System.out.println("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
-        PrimeFaces.current().executeScript("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        int i = referrer.indexOf("/bitServer/");
+        int j = referrer.indexOf("://");
+        String bufStr = referrer.substring(j+3,referrer.length()-4-i);
+        PrimeFaces.current().executeScript("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+bufStr+"viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
@@ -537,5 +543,20 @@ public class QueueBean implements UserDao {
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
+    }
+
+    public void chooseAETitle(){
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", false);
+        options.put("draggable", false);
+        options.put("modal", true);
+        PrimeFaces.current().dialog().openDynamic("selectProduct", options, null);
+    }
+
+    public void onProductChosen(SelectEvent event) {
+        //roduct product = (Product) event.getObject();
+        //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Product Selected", "Name:" + product.getName());
+
+        //FacesContext.getCurrentInstance().addMessage(null, message);
     }
 }
