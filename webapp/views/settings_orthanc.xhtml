@@ -360,12 +360,12 @@
                                          selection="#{settingsBean.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
                                          rows="10" rowSelectMode="add" >
 
-                                <p:column headerText="Title" sortBy="#{dicomModaliti.dicomtitle}" style="text-align: center">
-                                    <h:outputText value="#{dicomModaliti.dicomtitle}" />
-                                </p:column>
-
                                 <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
                                     <h:outputText value="#{dicomModaliti.dicomname}"/>
+                                </p:column>
+
+                                <p:column headerText="AE Title" sortBy="#{dicomModaliti.dicomtitle}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomtitle}" />
                                 </p:column>
 
                                 <p:column headerText="IP" sortBy="#{dicomModaliti.ip}" style="text-align: center">
@@ -400,11 +400,11 @@
                                       widgetVar="manageModalitiDialog" responsive="true">
                                 <p:panelGrid id="manage-modaliti-content" class="ui-fluid" columns="2">
 
-                                    <p:outputLabel for="dicomtitle" style="margin-right: .5rem">Title</p:outputLabel>
-                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomtitle}" />
-
                                     <p:outputLabel for="dicomname" style="margin-right: .5rem">Name</p:outputLabel>
                                     <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomname}" />
+
+                                    <p:outputLabel for="dicomtitle" style="margin-right: .5rem">AE Title</p:outputLabel>
+                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomtitle}" />
 
                                     <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
                                     <p:inputMask id="ip" value="#{settingsBean.selectedDicomModality.ip}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
@@ -419,7 +419,7 @@
 
                                 <f:facet name="footer" >
                                     <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingsBean.AddNewModaliti}"
-                                                     update="dialogNewModaliti, form:growl">
+                                                     update="form:growl">
                                     <p:resetInput target="dialogNewModaliti"/>
 
                                     </p:commandButton>

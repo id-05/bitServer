@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
@@ -562,19 +563,35 @@ public class SettingsBean {
         return bufUsers;
     }
 
-    public JsonObject setWebUserToJson(){
-        JsonObject jsonObj = new JsonObject();
-        for(int i=0; i<=webUsers.size()-1; i++){
-            jsonObj.addProperty(webUsers.get(i).getLogin(), webUsers.get(i).getPass());
-        }
-        return  jsonObj;
-    }
+//    public JsonObject setWebUserToJson(){
+//        JsonObject jsonObj = new JsonObject();
+//        for(int i=0; i<=webUsers.size()-1; i++){
+//            jsonObj.addProperty(webUsers.get(i).getLogin(), webUsers.get(i).getPass());
+//        }
+//        return  jsonObj;
+//    }
 
     public void AddNewWebUser(){
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
-            webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
-            PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-            PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+
+
+            boolean verifiUnical = true;
+            for(OrthancWebUser bufOrthancWebUser:webUsers){
+                if (bufOrthancWebUser.getLogin().equals(selectedUser.getLogin())) {
+                    verifiUnical = false;
+                    break;
+                }
+            }
+
+            if(verifiUnical ){
+                webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
+                PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+            }else{
+                PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+            }
+
         }else{
             System.out.println("else new web user");
         }
@@ -583,14 +600,28 @@ public class SettingsBean {
     public void AddNewModaliti(){
         if((!selectedDicomModality.getDicomtitle().equals(""))&(!selectedDicomModality.getDicomname().equals(""))
                 &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
-                &(!selectedDicomModality.getDicomproperty().equals(""))&(!selectedDicomModality.getDicomtitle().contains("_"))&(!selectedDicomModality.getDicomtitle().contains(" "))) {
+                &(!selectedDicomModality.getDicomproperty().equals(""))&(!selectedDicomModality.getDicomname().contains("_"))&(!selectedDicomModality.getDicomname().contains(" ")))
+        {
+            boolean verifiUnical = true;
+            for(DicomModaliti bufDicomModaliti:dicomModalities){
+                if (bufDicomModaliti.getDicomname().equals(selectedDicomModality.getDicomname())) {
+                    verifiUnical = false;
+                    break;
+                }
+            }
+            if(verifiUnical ){
+                dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
+                        selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
+                PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+            }else{
+                PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
+                PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+            }
 
-            dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
-                    selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
-            PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
-            PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+
         }else{
-            showMessage("Внимание","Все поля должны быть заполнены! Не допустимо использование символа: '_' или пробела !",FacesMessage.SEVERITY_ERROR);
+            showMessage("Внимание","Все поля должны быть заполнены! Не допустимо использование символа: '_' или пробела в имени подальности!",FacesMessage.SEVERITY_ERROR);
         }
     }
 

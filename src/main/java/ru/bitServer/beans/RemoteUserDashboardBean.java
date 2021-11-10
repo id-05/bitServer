@@ -178,13 +178,15 @@ public class RemoteUserDashboardBean implements UserDao {
                 timeLeft = new Date(timestamp);
             }
         }catch (Exception e){
+            //PrimeFaces.current().executeScript("alert('Ошибка: '"+e.getMessage()+"');");
             ExternalContext ec = FacesContext.getCurrentInstance()
                     .getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
-                        + "/views/errorpage.xhtml");
+                        + "/views/errorpage.xhtml?"+e.getMessage());
+                System.out.println(e.getMessage());
             }catch (Exception e2){
-                System.out.println(e2.getMessage().toString());
+                System.out.println(e2.getMessage());
             }
         }
 

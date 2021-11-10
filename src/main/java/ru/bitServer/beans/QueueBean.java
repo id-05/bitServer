@@ -174,18 +174,6 @@ public class QueueBean implements UserDao {
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         firstdate = new Date();
         seconddate = new Date();
-
-//        selectedModaliti.clear();
-//        selectedModaliti.add("CR");
-//        selectedModaliti.add("CT");
-//        selectedModaliti.add("MR");
-//        selectedModaliti.add("NM");
-//        selectedModaliti.add("PT");
-//        selectedModaliti.add("US");
-//        selectedModaliti.add("XA");
-//        selectedModaliti.add("MG");
-//        selectedModaliti.add("DX");
-
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
     }
@@ -460,7 +448,7 @@ public class QueueBean implements UserDao {
         }else{
             buf = "http";
         }
-        System.out.println("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        //System.out.println("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
         PrimeFaces.current().executeScript("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
     }
 
