@@ -413,7 +413,10 @@
                                     <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomport}" />
 
                                     <p:outputLabel for="dicomproperty" style="margin-right: .5rem">Property</p:outputLabel>
-                                    <p:inputText id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomproperty}" />
+                                    <p:selectOneMenu id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomproperty}">
+                                        <f:selectItem itemLabel="Generic" itemValue="Generic"/>
+                                        <f:selectItem itemLabel="Vitrea" itemValue="Vitrea"/>
+                                    </p:selectOneMenu>
 
                                 </p:panelGrid>
 

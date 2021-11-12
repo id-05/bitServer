@@ -5,10 +5,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
+import ru.bitServer.util.OrthancRestApi;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -16,17 +17,13 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 
 @ManagedBean(name = "settingsBean")
 @ViewScoped
 public class SettingsBean {
-    public static String authentication;
     public String ServerName;
     public JsonObject dicomNode = new JsonObject();
     public JsonObject orthancPeer = new JsonObject();
@@ -194,6 +191,8 @@ public class SettingsBean {
 
     public JsonSettings json;
 
+    OrthancRestApi connection;
+
 
 
     @PostConstruct
@@ -203,12 +202,12 @@ public class SettingsBean {
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
             loadConfig();
-            List<OrthancWebUser> webUsers;
+            //List<OrthancWebUser> webUsers;
             webUsers = getWebUserFromJson(users.toString());
-            this.webUsers = webUsers;
-            List<DicomModaliti> dicomModalities;
+            //this.webUsers = webUsers;
+            //List<DicomModaliti> dicomModalities;
             dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
-            this.dicomModalities = dicomModalities;
+            //this.dicomModalities = dicomModalities;
 
             File bufFile = new File(storageDirectory);
             directory = storageDirectory;
@@ -223,7 +222,7 @@ public class SettingsBean {
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml");
             }catch (Exception e2){
-                System.out.println(e2.getMessage().toString());
+                System.out.println(e2.getMessage());
             }
         }
     }
@@ -232,7 +231,8 @@ public class SettingsBean {
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+
                 "f:close()";
-        StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
+        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
         json = new JsonSettings(stringBuilder.toString());
         users = json.getUsers();
         dicomNode = json.getDicomNode();
@@ -303,7 +303,7 @@ public class SettingsBean {
         pluginsFolder = json.getPluginsFolder();
     }
 
-    public void saveConfig() throws IOException {
+    public void saveConfig() {
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("Name", ServerName);
         jsonOb.addProperty("StorageDirectory", storageDirectory);
@@ -410,67 +410,15 @@ public class SettingsBean {
                 "f:write(\""+modifyStr+"\"); "+
                 "f:close()";
         //System.out.println("url param "+urlParameters);
-        StringBuilder stringBuilder = makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
+        StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
 
         //System.out.println("saveout = "+jsonOb.toString());
         showMessage("Сообщение","Изменения сохранены!", info);
     }
 
     public void resetServer(){
-        StringBuilder sb = makePostConnectionAndStringBuilder("/tools/reset","" );
-        //System.out.println(sb);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
         showMessage("Сообщение","Сервис перезагружен!", info);
-    }
-
-    public static StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
-        StringBuilder sb =null;
-        try {
-            sb = new StringBuilder();
-            HttpURLConnection conn = makePostConnection(apiUrl, post);
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                if(truestring(output)){
-                    int i = output.indexOf("}");
-                    if(i!= -1){
-                        if ((i == (output.length()-1)&(i!=0))) {
-                            sb.append(output);
-                        }else
-                        {
-                            sb.append(output);
-                        }
-                    }else {
-                        sb.append(output);
-                    }
-                }
-            }
-            conn.disconnect();
-            conn.getResponseMessage();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        return sb;
-    }
-
-    public static HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
-        String fulladdress = "http://"+ mainServer.getIpaddress()+":"+ mainServer.getPort();
-        HttpURLConnection conn = null ;
-        URL url = new URL(fulladdress+apiUrl);
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        authentication = Base64.getEncoder().encodeToString((mainServer.getLogin()+":"+mainServer.getPassword()).getBytes());
-        //System.out.println("authentication = "+authentication);
-        if(authentication != null){
-            conn.setRequestProperty("Authorization", "Basic " + authentication);
-        }
-        OutputStream os = conn.getOutputStream();
-        os.write(post.getBytes());
-        os.flush();
-        conn.getResponseMessage();
-        return conn;
     }
 
     public String ModifyStr(String str){
@@ -482,7 +430,6 @@ public class SettingsBean {
         buf = buf0.replace("/","\\/");
         buf2 = buf.replace("\"","\\\"");
         result = buf2.replace(",",",\\n");
-        //System.out.println("modifi = "+result);
         return result;
     }
 
@@ -514,11 +461,7 @@ public class SettingsBean {
             ifHTTP = true;
         }
         if(ifSlash&ifHTTP){
-            if(j<k){
-                check = true;
-            }else{
-                check = false;
-            }
+            check = j < k;
         }
         str.replaceAll("\\s+","");
         if(str.length()>0){
@@ -628,14 +571,14 @@ public class SettingsBean {
 
 
     public void deleteModaliti() {
-        this.dicomModalities.remove(this.selectedDicomModality);
+        dicomModalities.remove(selectedDicomModality);
         selectedDicomModality= new DicomModaliti("","","","","");
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Модальность удалена!"));
         PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
     }
 
     public void deleteWebUser() {
-        this.webUsers.remove(this.selectedUser);
+        webUsers.remove(selectedUser);
         selectedUser = new OrthancWebUser("","");
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
         PrimeFaces.current().ajax().update(":form:accordion:dt-users");
@@ -1168,7 +1111,6 @@ public class SettingsBean {
     public void setLocale(String locale) {
         this.locale = locale;
     }
-
 
     public Object getWebUsers() {
         return webUsers;

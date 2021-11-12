@@ -12,6 +12,8 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
+import ru.bitServer.dicom.DicomModaliti;
+import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -37,7 +39,7 @@ public class QueueBean implements UserDao {
     public Date firstdate;
     public Date seconddate;
     public int typeSeach = 0;
-    private List<String> selectedModaliti = new ArrayList<>();
+    //private List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
@@ -49,8 +51,36 @@ public class QueueBean implements UserDao {
     public List<String> usergroupListRuName;
     public Users currentUser;
     public OrthancRestApi connection;
+    public OrthancSettings orthancSettings;
     public int uploadCount;
     public String freespace;
+    List<DicomModaliti> modalities;
+    List<DicomModaliti> selectedModalities;
+    DicomModaliti selectedModaliti;
+
+    public DicomModaliti getSelectedModaliti() {
+        return selectedModaliti;
+    }
+
+    public void setSelectedModaliti(DicomModaliti selectedModaliti) {
+        this.selectedModaliti = selectedModaliti;
+    }
+
+    public List<DicomModaliti> getSelectedModalities() {
+        return selectedModalities;
+    }
+
+    public void setSelectedModalities(List<DicomModaliti> selectedModalities) {
+        this.selectedModalities = selectedModalities;
+    }
+
+    public List<DicomModaliti> getModalities() {
+        return modalities;
+    }
+
+    public void setModalities(List<DicomModaliti> modalities) {
+        this.modalities = modalities;
+    }
 
     public String getFreespace() {
         return freespace;
@@ -96,13 +126,13 @@ public class QueueBean implements UserDao {
         this.usergroupList = usergroupList;
     }
 
-    public List<String> getSelectedModaliti() {
-        return selectedModaliti;
-    }
-
-    public void setSelectedModaliti(List<String> selectedModaliti) {
-        this.selectedModaliti = selectedModaliti;
-    }
+//    public List<String> getSelectedModaliti() {
+//        return selectedModaliti;
+//    }
+//
+//    public void setSelectedModaliti(List<String> selectedModaliti) {
+//        this.selectedModaliti = selectedModaliti;
+//    }
 
     public List<BitServerStudy> getVisibleStudiesList() {
         return visibleStudiesList;
@@ -169,10 +199,18 @@ public class QueueBean implements UserDao {
     @PostConstruct
     public void init() {
         selectedVisibleStudy = new BitServerStudy();
+        selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         System.out.println("QueueBean");
+
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        orthancSettings = new OrthancSettings(connection);
+        modalities = orthancSettings.getDicomModalitis();
+        for(DicomModaliti bufModaliti:modalities){
+            System.out.println(bufModaliti.getDicomname()+"  "+bufModaliti.getDicomtitle());
+        }
+
         firstdate = new Date();
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
@@ -546,17 +584,19 @@ public class QueueBean implements UserDao {
     }
 
     public void chooseAETitle(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", false);
-        options.put("draggable", false);
-        options.put("modal", true);
-        PrimeFaces.current().dialog().openDynamic("selectProduct", options, null);
-    }
+        String bufStr = "";
+        for(BitServerStudy bufstudy:selectedVisibleStudies){
+            bufStr = bufstudy.getSid();
+            if(selectedVisibleStudies.size()>1){
+                bufStr =  bufstudy.getSid() +",";
+            }else{
+                bufStr =  bufstudy.getSid();
+            }
+        }
 
-    public void onProductChosen(SelectEvent event) {
-        //roduct product = (Product) event.getObject();
-        //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Product Selected", "Name:" + product.getName());
-
-        //FacesContext.getCurrentInstance().addMessage(null, message);
+        System.out.println(selectedModaliti.getDicomname());
+        System.out.println("/modalities/" + selectedModaliti.getDicomname() + "/store"+"/"+bufStr);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", bufStr);
+        System.out.println("answer = "+sb);
     }
 }

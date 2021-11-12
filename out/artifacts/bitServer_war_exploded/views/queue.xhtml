@@ -193,11 +193,7 @@
                                  emptyMessage="Нет записей для отображения"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
-                        <f:facet name="header">
-                            <div class="products-table-header">
-                                <span style="font-weight: bold">Исследования</span>
-                            </div>
-                        </f:facet>
+
 
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselect" update=":seachform:send-button"/>
@@ -267,6 +263,7 @@
                                 <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+
                             <p:tooltip for="result" value="Результат/Описание"/>
 
                             <p:commandButton id="gettowork"
@@ -295,13 +292,59 @@
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
                         </p:menuitem>
 
-                        <p:menuitem value="Отправить в ..." action="#{queueBean.chooseAETitle}">
-
-                                <p:ajax event="dialogReturn" listener="#{queueBean.onProductChosen}" />
+                        <p:menuitem value="Отправить в ..."
+                                    update=":seachform:dialogAEchoose"
+                                    oncomplete="PF('AEchoose').show()"
+                                    styleClass="rounded-button ui-button-warning"
+                                    process="@this">
 
                         </p:menuitem>
 
                     </p:contextMenu>
+
+                    <p:dialog id="dialogAEchoose" header="Выберите клиента для отправки" showEffect="fade" modal="true"
+                              widgetVar="AEchoose" responsive="true">
+
+                        <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{queueBean.modalities}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{queueBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
+                                     rows="10" rowSelectMode="add" >
+
+                            <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.dicomname}"/>
+                            </p:column>
+
+                            <p:column headerText="AE Title"  style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.dicomtitle}" />
+                            </p:column>
+
+                            <p:column headerText="IP"  style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.ip}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-upload"
+                                                 action="#{queueBean.chooseAETitle}"
+                                                 style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{queueBean.selectedModaliti}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <f:facet name="footer">
+
+                            <span style="padding: 20px;"> </span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('AEchoose').hide()"
+                                             class="ui-button-secondary" update="dialogAEchoose">
+                                <p:resetInput target="dialogStudyAnamnes"/>
+                            </p:commandButton>
+
+                        </f:facet>
+
+                    </p:dialog>
 
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
