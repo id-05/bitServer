@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -126,14 +125,6 @@ public class QueueBean implements UserDao {
         this.usergroupList = usergroupList;
     }
 
-//    public List<String> getSelectedModaliti() {
-//        return selectedModaliti;
-//    }
-//
-//    public void setSelectedModaliti(List<String> selectedModaliti) {
-//        this.selectedModaliti = selectedModaliti;
-//    }
-
     public List<BitServerStudy> getVisibleStudiesList() {
         return visibleStudiesList;
     }
@@ -207,16 +198,12 @@ public class QueueBean implements UserDao {
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
-        for(DicomModaliti bufModaliti:modalities){
-            System.out.println(bufModaliti.getDicomname()+"  "+bufModaliti.getDicomtitle());
-        }
 
         firstdate = new Date();
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-        System.out.println("refererr = "+referrer);
     }
 
     public Boolean firstDateSelect() {
@@ -242,11 +229,11 @@ public class QueueBean implements UserDao {
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){
         List<Usergroup> bufUserGroupList = getUsergroupList();
-        for(int i = 0; i<sourceList.size(); i++){
-            if(sourceList.get(i).getUsergroupwhosees()!=null) {
+        for (BitServerStudy bitServerStudy : sourceList) {
+            if (bitServerStudy.getUsergroupwhosees() != null) {
                 for (Usergroup bufGroup : bufUserGroupList) {
-                    if (sourceList.get(i).getUsergroupwhosees().equals(bufGroup.getId().toString())) {
-                        sourceList.get(i).setUsergroupwhosees(bufGroup.getRuName());
+                    if (bitServerStudy.getUsergroupwhosees().equals(bufGroup.getId().toString())) {
+                        bitServerStudy.setUsergroupwhosees(bufGroup.getRuName());
                     }
                 }
             }
@@ -290,7 +277,7 @@ public class QueueBean implements UserDao {
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
 
-        boolean existInTable = false;
+        boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
@@ -407,6 +394,7 @@ public class QueueBean implements UserDao {
                 if (serie.has("MainDicomTags")) {
                     serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
                 }
+                assert serieMainDicomTags != null;
                 if (serieMainDicomTags.has("Modality")) {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
                 }
@@ -584,19 +572,18 @@ public class QueueBean implements UserDao {
     }
 
     public void chooseAETitle(){
-        String bufStr = "";
+        StringBuilder bufStr = new StringBuilder();
         for(BitServerStudy bufstudy:selectedVisibleStudies){
-            bufStr = bufstudy.getSid();
             if(selectedVisibleStudies.size()>1){
-                bufStr =  bufstudy.getSid() +",";
+                    bufStr.append(",").append(bufstudy.getSid());
+                bufStr = new StringBuilder(bufstudy.getSid() + ",");
             }else{
-                bufStr =  bufstudy.getSid();
+                bufStr = new StringBuilder(bufstudy.getSid());
             }
         }
-
-        System.out.println(selectedModaliti.getDicomname());
+        System.out.println(bufStr);
         System.out.println("/modalities/" + selectedModaliti.getDicomname() + "/store"+"/"+bufStr);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", bufStr);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", bufStr.toString());
         System.out.println("answer = "+sb);
     }
 }

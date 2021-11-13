@@ -22,7 +22,6 @@ public class AutoriseBean implements UserDao {
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     private static final Logger log = Logger.getLogger(AutoriseBean.class);
 
-
     String inputUserName;
     String inputPassword;
 
@@ -64,8 +63,7 @@ public class AutoriseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-       System.out.println("autorise referrer = "+referrer);
+
     }
 
     public void setTheme(String tName){

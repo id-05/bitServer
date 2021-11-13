@@ -200,6 +200,7 @@
                         <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
+                        <p:ajax event="contextMenu" update=":seachform:dt-studys"/>
 
                         <p:column selectionMode="multiple" exportable="false" style="width:20px;"> </p:column>
 
@@ -280,7 +281,7 @@
                         </p:column>
                     </p:dataTable>
 
-                    <p:contextMenu for="dt-studys">
+                    <p:contextMenu for="dt-studys" >
 
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
                                     action="#{queueBean.comebackStudy}"
@@ -293,7 +294,7 @@
                         </p:menuitem>
 
                         <p:menuitem value="Отправить в ..."
-                                    update=":seachform:dialogAEchoose"
+                                    update=":seachform:dt-studys"
                                     oncomplete="PF('AEchoose').show()"
                                     styleClass="rounded-button ui-button-warning"
                                     process="@this">
