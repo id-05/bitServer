@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
+import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancWebUser;
 import ru.bitServer.util.OrthancRestApi;
 
@@ -193,6 +194,8 @@ public class SettingsBean {
 
     OrthancRestApi connection;
 
+    OrthancSettings orthancSettings;
+
 
 
     @PostConstruct
@@ -201,13 +204,12 @@ public class SettingsBean {
             System.out.println("settings");
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
+            //connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            //orthancSettings = new OrthancSettings(connection);
+
             loadConfig();
-            //List<OrthancWebUser> webUsers;
             webUsers = getWebUserFromJson(users.toString());
-            //this.webUsers = webUsers;
-            //List<DicomModaliti> dicomModalities;
             dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
-            //this.dicomModalities = dicomModalities;
 
             File bufFile = new File(storageDirectory);
             directory = storageDirectory;

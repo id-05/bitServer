@@ -573,17 +573,50 @@ public class QueueBean implements UserDao {
 
     public void chooseAETitle(){
         StringBuilder bufStr = new StringBuilder();
+        System.out.println("selectedVisibleStudies.size() = "+selectedVisibleStudies.size());
         for(BitServerStudy bufstudy:selectedVisibleStudies){
             if(selectedVisibleStudies.size()>1){
                     bufStr.append(",").append(bufstudy.getSid());
-                bufStr = new StringBuilder(bufstudy.getSid() + ",");
             }else{
                 bufStr = new StringBuilder(bufstudy.getSid());
             }
         }
-        System.out.println(bufStr);
-        System.out.println("/modalities/" + selectedModaliti.getDicomname() + "/store"+"/"+bufStr);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", bufStr.toString());
+        String cutBuf = bufStr.substring(1,bufStr.length()-1);
+        System.out.println(cutBuf);
+
+        JsonArray ids=new JsonArray();
+        for(BitServerStudy bufstudy:selectedVisibleStudies){
+            ids.add(bufstudy.getSid());
+        }
+
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
         System.out.println("answer = "+sb);
+
+        MyThread myThread = new MyThread(selectedModaliti.getDicomname(),ids.toString());
+        myThread.run();
+    }
+
+    public class MyThread extends Thread {
+        String modaliti;
+        String ids;
+
+        MyThread(String modaliti,String ids){
+            this.modaliti = modaliti;
+            this.ids = ids;
+        }
+
+        public void run(String modaliti,String ids) {
+            this.modaliti = modaliti;
+            this.ids = ids;
+            StringBuilder sb = null;
+            try {
+                sb = connection.makePostConnectionAndStringBuilder("/modalities/" + modaliti + "/store", ids);
+                showMessage("Сообщение:","Данные успешно отправлены!",info);
+            }catch (Exception e){
+                System.out.println(sb);
+                showMessage("Возникла ошибка при отправке!",e.getMessage(),error);
+            }
+                //System.out.println(sb);
+        }
     }
 }

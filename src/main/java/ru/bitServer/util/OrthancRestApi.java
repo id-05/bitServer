@@ -67,7 +67,6 @@ public class OrthancRestApi {
                     (conn.getInputStream())));
             String output;
             while ((output = br.readLine()) != null) {
-                int i = output.indexOf("}");
                 sb.append(output);
             }
             conn.disconnect();
