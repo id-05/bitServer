@@ -86,9 +86,6 @@
                 </f:facet>
             </p:menubar>
 
-
-
-
             <p:panel id="panel1" widgetVar="panelVar" header="Фильтр Очереди" >
                 <div style="align-content: center">
                     <p:card style="margin-bottom: 2em">
@@ -294,7 +291,7 @@
                         </p:menuitem>
 
                         <p:menuitem value="Отправить в ..."
-                                    update=":seachform:dt-studys"
+                                    update="searchgrowl"
                                     oncomplete="PF('AEchoose').show()"
                                     styleClass="rounded-button ui-button-warning"
                                     process="@this">
@@ -304,7 +301,7 @@
                     </p:contextMenu>
 
                     <p:dialog id="dialogAEchoose" header="Выберите клиента для отправки" showEffect="fade" modal="true"
-                              widgetVar="AEchoose" responsive="true">
+                              widgetVar="AEchoose" responsive="false">
 
                         <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{queueBean.modalities}"
                                      reflow="true" styleClass="users-table"
@@ -327,11 +324,14 @@
                             <p:column exportable="false">
                                 <p:commandButton icon="pi pi-upload"
                                                  action="#{queueBean.chooseAETitle}"
+                                                 onclick="PF('statusDialog').show()"
+                                                 update="seachform:searchgrowl"
                                                  style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
                                     <f:setPropertyActionListener value="#{dicomModaliti}" target="#{queueBean.selectedModaliti}"/>
                                 </p:commandButton>
                             </p:column>
+
                         </p:dataTable>
 
                         <f:facet name="footer">

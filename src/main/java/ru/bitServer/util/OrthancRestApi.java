@@ -58,7 +58,7 @@ public class OrthancRestApi {
         return conn;
     }
 
-    public StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post) {
+    public StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post)  {
         StringBuilder sb;
         try {
             sb = new StringBuilder();
@@ -78,7 +78,24 @@ public class OrthancRestApi {
         return sb;
     }
 
-    //StringBuilder sb=makePostConnectionAndStringBuilder("/modalities/" + aet + "/store", ids.toString());
+    public StringBuilder makePostConnectionAndStringBuilderWithIOE(String apiUrl, String post) throws IOException {
+        StringBuilder sb;
+        try {
+            sb = new StringBuilder();
+            HttpURLConnection conn = makePostConnection(apiUrl, post);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            conn.disconnect();
+            conn.getResponseMessage();
+        } catch (Exception e) {
+            return null;
+        }
+        return sb;
+    }
 
     public HttpURLConnection makePostConnection(String apiUrl, String post) throws Exception {
         String fulladdress = "http://" + ipaddress + ":" + port;

@@ -571,52 +571,26 @@ public class QueueBean implements UserDao {
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
     }
 
-    public void chooseAETitle(){
-        StringBuilder bufStr = new StringBuilder();
-        System.out.println("selectedVisibleStudies.size() = "+selectedVisibleStudies.size());
-        for(BitServerStudy bufstudy:selectedVisibleStudies){
-            if(selectedVisibleStudies.size()>1){
-                    bufStr.append(",").append(bufstudy.getSid());
-            }else{
-                bufStr = new StringBuilder(bufstudy.getSid());
-            }
-        }
-        String cutBuf = bufStr.substring(1,bufStr.length()-1);
-        System.out.println(cutBuf);
-
+    public void chooseAETitle()  {
         JsonArray ids=new JsonArray();
         for(BitServerStudy bufstudy:selectedVisibleStudies){
             ids.add(bufstudy.getSid());
         }
+        StringBuilder sb = null;
 
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
-        System.out.println("answer = "+sb);
-
-        MyThread myThread = new MyThread(selectedModaliti.getDicomname(),ids.toString());
-        myThread.run();
-    }
-
-    public class MyThread extends Thread {
-        String modaliti;
-        String ids;
-
-        MyThread(String modaliti,String ids){
-            this.modaliti = modaliti;
-            this.ids = ids;
+        try {
+            sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
+        } catch (IOException e) {
+            showMessage("Сообщение:","Возникла ошибка при отправке! "+e.getMessage(),error);
         }
 
-        public void run(String modaliti,String ids) {
-            this.modaliti = modaliti;
-            this.ids = ids;
-            StringBuilder sb = null;
-            try {
-                sb = connection.makePostConnectionAndStringBuilder("/modalities/" + modaliti + "/store", ids);
-                showMessage("Сообщение:","Данные успешно отправлены!",info);
-            }catch (Exception e){
-                System.out.println(sb);
-                showMessage("Возникла ошибка при отправке!",e.getMessage(),error);
-            }
-                //System.out.println(sb);
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+
+        if(sb!=null){
+            showMessage("Сообщение:","Данные успешно отправлены!",info);
+        }else{
+            showMessage("Сообщение:","Возникла ошибка при отправке!",error);
         }
+
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import ru.bitServer.util.OrthancRestApi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -142,7 +143,7 @@ public class OrthancSettings {
 
     OrthancRestApi connection;
 
-    public OrthancSettings(OrthancRestApi connection){
+    public OrthancSettings(OrthancRestApi connection) {
         this.connection = connection;
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+

@@ -229,7 +229,7 @@ public class SettingsBean {
         }
     }
 
-    public void loadConfig(){
+    public void loadConfig() throws IOException {
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
                 "print(f:read(\"*a\"))"+
                 "f:close()";
@@ -305,7 +305,7 @@ public class SettingsBean {
         pluginsFolder = json.getPluginsFolder();
     }
 
-    public void saveConfig() {
+    public void saveConfig() throws IOException {
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("Name", ServerName);
         jsonOb.addProperty("StorageDirectory", storageDirectory);
@@ -418,7 +418,7 @@ public class SettingsBean {
         showMessage("Сообщение","Изменения сохранены!", info);
     }
 
-    public void resetServer(){
+    public void resetServer() throws IOException {
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
         showMessage("Сообщение","Сервис перезагружен!", info);
     }

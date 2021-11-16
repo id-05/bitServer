@@ -140,7 +140,7 @@ public class SearchBean {
         selectedModaliti.add("DX");
     }
 
-    public void seach() {
+    public void seach() throws IOException {
         System.out.println("seach start");
         JsonObject query=new JsonObject();
         query.addProperty("Level", "Studies");
