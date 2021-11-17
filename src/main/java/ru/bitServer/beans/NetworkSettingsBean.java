@@ -5,6 +5,8 @@ import org.primefaces.event.FlowEvent;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.service.NetworkAdapter;
+import ru.bitServer.service.NetworkSettingsParcer;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -15,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 
 @ManagedBean(name = "networkSettingsBean", eager = false)
@@ -24,7 +25,6 @@ public class NetworkSettingsBean implements UserDao {
 
     public Users currentUser;
     public String currentUserId;
-    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public String pathToFile;
     public ArrayList<NetworkAdapter> adapters = new ArrayList<>();
     public NetworkAdapter selectedAdapter;

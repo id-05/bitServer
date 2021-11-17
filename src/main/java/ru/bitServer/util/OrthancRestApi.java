@@ -1,5 +1,7 @@
 package ru.bitServer.util;
 
+import org.apache.log4j.Logger;
+import ru.bitServer.beans.SettingsBean;
 import ru.bitServer.dao.BitServerStudy;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +18,7 @@ public class OrthancRestApi {
     private final String port;
     private final String login;
     private final String password;
+    private static final Logger log = Logger.getLogger(OrthancRestApi.class);
 
     public OrthancRestApi(String ipaddress, String port, String login, String password){
         this.ipaddress = ipaddress;
@@ -92,6 +95,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
+            log.info("Error during makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
             return null;
         }
         return sb;
@@ -149,7 +153,6 @@ public class OrthancRestApi {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return conn;
     }
 

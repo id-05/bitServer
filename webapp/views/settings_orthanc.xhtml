@@ -75,6 +75,15 @@
                 <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
 
                 <p:divider align="left" type="dashed">
+                    <b>Lua-scripts</b>
+                </p:divider>
+                <p class="p-m-0">
+                    <p:inputText  value="#{settingsBean.luaFolder}" > </p:inputText>
+                </p>
+                <div class="p-text-capitalize">Путь к файлу, с Lua-скриптом.</div>
+
+
+                <p:divider align="left" type="dashed">
                     <b>Сжатие хранилища</b>
                 </p:divider>
                 <p class="p-m-0">

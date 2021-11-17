@@ -79,11 +79,6 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>searchPage</from-outcome>
-            <to-view-id>/views/search.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
             <from-outcome>wordeditor</from-outcome>
             <to-view-id>/views/wordeditor2.xhtml</to-view-id>
         </navigation-case>
@@ -106,6 +101,11 @@
         <navigation-case>
             <from-outcome>settings_network</from-outcome>
             <to-view-id>/views/settings_network.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_dicomroute</from-outcome>
+            <to-view-id>/views/settings_dicomroute.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>

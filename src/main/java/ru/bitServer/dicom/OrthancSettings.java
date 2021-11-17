@@ -139,6 +139,14 @@ public class OrthancSettings {
         this.selectedWebUsers = selectedWebUsers;
     }
 
+    public JsonArray getLuaFolder() {
+        return luaFolder;
+    }
+
+    public void setLuaFolder(JsonArray luaFolder) {
+        this.luaFolder = luaFolder;
+    }
+
     public JsonSettings json;
 
     OrthancRestApi connection;
@@ -217,6 +225,7 @@ public class OrthancSettings {
         JobsHistorySize = json.getJobsHistorySize();
         locale = json.getLocale();
         pluginsFolder = json.getPluginsFolder();
+        luaFolder = json.getLuaFolder();
     }
 
     public void saveSettings() {
@@ -228,6 +237,7 @@ public class OrthancSettings {
         jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
         jsonOb.add("Plugins",pluginsFolder);
+        jsonOb.add("LuaScripts",luaFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
         jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
         jsonOb.addProperty("HttpPort", HttpPort);
@@ -321,7 +331,6 @@ public class OrthancSettings {
                 "f:write(\""+modifyStr+"\"); "+
                 "f:close()";
         StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-
     }
 
     public List<DicomModaliti> getDicomModalitis(){
@@ -354,6 +363,4 @@ public class OrthancSettings {
         result = buf2.replace(",",",\\n");
         return result;
     }
-
-
 }

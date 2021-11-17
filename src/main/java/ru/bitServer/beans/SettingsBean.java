@@ -4,11 +4,13 @@ import static ru.bitServer.beans.MainBean.mainServer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancWebUser;
+import ru.bitServer.util.AuthorizationFilter;
 import ru.bitServer.util.OrthancRestApi;
 
 import javax.annotation.PostConstruct;
@@ -19,84 +21,87 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 @ManagedBean(name = "settingsBean")
 @ViewScoped
 public class SettingsBean {
-    public String ServerName;
-    public JsonObject dicomNode = new JsonObject();
-    public JsonObject orthancPeer = new JsonObject();
-    public JsonObject contentType = new JsonObject();
-    public JsonObject dictionary = new JsonObject();
-    public JsonArray luaFolder = new JsonArray();
-    public JsonArray pluginsFolder = new JsonArray();
-    public JsonObject users = new JsonObject();
-    public JsonObject userMetadata = new JsonObject();
-    public String storageDirectory;
-    public String indexDirectory;
-    public boolean StorageCompression;
-    public int MaximumStorageSize;
-    public int MaximumPatientCount;
-    public boolean HttpServerEnabled;
-    public int HttpPort;
-    public boolean HttpDescribeErrors;
-    public boolean HttpCompressionEnabled;
-    public boolean DicomServerEnabled;
-    public String DicomAet;
-    public boolean DicomCheckCalledAet;
-    public int DicomPort;
-    public String DefaultEncoding;
-    public boolean DeflatedTransferSyntaxAccepted;
-    public boolean JpegTransferSyntaxAccepted;
-    public boolean Jpeg2000TransferSyntaxAccepted;
-    public boolean JpegLosslessTransferSyntaxAccepted;
-    public boolean JpipTransferSyntaxAccepted;
-    public boolean Mpeg2TransferSyntaxAccepted;
-    public boolean RleTransferSyntaxAccepted;
-    public boolean UnknownSopClassAccepted;
-    public int DicomScpTimeout;
-    public boolean RemoteAccessAllowed;
-    public boolean SslEnabled;
-    public String SslCertificate;
-    public boolean AuthenticationEnabled;
-    public int DicomScuTimeout;
-    public String HttpProxy;
-    public int HttpTimeout;
-    public boolean HttpsVerifyPeers;
-    public String HttpsCACertificates;
-    public String locale;
-    public int StableAge;
-    public boolean StrictAetComparison;
-    public boolean StoreMD5ForAttachments;
-    public int LimitFindResults;
-    public int LimitFindInstances;
-    public int LimitJobs;
-    public boolean LogExportedResources;
-    public boolean KeepAlive;
-    public boolean StoreDicom;
-    public int DicomAssociationCloseDelay;
-    public int QueryRetrieveSize;
-    public boolean CaseSensitivePN;
-    public boolean LoadPrivateDictionary;
-    public boolean dicomAlwaysAllowEcho;
-    public boolean DicomAlwaysStore;
-    public boolean CheckModalityHost;
-    public boolean SynchronousCMove;
-    public int JobsHistorySize;
-    public int ConcurrentJobs;
-    public boolean dicomModalitiesInDb;
-    public boolean orthancPeerInDb;
-    public boolean overwriteInstances;
-    public int mediaArchiveSize;
-    public String storageAccessOnFind;
-    public boolean httpVerbose;
-    public boolean tcpNoDelay;
-    public int httpThreadsCount;
-    public boolean saveJobs;
-    public boolean metricsEnabled;
-    public boolean AllowFindSopClassesInStudy;
+    String ServerName;
+    JsonObject dicomNode = new JsonObject();
+    JsonObject orthancPeer = new JsonObject();
+    JsonObject contentType = new JsonObject();
+    JsonObject dictionary = new JsonObject();
+    JsonArray luaFolder = new JsonArray();
+    JsonArray pluginsFolder = new JsonArray();
+    JsonObject users = new JsonObject();
+    JsonObject userMetadata = new JsonObject();
+    String storageDirectory;
+    String indexDirectory;
+    boolean StorageCompression;
+    int MaximumStorageSize;
+    int MaximumPatientCount;
+    boolean HttpServerEnabled;
+    int HttpPort;
+    boolean HttpDescribeErrors;
+    boolean HttpCompressionEnabled;
+    boolean DicomServerEnabled;
+    String DicomAet;
+    boolean DicomCheckCalledAet;
+    int DicomPort;
+    String DefaultEncoding;
+    boolean DeflatedTransferSyntaxAccepted;
+    boolean JpegTransferSyntaxAccepted;
+    boolean Jpeg2000TransferSyntaxAccepted;
+    boolean JpegLosslessTransferSyntaxAccepted;
+    boolean JpipTransferSyntaxAccepted;
+    boolean Mpeg2TransferSyntaxAccepted;
+    boolean RleTransferSyntaxAccepted;
+    boolean UnknownSopClassAccepted;
+    int DicomScpTimeout;
+    boolean RemoteAccessAllowed;
+    boolean SslEnabled;
+    String SslCertificate;
+    boolean AuthenticationEnabled;
+    int DicomScuTimeout;
+    String HttpProxy;
+    int HttpTimeout;
+    boolean HttpsVerifyPeers;
+    String HttpsCACertificates;
+    String locale;
+    int StableAge;
+    boolean StrictAetComparison;
+    boolean StoreMD5ForAttachments;
+    int LimitFindResults;
+    int LimitFindInstances;
+    int LimitJobs;
+    boolean LogExportedResources;
+    boolean KeepAlive;
+    boolean StoreDicom;
+    int DicomAssociationCloseDelay;
+    int QueryRetrieveSize;
+    boolean CaseSensitivePN;
+    boolean LoadPrivateDictionary;
+    boolean dicomAlwaysAllowEcho;
+    boolean DicomAlwaysStore;
+    boolean CheckModalityHost;
+    boolean SynchronousCMove;
+    int JobsHistorySize;
+    int ConcurrentJobs;
+    boolean dicomModalitiesInDb;
+    boolean orthancPeerInDb;
+    boolean overwriteInstances;
+    int mediaArchiveSize;
+    String storageAccessOnFind;
+    boolean httpVerbose;
+    boolean tcpNoDelay;
+    int httpThreadsCount;
+    boolean saveJobs;
+    boolean metricsEnabled;
+    boolean AllowFindSopClassesInStudy;
+    String luaScriptsFolder;
+
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
@@ -105,6 +110,24 @@ public class SettingsBean {
     public String totalSpace;
     public String freeSpace;
     public String directory;
+
+    public JsonArray getLuaFolder() {
+        return luaFolder;
+    }
+
+    public void setLuaFolder(JsonArray luaFolder) {
+        this.luaFolder = luaFolder;
+    }
+
+    private static final Logger log = Logger.getLogger(SettingsBean.class);
+
+    public String getLuaScriptsFolder() {
+        return luaScriptsFolder;
+    }
+
+    public void setLuaScriptsFolder(String luaScriptsFolder) {
+        this.luaScriptsFolder = luaScriptsFolder;
+    }
 
     public String getDirectory() {
         return directory;
@@ -201,7 +224,6 @@ public class SettingsBean {
     @PostConstruct
     public void init() {
         try {
-            System.out.println("settings");
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
             //connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
@@ -222,90 +244,96 @@ public class SettingsBean {
                     .getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
-                        + "/views/errorpage.xhtml");
+                        + "/views/errorpage.xhtml"+"?");
             }catch (Exception e2){
                 System.out.println(e2.getMessage());
             }
         }
     }
 
-    public void loadConfig() throws IOException {
-        String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
-                "print(f:read(\"*a\"))"+
-                "f:close()";
-        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-        StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        json = new JsonSettings(stringBuilder.toString());
-        users = json.getUsers();
-        dicomNode = json.getDicomNode();
-        ServerName = json.getOrthancName();
-        storageDirectory = json.getStorageDirectory();
-        indexDirectory = json.getIndexDirectory();
-        StorageCompression = json.isStorageCompression();
-        MaximumStorageSize = json.getMaximumStorageSize();
-        MaximumPatientCount = json.getMaximumPatientCount();
-        ConcurrentJobs = json.getConcurrentJobs();
-        HttpServerEnabled = json.isHttpServerEnabled();
-        HttpPort = json.getHttpPort();
-        HttpDescribeErrors = json.isHttpDescribeErrors();
-        HttpCompressionEnabled = json.isHttpCompressionEnabled();
-        DicomServerEnabled = json.isDicomServerEnabled();
-        DicomAet = json.getDicomAet();
-        DicomCheckCalledAet = json.isDicomCheckCalledAet();
-        DicomPort = json.getDicomPort();
-        DefaultEncoding = json.getDefaultEncoding();
-        DeflatedTransferSyntaxAccepted = json.isDeflatedTransferSyntaxAccepted();
-        JpegTransferSyntaxAccepted = json.isJpegTransferSyntaxAccepted();
-        Jpeg2000TransferSyntaxAccepted = json.isJpeg2000TransferSyntaxAccepted();
-        JpegLosslessTransferSyntaxAccepted = json.isJpegLosslessTransferSyntaxAccepted();
-        JpipTransferSyntaxAccepted = json.isJpipTransferSyntaxAccepted();
-        Mpeg2TransferSyntaxAccepted = json.isMpeg2TransferSyntaxAccepted();
-        RleTransferSyntaxAccepted = json.isRleTransferSyntaxAccepted();
-        UnknownSopClassAccepted = json.isUnknownSopClassAccepted();
-        DicomScpTimeout = json.getDicomScpTimeout();
-        RemoteAccessAllowed = json.isRemoteAccessAllowed();
-        SslEnabled = json.isSslEnabled();
-        SslCertificate = json.getSslCertificate();
-        AuthenticationEnabled = json.isAuthenticationEnabled();
-        DicomScuTimeout = json.getDicomScuTimeout();
-        HttpProxy = json.getHttpProxy();
-        HttpTimeout = json.getHttpTimeout();
-        HttpsVerifyPeers = json.isHttpsVerifyPeers();
-        HttpsCACertificates = json.getHttpsCACertificates();
-        StableAge = json.getStableAge();
-        StrictAetComparison = json.isStrictAetComparison();
-        StoreMD5ForAttachments = json.isStoreMD5ForAttachments();
-        LimitFindResults = json.getLimitFindResults();
-        LimitFindInstances = json.getLimitFindInstances();
-        LimitJobs = json.getLimitJobs();
-        LogExportedResources = json.isLogExportedResources();
-        KeepAlive = json.isKeepAlive();
-        StoreDicom = json.isStoreDicom();
-        DicomAssociationCloseDelay = json.getDicomAssociationCloseDelay();
-        QueryRetrieveSize = json.getQueryRetrieveSize();
-        CaseSensitivePN = json.isCaseSensitivePN();
-        LoadPrivateDictionary = json.isLoadPrivateDictionary();
-        dicomModalitiesInDb = json.isDicomModalitiesInDb();
-        orthancPeerInDb = json.isOrthancPeerInDb();
-        overwriteInstances = json.isOverwriteInstances();
-        mediaArchiveSize = json.getMediaArchiveSize();
-        storageAccessOnFind = json.getStorageAccessOnFind();
-        httpVerbose = json.isHttpVerbose();
-        tcpNoDelay = json.isTcpNoDelay();
-        httpThreadsCount = json.getHttpThreadsCount();
-        saveJobs = json.isSaveJobs();
-        metricsEnabled = json.isMetricsEnabled();
-        AllowFindSopClassesInStudy = json.isAllowFindSopClassesInStudy();
-        dicomAlwaysAllowEcho = json.isDicomAlwaysAllowEcho();
-        DicomAlwaysStore = json.isDicomAlwaysStore();
-        CheckModalityHost = json.isCheckModalityHost();
-        SynchronousCMove = json.isSynchronousCMove();
-        JobsHistorySize = json.getJobsHistorySize();
-        locale = json.getLocale();
-        pluginsFolder = json.getPluginsFolder();
+    public void loadConfig() {
+        try{
+            String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
+                    "print(f:read(\"*a\"))"+
+                    "f:close()";
+            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
+            json = new JsonSettings(stringBuilder.toString());
+            users = json.getUsers();
+            dicomNode = json.getDicomNode();
+            ServerName = json.getOrthancName();
+            storageDirectory = json.getStorageDirectory();
+            indexDirectory = json.getIndexDirectory();
+            StorageCompression = json.isStorageCompression();
+            MaximumStorageSize = json.getMaximumStorageSize();
+            MaximumPatientCount = json.getMaximumPatientCount();
+            ConcurrentJobs = json.getConcurrentJobs();
+            HttpServerEnabled = json.isHttpServerEnabled();
+            HttpPort = json.getHttpPort();
+            HttpDescribeErrors = json.isHttpDescribeErrors();
+            HttpCompressionEnabled = json.isHttpCompressionEnabled();
+            DicomServerEnabled = json.isDicomServerEnabled();
+            DicomAet = json.getDicomAet();
+            DicomCheckCalledAet = json.isDicomCheckCalledAet();
+            DicomPort = json.getDicomPort();
+            DefaultEncoding = json.getDefaultEncoding();
+            DeflatedTransferSyntaxAccepted = json.isDeflatedTransferSyntaxAccepted();
+            JpegTransferSyntaxAccepted = json.isJpegTransferSyntaxAccepted();
+            Jpeg2000TransferSyntaxAccepted = json.isJpeg2000TransferSyntaxAccepted();
+            JpegLosslessTransferSyntaxAccepted = json.isJpegLosslessTransferSyntaxAccepted();
+            JpipTransferSyntaxAccepted = json.isJpipTransferSyntaxAccepted();
+            Mpeg2TransferSyntaxAccepted = json.isMpeg2TransferSyntaxAccepted();
+            RleTransferSyntaxAccepted = json.isRleTransferSyntaxAccepted();
+            UnknownSopClassAccepted = json.isUnknownSopClassAccepted();
+            DicomScpTimeout = json.getDicomScpTimeout();
+            RemoteAccessAllowed = json.isRemoteAccessAllowed();
+            SslEnabled = json.isSslEnabled();
+            SslCertificate = json.getSslCertificate();
+            AuthenticationEnabled = json.isAuthenticationEnabled();
+            DicomScuTimeout = json.getDicomScuTimeout();
+            HttpProxy = json.getHttpProxy();
+            HttpTimeout = json.getHttpTimeout();
+            HttpsVerifyPeers = json.isHttpsVerifyPeers();
+            HttpsCACertificates = json.getHttpsCACertificates();
+            StableAge = json.getStableAge();
+            StrictAetComparison = json.isStrictAetComparison();
+            StoreMD5ForAttachments = json.isStoreMD5ForAttachments();
+            LimitFindResults = json.getLimitFindResults();
+            LimitFindInstances = json.getLimitFindInstances();
+            LimitJobs = json.getLimitJobs();
+            LogExportedResources = json.isLogExportedResources();
+            KeepAlive = json.isKeepAlive();
+            StoreDicom = json.isStoreDicom();
+            DicomAssociationCloseDelay = json.getDicomAssociationCloseDelay();
+            QueryRetrieveSize = json.getQueryRetrieveSize();
+            CaseSensitivePN = json.isCaseSensitivePN();
+            LoadPrivateDictionary = json.isLoadPrivateDictionary();
+            dicomModalitiesInDb = json.isDicomModalitiesInDb();
+            orthancPeerInDb = json.isOrthancPeerInDb();
+            overwriteInstances = json.isOverwriteInstances();
+            mediaArchiveSize = json.getMediaArchiveSize();
+            storageAccessOnFind = json.getStorageAccessOnFind();
+            httpVerbose = json.isHttpVerbose();
+            tcpNoDelay = json.isTcpNoDelay();
+            httpThreadsCount = json.getHttpThreadsCount();
+            saveJobs = json.isSaveJobs();
+            metricsEnabled = json.isMetricsEnabled();
+            AllowFindSopClassesInStudy = json.isAllowFindSopClassesInStudy();
+            dicomAlwaysAllowEcho = json.isDicomAlwaysAllowEcho();
+            DicomAlwaysStore = json.isDicomAlwaysStore();
+            CheckModalityHost = json.isCheckModalityHost();
+            SynchronousCMove = json.isSynchronousCMove();
+            JobsHistorySize = json.getJobsHistorySize();
+            locale = json.getLocale();
+            pluginsFolder = json.getPluginsFolder();
+            luaFolder = json.getLuaFolder();
+            //luaScriptsFolder = luaFolder.toString();
+        }catch (Exception e){
+            log.info("Error from  SettingsBean:"+e.getMessage());
+        }
     }
 
-    public void saveConfig() throws IOException {
+    public void saveConfig() {
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("Name", ServerName);
         jsonOb.addProperty("StorageDirectory", storageDirectory);
@@ -314,6 +342,8 @@ public class SettingsBean {
         jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
         jsonOb.add("Plugins",pluginsFolder);
+        //luaFolder.add(luaScriptsFolder);
+        jsonOb.add("LuaScripts",luaFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
         jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
         jsonOb.addProperty("HttpPort", HttpPort);
@@ -569,8 +599,6 @@ public class SettingsBean {
             showMessage("Внимание","Все поля должны быть заполнены! Не допустимо использование символа: '_' или пробела в имени подальности!",FacesMessage.SEVERITY_ERROR);
         }
     }
-
-
 
     public void deleteModaliti() {
         dicomModalities.remove(selectedDicomModality);

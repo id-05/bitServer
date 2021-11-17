@@ -1,4 +1,4 @@
-package ru.bitServer.beans;
+package ru.bitServer.service;
 
 public class NetworkAdapter {
 

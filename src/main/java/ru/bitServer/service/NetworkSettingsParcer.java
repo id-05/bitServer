@@ -1,4 +1,4 @@
-package ru.bitServer.beans;
+package ru.bitServer.service;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ public class NetworkSettingsParcer {
 
     public StringBuilder textSettings;
 
-    NetworkSettingsParcer(StringBuilder textSettings){
+    public NetworkSettingsParcer(StringBuilder textSettings){
         this.textSettings = textSettings;
     }
 

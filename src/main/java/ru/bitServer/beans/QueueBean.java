@@ -38,7 +38,6 @@ public class QueueBean implements UserDao {
     public Date firstdate;
     public Date seconddate;
     public int typeSeach = 0;
-    //private List<String> selectedModaliti = new ArrayList<>();
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
@@ -49,8 +48,8 @@ public class QueueBean implements UserDao {
     public String selectedUserGroup;
     public List<String> usergroupListRuName;
     public Users currentUser;
-    public OrthancRestApi connection;
-    public OrthancSettings orthancSettings;
+    OrthancRestApi connection;
+    OrthancSettings orthancSettings;
     public int uploadCount;
     public String freespace;
     List<DicomModaliti> modalities;
@@ -193,7 +192,6 @@ public class QueueBean implements UserDao {
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
-        System.out.println("QueueBean");
 
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
@@ -203,7 +201,6 @@ public class QueueBean implements UserDao {
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
     }
 
     public Boolean firstDateSelect() {
