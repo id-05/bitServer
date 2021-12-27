@@ -104,15 +104,15 @@ public class OrthancStudy {
         this.series = new ArrayList<>();
     }
 
-    public OrthancStudy(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
-        this.studyDescription = studyDescription;
-        this.date = studyDateObject;
-        this.accession = accessionNumber;
-        this.StudyOrthancId = studyId;
-        SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
-        this.studyDateToStr = format.format(date);
-        this.series = new ArrayList<>();
-    }
+//    public OrthancStudy(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
+//        this.studyDescription = studyDescription;
+//        this.date = studyDateObject;
+//        this.accession = accessionNumber;
+//        this.StudyOrthancId = studyId;
+//        SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
+//        this.studyDateToStr = format.format(date);
+//        this.series = new ArrayList<>();
+//    }
 
     public String getStudyDescription() {
         return studyDescription;

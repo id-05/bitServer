@@ -101,7 +101,7 @@ public class DicomrouteBean implements UserDao {
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
 
-        String buf = orthancSettings.getLuaFolder().toString();
+        String buf = "DFGDFGDFGDFGDFGDG";//orthancSettings.getLuaFolder().toString();
         pathToFile = buf.substring(2,buf.length()-2);
 
         pathToFile = "D://route.lua";

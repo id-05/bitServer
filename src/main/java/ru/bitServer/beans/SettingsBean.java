@@ -33,7 +33,7 @@ public class SettingsBean {
     JsonObject orthancPeer = new JsonObject();
     JsonObject contentType = new JsonObject();
     JsonObject dictionary = new JsonObject();
-    JsonArray luaFolder = new JsonArray();
+  //  JsonArray luaFolder = new JsonArray();
     JsonArray pluginsFolder = new JsonArray();
     JsonObject users = new JsonObject();
     JsonObject userMetadata = new JsonObject();
@@ -111,13 +111,13 @@ public class SettingsBean {
     public String freeSpace;
     public String directory;
 
-    public JsonArray getLuaFolder() {
-        return luaFolder;
-    }
-
-    public void setLuaFolder(JsonArray luaFolder) {
-        this.luaFolder = luaFolder;
-    }
+//    public JsonArray getLuaFolder() {
+//        return luaFolder;
+//    }
+//
+//    public void setLuaFolder(JsonArray luaFolder) {
+//        this.luaFolder = luaFolder;
+//    }
 
     private static final Logger log = Logger.getLogger(SettingsBean.class);
 
@@ -326,7 +326,7 @@ public class SettingsBean {
             JobsHistorySize = json.getJobsHistorySize();
             locale = json.getLocale();
             pluginsFolder = json.getPluginsFolder();
-            luaFolder = json.getLuaFolder();
+        //    luaFolder = json.getLuaFolder();
             //luaScriptsFolder = luaFolder.toString();
         }catch (Exception e){
             log.info("Error from  SettingsBean:"+e.getMessage());
@@ -343,7 +343,7 @@ public class SettingsBean {
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
         jsonOb.add("Plugins",pluginsFolder);
         //luaFolder.add(luaScriptsFolder);
-        jsonOb.add("LuaScripts",luaFolder);
+     //   jsonOb.add("LuaScripts",luaFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
         jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
         jsonOb.addProperty("HttpPort", HttpPort);

@@ -19,7 +19,7 @@ public class OrthancSettings {
     public JsonObject orthancPeer = new JsonObject();
     public JsonObject contentType = new JsonObject();
     public JsonObject dictionary = new JsonObject();
-    public JsonArray luaFolder = new JsonArray();
+    //public JsonArray luaFolder = new JsonArray();
     public JsonArray pluginsFolder = new JsonArray();
     public JsonObject users = new JsonObject();
     public JsonObject userMetadata = new JsonObject();
@@ -139,13 +139,13 @@ public class OrthancSettings {
         this.selectedWebUsers = selectedWebUsers;
     }
 
-    public JsonArray getLuaFolder() {
-        return luaFolder;
-    }
+  //  public JsonArray getLuaFolder() {
+   //     return luaFolder;
+  //  }
 
-    public void setLuaFolder(JsonArray luaFolder) {
-        this.luaFolder = luaFolder;
-    }
+ //   public void setLuaFolder(JsonArray luaFolder) {
+ ////       this.luaFolder = luaFolder;
+//    }
 
     public JsonSettings json;
 
@@ -225,7 +225,7 @@ public class OrthancSettings {
         JobsHistorySize = json.getJobsHistorySize();
         locale = json.getLocale();
         pluginsFolder = json.getPluginsFolder();
-        luaFolder = json.getLuaFolder();
+        //luaFolder = json.getLuaFolder();
     }
 
     public void saveSettings() {
@@ -237,7 +237,7 @@ public class OrthancSettings {
         jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
         jsonOb.add("Plugins",pluginsFolder);
-        jsonOb.add("LuaScripts",luaFolder);
+       // jsonOb.add("LuaScripts",luaFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);
         jsonOb.addProperty("HttpServerEnabled", HttpServerEnabled);
         jsonOb.addProperty("HttpPort", HttpPort);

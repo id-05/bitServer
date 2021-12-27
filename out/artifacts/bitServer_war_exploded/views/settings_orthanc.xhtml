@@ -78,7 +78,7 @@
                     <b>Lua-scripts</b>
                 </p:divider>
                 <p class="p-m-0">
-                    <p:inputText  value="#{settingsBean.luaFolder}" > </p:inputText>
+
                 </p>
                 <div class="p-text-capitalize">Путь к файлу, с Lua-скриптом.</div>
 
@@ -709,15 +709,6 @@
                                 <p:inputText  value="#{settingsBean.mediaArchiveSize}" > </p:inputText>
                             </p>
                             <div class="p-text-capitalize">Максимальное количество ZIP/медиаархивов, поддерживаемых сервером. Недавно использованные архивы удаляются по мере создания новых архивов. Эта опция была введена в Orthanc 1.5.0, и не оказывает влияния на синхронное формирование архивов</div>
-
-                        <p:divider align="left" type="dashed">
-                            <b>Overwrite Instances</b>
-                        </p:divider>
-                        <p class="p-m-0">
-                            <p:toggleSwitch value="#{settingsBean.overwriteInstances}"/>
-                        </p>
-                        <div class="p-text-capitalize">Определяет, как сервер реагирует, когда  получает DICOM-данные, уже сохраненные ранее. Если включено, новый экземпляр заменяет старый. Если выключено, новый экземпляр отбрасывается, а старый сохраняется. До Orthanc 1.4.1 данный параметр по умолчанию был выключен</div>
-
 
                     </p:outputPanel>
                 </p:tab>

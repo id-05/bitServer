@@ -10,7 +10,7 @@ public class JsonSettings {
     private JsonObject orthancPeer = new JsonObject();
     private JsonObject contentType = new JsonObject();
     private JsonObject dictionary = new JsonObject();
-    private JsonArray luaFolder = new JsonArray();
+   // private JsonArray luaFolder = new JsonArray();
     private JsonArray pluginsFolder = new JsonArray();
     private JsonObject users = new JsonObject();
     private JsonObject userMetadata = new JsonObject();
@@ -111,13 +111,13 @@ public class JsonSettings {
         this.dictionary = dictionary;
     }
 
-    public JsonArray getLuaFolder() {
-        return luaFolder;
-    }
-
-    public void setLuaFolder(JsonArray luaFolder) {
-        this.luaFolder = luaFolder;
-    }
+//    public JsonArray getLuaFolder() {
+//        return luaFolder;
+//    }
+//
+//    public void setLuaFolder(JsonArray luaFolder) {
+//        this.luaFolder = luaFolder;
+//    }
 
     public JsonObject getUsers() {
         return users;
@@ -729,7 +729,7 @@ public class JsonSettings {
         if (orthancJson.has("MetricsEnabled")) metricsEnabled=orthancJson.get("MetricsEnabled").getAsBoolean();
         if (orthancJson.has("DicomModalities")) dicomNode= orthancJson.get("DicomModalities").getAsJsonObject();
         if (orthancJson.has("RegisteredUsers")) users= orthancJson.get("RegisteredUsers").getAsJsonObject();
-        if (orthancJson.has("LuaScripts")) luaFolder= orthancJson.get("LuaScripts").getAsJsonArray();
+     //   if (orthancJson.has("LuaScripts")) luaFolder= orthancJson.get("LuaScripts").getAsJsonArray();
         if (orthancJson.has("Plugins")) pluginsFolder= orthancJson.get("Plugins").getAsJsonArray();
         if (orthancJson.has("UserMetadata")) userMetadata= orthancJson.get("UserMetadata").getAsJsonObject();
         if (orthancJson.has("Dictionary")) dictionary= orthancJson.get("Dictionary").getAsJsonObject();

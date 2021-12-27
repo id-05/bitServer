@@ -304,7 +304,6 @@ public class QueueBean implements UserDao {
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
-            System.out.println("studyData = "+studyData);
             JsonObject parentPatientDetails = null;
             if (studyData.has("PatientMainDicomTags")) {
                 parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
@@ -360,14 +359,6 @@ public class QueueBean implements UserDao {
                 studyDateObject = format.parse(studyDate);
             } catch (Exception e) {
                 System.out.println("Errot to transfer date 2");
-            }
-
-            try {
-                studyDateObject = format.parse("19000101");
-                assert studyDate != null;
-                studyDateObject = format.parse(studyDate);
-            } catch (Exception e) {
-                System.out.println("Errot to transfer date 3");
             }
 
             String studyDescription = "N/A";

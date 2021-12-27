@@ -1,7 +1,6 @@
 package ru.bitServer.util;
 
 import org.apache.log4j.Logger;
-import ru.bitServer.beans.SettingsBean;
 import ru.bitServer.dao.BitServerStudy;
 import java.io.BufferedReader;
 import java.io.IOException;

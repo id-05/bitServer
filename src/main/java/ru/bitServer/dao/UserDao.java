@@ -21,14 +21,6 @@ public interface UserDao {
 
     final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-//    public default void initialHibernate(){
-//        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-//    }
-//
-//    public default Users findById(long id) {
-//        return (Users) HibernateSessionFactoryUtil.getSessionFactory().openSession().get(Users.class, id);
-//    }
-
     public default void saveNewUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
@@ -89,7 +81,6 @@ public interface UserDao {
 
     public default List<Usergroup> getRealBitServerUsergroupList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
         Query query = null;
         String hql= "from Usergroup  where forlocal=:forgroup and status=:pstatus";
         query = session.createQuery(hql);
@@ -238,7 +229,6 @@ public interface UserDao {
 
     public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
         switch (dateSeachType){
             case "today":
                 firstdate = new Date();
@@ -257,32 +247,37 @@ public interface UserDao {
                 seconddate = cal.getTime();
                 break;
         }
-        Query query = null;
-
+        firstdate.setHours(00);
+        firstdate.setMinutes(00);
+        firstdate.setSeconds(00);
+        seconddate.setHours(23);
+        seconddate.setMinutes(59);
+        seconddate.setSeconds(59);
+        Query query;
+        String hql;
         if(state==5){
             if(dateSeachType.equals("all")){
-                String hql= "from BitServerStudy";
+                hql= "from BitServerStudy";
                 query = session.createQuery(hql);
             }else{
-                String hql= "from BitServerStudy  where sdate BETWEEN :frmdate and :todate";
+                hql= "from BitServerStudy  where sdate BETWEEN :frmdate and :todate";
                 query = session.createQuery(hql);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);
             }
         }else{
             if(dateSeachType.equals("all")){
-                String hql= "from BitServerStudy  where status=:pstatus";
+                hql= "from BitServerStudy  where status=:pstatus";
                 query = session.createQuery(hql);
                 query.setParameter("pstatus", state);
             }else{
-                String hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
+                hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
                 query = session.createQuery(hql);
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);
             }
         }
-
         List<BitServerStudy> results = query.list();
         session.close();
         return results;
@@ -290,8 +285,7 @@ public interface UserDao {
 
     public default List<BitServerStudy> getMyStudy(Users currentUser) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = null;
+        Query query;
         String hql= "from BitServerStudy  where status=:pstatus and userwhodiagnost=:puser";
         query = session.createQuery(hql);
         query.setParameter("pstatus", 2);
@@ -301,40 +295,13 @@ public interface UserDao {
         return results;
     }
 
-    public default List<BitServerStudy> getAllHasResultStudies() {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = null;
-        String hql= "from BitServerStudy  where status=:pstatus";
-        query = session.createQuery(hql);
-        query.setParameter("pstatus", 2);
-        List<BitServerStudy> results = query.list();
-        session.close();
-        return results;
-    }
-
     public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = null;
+        Query query;
         String hql= "from BitServerStudy  where usergroupwhosees=:pgroup and status=:pstatus";
         query = session.createQuery(hql);
         query.setParameter("pgroup", usergroup);
         query.setParameter("pstatus", 1);
-        List<BitServerStudy> results = query.list();
-        session.close();
-        return results;
-    }
-
-    public default List<BitServerStudy> getMyBitServerStudy(Users requestUser) {
-        //System.out.println("requestuser "+requestUser.getUid());
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = null;
-        String hql= "from BitServerStudy  where userwhodiagnost=:userid";
-        //System.out.println("hql = "+hql);
-        query = session.createQuery(hql);
-        query.setParameter("userid", requestUser.getUid());
         List<BitServerStudy> results = query.list();
         session.close();
         return results;
@@ -366,6 +333,9 @@ public interface UserDao {
     }
 
     public default void addStudy(BitServerStudy study) {
+        Date date = study.getSdate();
+        date.setHours(23);
+        study.setSdate(date);
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(study);
@@ -382,8 +352,6 @@ public interface UserDao {
     }
 
     public default void deleteStudy(BitServerStudy study) {
-        System.out.println("deleteStudy");
-        System.out.println("study "+study.getId());
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(study);
