@@ -17,8 +17,10 @@
 
 ### Как начать использовать
 
-- Прилоежние использует REST-API для работы с DICOM-сервером Orthanc, DICOM-сервер может быть утсновлен на одной машине с bitServer$
+- Прилоежние использует REST-API для работы с DICOM-сервером Orthanc, DICOM-сервер может быть утсновлен на одной машине с bitServer.
 - bitServer развертывается с помощью Tomcat;
 
 ### [Скачать руководство пользователя](https://github.com/id-05/bitServer/raw/master/Руководство_пользователя.docx)
+
+### [Скачать war-файл для развертывания](https://github.com/id-05/bitServer/raw/master/out/artifacts/bitServer_war/bitServer.war)
 
