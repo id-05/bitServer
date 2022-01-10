@@ -2,6 +2,7 @@ package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
@@ -34,8 +35,21 @@ public class DicomrouteBean implements UserDao {
     public String luascripttextFile;
     List<DicomModaliti> modalities;
     List<DicomModaliti> selectedModalities;
+    List<String> modalitiesName;
     DicomModaliti selectedModaliti;
     public DicomrouteRule selectedRule;
+
+    public List<String> getModalitiesName() {
+        modalitiesName = new ArrayList<>();
+        for(DicomModaliti bufmodaliti:modalities){
+            modalitiesName.add(bufmodaliti.getDicomname());
+        }
+        return modalitiesName;
+    }
+
+    public void setModalitiesName(List<String> modalitiesName) {
+        this.modalitiesName = modalitiesName;
+    }
 
     public DicomModaliti getSelectedModaliti() {
         return selectedModaliti;
@@ -101,10 +115,11 @@ public class DicomrouteBean implements UserDao {
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
 
-        String buf = "DFGDFGDFGDFGDFGDG";//orthancSettings.getLuaFolder().toString();
-        pathToFile = buf.substring(2,buf.length()-2);
 
-        pathToFile = "D://route.lua";
+//        String buf = "DFGDFGDFGDFGDFGDG";//orthancSettings.getLuaFolder().toString();
+//        pathToFile = buf.substring(2,buf.length()-2);
+
+        pathToFile = "D://route.lua";//"/usr/share/orthanc/lua/route.lua";
 
         luascriptFile = new StringBuilder();
         try(FileReader reader = new FileReader(pathToFile)) {
@@ -126,7 +141,7 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void addNewRule(){
-        selectedRule.setNameRemoteModality(selectedModaliti.getDicomname());
+        //selectedRule.setNameRemoteModality(selectedModaliti.getDicomname());
         selectedRule.setDeleteAfteRoute(false);
         rules.add(selectedRule);
         PrimeFaces.current().executeScript("PF('manageRule').hide()");

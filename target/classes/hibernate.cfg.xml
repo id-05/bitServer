@@ -8,8 +8,7 @@
         <property name="hibernate.connection.url">jdbc:mysql://192.168.1.58:3306/orthanc?serverTimezone=UTC</property>
         <property name="hibernate.connection.username">orthanc</property>
         <property name="hibernate.connection.password">orthanc</property>
-        <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
-        <property name="spring.jpa.properties.hibernate.jdbc.time_zone=">UTC</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">false</property>
     </session-factory>
 </hibernate-configuration>

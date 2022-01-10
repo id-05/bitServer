@@ -260,7 +260,8 @@ public interface UserDao {
                 hql= "from BitServerStudy";
                 query = session.createQuery(hql);
             }else{
-                hql= "from BitServerStudy  where sdate BETWEEN :frmdate and :todate";
+                //extract(DAY FROM CURRENT_TIMESTAMP())
+                hql= "from BitServerStudy  where sdate BETWEEN :frmdate and  :todate";
                 query = session.createQuery(hql);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);

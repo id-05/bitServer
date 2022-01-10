@@ -60,11 +60,26 @@
                                      selection="#{dicomrouteBean.rules}" rowKey="#{DicomrouteRule.name}"
                                      rows="10" rowSelectMode="add" >
 
-                            <p:column headerText="Name" style="text-align: center">
+                            <p:column headerText="Tag" style="text-align: center">
+                                <h:outputText value="#{dicomrouteRule.tag}" />
+                            </p:column>
+
+                            <p:column headerText="Tag Value" style="text-align: center">
+                                <h:outputText value="#{dicomrouteRule.tagValue}" />
+                            </p:column>
+
+                            <p:column headerText="Target Modality" style="text-align: center">
                                 <h:outputText value="#{dicomrouteRule.nameRemoteModality}" />
                             </p:column>
 
                             <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":dicomroute:tabview1:manage-rule"
+                                                 oncomplete="PF('manageRule').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{dicomrouteRule}" target="#{dicomrouteBean.selectedRule}"/>
+                                    <p:resetInput target=":dicomroute:tabview1:manage-rule"/>
+                                </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                                  oncomplete="PF('deleteRule').show()">
@@ -75,43 +90,38 @@
 
                         </p:dataTable>
 
-                        <p:dialog id="dialogNewRule" header="Выберите удаленную модальность для автопересылки:" showEffect="fade" modal="true"
+
+                        <p:dialog id="dialogNewRule" header="Новое правило:" showEffect="fade" modal="true"
                                   widgetVar="manageRule" responsive="true">
                             <p:panelGrid id="manage-rule" class="ui-fluid" columns="2">
+                                <p:outputLabel for="role" style="margin-right: .5rem">Тэг</p:outputLabel>
+                                <p:selectOneMenu id="role" value="#{dicomrouteBean.selectedRule.tag}">
+                                    <f:selectItem itemLabel="Modality" itemValue="Modality"/>
+                                    <f:selectItem itemLabel="Manufacturer" itemValue="Manufacturer"/>
+                                    <f:selectItem itemLabel="StudyDescription" itemValue="StudyDescription"/>
+                                    <f:selectItem itemLabel="InstitutionName" itemValue="InstitutionName"/>
+                                    <f:selectItem itemLabel="ProductId" itemValue="ProductId"/>
+                                    <f:selectItem itemLabel="StationName" itemValue="StationName"/>
+                                </p:selectOneMenu>
 
-                                <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{dicomrouteBean.modalities}"
-                                             reflow="true" styleClass="users-table"
-                                             emptyMessage="Нет записей для отображения"
-                                             selection="#{dicomrouteBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
-                                             rows="10" rowSelectMode="add" >
+                                <p:outputLabel for="family" style="margin-right: .5rem">Значение</p:outputLabel>
+                                <p:inputText id="family" value="#{dicomrouteBean.selectedRule.tagValue}" />
 
-                                    <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
-                                        <h:outputText value="#{dicomModaliti.dicomname}"/>
-                                    </p:column>
-
-                                    <p:column headerText="AE Title"  style="text-align: center">
-                                        <h:outputText value="#{dicomModaliti.dicomtitle}" />
-                                    </p:column>
-
-                                    <p:column headerText="IP"  style="text-align: center">
-                                        <h:outputText value="#{dicomModaliti.ip}"/>
-                                    </p:column>
-
-                                    <p:column exportable="false">
-                                        <p:commandButton icon="pi pi-upload"
-                                                         action="#{dicomrouteBean.addNewRule}"
-                                                         update="dicomroute:growl"
-                                                         style="margin-right: 10px"
-                                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                            <f:setPropertyActionListener value="#{dicomModaliti}" target="#{dicomrouteBean.selectedModaliti}"/>
-                                        </p:commandButton>
-                                    </p:column>
-
-                                </p:dataTable>
+                                <p:outputLabel for="ugroup" style="margin-right: .5rem">Модальность для отправки</p:outputLabel>
+                                <p:selectOneMenu id="ugroup" value="#{dicomrouteBean.selectedRule.nameRemoteModality}" dynamic="true">
+                                    <f:selectItems value="#{dicomrouteBean.modalitiesName}"/>
+                                </p:selectOneMenu>
 
                             </p:panelGrid>
 
                             <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{dicomrouteBean.addNewRule}"
+                                                 update="dialogNewRule">
+                                    <p:resetInput target="dialogNewRule"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
 
                                 <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageRule').hide()"
                                                  class="ui-button-secondary" update="dialogNewRule">
@@ -133,7 +143,7 @@
                     </p:outputPanel>
                     <div class="p-d-flex"></div>
                     <br></br>
-                    <div >Список удаленных модальностей, на которые все поступающие данные будут автоматически дублироваться.</div>
+                    <div >Список правил автоматической маршрутизации.</div>
                     <br></br>
                     <div > </div>
                 </p:tab>
