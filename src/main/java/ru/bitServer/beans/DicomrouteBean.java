@@ -161,6 +161,12 @@ public class DicomrouteBean implements UserDao {
 
     }
 
+    public void onTabChange(){
+        System.out.println("onTabChange");
+        init();
+        PrimeFaces.current().ajax().update(":dicomroute:tabview1");
+    }
+
     public void saveSettingsCustomMode(){
         System.out.println("pathToFile = " + pathToFile);
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
@@ -179,7 +185,13 @@ public class DicomrouteBean implements UserDao {
         bufStringBuilder.append("function OnStoredInstance(instanceId, tags, metadata)\n");
 
         for(DicomrouteRule bufRule:rules){
-            bufStringBuilder.append("SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
+            if(bufRule.getTag().equals("all")){
+                bufStringBuilder.append("   SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
+            }else {
+                bufStringBuilder.append("   if tags.").append(bufRule.getTag()).append(" == '").append(bufRule.getTagValue()).append("' then").append("\n");
+                bufStringBuilder.append("       SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
+                bufStringBuilder.append("   end\n");
+            }
         }
 
         bufStringBuilder.append("end\n");

@@ -37,7 +37,7 @@
             </p:menubar>
 
             <p:tabView id="tabview1">
-                <p:ajax event="tabChange" listener="#{networkSettingsBean.onTabChange}"/>
+                <p:ajax event="tabChange" listener="#{dicomrouteBean.onTabChange}"/>
 
                 <p:tab title="Для обычных пользователей">
                     <p:outputPanel>
@@ -96,6 +96,7 @@
                             <p:panelGrid id="manage-rule" class="ui-fluid" columns="2">
                                 <p:outputLabel for="role" style="margin-right: .5rem">Тэг</p:outputLabel>
                                 <p:selectOneMenu id="role" value="#{dicomrouteBean.selectedRule.tag}">
+                                    <f:selectItem itemLabel="all" itemValue="all"/>
                                     <f:selectItem itemLabel="Modality" itemValue="Modality"/>
                                     <f:selectItem itemLabel="Manufacturer" itemValue="Manufacturer"/>
                                     <f:selectItem itemLabel="StudyDescription" itemValue="StudyDescription"/>
