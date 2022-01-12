@@ -41,7 +41,6 @@ public class DicomruleParser {
                 dicomrouteRuleList.add(bufRule);
                 hasIf = false;
             }
-
         }
         return dicomrouteRuleList;
     }

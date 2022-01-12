@@ -1,6 +1,7 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
+import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
@@ -104,22 +105,19 @@ public class DicomrouteBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("dicomrouteBean");
         selectedRule = new DicomrouteRule();
-
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
-
-
 //        String buf = "DFGDFGDFGDFGDFGDG";//orthancSettings.getLuaFolder().toString();
 //        pathToFile = buf.substring(2,buf.length()-2);
+        BitServerResources bufResources = getBitServerResource("luascriptpathfile");
+        pathToFile = bufResources.getRvalue();
 
-        pathToFile = "D://route.lua";//"/usr/share/orthanc/lua/route.lua";
+        //pathToFile = "D://route.lua";//"/usr/share/orthanc/lua/route.lua";
 
         luascriptFile = new StringBuilder();
         try(FileReader reader = new FileReader(pathToFile)) {

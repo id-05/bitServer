@@ -4,10 +4,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
-import ru.bitServer.dao.BitServerStudy;
-import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Usergroup;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.*;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -123,13 +120,25 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        String buf;
+        String HttpOrHttps;
         if(mainServer.getHttpmode().equals("true")){
-            buf = "https";
+            HttpOrHttps = "https";
         }else{
-            buf = "http";
+            HttpOrHttps = "http";
         }
-        PrimeFaces.current().executeScript("window.open('"+buf+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        int i = referrer.indexOf("/bitServer/");
+        int j = referrer.indexOf("://");
+        String address = referrer.substring(j+3,i);
+        if(address.contains(":")){
+            BitServerResources bufResources = getBitServerResource("port");
+            String port = bufResources.getRvalue();
+            int k = address.indexOf(":");
+            String addressCutPort = address.substring(0,k);
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        }else{
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        }
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
