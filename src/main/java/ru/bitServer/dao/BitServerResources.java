@@ -41,4 +41,9 @@ public class BitServerResources {
     public BitServerResources(){
 
     }
+
+    public BitServerResources(String rname, String rvalue){
+        this.rname = rname;
+        this.rvalue = rvalue;
+    }
 }

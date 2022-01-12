@@ -28,6 +28,7 @@ public class SettingBitServerBean implements UserDao {
     public List<Usergroup> selectedUsergroups;
     public Usergroup selectedUsergroup;
     public String httpmode;
+    public String updateQueueAfterOpen;
     public String osimisAddress;
     public String orthancAddress;
     public String orthancWebPort;
@@ -39,6 +40,14 @@ public class SettingBitServerBean implements UserDao {
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public String networksetpathfile;
     public Date syncdate;
+
+    public String getUpdateQueueAfterOpen() {
+        return updateQueueAfterOpen;
+    }
+
+    public void setUpdateQueueAfterOpen(String updateQueueAfterOpen) {
+        this.updateQueueAfterOpen = updateQueueAfterOpen;
+    }
 
     public String getLuaScriptPath() {
         return luaScriptPath;
@@ -199,6 +208,8 @@ public class SettingBitServerBean implements UserDao {
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "updateafteropen": updateQueueAfterOpen = buf.getRvalue();
+                    break;
                 case "httpmode": httpmode = buf.getRvalue();
                     break;
                 case "luascriptpathfile": luaScriptPath = buf.getRvalue();
@@ -283,6 +294,8 @@ public class SettingBitServerBean implements UserDao {
     public void saveParam(){
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "updateafteropen": buf.setRvalue(updateQueueAfterOpen);
+                    break;
                 case "httpmode": buf.setRvalue(httpmode);
                     break;
                 case "luascriptpathfile": buf.setRvalue(luaScriptPath);

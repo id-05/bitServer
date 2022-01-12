@@ -201,6 +201,11 @@ public class QueueBean implements UserDao {
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
+
+        BitServerResources bufResource = getBitServerResource("updateafteropen");
+        if(bufResource.getRvalue().equals("true")) {
+            readStudyFromDB();
+        }
     }
 
     public Boolean firstDateSelect() {

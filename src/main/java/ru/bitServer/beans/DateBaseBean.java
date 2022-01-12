@@ -139,29 +139,51 @@ public class DateBaseBean implements UserDao {
         listModalitys = getAllBitServerModality();
 
         selectedResource = new BitServerResources();
-
-//        if(listStudys.size()>0){
-//            selectedStudy = listStudys.get(0);
-//        }else{
-            selectedStudy = new BitServerStudy();
-//        }
-
-//        if(listModalitys.size()>0){
-//            selectedModality = listModalitys.get(0);
-//        }else{
-            selectedModality = new BitServerModality();
-      //  }
-
-//        if(listSchedulers.size()>0){
-//            selectedScheduler = listSchedulers.get(0);
-//        }else{
-            selectedScheduler = new BitServerScheduler();
- //       }
-
+        selectedStudy = new BitServerStudy();
+        selectedModality = new BitServerModality();
+        selectedScheduler = new BitServerScheduler();
     }
 
     public void initNewResources(){
         selectedResource = new BitServerResources();
+    }
+
+    public void initDefaultResources(){
+        System.out.println("default");
+        for(BitServerResources bufResources:listResources){
+            deleteBitServerResource(bufResources);
+        }
+        listResources.clear();
+        selectedResource = new BitServerResources();
+
+        saveBitServiceResource(new BitServerResources("orthancaddress","127.0.0.1"));
+        saveBitServiceResource(new BitServerResources("port","8042"));
+        saveBitServiceResource(new BitServerResources("login","doctor"));
+        saveBitServiceResource(new BitServerResources("password","doctor"));
+        saveBitServiceResource(new BitServerResources("pathtojson","/etc/orthanc/"));
+        saveBitServiceResource(new BitServerResources("pathtoresultfile","D:\\results\\"));
+        saveBitServiceResource(new BitServerResources("demontimerupdate","5"));
+        saveBitServiceResource(new BitServerResources("syncdate","2015-11-01"));
+        saveBitServiceResource(new BitServerResources("networksetpathfile","D:\\interfaces"));
+        saveBitServiceResource(new BitServerResources("httpmode","false"));
+        saveBitServiceResource(new BitServerResources("luascriptpathfile","D:\\route.lua"));
+        saveBitServiceResource(new BitServerResources("updateafteropen","true"));
+
+        listResources.add(new BitServerResources("orthancaddress","127.0.0.1"));
+        listResources.add(new BitServerResources("port","8042"));
+        listResources.add(new BitServerResources("login","doctor"));
+        listResources.add(new BitServerResources("password","doctor"));
+        listResources.add(new BitServerResources("pathtojson","/etc/orthanc/"));
+        listResources.add(new BitServerResources("pathtoresultfile","/dataimage/result/"));
+        listResources.add(new BitServerResources("demontimerupdate","5"));
+        listResources.add(new BitServerResources("syncdate","2015-11-01"));
+        listResources.add(new BitServerResources("networksetpathfile","/etc/network/"));
+        listResources.add(new BitServerResources("httpmode","false"));
+        listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
+        listResources.add(new BitServerResources("updateafteropen","true"));
+
+        showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
+        PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
 
     public void initNewModality(){

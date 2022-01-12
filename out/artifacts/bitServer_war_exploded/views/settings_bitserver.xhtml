@@ -408,6 +408,24 @@
 
                     </p:outputPanel>
                 </p:tab>
+
+                <p:tab title="Отладка">
+                    <p:outputPanel>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Обновлять базу при открытиии очереди</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.updateQueueAfterOpen}">
+                                <p:ajax listener="#{settingBitServerBean.changehttpmode}" />
+                            </p:toggleSwitch>
+                        </p>
+                        <br></br>
+                        <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить в длительному ожиданию открытия страницы</div>
+
+                    </p:outputPanel>
+                </p:tab>
+
             </p:accordionPanel>
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
