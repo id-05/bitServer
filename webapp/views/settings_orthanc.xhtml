@@ -78,9 +78,9 @@
                     <b>Lua-scripts</b>
                 </p:divider>
                 <p class="p-m-0">
-
+                    <p:inputText  value="#{settingsBean.luaScriptsFolder}" > </p:inputText>
                 </p>
-                <div class="p-text-capitalize">Путь к файлу, с Lua-скриптом.</div>
+                <div class="p-text-capitalize">Путь к файлу с Lua-скриптом.</div>
 
 
                 <p:divider align="left" type="dashed">
@@ -181,13 +181,29 @@
                             <p:inputText  value="#{settingsBean.dicomPort}" > </p:inputText>
                         </p>
 
+
                 <p:divider align="left" type="dashed">
                     <b>Кодировка по умолачнию</b>
                 </p:divider>
                         <p class="p-m-0">
-                            <p:inputText  value="#{settingsBean.defaultEncoding}" > </p:inputText>
+                            <p:selectOneMenu id="role" value="#{settingsBean.defaultEncoding}">
+                                <f:selectItem itemLabel="Utf8" itemValue="Utf8"/>
+                                <f:selectItem itemLabel="Ascii" itemValue="Ascii"/>
+                                <f:selectItem itemLabel="Latin1" itemValue="Latin1"/>
+                                <f:selectItem itemLabel="Latin2" itemValue="Latin2"/>
+                                <f:selectItem itemLabel="Latin4" itemValue="Latin4"/>
+                                <f:selectItem itemLabel="Latin5" itemValue="Latin5"/>
+                                <f:selectItem itemLabel="Cyrillic" itemValue="Cyrillic"/>
+                                <f:selectItem itemLabel="Windows1251" itemValue="Windows1251"/>
+                                <f:selectItem itemLabel="Arabic" itemValue="Arabic"/>
+                                <f:selectItem itemLabel="Greek" itemValue="Greek"/>
+                                <f:selectItem itemLabel="Hebrew" itemValue="Hebrew"/>
+                                <f:selectItem itemLabel="Thai" itemValue="Thai"/>
+                                <f:selectItem itemLabel="Japanese" itemValue="Japanese"/>
+                            </p:selectOneMenu>
                         </p>
-                        <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
+                <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
+
 
                 <p:divider align="left" type="dashed">
                     <b>Синтаксис передачи</b>

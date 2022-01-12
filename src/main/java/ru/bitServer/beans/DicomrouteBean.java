@@ -112,12 +112,9 @@ public class DicomrouteBean implements UserDao {
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
-//        String buf = "DFGDFGDFGDFGDFGDG";//orthancSettings.getLuaFolder().toString();
-//        pathToFile = buf.substring(2,buf.length()-2);
+
         BitServerResources bufResources = getBitServerResource("luascriptpathfile");
         pathToFile = bufResources.getRvalue();
-
-        //pathToFile = "D://route.lua";//"/usr/share/orthanc/lua/route.lua";
 
         luascriptFile = new StringBuilder();
         try(FileReader reader = new FileReader(pathToFile)) {
@@ -160,7 +157,6 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void onTabChange(){
-        System.out.println("onTabChange");
         init();
         PrimeFaces.current().ajax().update(":dicomroute:tabview1");
     }

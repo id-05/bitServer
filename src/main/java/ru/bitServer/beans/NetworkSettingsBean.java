@@ -167,7 +167,8 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void onTabChange(){
-        System.out.println("onTabChange");
+        init();
+        PrimeFaces.current().ajax().update(":form:tabview1");
     }
 
     public void onInputTextChange(){

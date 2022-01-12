@@ -35,9 +35,18 @@ public class SettingBitServerBean implements UserDao {
     public String orthancPassword;
     public String orthancPathToJson;
     public String orthancPathToResultFile;
+    public String luaScriptPath;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public String networksetpathfile;
     public Date syncdate;
+
+    public String getLuaScriptPath() {
+        return luaScriptPath;
+    }
+
+    public void setLuaScriptPath(String luaScriptPath) {
+        this.luaScriptPath = luaScriptPath;
+    }
 
     public String getHttpmode() {
         return httpmode;
@@ -192,7 +201,7 @@ public class SettingBitServerBean implements UserDao {
             switch (buf.getRname()){
                 case "httpmode": httpmode = buf.getRvalue();
                     break;
-                case "orthancaddress": orthancAddress = buf.getRvalue();
+                case "luascriptpathfile": luaScriptPath = buf.getRvalue();
                     break;
                 case "port": orthancWebPort = buf.getRvalue();
                     break;
@@ -276,7 +285,7 @@ public class SettingBitServerBean implements UserDao {
             switch (buf.getRname()){
                 case "httpmode": buf.setRvalue(httpmode);
                     break;
-                case "orthancaddress": buf.setRvalue(orthancAddress);
+                case "luascriptpathfile": buf.setRvalue(luaScriptPath);
                     break;
                 case "port": buf.setRvalue(orthancWebPort);
                     break;

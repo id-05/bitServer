@@ -62,7 +62,7 @@
                             </p:inplace>
                         </p>
                         <br></br>
-                        <div >Порт для доступа к RESTAPI Orthanc</div>
+                        <div >Порт для доступа к RESTAPI Orthanc. Этот же порт подставляется к адресу при перенаправлении пользователя в OSIMIS.</div>
 
                         <br></br>
                         <p:divider align="left" type="dashed">
@@ -98,6 +98,19 @@
 
                         <br></br>
                         <p:divider align="left" type="dashed">
+                            <b>Путь к файлу c lua-скриптом</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.luaScriptPath}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br></br>
+                        <div >Данный файл используется для настройки маршрутизации dicom-файлов</div>
+
+                        <br></br>
+                        <p:divider align="left" type="dashed">
                             <b>Каталог хранения файлов результатов анализа</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -123,19 +136,6 @@
                         </p>
                         <br></br>
                         <div >Исследования сделанные позднее этой даты, будут автоматически добавляться в Orthanc</div>
-
-                        <br></br>
-                        <p:divider align="left" type="dashed">
-                            <b>Адрес для доступа к OSIMIS</b>
-                        </p:divider>
-                        <p class="p-m-0">
-                            <p:inplace editor="true" >
-                                <p:inputText value="#{settingBitServerBean.osimisAddress}" required="true" label="text" style="margin-bottom: 50px"/>
-                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
-                            </p:inplace>
-                        </p>
-                        <br></br>
-                        <div >Адрес по которому доступен osimis, пользователю будет передаваться в виде: "http(s)://указанный_адрес/osimis-viewer/app/index.html?"</div>
 
                         <br></br>
                         <p:divider align="left" type="dashed">
