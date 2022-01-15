@@ -154,6 +154,7 @@ public class MainBean implements UserDao {
         }
         try {
             connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            System.out.println("connection : "+mainServer.getIpaddress()+":"+mainServer.getPort());
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");
             JsonParser parser = new JsonParser();
             JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();

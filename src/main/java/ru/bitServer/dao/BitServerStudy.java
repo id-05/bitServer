@@ -37,11 +37,32 @@ public class BitServerStudy {
     private String statusstyle;
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
-        System.out.println(" sdate = "+sdate);
-        this.sid = sid;
-        this.shortid = shortid;
-        this.sdescription = sdescription;
-        this.source = source;
+        System.out.println(" sdate = "+ sdate);
+
+        if(sid.length()>59){
+            this.sid = sid.substring(0,59);
+        }else{
+            this.sid = sid;
+        }
+
+        if(shortid.length()>63){
+            this.shortid = shortid.substring(0,63);
+        }else{
+            this.shortid = shortid;
+        }
+
+        if(sdescription.length()>59){
+            this.sdescription = sdescription.substring(0,59);
+        }else{
+            this.sdescription = sdescription;
+        }
+
+        if(source.length()>59){
+            this.source = source.substring(0,59);
+        }else{
+            this.source = source;
+        }
+
         this.sdate = sdate;
         this.modality = modality;
         this.dateaddinbase = dateaddinbase;

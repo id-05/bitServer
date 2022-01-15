@@ -342,6 +342,9 @@ public class SettingsBean {
         jsonOb.addProperty("MaximumStorageSize", MaximumStorageSize);
         jsonOb.addProperty("MaximumPatientCount", MaximumPatientCount);
         jsonOb.add("Plugins",pluginsFolder);
+        JsonArray luaScripts = new JsonArray();
+        luaScripts.add("/usr/share/orthanc/lua/route.lua");
+        jsonOb.add("LuaScripts",luaScripts);
         //luaFolder.add(luaScriptsFolder);
      //   jsonOb.add("LuaScripts",luaFolder);
         jsonOb.addProperty("ConcurrentJobs", ConcurrentJobs);

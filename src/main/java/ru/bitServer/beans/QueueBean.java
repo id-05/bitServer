@@ -392,6 +392,7 @@ public class QueueBean implements UserDao {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
                 }
             }
+
             OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }

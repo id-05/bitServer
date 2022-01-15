@@ -161,12 +161,12 @@ public class DateBaseBean implements UserDao {
         saveBitServiceResource(new BitServerResources("login","doctor"));
         saveBitServiceResource(new BitServerResources("password","doctor"));
         saveBitServiceResource(new BitServerResources("pathtojson","/etc/orthanc/"));
-        saveBitServiceResource(new BitServerResources("pathtoresultfile","D:\\results\\"));
+        saveBitServiceResource(new BitServerResources("pathtoresultfile","/dataimage/result/"));
         saveBitServiceResource(new BitServerResources("demontimerupdate","5"));
         saveBitServiceResource(new BitServerResources("syncdate","2015-11-01"));
-        saveBitServiceResource(new BitServerResources("networksetpathfile","D:\\interfaces"));
+        saveBitServiceResource(new BitServerResources("networksetpathfile","/etc/network/interfaces"));
         saveBitServiceResource(new BitServerResources("httpmode","false"));
-        saveBitServiceResource(new BitServerResources("luascriptpathfile","D:\\route.lua"));
+        saveBitServiceResource(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         saveBitServiceResource(new BitServerResources("updateafteropen","true"));
 
         listResources.add(new BitServerResources("orthancaddress","127.0.0.1"));
@@ -177,7 +177,7 @@ public class DateBaseBean implements UserDao {
         listResources.add(new BitServerResources("pathtoresultfile","/dataimage/result/"));
         listResources.add(new BitServerResources("demontimerupdate","5"));
         listResources.add(new BitServerResources("syncdate","2015-11-01"));
-        listResources.add(new BitServerResources("networksetpathfile","/etc/network/"));
+        listResources.add(new BitServerResources("networksetpathfile","/etc/network/interfaces"));
         listResources.add(new BitServerResources("httpmode","false"));
         listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         listResources.add(new BitServerResources("updateafteropen","true"));
