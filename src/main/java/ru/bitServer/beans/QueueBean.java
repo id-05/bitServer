@@ -55,6 +55,33 @@ public class QueueBean implements UserDao {
     List<DicomModaliti> modalities;
     List<DicomModaliti> selectedModalities;
     DicomModaliti selectedModaliti;
+    boolean datepickerVisible1;
+    boolean datepickerVisible2;
+    List<String> selectedModalitiName = new ArrayList<>();
+
+    public List<String> getSelectedModalitiName() {
+        return selectedModalitiName;
+    }
+
+    public void setSelectedModalitiName(List<String> selectedModalitiName) {
+        this.selectedModalitiName = selectedModalitiName;
+    }
+
+    public boolean isDatepickerVisible1() {
+        return datepickerVisible1;
+    }
+
+    public void setDatepickerVisible1(boolean datepickerVisible1) {
+        this.datepickerVisible1 = datepickerVisible1;
+    }
+
+    public boolean isDatepickerVisible2() {
+        return datepickerVisible2;
+    }
+
+    public void setDatepickerVisible2(boolean datepickerVisible2) {
+        this.datepickerVisible2 = datepickerVisible2;
+    }
 
     public DicomModaliti getSelectedModaliti() {
         return selectedModaliti;
@@ -206,6 +233,18 @@ public class QueueBean implements UserDao {
         if(bufResource.getRvalue().equals("true")) {
             readStudyFromDB();
         }
+
+        selectedModalitiName.clear();
+        selectedModalitiName.add("CR");
+        selectedModalitiName.add("CT");
+        selectedModalitiName.add("MR");
+        selectedModalitiName.add("NM");
+        selectedModalitiName.add("PT");
+        selectedModalitiName.add("US");
+        selectedModalitiName.add("XA");
+        selectedModalitiName.add("CR");
+        selectedModalitiName.add("MG");
+        selectedModalitiName.add("DX");
     }
 
     public Boolean firstDateSelect() {
@@ -226,7 +265,22 @@ public class QueueBean implements UserDao {
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
+
+        if(filtrDate.equals("targetdate")){
+            datepickerVisible1 = true;
+            datepickerVisible2 = false;
+        }else{
+            if(filtrDate.equals("range")){
+                datepickerVisible1 = true;
+                datepickerVisible2 = true;
+            }else{
+                datepickerVisible1 = false;
+                datepickerVisible2 = false;
+            }
+        }
+
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        PrimeFaces.current().ajax().update(":seachform:datecard");
     }
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){

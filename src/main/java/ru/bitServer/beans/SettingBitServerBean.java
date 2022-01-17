@@ -208,6 +208,8 @@ public class SettingBitServerBean implements UserDao {
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "orthancaddress": orthancAddress = buf.getRvalue();
+                    break;
                 case "updateafteropen": updateQueueAfterOpen = buf.getRvalue();
                     break;
                 case "httpmode": httpmode = buf.getRvalue();
@@ -275,6 +277,12 @@ public class SettingBitServerBean implements UserDao {
                     users.setRole("Локальный только просмотр");
                     break;
                 }
+
+                case "demo": {
+                    users.setRole("demo");
+                    break;
+                }
+
             }
         }
         return usersList;
@@ -294,6 +302,8 @@ public class SettingBitServerBean implements UserDao {
     public void saveParam(){
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+                case "orthancaddress": buf.setRvalue(orthancAddress);
+                    break;
                 case "updateafteropen": buf.setRvalue(updateQueueAfterOpen);
                     break;
                 case "httpmode": buf.setRvalue(httpmode);
@@ -328,6 +338,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
+        System.out.println("save new user start");
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
@@ -355,6 +366,7 @@ public class SettingBitServerBean implements UserDao {
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
+        System.out.println("save new finish");
     }
 
     public Users getRealUserForBase(Users sourseUser){
@@ -387,6 +399,11 @@ public class SettingBitServerBean implements UserDao {
 
                 case "Локальный только просмотр": {
                     buf = "onlyview";
+                    break;
+                }
+
+                case "demo": {
+                    buf = "demo";
                     break;
                 }
             }

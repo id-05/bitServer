@@ -22,7 +22,6 @@
             function dateTemplateFunc(date) {
                 return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
             }
-
             //]]>
         </script>
 
@@ -36,20 +35,10 @@
         </script>
 
         <style type="text/css">
-            .value {
-                font-weight: bold;
-            }
-
-            .ui-datatable.products-table {
-
-
-            }
-
             .fileupload-content {
                 overflow: auto;
                 height: 300px;
             }
-
             .product-badge {
                 border-radius: 2px;
                 padding: .25em .5rem;
@@ -72,7 +61,7 @@
         <h:form id="seachform">
             <p:growl id="searchgrowl" showDetail="true" />
             <p:menubar>
-                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward"/>
+                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward" rendered="#{!queueBean.currentUser.role == 'demo'}"/>
                 <f:facet name="options">
 
                     <div class="p-mr-2 p-as-center">
@@ -86,19 +75,12 @@
                 </f:facet>
             </p:menubar>
 
-            <p:panel id="panel1" widgetVar="panelVar" header="Фильтр Очереди" >
+            <p:panel id="panel1" widgetVar="panelVar" header="Фильтр" >
                 <div style="align-content: center">
-                    <p:card style="margin-bottom: 2em">
-                        <div class="p-grid">
-                            <p:panelGrid columns="2" layout="grid">
-
-                            </p:panelGrid>
-                        </div>
-
-                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
-
-                            <label for="state" class="p-col-fixed" style="width:250px; font-size: large">Состояние исследования:</label>
-                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px" >
+                    <p:card id="datecard" style="margin-bottom: 1em">
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 1em" >
+                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px"
+                                               rendered="#{!queueBean.currentUser.role == 'demo'}">
                                 <f:selectItem itemLabel="Не описан" itemValue="0" />
                                 <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
                                 <f:selectItem itemLabel="Описан" itemValue="2"/>
@@ -107,9 +89,8 @@
                             </p:selectOneButton>
                         </div>
 
-                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
-                            <label for="dateStudySelector" class="p-col-fixed" style="width:250px; font-size: large">Дата исследования:</label>
-                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px">
+                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-top: 2em">
+                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px; margin-bottom: 1em;">
                                 <f:selectItem itemLabel="Сегодня " itemValue="today" />
                                 <f:selectItem itemLabel="Вчера " itemValue="yesterday"/>
                                 <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
@@ -118,14 +99,29 @@
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectOneButton>
 
-                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-right: 10px">
+                            <p:datePicker id="firstDate" value="#{queueBean.firstdate}" showIcon="true" style="margin-right: 10px" rendered="#{queueBean.datepickerVisible1}">
                                 <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}" update=":seachform:dateStudySelector"/>
                             </p:datePicker>
 
-                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true">
+                            <p:datePicker id="secondDate" value="#{queueBean.seconddate}" showIcon="true" rendered="#{queueBean.datepickerVisible2}">
                                 <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}" update=":seachform:dateStudySelector"/>
                             </p:datePicker>
 
+                        </div>
+
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em">
+                            <p:selectManyButton value="#{queueBean.selectedModalitiName}">
+                                <f:selectItem itemLabel="CR" itemValue="CR"/>
+                                <f:selectItem itemLabel="CT" itemValue="CT"/>
+                                <f:selectItem itemLabel="MR" itemValue="MR"/>
+                                <f:selectItem itemLabel="NM" itemValue="NM"/>
+                                <f:selectItem itemLabel="PT" itemValue="PT"/>
+                                <f:selectItem itemLabel="US" itemValue="US"/>
+                                <f:selectItem itemLabel="XA" itemValue="XA"/>
+                                <f:selectItem itemLabel="MG" itemValue="MG"/>
+                                <f:selectItem itemLabel="DX" itemValue="DX"/>
+                                <p:ajax event="change"/>
+                            </p:selectManyButton>
                         </div>
                     </p:card>
 
@@ -139,10 +135,12 @@
                                              styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
                                              onclick="PF('statusDialog').show()"
                                              update="searchgrowl"
+                                             rendered="#{!queueBean.currentUser.role == 'demo'}"
                                              style="margin-right: 5px">
                             </p:commandButton>
 
-                            <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true">
+                            <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true"
+                                             rendered="#{!queueBean.currentUser.role == 'demo'}">
                                 <f:selectItems value="#{queueBean.usergroupListRuName}"/>
                             </p:selectOneMenu>
 
@@ -186,7 +184,7 @@
                     </p:dialog>
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
-                                 reflow="true" styleClass="products-table"
+                                 reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
