@@ -62,6 +62,7 @@
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{datebaseBean.selectedResources}" rowKey="#{BitServerResources.rname}"
                                      rows="10"
+                                     size="small"
                                      rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom">
@@ -159,12 +160,12 @@
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{datebaseBean.selectedStudys}" rowKey="#{BitServerStudy.sid}"
                                      rows="10"
+                                     size="small"
                                      rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom"
                                      scrollable="true"
-                                     tableStyle = "width: auto! important;"
-                                     >
+                                     tableStyle = "width: auto! important;">
 
                             <p:column headerText="id" sortBy="#{study.id}" style="width: max-content">
                                 <h:outputText value="#{study.id}" />
@@ -347,6 +348,7 @@
                                      rows="10"
                                      rowSelectMode="add"
                                      paginator="true"
+                                     size="small"
                                      paginatorAlwaysVisible="false"
                                      paginatorPosition="bottom">
 
@@ -434,6 +436,7 @@
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{datebaseBean.selectedModalitys}" rowKey="#{BitServerModality.name}"
                                      rows="10"
+                                     size="small"
                                      rowSelectMode="add"
                                      paginator="true"
                                      paginatorPosition="bottom">

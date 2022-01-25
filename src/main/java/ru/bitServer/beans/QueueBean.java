@@ -260,10 +260,20 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
+        String bufStr = "";
+        for(String buf:selectedModalitiName) {
+            if (bufStr.length()<1) {
+                bufStr = "" + buf + "";
+            } else{
+                bufStr = bufStr + "," + buf + "";
+            }
+        }
+        System.out.println(bufStr);
+
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
+        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStr);
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
 
         if(filtrDate.equals("targetdate")){
@@ -351,7 +361,18 @@ public class QueueBean implements UserDao {
                 addStudy(buf);
             }
         }
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate);
+
+        String bufStrMod = "";
+        for(String buf:selectedModalitiName){
+            if(!bufStrMod.equals("")){
+                bufStrMod = "'" + buf + "'";
+            }else {
+                bufStrMod = bufStr + ",'" + buf + "'";
+            }
+        }
+        System.out.println(bufStrMod);
+
+        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStrMod);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 

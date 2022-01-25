@@ -10,10 +10,7 @@ import javax.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static javax.persistence.TemporalType.DATE;
 
@@ -227,7 +224,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate) {
+    public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         switch (dateSeachType){
             case "today":
@@ -261,7 +258,8 @@ public interface UserDao {
                 query = session.createQuery(hql);
             }else{
                 //extract(DAY FROM CURRENT_TIMESTAMP())
-                hql= "from BitServerStudy  where sdate BETWEEN :frmdate and  :todate";
+                hql = "from BitServerStudy  where sdate BETWEEN :frmdate and  :todate";
+                System.out.println("hql =  "+hql);
                 query = session.createQuery(hql);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);
@@ -273,6 +271,7 @@ public interface UserDao {
                 query.setParameter("pstatus", state);
             }else{
                 hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
+                System.out.println("hql =  "+hql);
                 query = session.createQuery(hql);
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);
@@ -281,7 +280,13 @@ public interface UserDao {
         }
         List<BitServerStudy> results = query.list();
         session.close();
-        return results;
+        List<BitServerStudy> results2 = new ArrayList<>();
+        for(BitServerStudy bufStudy:results){
+            if(strModality.contains(bufStudy.getModality())){
+                results2.add(bufStudy);
+            }
+        }
+        return results2;
     }
 
     public default List<BitServerStudy> getMyStudy(Users currentUser) {

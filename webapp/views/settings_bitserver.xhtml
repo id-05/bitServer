@@ -181,6 +181,7 @@
                         <p:dataTable id="dt-users" widgetVar="dtUsers" var="users" value="#{settingBitServerBean.usersList}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
+                                     size="small"
                                      selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
                                      rows="10" rowSelectMode="add" >
 
@@ -311,6 +312,7 @@
                         <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup"
                                      var="usergroup" value="#{settingBitServerBean.usergroupList}"
                                      reflow="true" styleClass="usergroup-table"
+                                     size="small"
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
                                      rows="10" rowSelectMode="add" >
