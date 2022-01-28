@@ -1,8 +1,0 @@
-
-
-function OnStoredInstance(instanceId, tags, metadata)
-        if tags.StationName == 'D4000RF_PAV' then
-                SendToModality(instanceId, 'MULTIVOX')
-        end
-        SendToModality(instanceId,'CAMI')
-end
