@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -20,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
@@ -264,12 +267,12 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        String bufStr = "";
+        StringBuilder bufStr = new StringBuilder();
         for(String buf:selectedModalitiName) {
             if (bufStr.length()<1) {
-                bufStr = "" + buf + "";
+                bufStr = new StringBuilder("" + buf + "");
             } else{
-                bufStr = bufStr + "," + buf + "";
+                bufStr.append(",").append(buf);
             }
         }
         System.out.println(bufStr);
@@ -277,7 +280,7 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStr);
+        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
 
         if(filtrDate.equals("targetdate")){
@@ -292,9 +295,15 @@ public class QueueBean implements UserDao {
                 datepickerVisible2 = false;
             }
         }
+        //filteredRows = visibleStudiesList;
 
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        PrimeFaces.current().ajax().update(":seachform:datecard");
+        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+        UIComponent component = view.findComponent(":seachform:dt-studys");
+        DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
+        dt.resetValue();
+
+        PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
+        //PrimeFaces.current().ajax().update(":seachform:datecard");
     }
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){

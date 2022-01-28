@@ -190,8 +190,6 @@
                                  emptyMessage="Нет записей для отображения"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
-
-
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselect" update=":seachform:send-button"/>
                         <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
