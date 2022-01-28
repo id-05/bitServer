@@ -182,6 +182,8 @@ public class DateBaseBean implements UserDao {
         listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         listResources.add(new BitServerResources("updateafteropen","true"));
 
+      //  /home/tomcat/settings/netsetting
+
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }

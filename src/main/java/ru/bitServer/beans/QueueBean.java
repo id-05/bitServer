@@ -229,9 +229,13 @@ public class QueueBean implements UserDao {
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
 
-        BitServerResources bufResource = getBitServerResource("updateafteropen");
-        if(bufResource.getRvalue().equals("true")) {
-            readStudyFromDB();
+        try {
+            BitServerResources bufResource = getBitServerResource("updateafteropen");
+            if (bufResource.getRvalue().equals("true")) {
+                readStudyFromDB();
+            }
+        }catch (Exception e){
+            System.out.println("error update after open "+e.getMessage());
         }
 
         selectedModalitiName.clear();

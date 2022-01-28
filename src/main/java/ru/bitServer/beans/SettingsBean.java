@@ -244,7 +244,7 @@ public class SettingsBean {
                     .getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
-                        + "/views/errorpage.xhtml"+"?");
+                        + "/views/errorpage.xhtml"+"?"+e.getMessage());
             }catch (Exception e2){
                 System.out.println(e2.getMessage());
             }
