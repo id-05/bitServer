@@ -40,7 +40,7 @@ public class QueueBean implements UserDao {
     public String filtrDate = "today";
     public Date firstdate;
     public Date seconddate;
-    public int typeSeach = 0;
+    public int typeSeach = 5;
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
     public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
@@ -61,6 +61,61 @@ public class QueueBean implements UserDao {
     boolean datepickerVisible1;
     boolean datepickerVisible2;
     List<String> selectedModalitiName = new ArrayList<>();
+    String colStatus;
+    String colDateBirth;
+    String colDate;
+    String colDescription;
+    String colModality;
+    String colWhereSend;
+    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+
+    public String getColStatus() {
+        return colStatus;
+    }
+
+    public void setColStatus(String colStatus) {
+        this.colStatus = colStatus;
+    }
+
+    public String getColDateBirth() {
+        return colDateBirth;
+    }
+
+    public void setColDateBirth(String colDateBirth) {
+        this.colDateBirth = colDateBirth;
+    }
+
+    public String getColDate() {
+        return colDate;
+    }
+
+    public void setColDate(String colDate) {
+        this.colDate = colDate;
+    }
+
+    public String getColDescription() {
+        return colDescription;
+    }
+
+    public void setColDescription(String colDescription) {
+        this.colDescription = colDescription;
+    }
+
+    public String getColModality() {
+        return colModality;
+    }
+
+    public void setColModality(String colModality) {
+        this.colModality = colModality;
+    }
+
+    public String getColWhereSend() {
+        return colWhereSend;
+    }
+
+    public void setColWhereSend(String colWhereSend) {
+        this.colWhereSend = colWhereSend;
+    }
 
     public List<String> getSelectedModalitiName() {
         return selectedModalitiName;
@@ -252,6 +307,26 @@ public class QueueBean implements UserDao {
         selectedModalitiName.add("CR");
         selectedModalitiName.add("MG");
         selectedModalitiName.add("DX");
+
+
+        bitServerResourcesList = getAllBitServerResource();
+        for(BitServerResources buf: bitServerResourcesList){
+            switch (buf.getRname()){
+                case "colstatus": colStatus = buf.getRvalue();
+                    break;
+                case "colDateBirth": colDateBirth = buf.getRvalue();
+                    break;
+                case "colDate": colDate = buf.getRvalue();
+                    break;
+                case "colDescription": colDescription = buf.getRvalue();
+                    break;
+                case "colModality": colModality = buf.getRvalue();
+                    break;
+                case "colWhereSend": colWhereSend = buf.getRvalue();
+                    break;
+            }
+        }
+
     }
 
     public Boolean firstDateSelect() {
@@ -275,7 +350,6 @@ public class QueueBean implements UserDao {
                 bufStr.append(",").append(buf);
             }
         }
-        System.out.println(bufStr);
 
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:send-button");
@@ -383,7 +457,6 @@ public class QueueBean implements UserDao {
                 bufStrMod = bufStr + ",'" + buf + "'";
             }
         }
-        System.out.println(bufStrMod);
 
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStrMod);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");

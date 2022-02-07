@@ -10,9 +10,7 @@ import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancWebUser;
-import ru.bitServer.util.AuthorizationFilter;
 import ru.bitServer.util.OrthancRestApi;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -21,7 +19,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -239,6 +236,7 @@ public class SettingsBean {
             freeSpace = (int) (bufFile.getFreeSpace() / (double) (1024 * 1024 * 1024)) + " Gb";
             double bufDouble = (bufFile.getFreeSpace() / (double) bufFile.getTotalSpace());
             usedSpace = (100 - (int) (bufDouble * 100)) + " %";
+
         }catch (Exception e){
             ExternalContext ec = FacesContext.getCurrentInstance()
                     .getExternalContext();
@@ -444,10 +442,7 @@ public class SettingsBean {
         String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"w+\");" +
                 "f:write(\""+modifyStr+"\"); "+
                 "f:close()";
-        //System.out.println("url param "+urlParameters);
         StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-
-        //System.out.println("saveout = "+jsonOb.toString());
         showMessage("Сообщение","Изменения сохранены!", info);
     }
 

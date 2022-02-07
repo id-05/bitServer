@@ -154,9 +154,10 @@
                         <p:divider align="left" type="dashed">
                             <b>Включить HTTPS</b>
                         </p:divider>
+
                         <p class="p-m-0">
                             <p:toggleSwitch value="#{settingBitServerBean.httpmode}">
-                                <p:ajax listener="#{settingBitServerBean.changehttpmode}" />
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
                             </p:toggleSwitch>
                         </p>
                         <br></br>
@@ -420,11 +421,148 @@
                         </p:divider>
                         <p class="p-m-0">
                             <p:toggleSwitch value="#{settingBitServerBean.updateQueueAfterOpen}">
-                                <p:ajax listener="#{settingBitServerBean.changehttpmode}" />
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
                             </p:toggleSwitch>
                         </p>
                         <br></br>
                         <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить в длительному ожиданию открытия страницы</div>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Внешний вид таблиц">
+                    <p:outputPanel>
+
+                        <p class="p-m-0" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px">
+
+                            <p:panelGrid id="manageTG"  styleClass="ui-panelgrid-blank ui-fluid" style="border:0px none; background-color:transparent;">
+
+                                <p:row>
+
+                                    <p:column>
+                                        <p:outputLabel for="statusTogle" style="margin-right: .5rem">Статус</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="datebthTogle" style="margin-right: .5rem">Дата рождения</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="dateTogle" style="margin-right: .5rem">Дата исследования</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="descriptionTogle" style="margin-right: .5rem">Описание</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="modalitiTogle" style="margin-right: .5rem">Модальность</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="whereSendTogle" style="margin-right: .5rem">Куда отправлено</p:outputLabel>
+                                    </p:column>
+
+                                </p:row>
+
+                                <p:row>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="statusTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStatus}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="datebthTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDateBirth}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="dateTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDate}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="descriptionTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDescription}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="modalitiTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colModality}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="whereSendTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colWhereSend}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                </p:row>
+
+                            </p:panelGrid>
+
+                        </p>
+
+                        <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy"
+                                     reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                                     emptyMessage="Нет записей для отображения"
+                                     paginatorPosition="bottom">
+
+                            <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
+
+                            <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colStatus == 'true'}" >
+                                <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
+                                              value="#{bitServerStudy.rustatus}"/>
+                            </p:column>
+
+                            <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
+                                <h:outputText value="#{bitServerStudy.shortid}"/>
+                            </p:column>
+
+                            <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}" filterBy="#{bitServerStudy.patientname}" style="text-align: center">
+                                <h:outputText value="#{bitServerStudy.patientname}"/>
+                            </p:column>
+
+                            <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDateBirth == 'true'}">
+                                <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDate == 'true'}">
+                                <h:outputText value="#{bitServerStudy.sdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDescription == 'true'}">
+                                <h:outputText value="#{bitServerStudy.sdescription}"/>
+                            </p:column>
+
+                            <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colModality == 'true'}">
+                                <h:outputText value="#{bitServerStudy.modality}"/>
+                            </p:column>
+
+                            <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colWhereSend == 'true'}">
+                                <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <br></br>
+                        <div > ----</div>
 
                     </p:outputPanel>
                 </p:tab>

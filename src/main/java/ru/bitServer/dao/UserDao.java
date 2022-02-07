@@ -169,7 +169,7 @@ public interface UserDao {
     public default void updateBitServiceResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.update(bitServerResources);
+        session.saveOrUpdate(bitServerResources);
         transaction.commit();
         session.close();
     }
@@ -259,7 +259,6 @@ public interface UserDao {
             }else{
                 //extract(DAY FROM CURRENT_TIMESTAMP())
                 hql = "from BitServerStudy  where sdate BETWEEN :frmdate and  :todate";
-                System.out.println("hql =  "+hql);
                 query = session.createQuery(hql);
                 query.setParameter("frmdate", firstdate,DATE);
                 query.setParameter("todate", seconddate,DATE);
@@ -271,7 +270,6 @@ public interface UserDao {
                 query.setParameter("pstatus", state);
             }else{
                 hql= "from BitServerStudy  where status=:pstatus and sdate BETWEEN :frmdate and :todate";
-                System.out.println("hql =  "+hql);
                 query = session.createQuery(hql);
                 query.setParameter("pstatus", state);
                 query.setParameter("frmdate", firstdate,DATE);

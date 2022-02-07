@@ -80,7 +80,7 @@
                     <p:card id="datecard" style="margin-bottom: 1em">
 
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 1em" >
-                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px"
+                            <p:selectOneButton id="state" value="#{queueBean.typeSeach}" style="margin-left: 1em; margin-right: 1em; width: 500px; margin-bottom: 1em"
                                                rendered="#{queueBean.currentUser.role != 'demo'}">
                                 <f:selectItem itemLabel="Не описан" itemValue="0" />
                                 <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
@@ -90,8 +90,8 @@
                             </p:selectOneButton>
                         </div>
 
-                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-top: 2em">
-                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px; margin-bottom: 1em;">
+                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em">
+                            <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="margin-left: 1em; margin-right: 1em; width: 500px; ">
                                 <f:selectItem itemLabel="Сегодня " itemValue="today" />
                                 <f:selectItem itemLabel="Вчера " itemValue="yesterday"/>
                                 <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
@@ -110,8 +110,8 @@
 
                         </div>
 
-                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 1em; margin-top: 1em">
-                            <p:selectManyButton value="#{queueBean.selectedModalitiName}" style="margin-left: 1em; margin-right: 1em; width: 500px; margin-bottom: 1em;"
+                        <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-top: 1em">
+                            <p:selectManyButton value="#{queueBean.selectedModalitiName}" style="margin-left: 1em; margin-right: 1em; margin-top: 1em; width: 500px; margin-bottom: 1em;"
                                                 rendered="#{queueBean.currentUser.role == 'demo'}">
                                 <f:selectItem itemLabel="CR" itemValue="CR"/>
                                 <f:selectItem itemLabel="CT" itemValue="CT"/>
@@ -195,11 +195,10 @@
                         <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
-                        <p:ajax event="contextMenu" update=":seachform:dt-studys"/>
 
-                        <p:column selectionMode="multiple" exportable="false" style="width:20px;"> </p:column>
+                        <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
 
-                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center">
+                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
                             <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
                                           value="#{bitServerStudy.rustatus}"/>
                         </p:column>
@@ -212,21 +211,32 @@
                             <h:outputText value="#{bitServerStudy.patientname}"/>
                         </p:column>
 
-                        <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center">
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center"
+                                  rendered="#{queueBean.colDateBirth == 'true'}">
+                            <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
+                                  rendered="#{queueBean.colDate == 'true'}">
                             <h:outputText value="#{bitServerStudy.sdate}">
                                 <f:convertDateTime pattern="dd.MM.yyyy" />
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                                  rendered="#{queueBean.colDescription == 'true'}">
                             <h:outputText value="#{bitServerStudy.sdescription}"/>
                         </p:column>
 
-                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
+                                  rendered="#{queueBean.colModality == 'true'}">
                             <h:outputText value="#{bitServerStudy.modality}"/>
                         </p:column>
 
-                        <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center">
+                        <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
+                                  rendered="#{queueBean.colWhereSend == 'true'}">
                             <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
                         </p:column>
 
@@ -265,6 +275,7 @@
                             <p:commandButton id="gettowork"
                                              icon="pi pi-pencil"
                                              styleClass="rounded-button" process="@this"
+                                             rendered="#{queueBean.currentUser.role != 'demo'}"
                                              disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
                                                             or bitServerStudy.status == 1 or bitServerStudy.status == 3
                                                                 or queueBean.currentUser.role == 'onlyview'}"
@@ -279,9 +290,11 @@
                     <p:contextMenu for="dt-studys" >
 
                         <p:menuitem value="Отозвать с описания" update="dt-studys"
+                                    rendered="#{queueBean.currentUser.role != 'demo'}"
                                     action="#{queueBean.comebackStudy}"
                                     disabled="#{not empty bitServerStudy.usergroupwhosees or queueBean.currentUser.role == 'onlyview'}"/>
                         <p:menuitem value="Пометить как описанное" update="dt-studys"
+                                    rendered="#{queueBean.currentUser.role != 'demo'}"
                                     action="#{queueBean.markAsHasResult}"
                                     disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
                         <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">

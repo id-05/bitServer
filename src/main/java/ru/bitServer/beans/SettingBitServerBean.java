@@ -1,6 +1,7 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.Usergroup;
@@ -9,6 +10,8 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -40,6 +43,60 @@ public class SettingBitServerBean implements UserDao {
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public String networksetpathfile;
     public Date syncdate;
+    public String colStatus;
+    public String colDateBirth;
+    public String colDate;
+    public String colDescription;
+    public String colModality;
+    public String colWhereSend;
+
+    public String getColStatus() {
+        return colStatus;
+    }
+
+    public void setColStatus(String colStatus) {
+        this.colStatus = colStatus;
+    }
+
+    public String getColDateBirth() {
+        return colDateBirth;
+    }
+
+    public void setColDateBirth(String colDateBirth) {
+        this.colDateBirth = colDateBirth;
+    }
+
+    public String getColDate() {
+        return colDate;
+    }
+
+    public void setColDate(String colDate) {
+        this.colDate = colDate;
+    }
+
+    public String getColDescription() {
+        return colDescription;
+    }
+
+    public void setColDescription(String colDescription) {
+        this.colDescription = colDescription;
+    }
+
+    public String getColModality() {
+        return colModality;
+    }
+
+    public void setColModality(String colModality) {
+        this.colModality = colModality;
+    }
+
+    public String getColWhereSend() {
+        return colWhereSend;
+    }
+
+    public void setColWhereSend(String colWhereSend) {
+        this.colWhereSend = colWhereSend;
+    }
 
     public String getUpdateQueueAfterOpen() {
         return updateQueueAfterOpen;
@@ -206,6 +263,22 @@ public class SettingBitServerBean implements UserDao {
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
+
+        boolean updateRes = false;
+        for(BitServerResources buf: bitServerResourcesList){
+            if(buf.getRname().equals("colstatus")){
+                updateRes = true;
+            }
+        }
+        if(!updateRes){
+            bitServerResourcesList.add(new BitServerResources("colstatus","false"));
+            bitServerResourcesList.add(new BitServerResources("colDateBirth","false"));
+            bitServerResourcesList.add(new BitServerResources("colDate","false"));
+            bitServerResourcesList.add(new BitServerResources("colDescription","false"));
+            bitServerResourcesList.add(new BitServerResources("colModality","false"));
+            bitServerResourcesList.add(new BitServerResources("colWhereSend","false"));
+        }
+
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
                 case "orthancaddress": orthancAddress = buf.getRvalue();
@@ -238,13 +311,21 @@ public class SettingBitServerBean implements UserDao {
                     }
                 }
                     break;
+
+                case "colstatus": colStatus = buf.getRvalue();
+                    break;
+                case "colDateBirth": colDateBirth = buf.getRvalue();
+                    break;
+                case "colDate": colDate = buf.getRvalue();
+                    break;
+                case "colDescription": colDescription = buf.getRvalue();
+                    break;
+                case "colModality": colModality = buf.getRvalue();
+                    break;
+                case "colWhereSend": colWhereSend = buf.getRvalue();
+                    break;
             }
         }
-    }
-
-    public void changehttpmode(){
-        System.out.println("change http mode");
-        saveParam();
     }
 
     public List<Users> prepareUserList(){
@@ -324,9 +405,29 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "syncdate": buf.setRvalue(format.format(syncdate));
                     break;
+                case "colstatus": buf.setRvalue(colStatus);
+                    break;
+                case "colDateBirth": buf.setRvalue(colDateBirth);
+                    break;
+                case "colDate": buf.setRvalue(colDate);
+                    break;
+                case "colDescription": buf.setRvalue(colDescription);
+                    break;
+                case "colModality": buf.setRvalue(colModality);
+                    break;
+                case "colWhereSend": buf.setRvalue(colWhereSend);
+                    break;
             }
             updateBitServiceResource(buf);
         }
+
+//        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+//        UIComponent component = view.findComponent(":form:accord:dt-studys");
+//        DataTable dt = (DataTable) component.findComponent(":form:accord:dt-studys");
+//        dt.clearInitialState();
+
+        PrimeFaces.current().ajax().update(":form:accord:dt-studys");
+        System.out.println(colStatus);
     }
 
     public void initNewUser() {
