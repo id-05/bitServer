@@ -18,7 +18,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,26 +27,26 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.*;
 
-@ManagedBean(name = "remoteDashboard", eager = true)
+@ManagedBean(name = "remoteDashboard")
 @ViewScoped
 public class RemoteUserDashboardBean implements UserDao {
 
-    private DashboardModel model;
-    private int countBlock = 0;
-    private int countToday = 0;
-    private int countWeek = 0;
-    private int countMounth = 0;
-    private int countAll = 0;
-    private Date timeLeft;
-    public Users currentUser;
-    private BitServerStudy currentStudy;
-    private List<BitServerStudy> myStudies = new ArrayList<>();
-    private List<BitServerStudy> allHasResultStudies = new ArrayList<>();
-    public LineChartModel lineModel;
-    private String typeChart = "mounth";
-    private int sliderDate = 50;
-    public Date firstdate;
-    public Date seconddate;
+    DashboardModel model;
+    int countBlock = 0;
+    int countToday = 0;
+    int countWeek = 0;
+    int countMounth = 0;
+    int countAll = 0;
+    Date timeLeft;
+    Users currentUser;
+    BitServerStudy currentStudy;
+    List<BitServerStudy> myStudies = new ArrayList<>();
+    List<BitServerStudy> allHasResultStudies = new ArrayList<>();
+    LineChartModel lineModel;
+    String typeChart = "mounth";
+    int sliderDate = 50;
+    Date firstdate;
+    Date seconddate;
 
     public Users getCurrentUser() {
         return currentUser;
@@ -56,8 +55,6 @@ public class RemoteUserDashboardBean implements UserDao {
     public void setCurrentUser(Users currentUser) {
         this.currentUser = currentUser;
     }
-
-    DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
 
     public int getSliderDate() {
         return sliderDate;
@@ -99,14 +96,6 @@ public class RemoteUserDashboardBean implements UserDao {
         this.timeLeft = timeLeft;
     }
 
-    public int getCountWeek() {
-        return countWeek;
-    }
-
-    public void setCountWeek(int countWeek) {
-        this.countWeek = countWeek;
-    }
-
     public int getCountMounth() {
         return countMounth;
     }
@@ -121,14 +110,6 @@ public class RemoteUserDashboardBean implements UserDao {
 
     public void setCountAll(int countAll) {
         this.countAll = countAll;
-    }
-
-    public List<BitServerStudy> getMyStudies() {
-        return myStudies;
-    }
-
-    public void setMyStudies(List<BitServerStudy> myStudies) {
-        this.myStudies = myStudies;
     }
 
     public int getCountToday() {

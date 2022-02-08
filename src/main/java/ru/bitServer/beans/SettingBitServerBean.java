@@ -10,6 +10,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +22,10 @@ import static ru.bitServer.beans.AutoriseBean.showMessage;
 @ViewScoped
 public class SettingBitServerBean implements UserDao {
 
+    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    int progress1;
     List<Users> usersList;
     List<Users> selectedUsers;
     Users selectedUser;
@@ -39,12 +46,23 @@ public class SettingBitServerBean implements UserDao {
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     String networksetpathfile;
     Date syncdate;
+    Date startDate;
+    Date stopDate;
     String colStatus;
     String colDateBirth;
     String colDate;
     String colDescription;
     String colModality;
     String colWhereSend;
+
+    public Integer getProgress1() {
+        progress1 = updateProgress(progress1);
+        return progress1;
+    }
+
+    public void setProgress1(int progress1) {
+        this.progress1 = progress1;
+    }
 
     public String getColStatus() {
         return colStatus;
@@ -132,6 +150,22 @@ public class SettingBitServerBean implements UserDao {
 
     public void setSyncdate(Date syncdate) {
         this.syncdate = syncdate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getStopDate() {
+        return stopDate;
+    }
+
+    public void setStopDate(Date stopDate) {
+        this.stopDate = stopDate;
     }
 
     public String getOrthancWebPort() {
@@ -243,9 +277,54 @@ public class SettingBitServerBean implements UserDao {
     }
 
 
+    public void onComplete() {
+        System.out.println("complete");
+    }
+
+    public void cancel() {
+        progress1 = 0;
+    }
+
+    private static Integer updateProgress(Integer progress) {
+        if (progress == null) {
+            progress = 0;
+        }
+        else {
+            progress = progress + (int) (Math.random() * 35);
+
+            if (progress > 100) {
+                progress = 100;
+            }
+        }
+
+        return progress;
+    }
+
+    public void startProgress(){
+        System.out.println("start");
+        System.out.println(FORMAT2.format(startDate));
+        Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
+        Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
+        Instant bufInstant = startInstant.plus(1,ChronoUnit.DAYS);
+
+        while(!FORMAT.format(Date.from(bufInstant)).equals( FORMAT.format(Date.from(stopInstant)) ))
+        {
+            String dateStr = FORMAT.format(Date.from(startInstant)) + "-" + FORMAT.format(Date.from(bufInstant));
+            System.out.println(dateStr);
+            startInstant = startInstant.plus(1,ChronoUnit.DAYS);
+            bufInstant = startInstant.plus(1,ChronoUnit.DAYS);
+        }
+
+        PrimeFaces.current().executeScript("PF('pbAjax').start()");
+        PrimeFaces.current().executeScript("PF('startButton2').disable()");
+    }
+
+
     @PostConstruct
     public void init() {
         System.out.println("settingBitServerBean page");
+        startDate = new Date();
+        stopDate = new Date();
         usergroupList = getBitServerUsergroupList();
         usersList = prepareUserList();
         initNewUser();

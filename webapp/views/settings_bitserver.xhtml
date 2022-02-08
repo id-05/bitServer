@@ -426,6 +426,44 @@
                         <br/>
                         <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить в длительному ожиданию открытия страницы</div>
 
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация</b>
+                        </p:divider>
+
+                        <p:outputLabel for="startdate">Дата начала синхронизации: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="startdate" value="#{settingBitServerBean.startDate}" showIcon="true" style="font-weight: bold; margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <p:outputLabel for="stopdate">  Дата окончания синхронизации: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="stopdate" value="#{settingBitServerBean.stopDate}" showIcon="true" style="margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <p:divider />
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         actionListener="#{settingBitServerBean.startProgress}"
+                                         widgetVar="startButton2" styleClass="p-mr-2" ajax="false"/>
+                        <p:commandButton value="Стоп" action="#{settingBitServerBean.cancel}"
+                                         oncomplete="PF('pbAjax').cancel(); PF('startButton2').enable()" styleClass="ui-button-outlined"/>
+
+                        <p:progressBar widgetVar="pbAjax" ajax="true" value="#{settingBitServerBean.progress1}"
+                                       labelTemplate="{value}%" styleClass="p-mt-3" global="false">
+                            <p:ajax event="complete" listener="#{settingBitServerBean.onComplete}"
+                                    oncomplete="PF('startButton2').enable()" />
+                        </p:progressBar>
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
+
                     </p:outputPanel>
                 </p:tab>
 
@@ -561,7 +599,7 @@
                         </p:dataTable>
 
                         <br/>
-                        <div > ----</div>
+                        <div > Включение/выключение соответствующих тумблеров, отвечает за видимость колонок в таблице очереди</div>
 
                     </p:outputPanel>
                 </p:tab>

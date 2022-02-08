@@ -30,6 +30,8 @@ import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
@@ -41,7 +43,7 @@ public class QueueBean implements UserDao {
     Date firstdate;
     Date seconddate;
     int typeSeach = 5;
-    private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
     ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
@@ -403,6 +405,7 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
+        double ii=0;
         selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
@@ -414,8 +417,12 @@ public class QueueBean implements UserDao {
         String bufStr = getBitServerResource("syncdate").getRvalue();
         String dateStartFromBase = bufStr.replaceAll("-","");
 
+
         seconddate = new Date();
-        String dateStr = dateStartFromBase + "-" + format.format(seconddate);
+        String dateStr = dateStartFromBase + "-" + FORMAT.format(seconddate);
+//        Instant now = Instant.now();
+//        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+//        String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(seconddate);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
         StringBuilder modalities = new StringBuilder();
@@ -428,12 +435,16 @@ public class QueueBean implements UserDao {
         queryDetails.addProperty("Modality", modalities.toString());
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        System.out.println(query.toString());
         assert sb != null;
 
         boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
+        System.out.println("studiesFromRestApi = "+studiesFromRestApi.size());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
+            ii++;
+            System.out.println("ii = "+ii);
             existInTable = false;
             for(BitServerStudy bBSS:studiesFromTableBitServer){
                 if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
@@ -490,7 +501,7 @@ public class QueueBean implements UserDao {
 
             if(!patientDobString.equals("")){
                 try {
-                    patientDob = format.parse(patientDobString);
+                    patientDob = FORMAT.parse(patientDobString);
                 } catch (Exception e) {
                     System.out.println("Error to transfer date 1  "+parentPatientDetails);
                 }
@@ -520,9 +531,9 @@ public class QueueBean implements UserDao {
             }
 
             try {
-                studyDateObject = format.parse("19000101");
+                studyDateObject = FORMAT.parse("19000101");
                 assert studyDate != null;
-                studyDateObject = format.parse(studyDate);
+                studyDateObject = FORMAT.parse(studyDate);
             } catch (Exception e) {
                 System.out.println("Errot to transfer date 2");
             }

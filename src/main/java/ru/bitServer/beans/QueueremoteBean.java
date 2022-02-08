@@ -23,14 +23,14 @@ import static ru.bitServer.beans.MainBean.*;
 @ViewScoped
 public class QueueremoteBean implements UserDao {
 
-    private List<BitServerStudy> visibleStudiesList;
-    private BitServerStudy selectedVisibleStudy;
-    public List<Usergroup> usergroupList;
-    public String selectedUserGroup;
-    public Users currentUser;
-    public String currentUserId;
-    private UploadedFile resultFile;
-    private OrthancRestApi connection;
+    List<BitServerStudy> visibleStudiesList;
+    BitServerStudy selectedVisibleStudy;
+    List<Usergroup> usergroupList;
+    String selectedUserGroup;
+    Users currentUser;
+    String currentUserId;
+    UploadedFile resultFile;
+    OrthancRestApi connection;
 
     public Users getCurrentUser() {
         return currentUser;

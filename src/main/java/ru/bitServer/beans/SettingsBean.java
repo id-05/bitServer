@@ -103,12 +103,12 @@ public class SettingsBean {
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
 
-    public String usedSpace;
-    public String totalSpace;
-    public String freeSpace;
-    public String directory;
+    public String usedSpace = "1";
+    public String totalSpace = "1";
+    public String freeSpace = "1";
+    public String directory = "1";
 
-    private static final Logger log = Logger.getLogger(SettingsBean.class);
+    //private static final Logger log = Logger.getLogger(SettingsBean.class);
 
     public String getLuaScriptsFolder() {
         return luaScriptsFolder;
@@ -319,7 +319,7 @@ public class SettingsBean {
         //    luaFolder = json.getLuaFolder();
             //luaScriptsFolder = luaFolder.toString();
         }catch (Exception e){
-            log.info("Error from  SettingsBean:"+e.getMessage());
+            MainBean.LOG.info("Error from  SettingsBean: "+e.getMessage());
         }
     }
 

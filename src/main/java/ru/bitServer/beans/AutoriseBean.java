@@ -1,6 +1,7 @@
 package ru.bitServer.beans;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
@@ -20,7 +21,7 @@ public class AutoriseBean implements UserDao {
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
-    private static final Logger log = Logger.getLogger(AutoriseBean.class);
+
 
     String inputUserName;
     String inputPassword;
@@ -80,7 +81,7 @@ public class AutoriseBean implements UserDao {
             if (currentUser.getUname()!=null) {
                 HttpSession session = SessionUtils.getSession();
 
-                log.info(currentUser.getUid() + " Пользователь зарегистрировался!");
+                MainBean.LOG.info(currentUser.getUid() + " Пользователь зарегистрировался!");
                 session.setAttribute("userid", currentUser.getUid());
                 currentuserTheme = "saga";
 

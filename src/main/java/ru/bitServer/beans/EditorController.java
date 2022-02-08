@@ -11,11 +11,11 @@ import javax.faces.context.FacesContext;
 @ViewScoped
 public class EditorController implements Serializable {
 
-    private static final long serialVersionUID = 20111020L;
+    static final long SERIAL_VERSION_UID = 20111020L;
 
-    private String content;
-    private String secondContent;
-    private String color = "#33fc14";
+    String content;
+    String secondContent;
+    String color = "#33fc14";
 
     public String getContent() {
         return content;

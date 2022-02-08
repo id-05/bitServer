@@ -2,6 +2,7 @@ package ru.bitServer.beans;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.log4j.Logger;
 import org.primefaces.model.DashboardModel;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
@@ -13,6 +14,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @ManagedBean(name = "mainBean", eager = true)
 @SessionScoped
@@ -35,6 +37,7 @@ public class MainBean implements UserDao {
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
+    public static final Logger LOG = Logger.getLogger(MainBean.class);
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -104,6 +107,20 @@ public class MainBean implements UserDao {
     public void init() {
         versionInfo = "1.1";
         timeOnWork = 24;
+
+
+//        ResourceBundle RB = new ResourceBundle() {
+//            @Override
+//            protected Object handleGetObject(String key) {
+//                return null;
+//            }
+//
+//            @Override
+//            public Enumeration<String> getKeys() {
+//                return null;
+//            }
+//        };
+//        LOG.setResourceBundle(RB);
 
         //model = new DefaultDashboardModel();
         //DashboardColumn column1 = new DefaultDashboardColumn();
