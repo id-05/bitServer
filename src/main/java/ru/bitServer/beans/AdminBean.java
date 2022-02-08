@@ -1,6 +1,5 @@
 package ru.bitServer.beans;
 
-
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import ru.bitServer.dicomviewer.Instance;
@@ -10,7 +9,6 @@ import ru.bitServer.dicomviewer.Study;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -27,13 +25,6 @@ import java.util.Map;
 @RequestScoped
 public class AdminBean {
     public String buf = "buffer";
-    public String getBuf() {
-        return buf;
-    }
-
-    public void setBuf(String buf) {
-        this.buf = buf;
-    }
 
     @PostConstruct
     public void init(){

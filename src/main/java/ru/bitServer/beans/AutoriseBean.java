@@ -13,7 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@ManagedBean(name = "autoriseBean", eager = false)
+@ManagedBean(name = "autoriseBean")
 @SessionScoped
 public class AutoriseBean implements UserDao {
 
@@ -81,12 +81,12 @@ public class AutoriseBean implements UserDao {
                 HttpSession session = SessionUtils.getSession();
 
                 log.info(currentUser.getUid() + " Пользователь зарегистрировался!");
-                //System.out.println(session.);
                 session.setAttribute("userid", currentUser.getUid());
                 currentuserTheme = "saga";
 
                 switch (currentUser.getRole()){
                     case "localuser":
+                    case "onlyview":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
                         break;
                     case "remoteuser":
@@ -97,9 +97,6 @@ public class AutoriseBean implements UserDao {
                         break;
                     case "client":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/client.xhtml");
-                        break;
-                    case "onlyview":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
                         break;
                     case "demo":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");

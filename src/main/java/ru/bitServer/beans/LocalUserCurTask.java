@@ -1,6 +1,5 @@
 package ru.bitServer.beans;
 
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
@@ -25,16 +24,16 @@ import java.util.List;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-@ManagedBean(name = "lucurrenttaskBean", eager = false)
+@ManagedBean(name = "lucurrenttaskBean")
 @ViewScoped
 public class LocalUserCurTask implements UserDao {
 
-    public Users currentUser;
-    public String currentUserId;
-    public BitServerStudy currentStudy;
-    public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
-    private OrthancRestApi connection;
-    private String resulttext;
+    Users currentUser;
+    String currentUserId;
+    BitServerStudy currentStudy;
+    List<BitServerStudy> visibleStudiesList = new ArrayList<>();
+    OrthancRestApi connection;
+    String resulttext;
 
     public String getResulttext() {
         return resulttext;
@@ -81,7 +80,6 @@ public class LocalUserCurTask implements UserDao {
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        System.out.println("Вход");
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             System.out.println("перед add");
@@ -94,7 +92,6 @@ public class LocalUserCurTask implements UserDao {
     public void addResult(BitServerStudy selectedVisibleStudy, UploadedFile resultFile) throws IOException {
         selectedVisibleStudy.setStatus(2);
         selectedVisibleStudy.setUserwhodiagnost(currentUserId);
-        System.out.println("sid = "+selectedVisibleStudy.getSid());
         selectedVisibleStudy.setDateresult(new Date());
         currentUser.setHasBlockStudy(false);
         currentUser.setBlockStudy("");
@@ -123,27 +120,5 @@ public class LocalUserCurTask implements UserDao {
 
     public void saveResult(){
         System.out.print("save result");
-    }
-
-    public void changeResult(){
-
-        if(resulttext.contains("тест")){
-            resulttext = "тест";
-            System.out.println("yes contains");
-            //PrimeFaces.current().
-            //PrimeFaces.current().ajax().update(":lucurrenttask:editorResultDialogt:ed");
-        }
-
-        System.out.println(resulttext);
-    }
-
-    public List<String> completeText(String query) {
-        String queryLowerCase = query.toLowerCase();
-        List<String> countryList = new ArrayList<>();
-
-        for (int i = 0; i < 5; i++) {
-            countryList.add("Строка "+i);
-        }
-        return countryList;
     }
 }

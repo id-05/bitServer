@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.FlowEvent;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
@@ -18,19 +17,18 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-
-@ManagedBean(name = "networkSettingsBean", eager = false)
+@ManagedBean(name = "networkSettingsBean")
 @ViewScoped
 public class NetworkSettingsBean implements UserDao {
 
-    public Users currentUser;
-    public String currentUserId;
-    public String pathToFile;
-    public ArrayList<NetworkAdapter> adapters = new ArrayList<>();
-    public NetworkAdapter selectedAdapter;
-    public boolean advancedmode;
-    public String configFileText;
-    public StringBuilder newtworkSettingsFile;
+    Users currentUser;
+    String currentUserId;
+    String pathToFile;
+    ArrayList<NetworkAdapter> adapters = new ArrayList<>();
+    NetworkAdapter selectedAdapter;
+    boolean advancedmode;
+    String configFileText;
+    StringBuilder newtworkSettingsFile;
 
     public String getConfigFileText() {
         return configFileText;
@@ -88,7 +86,7 @@ public class NetworkSettingsBean implements UserDao {
         adapters = settingsParcer.getAdapterList();
     }
 
-    public void resAdapter() throws InterruptedException, IOException {
+    public void resAdapter() {
         showMessage("Внимание","Сетевой адаптер будет перезагружен!",FacesMessage.SEVERITY_INFO);
 
         try {
@@ -135,31 +133,23 @@ public class NetworkSettingsBean implements UserDao {
 
             if (verifiUnical) {
                 adapters.add(selectedAdapter);
-                PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
-                PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
             } else {
                 adapters.remove(selectedAdapter);
                 adapters.add(selectedAdapter);
                 adapters.sort(Comparator.comparing(NetworkAdapter::getName));
-                PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
-                PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
             }
+            PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
+            PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
         }
     }
 
     public void deleteAdapter(){
         adapters.remove(selectedAdapter);
         PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
-        System.out.println("delete adapter");
     }
 
     public void initNewAdapter(){
         selectedAdapter = new NetworkAdapter();
-        System.out.println("initNewAdapterr");
-    }
-
-    public String onFlowProcess(FlowEvent event) {
-        return event.getNewStep();
     }
 
     public void save() {
@@ -169,10 +159,6 @@ public class NetworkSettingsBean implements UserDao {
     public void onTabChange(){
         init();
         PrimeFaces.current().ajax().update(":form:tabview1");
-    }
-
-    public void onInputTextChange(){
-
     }
 
     public void saveSettingsCustomMode(){
@@ -193,7 +179,6 @@ public class NetworkSettingsBean implements UserDao {
         bufStringBuilder.append("# and how to activate them. For more information, see interfaces(5).\n");
         bufStringBuilder.append("\n");
         bufStringBuilder.append("source /etc/network/interfaces.d/*\n");
-        bufStringBuilder.append("");
         bufStringBuilder.append("# The loopback network interface\n");
         bufStringBuilder.append("auto lo\n");
         bufStringBuilder.append("iface lo inet loopback\n");

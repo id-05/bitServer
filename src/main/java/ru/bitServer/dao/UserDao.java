@@ -16,17 +16,9 @@ import static javax.persistence.TemporalType.DATE;
 
 public interface UserDao {
 
-    final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
-    public default void saveNewUser(Users user) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(user);
-        transaction.commit();
-        session.close();
-    }
-
-    public default void deleteUser(Users user) {
+    default void deleteUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(user);
@@ -34,15 +26,15 @@ public interface UserDao {
         session.close();
     }
 
-    public default void updateUser(Users user) {
+    default void updateUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.update(user);
+        session.saveOrUpdate(user);
         transaction.commit();
         session.close();
     }
 
-    public default void saveNewUsergroup(Usergroup usergroup) {
+    default void saveNewUsergroup(Usergroup usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(usergroup);
@@ -50,7 +42,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteUsergroup(Usergroup usergroup) {
+    default void deleteUsergroup(Usergroup usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(usergroup);
@@ -58,7 +50,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void updateUsergroup(Usergroup usergroup) {
+    default void updateUsergroup(Usergroup usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(usergroup);
@@ -66,7 +58,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default List<Usergroup> getBitServerUsergroupList() {
+    default List<Usergroup> getBitServerUsergroupList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Usergroup> criteriaQuery = builder.createQuery(Usergroup.class);
@@ -76,7 +68,7 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default List<Usergroup> getRealBitServerUsergroupList() {
+    default List<Usergroup> getRealBitServerUsergroupList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Query query = null;
         String hql= "from Usergroup  where forlocal=:forgroup and status=:pstatus";
@@ -88,7 +80,7 @@ public interface UserDao {
         return results;
     }
 
-    public default Users validateUserAndGetIfExist(String ulogin, String upassword) {
+    default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.uname = '" + ulogin + "' and U.password = '" + upassword + "'";
         Query query = session.createQuery(hql);
@@ -96,14 +88,14 @@ public interface UserDao {
 
         if (results.size() > 0) {
             Iterator<Users> it = results.iterator();
-            return (Users) it.next();
+            return it.next();
         }else{
             Users user = new Users();
             return user;
         }
     }
 
-    public default Users getUserById(String userid){
+    default Users getUserById(String userid){
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.id = '" + userid + "'";
         Query query = session.createQuery(hql);
@@ -111,14 +103,14 @@ public interface UserDao {
 
         if (results.size() > 0) {
             Iterator<Users> it = results.iterator();
-            return (Users) it.next();
+            return it.next();
         }else{
             Users user = new Users();
             return user;
         }
     }
 
-    public default Usergroup getUsergroupById(String groupid){
+    default Usergroup getUsergroupById(String groupid){
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Usergroup U WHERE U.id = '" + groupid + "'";
         Query query = session.createQuery(hql);
@@ -126,14 +118,14 @@ public interface UserDao {
 
         if (results.size() > 0) {
             Iterator<Usergroup> it = results.iterator();
-            return (Usergroup) it.next();
+            return it.next();
         }else{
             Usergroup usergroup = new Usergroup();
             return usergroup;
         }
     }
 
-    public default List<Users> getBitServerUserList() {
+    default List<Users> getBitServerUserList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Users> criteriaQuery = builder.createQuery(Users.class);
@@ -143,7 +135,7 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default BitServerResources getBitServerResource(String uname) {
+    default BitServerResources getBitServerResource(String uname) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
         Query query = session.createQuery(hql);
@@ -151,12 +143,12 @@ public interface UserDao {
 
         if (results.size() > 0) {
             Iterator<BitServerResources> it = results.iterator();
-            return  (BitServerResources) it.next();
+            return  it.next();
         }
         return null;
     }
 
-    public default List<BitServerResources> getAllBitServerResource() {
+    default List<BitServerResources> getAllBitServerResource() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BitServerResources> criteriaQuery = builder.createQuery(BitServerResources.class);
@@ -166,7 +158,7 @@ public interface UserDao {
         return BitServerDBresources.list();
     }
 
-    public default void updateBitServiceResource(BitServerResources bitServerResources) {
+    default void updateBitServiceResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(bitServerResources);
@@ -174,7 +166,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void saveBitServiceResource(BitServerResources bitServerResources) {
+    default void saveBitServiceResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(bitServerResources);
@@ -182,7 +174,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteBitServerResource(BitServerResources bitServerResources) {
+    default void deleteBitServerResource(BitServerResources bitServerResources) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(bitServerResources);
@@ -190,7 +182,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default List<BitServerModality> getAllBitServerModality() {
+    default List<BitServerModality> getAllBitServerModality() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BitServerModality> criteriaQuery = builder.createQuery(BitServerModality.class);
@@ -200,15 +192,15 @@ public interface UserDao {
         return BitServerDBresources.list();
     }
 
-    public default void updateBitServerModality(BitServerModality bitServerModality) {
+    default void updateBitServerModality(BitServerModality bitServerModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        session.update(bitServerModality);
+        session.saveOrUpdate(bitServerModality);
         transaction.commit();
         session.close();
     }
 
-    public default void saveBitServerModality(BitServerModality bitServerModality) {
+    default void saveBitServerModality(BitServerModality bitServerModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(bitServerModality);
@@ -216,7 +208,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteBitServerModality(BitServerModality bitServerModality) {
+    default void deleteBitServerModality(BitServerModality bitServerModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(bitServerModality);
@@ -224,7 +216,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
+    default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         switch (dateSeachType){
             case "today":
@@ -287,7 +279,7 @@ public interface UserDao {
         return results2;
     }
 
-    public default List<BitServerStudy> getMyStudy(Users currentUser) {
+    default List<BitServerStudy> getMyStudy(Users currentUser) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Query query;
         String hql= "from BitServerStudy  where status=:pstatus and userwhodiagnost=:puser";
@@ -299,7 +291,7 @@ public interface UserDao {
         return results;
     }
 
-    public default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
+    default List<BitServerStudy> getBitServerStudyOnAnalisis(String usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Query query;
         String hql= "from BitServerStudy  where usergroupwhosees=:pgroup and status=:pstatus";
@@ -311,7 +303,7 @@ public interface UserDao {
         return results;
     }
 
-    public default BitServerStudy getStudyById(String studyid){
+    default BitServerStudy getStudyById(String studyid){
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM BitServerStudy U WHERE U.id = '" + studyid + "'";
         Query query = session.createQuery(hql);
@@ -319,14 +311,14 @@ public interface UserDao {
 
         if (results.size() > 0) {
             Iterator<BitServerStudy> it = results.iterator();
-            return (BitServerStudy) it.next();
+            return it.next();
         }else{
             BitServerStudy bitServerStudy = new BitServerStudy();
             return bitServerStudy;
         }
     }
 
-    public default List<BitServerStudy> getAllBitServerStudy() {
+    default List<BitServerStudy> getAllBitServerStudy() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BitServerStudy> criteriaQuery = builder.createQuery(BitServerStudy.class);
@@ -336,7 +328,7 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    public default void addStudy(BitServerStudy study) {
+    default void addStudy(BitServerStudy study) {
         Date date = study.getSdate();
         date.setHours(23);
         study.setSdate(date);
@@ -347,7 +339,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void updateStudy(BitServerStudy study) {
+    default void updateStudy(BitServerStudy study) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(study);
@@ -355,7 +347,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteStudy(BitServerStudy study) {
+    default void deleteStudy(BitServerStudy study) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(study);
@@ -364,7 +356,7 @@ public interface UserDao {
 
     }
 
-    public default void saveNewRule(BitServerScheduler rule) {
+    default void saveNewRule(BitServerScheduler rule) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(rule);
@@ -372,7 +364,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void deleteRule(BitServerScheduler rule) {
+    default void deleteRule(BitServerScheduler rule) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(rule);
@@ -380,7 +372,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default void updateRule(BitServerScheduler rule) {
+    default void updateRule(BitServerScheduler rule) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.update(rule);
@@ -388,7 +380,7 @@ public interface UserDao {
         session.close();
     }
 
-    public default List<BitServerScheduler> getAllBitServerSheduler() {
+    default List<BitServerScheduler> getAllBitServerSheduler() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BitServerScheduler> criteriaQuery = builder.createQuery(BitServerScheduler.class);

@@ -2,10 +2,7 @@ package ru.bitServer.beans;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
-import org.primefaces.model.DefaultDashboardColumn;
-import org.primefaces.model.DefaultDashboardModel;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;

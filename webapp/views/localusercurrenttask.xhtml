@@ -3,11 +3,9 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
-      xmlns:pe="http://primefaces.org/ui/extensions"
-      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html">
+      xmlns:p="http://primefaces.org/ui" >
 
 <f:view>
     <h:head>
@@ -17,14 +15,6 @@
                   href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
         </f:facet>
     </h:head>
-    <style type="text/css">
-        .ui-panel{
-            margin: 10px;
-            width: 200px;
-        }
-
-    </style>
-
 
     <h:body>
 
@@ -181,7 +171,7 @@
                                invalidSizeMessage="Maximum file size allowed is 10 MB"
                                invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
                 />
-                <br></br>
+                <br/>
                 <div class="p-text-bold" style="width: 40rem">
                     <p:outputLabel style="color: #dc143c">После того как вы нажмете кнопку "Зазрузить и Сохранить", выбранный файл результата, будет прикреплен к исследованию,
                     а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>
@@ -226,7 +216,7 @@
                 </p:textEditor>
 
 
-                <br></br>
+                <br/>
                 <div class="p-text-bold" style="width: 40rem">
                     <p:outputLabel style="color: #dc143c">После того как вы нажмете кнопку "Сохранить", указанное вами описание в текстовом виде, будет прикреплен к исследованию,
                         а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>

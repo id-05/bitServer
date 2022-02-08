@@ -7,7 +7,6 @@ import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
-import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -24,15 +23,14 @@ import java.util.List;
 import static ru.bitServer.beans.MainBean.mainServer;
 import static ru.bitServer.beans.MainBean.osimisAddress;
 
-@ManagedBean(name = "luresultsBean", eager = false)
+@ManagedBean(name = "luresultsBean")
 @ViewScoped
 public class LocalUserResults implements UserDao {
 
-    private Users currentUser;
-    private String currentUserId;
-    public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
-    private OrthancRestApi connection;
-    private BitServerStudy selectedVisibleStudy;
+    Users currentUser;
+    String currentUserId;
+    List<BitServerStudy> visibleStudiesList = new ArrayList<>();
+    BitServerStudy selectedVisibleStudy;
 
     public BitServerStudy getSelectedVisibleStudy() {
         return selectedVisibleStudy;
@@ -48,14 +46,6 @@ public class LocalUserResults implements UserDao {
 
     public void setCurrentUser(Users currentUser) {
         this.currentUser = currentUser;
-    }
-
-    public String getCurrentUserId() {
-        return currentUserId;
-    }
-
-    public void setCurrentUserId(String currentUserId) {
-        this.currentUserId = currentUserId;
     }
 
     public List<BitServerStudy> getVisibleStudiesList() {

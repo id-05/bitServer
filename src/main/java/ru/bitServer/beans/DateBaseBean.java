@@ -13,7 +13,7 @@ import java.util.List;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
-@ManagedBean(name = "datebaseBean", eager = false)
+@ManagedBean(name = "datebaseBean")
 @ViewScoped
 public class DateBaseBean implements UserDao {
 
@@ -182,8 +182,6 @@ public class DateBaseBean implements UserDao {
         listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         listResources.add(new BitServerResources("updateafteropen","true"));
 
-      //  /home/tomcat/settings/netsetting
-
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
@@ -221,24 +219,10 @@ public class DateBaseBean implements UserDao {
     public void addNewModality(){
         if(!selectedModality.getName().equals(""))
         {
-            boolean verifiUnical = true;
-            for(BitServerModality bufModality:listModalitys){
-                if (bufModality.getName().equals(selectedModality.getName())) {
-                    verifiUnical = false;
-                    break;
-                }
-            }
-            if(verifiUnical) {
-                saveBitServerModality(selectedModality);
-                listModalitys = getAllBitServerModality();
-                PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-            }else{
-                updateBitServerModality(selectedModality);
-                listModalitys = getAllBitServerModality();
-                PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-            }
+            updateBitServerModality(selectedModality);
+            listModalitys = getAllBitServerModality();
+            PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
+            PrimeFaces.current().ajax().update(":form:accord:dt-modality");
         }else{
             showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
         }

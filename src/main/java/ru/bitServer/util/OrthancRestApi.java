@@ -62,9 +62,10 @@ public class OrthancRestApi {
 
     public StringBuilder makePostConnectionAndStringBuilder(String apiUrl, String post)  {
         StringBuilder sb;
+        HttpURLConnection conn;
         try {
             sb = new StringBuilder();
-            HttpURLConnection conn = makePostConnection(apiUrl, post);
+            conn = makePostConnection(apiUrl, post);
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
             String output;
@@ -81,9 +82,8 @@ public class OrthancRestApi {
     }
 
     public StringBuilder makePostConnectionAndStringBuilderWithIOE(String apiUrl, String post) throws IOException {
-        StringBuilder sb;
+        StringBuilder sb = new StringBuilder();
         try {
-            sb = new StringBuilder();
             HttpURLConnection conn = makePostConnection(apiUrl, post);
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));

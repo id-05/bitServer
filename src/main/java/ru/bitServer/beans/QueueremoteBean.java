@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
-@ManagedBean(name = "queueremoteBean", eager = false)
+@ManagedBean(name = "queueremoteBean")
 @ViewScoped
 public class QueueremoteBean implements UserDao {
 

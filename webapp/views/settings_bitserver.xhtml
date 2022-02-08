@@ -3,9 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui" xmlns:P="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
 
 <f:view>
@@ -48,10 +47,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div>Адрес orthanc сервера</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Порт RESTAPI</b>
                         </p:divider>
@@ -61,10 +60,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Порт для доступа к RESTAPI Orthanc. Этот же порт подставляется к адресу при перенаправлении пользователя в OSIMIS.</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Логин и пароль для доступа к Orthanc</b>
                         </p:divider>
@@ -80,10 +79,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу orthanc.json</b>
                         </p:divider>
@@ -93,10 +92,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Данный файл используется для настройки сервера Orthanc</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу c lua-скриптом</b>
                         </p:divider>
@@ -106,10 +105,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Данный файл используется для настройки маршрутизации dicom-файлов</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Каталог хранения файлов результатов анализа</b>
                         </p:divider>
@@ -119,10 +118,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Дата начала синхронизации с Orthanc</b>
                         </p:divider>
@@ -134,10 +133,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}" />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Исследования сделанные позднее этой даты, будут автоматически добавляться в Orthanc</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу сетевых настроек</b>
                         </p:divider>
@@ -147,10 +146,10 @@
                                 <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
                             </p:inplace>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Данный файл используется для настройки сетевых параметров</div>
 
-                        <br></br>
+                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Включить HTTPS</b>
                         </p:divider>
@@ -160,7 +159,7 @@
                                 <p:ajax listener="#{settingBitServerBean.saveParam}" />
                             </p:toggleSwitch>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Включите, если вы используете HTTPS на этом сервере.</div>
 
 
@@ -287,7 +286,7 @@
 
                         <div class="p-d-flex"></div>
                         <div >Список зарегистрированных пользователей.</div>
-                        <br></br>
+                        <br/>
                         <div > </div>
                         <div ><strong>Администратор</strong> - имеет доступ к настройкам системы</div>
                         <div ><strong>Локальный пользователь</strong> - видит все исследования, вместе с ПД</div>
@@ -424,7 +423,7 @@
                                 <p:ajax listener="#{settingBitServerBean.saveParam}" />
                             </p:toggleSwitch>
                         </p>
-                        <br></br>
+                        <br/>
                         <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить в длительному ожиданию открытия страницы</div>
 
                     </p:outputPanel>
@@ -561,7 +560,7 @@
 
                         </p:dataTable>
 
-                        <br></br>
+                        <br/>
                         <div > ----</div>
 
                     </p:outputPanel>

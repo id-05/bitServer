@@ -33,28 +33,28 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
-@ManagedBean(name = "queueBean", eager = false)
+@ManagedBean(name = "queueBean")
 @ViewScoped
 public class QueueBean implements UserDao {
 
-    public String filtrDate = "today";
-    public Date firstdate;
-    public Date seconddate;
-    public int typeSeach = 5;
+    String filtrDate = "today";
+    Date firstdate;
+    Date seconddate;
+    int typeSeach = 5;
     private final SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-    public ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
-    public List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
-    private List<BitServerStudy> visibleStudiesList;
-    private List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
-    private BitServerStudy selectedVisibleStudy;
-    public List<Usergroup> usergroupList;
-    public String selectedUserGroup;
-    public List<String> usergroupListRuName;
-    public Users currentUser;
+    ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
+    List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
+    List<BitServerStudy> visibleStudiesList;
+    List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
+    BitServerStudy selectedVisibleStudy;
+    List<Usergroup> usergroupList;
+    String selectedUserGroup;
+    List<String> usergroupListRuName;
+    Users currentUser;
     OrthancRestApi connection;
     OrthancSettings orthancSettings;
-    public int uploadCount;
-    public String freespace;
+    int uploadCount;
+    String freespace;
     List<DicomModaliti> modalities;
     List<DicomModaliti> selectedModalities;
     DicomModaliti selectedModaliti;
@@ -67,7 +67,7 @@ public class QueueBean implements UserDao {
     String colDescription;
     String colModality;
     String colWhereSend;
-    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    List<BitServerResources> bitServerResourcesList = new ArrayList<>();
 
     public String getColStatus() {
         return colStatus;
@@ -658,7 +658,6 @@ public class QueueBean implements UserDao {
                     .stream(() -> inputStream)
                     .build();
         }else{
-            //PrimeFaces.current().executeScript("PF('sidebar').show()");
             return null;
         }
     }
@@ -710,7 +709,7 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:send-button");
     }
 
-    public void markAsHasResult() throws IOException {
+    public void markAsHasResult() {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             bufStudy.setUsergroupwhosees("");
             bufStudy.setStatus(2);

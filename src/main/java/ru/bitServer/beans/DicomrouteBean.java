@@ -3,7 +3,6 @@ package ru.bitServer.beans;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
@@ -24,26 +23,25 @@ import java.util.List;
 import static ru.bitServer.beans.MainBean.mainServer;
 
 
-@ManagedBean(name = "dicomrouteBean", eager = false)
+@ManagedBean(name = "dicomrouteBean")
 @ViewScoped
 public class DicomrouteBean implements UserDao {
 
     Users currentUser;
     String currentUserId;
     String pathToFile;
-    public ArrayList<DicomrouteRule> rules = new ArrayList<>();
-    public StringBuilder luascriptFile;
-    public String luascripttextFile;
+    ArrayList<DicomrouteRule> rules = new ArrayList<>();
+    StringBuilder luascriptFile;
+    String luascripttextFile;
     List<DicomModaliti> modalities;
     List<DicomModaliti> selectedModalities;
     List<String> modalitiesName;
-    DicomModaliti selectedModaliti;
-    public DicomrouteRule selectedRule;
+    DicomrouteRule selectedRule;
 
     public List<String> getModalitiesName() {
         modalitiesName = new ArrayList<>();
-        for(DicomModaliti bufmodaliti:modalities){
-            modalitiesName.add(bufmodaliti.getDicomname());
+        for(DicomModaliti bufmodality:modalities){
+            modalitiesName.add(bufmodality.getDicomname());
         }
         return modalitiesName;
     }
@@ -52,28 +50,12 @@ public class DicomrouteBean implements UserDao {
         this.modalitiesName = modalitiesName;
     }
 
-    public DicomModaliti getSelectedModaliti() {
-        return selectedModaliti;
-    }
-
-    public void setSelectedModaliti(DicomModaliti selectedModaliti) {
-        this.selectedModaliti = selectedModaliti;
-    }
-
     public List<DicomModaliti> getSelectedModalities() {
         return selectedModalities;
     }
 
     public void setSelectedModalities(List<DicomModaliti> selectedModalities) {
         this.selectedModalities = selectedModalities;
-    }
-
-    public List<DicomModaliti> getModalities() {
-        return modalities;
-    }
-
-    public void setModalities(List<DicomModaliti> modalities) {
-        this.modalities = modalities;
     }
 
     public DicomrouteRule getSelectedRule() {
@@ -132,11 +114,10 @@ public class DicomrouteBean implements UserDao {
 
     public void resetOrthanc() {
         showMessage("Внимание","Сервис Orthanc, будет перезагружен!",FacesMessage.SEVERITY_INFO);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
+        connection.makePostConnectionAndStringBuilder("/tools/reset","" );
     }
 
     public void addNewRule(){
-        //selectedRule.setNameRemoteModality(selectedModaliti.getDicomname());
         selectedRule.setDeleteAfteRoute(false);
         rules.add(selectedRule);
         PrimeFaces.current().executeScript("PF('manageRule').hide()");

@@ -29,15 +29,15 @@ import java.util.List;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-@ManagedBean(name = "rucurrenttaskBean", eager = false)
+@ManagedBean(name = "rucurrenttaskBean")
 @ViewScoped
 public class RemoteUserCurTask implements UserDao {
-    public Users currentUser;
-    public String currentUserId;
-    public BitServerStudy currentStudy;
-    public List<BitServerStudy> visibleStudiesList = new ArrayList<>();
-    private OrthancRestApi connection;
-    public Usergroup bufGroup;
+    Users currentUser;
+    String currentUserId;
+    BitServerStudy currentStudy;
+    List<BitServerStudy> visibleStudiesList = new ArrayList<>();
+    OrthancRestApi connection;
+    Usergroup bufGroup;
 
     public Usergroup getBufGroup() {
         return bufGroup;
@@ -77,7 +77,6 @@ public class RemoteUserCurTask implements UserDao {
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        System.out.println("Вход");
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             System.out.println("перед add");

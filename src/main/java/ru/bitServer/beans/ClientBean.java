@@ -30,7 +30,6 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,11 +46,9 @@ public class ClientBean implements UserDao {
     boolean skipNext = true;
     int activeStep = 0;
     String currentStudyName;
-    DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy_HH:mm");
     Users currentUser;
     ArrayList<byte[]> listUploadFile = new ArrayList<>();
     int uploadCount = 0;
-    ArrayList<UploadedFile> files = new ArrayList<>();
     String anamnes;
 
     public String getAnamnes() {

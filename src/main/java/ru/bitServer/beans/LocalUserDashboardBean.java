@@ -10,10 +10,10 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-@ManagedBean(name = "localDashboard", eager = true)
+@ManagedBean(name = "localDashboard")
 @ViewScoped
 public class LocalUserDashboardBean implements UserDao {
-    public Users currentUser;
+    Users currentUser;
 
     public Users getCurrentUser() {
         return currentUser;

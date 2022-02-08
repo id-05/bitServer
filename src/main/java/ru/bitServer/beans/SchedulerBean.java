@@ -13,7 +13,7 @@ import java.time.LocalTime;
 import java.util.*;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
-@ManagedBean (name = "schedulerBean", eager = false)
+@ManagedBean (name = "schedulerBean")
 @ViewScoped
 public class SchedulerBean implements UserDao {
 
@@ -21,14 +21,11 @@ public class SchedulerBean implements UserDao {
     String currentUserId;
     BitServerScheduler selectedRule;
     List<BitServerScheduler> visibleRules = new ArrayList<>();
-    String selectedmodality;
     String selectsource;
     List<String> modalitylist = new ArrayList<>();
     List<String> sourcelist = new ArrayList<>();
-    String selecttimecondition;
-    public List<Usergroup> usergroupList;
+    List<Usergroup> usergroupList;
     List<String> usergroupListRuName = new ArrayList<>();
-    Usergroup selectedgroup;
     LocalTime selectedtime;
     List<BitServerScheduler> selectedRules = new ArrayList<>();
 
@@ -40,28 +37,12 @@ public class SchedulerBean implements UserDao {
         this.selectedRules = selectedRules;
     }
 
-    public Usergroup getSelectedgroup() {
-        return selectedgroup;
-    }
-
-    public void setSelectedgroup(Usergroup selectedgroup) {
-        this.selectedgroup = selectedgroup;
-    }
-
     public LocalTime getSelectedtime() {
         return selectedtime;
     }
 
     public void setSelectedtime(LocalTime selectedtime) {
         this.selectedtime = selectedtime;
-    }
-
-    public String getSelectedmodality() {
-        return selectedmodality;
-    }
-
-    public void setSelectedmodality(String selectedmodality) {
-        this.selectedmodality = selectedmodality;
     }
 
     public String getSelectsource() {
@@ -86,14 +67,6 @@ public class SchedulerBean implements UserDao {
 
     public void setSourcelist(List<String> sourcelist) {
         this.sourcelist = sourcelist;
-    }
-
-    public String getSelecttimecondition() {
-        return selecttimecondition;
-    }
-
-    public void setSelecttimecondition(String selecttimecondition) {
-        this.selecttimecondition = selecttimecondition;
     }
 
     public List<String> getUsergroupListRuName() {

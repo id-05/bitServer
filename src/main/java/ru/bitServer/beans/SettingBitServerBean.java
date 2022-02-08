@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.Usergroup;
@@ -10,45 +9,42 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
-@ManagedBean(name = "settingBitServerBean", eager = false)
+@ManagedBean(name = "settingBitServerBean")
 @ViewScoped
 public class SettingBitServerBean implements UserDao {
 
-    public List<Users> usersList;
-    public List<Users> selectedUsers;
-    public Users selectedUser;
-    public List<Usergroup> usergroupList;
-    public List<String> usergroupListRuName;
-    public List<Usergroup> selectedUsergroups;
-    public Usergroup selectedUsergroup;
-    public String httpmode;
-    public String updateQueueAfterOpen;
-    public String osimisAddress;
-    public String orthancAddress;
-    public String orthancWebPort;
-    public String orthancLogin;
-    public String orthancPassword;
-    public String orthancPathToJson;
-    public String orthancPathToResultFile;
-    public String luaScriptPath;
-    public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
-    public String networksetpathfile;
-    public Date syncdate;
-    public String colStatus;
-    public String colDateBirth;
-    public String colDate;
-    public String colDescription;
-    public String colModality;
-    public String colWhereSend;
+    List<Users> usersList;
+    List<Users> selectedUsers;
+    Users selectedUser;
+    List<Usergroup> usergroupList;
+    List<String> usergroupListRuName;
+    List<Usergroup> selectedUsergroups;
+    Usergroup selectedUsergroup;
+    String httpmode;
+    String updateQueueAfterOpen;
+    String osimisAddress;
+    String orthancAddress;
+    String orthancWebPort;
+    String orthancLogin;
+    String orthancPassword;
+    String orthancPathToJson;
+    String orthancPathToResultFile;
+    String luaScriptPath;
+    List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    String networksetpathfile;
+    Date syncdate;
+    String colStatus;
+    String colDateBirth;
+    String colDate;
+    String colDescription;
+    String colModality;
+    String colWhereSend;
 
     public String getColStatus() {
         return colStatus;
@@ -136,14 +132,6 @@ public class SettingBitServerBean implements UserDao {
 
     public void setSyncdate(Date syncdate) {
         this.syncdate = syncdate;
-    }
-
-    public String getOsimisAddress() {
-        return osimisAddress;
-    }
-
-    public void setOsimisAddress(String osimisAddress) {
-        this.osimisAddress = osimisAddress;
     }
 
     public String getOrthancWebPort() {
@@ -266,8 +254,9 @@ public class SettingBitServerBean implements UserDao {
 
         boolean updateRes = false;
         for(BitServerResources buf: bitServerResourcesList){
-            if(buf.getRname().equals("colstatus")){
+            if (buf.getRname().equals("colstatus")) {
                 updateRes = true;
+                break;
             }
         }
         if(!updateRes){
@@ -420,14 +409,7 @@ public class SettingBitServerBean implements UserDao {
             }
             updateBitServiceResource(buf);
         }
-
-//        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
-//        UIComponent component = view.findComponent(":form:accord:dt-studys");
-//        DataTable dt = (DataTable) component.findComponent(":form:accord:dt-studys");
-//        dt.clearInitialState();
-
         PrimeFaces.current().ajax().update(":form:accord:dt-studys");
-        System.out.println(colStatus);
     }
 
     public void initNewUser() {
@@ -444,30 +426,14 @@ public class SettingBitServerBean implements UserDao {
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
         {
-            boolean verifiUnical = true;
-            for(Users bufUser:usersList){
-                if (bufUser.getUname().equals(selectedUser.getUname())) {
-                    verifiUnical = false;
-                    break;
-                }
-            }
-            if(verifiUnical) {
-                Users bufUser = getRealUserForBase(selectedUser);
-                saveNewUser(bufUser);
-                usersList = prepareUserList();
-                PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-users");
-            }else{
-                Users bufUser = getRealUserForBase(selectedUser);
-                updateUser(bufUser);
-                usersList = prepareUserList();
-                PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-users");
-            }
+            Users bufUser = getRealUserForBase(selectedUser);
+            updateUser(bufUser);
+            usersList = prepareUserList();
+            PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
+            PrimeFaces.current().ajax().update(":form:accord:dt-users");
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
-        System.out.println("save new finish");
     }
 
     public Users getRealUserForBase(Users sourseUser){
@@ -528,8 +494,9 @@ public class SettingBitServerBean implements UserDao {
         {
             boolean verifiUnical = true;
             for(Usergroup bufUsergroup:usergroupList){
-                if(bufUsergroup.getRuName().equals(selectedUsergroup.getRuName())){
+                if (bufUsergroup.getRuName().equals(selectedUsergroup.getRuName())) {
                     verifiUnical = false;
+                    break;
                 }
             }
             if(verifiUnical) {
@@ -562,7 +529,4 @@ public class SettingBitServerBean implements UserDao {
         }
     }
 
-    public void setsyncdate(){
-        System.out.println("asdqwe");
-    }
 }

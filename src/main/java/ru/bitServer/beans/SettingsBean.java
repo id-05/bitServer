@@ -108,14 +108,6 @@ public class SettingsBean {
     public String freeSpace;
     public String directory;
 
-//    public JsonArray getLuaFolder() {
-//        return luaFolder;
-//    }
-//
-//    public void setLuaFolder(JsonArray luaFolder) {
-//        this.luaFolder = luaFolder;
-//    }
-
     private static final Logger log = Logger.getLogger(SettingsBean.class);
 
     public String getLuaScriptsFolder() {
