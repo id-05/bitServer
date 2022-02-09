@@ -406,23 +406,20 @@ public class QueueBean implements UserDao {
 
     public void readStudyFromDB() {
         double ii=0;
-        selectedVisibleStudy = new BitServerStudy();
+        //selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
         query.addProperty("CaseSensitive", false);
         query.addProperty("Expand", true);
         query.addProperty("Limit", 0);
         JsonObject queryDetails = new JsonObject();
-
         String bufStr = getBitServerResource("syncdate").getRvalue();
-        String dateStartFromBase = bufStr.replaceAll("-","");
-
-
-        seconddate = new Date();
-        String dateStr = dateStartFromBase + "-" + FORMAT.format(seconddate);
-//        Instant now = Instant.now();
-//        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-//        String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(seconddate);
+        //String dateStartFromBase = bufStr.replaceAll("-","");
+        Date lastdate = new Date();
+        //String dateStr = dateStartFromBase + "-" + FORMAT.format(seconddate);
+        Instant now = Instant.now();
+        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+        String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
         StringBuilder modalities = new StringBuilder();

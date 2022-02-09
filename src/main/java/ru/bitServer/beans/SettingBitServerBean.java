@@ -1,10 +1,16 @@
 package ru.bitServer.beans;
 
+//import org.joda.time.Days;
+//import org.joda.time.LocalDate;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.BitServerResources;
-import ru.bitServer.dao.Usergroup;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.*;
+import ru.bitServer.dicom.OrthancStudy;
+import ru.bitServer.util.OrthancRestApi;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -13,10 +19,10 @@ import javax.faces.context.FacesContext;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 import static ru.bitServer.beans.AutoriseBean.showMessage;
+import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "settingBitServerBean")
 @ViewScoped
@@ -25,7 +31,7 @@ public class SettingBitServerBean implements UserDao {
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
     final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    int progress1;
+    private int progress1;
     List<Users> usersList;
     List<Users> selectedUsers;
     Users selectedUser;
@@ -54,14 +60,18 @@ public class SettingBitServerBean implements UserDao {
     String colDescription;
     String colModality;
     String colWhereSend;
+    OrthancRestApi connection;
+    ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
+    List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
 
-    public Integer getProgress1() {
-        progress1 = updateProgress(progress1);
-        return progress1;
+    private int number;
+
+    public void increment() {
+        number = progress1;
     }
 
-    public void setProgress1(int progress1) {
-        this.progress1 = progress1;
+    public String getNumber() {
+        return number+"%";
     }
 
     public String getColStatus() {
@@ -285,44 +295,184 @@ public class SettingBitServerBean implements UserDao {
         progress1 = 0;
     }
 
-    private static Integer updateProgress(Integer progress) {
-        if (progress == null) {
-            progress = 0;
-        }
-        else {
-            progress = progress + (int) (Math.random() * 35);
-
-            if (progress > 100) {
-                progress = 100;
-            }
-        }
-
-        return progress;
-    }
-
     public void startProgress(){
         System.out.println("start");
         System.out.println(FORMAT2.format(startDate));
         Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
         Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
+        Calendar cal1 = new GregorianCalendar();
+        Calendar cal2 = new GregorianCalendar();
+        cal1.setTime(startDate);
+        cal2.setTime(stopDate);
+        int days = (int)( (cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
         Instant bufInstant = startInstant.plus(1,ChronoUnit.DAYS);
-
-        while(!FORMAT.format(Date.from(bufInstant)).equals( FORMAT.format(Date.from(stopInstant)) ))
-        {
-            String dateStr = FORMAT.format(Date.from(startInstant)) + "-" + FORMAT.format(Date.from(bufInstant));
-            System.out.println(dateStr);
-            startInstant = startInstant.plus(1,ChronoUnit.DAYS);
-            bufInstant = startInstant.plus(1,ChronoUnit.DAYS);
+        double dProgress;
+        if(days!=0) {
+            dProgress = (double)100 / days;
+        }else{
+            dProgress = 0;
         }
+        int i = 1;
+        progress1 = 0;
+        if(!FORMAT.format(Date.from(bufInstant)).equals( FORMAT.format(Date.from(stopInstant)) )) {
+            while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                readStudyFromDB(startInstant, bufInstant);
+                startInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                i++;
+                progress1 = (int) (dProgress * i);
+            }
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+    }
 
-        PrimeFaces.current().executeScript("PF('pbAjax').start()");
-        PrimeFaces.current().executeScript("PF('startButton2').disable()");
+    public void readStudyFromDB(Instant startDate, Instant stopDate) {
+        JsonObject query = new JsonObject();
+        query.addProperty("Level", "Studies");
+        query.addProperty("CaseSensitive", false);
+        query.addProperty("Expand", true);
+        query.addProperty("Limit", 0);
+        JsonObject queryDetails = new JsonObject();
+        String dateStr = FORMAT.format(Date.from(startDate)) + "-" + FORMAT.format(Date.from(stopDate));
+        System.out.println("readFromBase "+dateStr);
+        queryDetails.addProperty("StudyDate", dateStr);
+        queryDetails.addProperty("PatientID", "*");
+        StringBuilder modalities = new StringBuilder();
+
+        List<BitServerModality> modalityFromBase = getAllBitServerModality();
+        for(BitServerModality bufModality:modalityFromBase){
+            modalities.append(bufModality.getName()).append("\\");
+        }
+        queryDetails.addProperty("Modality", modalities.toString());
+        query.add("Query", queryDetails);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        assert sb != null;
+        boolean existInTable;
+        studiesFromRestApi = getStudiesFromJson(sb.toString());
+        System.out.println("studiesFromRestApi "+studiesFromRestApi.size());
+        studiesFromTableBitServer = getAllBitServerStudy();
+        for(OrthancStudy bufStudy:studiesFromRestApi){
+            existInTable = false;
+            if(studiesFromTableBitServer.size()>0) {
+                for (BitServerStudy bBSS : studiesFromTableBitServer) {
+                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+                        existInTable = true;
+                        break;
+                    }
+                }
+            }
+            if(!existInTable) {
+                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
+                addStudy(buf);
+            }
+        }
+    }
+
+    private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(data);
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+        ArrayList<OrthancStudy> studyList = new ArrayList<>();
+
+        while (studiesIterator.hasNext()) {
+            JsonObject studyData = (JsonObject) studiesIterator.next();
+            JsonObject parentPatientDetails = null;
+            if (studyData.has("PatientMainDicomTags")) {
+                parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
+            }
+            String parentPatientID = studyData.get("ParentPatient").getAsString();
+            String studyId = studyData.get("ID").getAsString();
+            JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
+            String patientSex = "N/A";
+            String patientName = "N/A";
+            String patientId = "N/A";
+            String patientDobString = "N/A";
+            Date patientDob = null;
+
+            assert parentPatientDetails != null;
+            if (parentPatientDetails.has("PatientBirthDate")) {
+                patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
+            }
+
+            if(!patientDobString.equals("")){
+                try {
+                    patientDob = FORMAT.parse(patientDobString);
+                } catch (Exception e) {
+                    System.out.println("Error to transfer date 1  "+parentPatientDetails);
+                }
+            }
+
+            if (parentPatientDetails.has("PatientSex")) {
+                patientSex = parentPatientDetails.get("PatientSex").getAsString();
+            }
+
+            if (parentPatientDetails.has("PatientName")) {
+                patientName = parentPatientDetails.get("PatientName").getAsString();
+            }
+
+            if (parentPatientDetails.has("PatientID")) {
+                patientId = parentPatientDetails.get("PatientID").getAsString();
+            }
+
+            String accessionNumber = "N/A";
+            if (studyDetails.has("AccessionNumber")) {
+                accessionNumber = studyDetails.get("AccessionNumber").getAsString();
+            }
+            String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
+            String studyDate = null;
+            Date studyDateObject = null;
+            if (studyDetails.has("StudyDate")) {
+                studyDate = studyDetails.get("StudyDate").getAsString();
+            }
+
+            try {
+                studyDateObject = FORMAT.parse("19000101");
+                assert studyDate != null;
+                studyDateObject = FORMAT.parse(studyDate);
+            } catch (Exception e) {
+                System.out.println("Errot to transfer date 2");
+            }
+
+            String studyDescription = "N/A";
+            if (studyDetails.has("StudyDescription")) {
+                studyDescription = studyDetails.get("StudyDescription").getAsString();
+            }
+
+            String studyInstitutionName = "N/A";
+            if (studyDetails.has("InstitutionName")) {
+                studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
+            }
+
+            String studyModality = "N/A";
+            if (studyData.has("Series")) {
+                JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
+                String bufSerie = SeriesArray.get(0).getAsString();
+                StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
+                JsonParser parserJsonSerie = new JsonParser();
+                JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
+                JsonObject serieMainDicomTags = null;
+                if (serie.has("MainDicomTags")) {
+                    serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
+                }
+                assert serieMainDicomTags != null;
+                if (serieMainDicomTags.has("Modality")) {
+                    studyModality = serieMainDicomTags.get("Modality").getAsString();
+                }
+            }
+
+            OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            studyList.add(studyObj);
+        }
+        return studyList;
     }
 
 
     @PostConstruct
     public void init() {
         System.out.println("settingBitServerBean page");
+        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
         stopDate = new Date();
         usergroupList = getBitServerUsergroupList();
