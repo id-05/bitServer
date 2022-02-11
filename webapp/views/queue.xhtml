@@ -134,12 +134,12 @@
                                              styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
                                              onclick="PF('statusDialog').show()"
                                              update="searchgrowl"
-                                             rendered="#{!queueBean.currentUser.role == 'demo'}"
+                                             rendered="#{queueBean.currentUser.role != 'demo'}"
                                              style="margin-right: 5px">
                             </p:commandButton>
 
                             <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true"
-                                             rendered="#{!queueBean.currentUser.role == 'demo'}">
+                                             rendered="#{queueBean.currentUser.role != 'demo'}">
                                 <f:selectItems value="#{queueBean.usergroupListRuName}"/>
                             </p:selectOneMenu>
 
@@ -192,6 +192,7 @@
                         <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
+                        <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
 
                         <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
 

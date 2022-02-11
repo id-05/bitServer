@@ -371,15 +371,19 @@ public class QueueBean implements UserDao {
                 datepickerVisible2 = false;
             }
         }
-        //filteredRows = visibleStudiesList;
-
         UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
         UIComponent component = view.findComponent(":seachform:dt-studys");
         DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
         dt.resetValue();
-
         PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
-        //PrimeFaces.current().ajax().update(":seachform:datecard");
+    }
+
+    public void sortListener(){
+        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+        UIComponent component = view.findComponent(":seachform:dt-studys");
+        DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
+        dt.resetValue();
+        PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
     }
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){
@@ -405,18 +409,13 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        double ii=0;
-        //selectedVisibleStudy = new BitServerStudy();
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
         query.addProperty("CaseSensitive", false);
         query.addProperty("Expand", true);
         query.addProperty("Limit", 0);
         JsonObject queryDetails = new JsonObject();
-        String bufStr = getBitServerResource("syncdate").getRvalue();
-        //String dateStartFromBase = bufStr.replaceAll("-","");
         Date lastdate = new Date();
-        //String dateStr = dateStartFromBase + "-" + FORMAT.format(seconddate);
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
         String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
@@ -437,11 +436,8 @@ public class QueueBean implements UserDao {
 
         boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
-        System.out.println("studiesFromRestApi = "+studiesFromRestApi.size());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
-            ii++;
-            System.out.println("ii = "+ii);
             existInTable = false;
             for(BitServerStudy bBSS:studiesFromTableBitServer){
                 if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
@@ -458,6 +454,7 @@ public class QueueBean implements UserDao {
         }
 
         String bufStrMod = "";
+        String bufStr="";
         for(String buf:selectedModalitiName){
             if(!bufStrMod.equals("")){
                 bufStrMod = "'" + buf + "'";
@@ -465,7 +462,6 @@ public class QueueBean implements UserDao {
                 bufStrMod = bufStr + ",'" + buf + "'";
             }
         }
-
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStrMod);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
