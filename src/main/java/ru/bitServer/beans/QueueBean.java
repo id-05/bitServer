@@ -275,6 +275,7 @@ public class QueueBean implements UserDao {
 
     @PostConstruct
     public void init() {
+        System.out.println("start "+(new SimpleDateFormat("dd.MM.yy hh:mm").format(new Date())));
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
@@ -421,19 +422,10 @@ public class QueueBean implements UserDao {
         String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
-        StringBuilder modalities = new StringBuilder();
-
-        List<BitServerModality> modalityFromBase = getAllBitServerModality();
-        for(BitServerModality bufModality:modalityFromBase){
-            modalities.append(bufModality.getName()).append("\\");
-        }
-
-        queryDetails.addProperty("Modality", modalities.toString());
+        queryDetails.addProperty("Modality", "");
         query.add("Query", queryDetails);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-        System.out.println(query.toString());
-        assert sb != null;
 
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();

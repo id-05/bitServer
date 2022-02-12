@@ -343,7 +343,7 @@ public class SettingBitServerBean implements UserDao {
         for(BitServerModality bufModality:modalityFromBase){
             modalities.append(bufModality.getName()).append("\\");
         }
-        queryDetails.addProperty("Modality", modalities.toString());
+        queryDetails.addProperty("Modality", "");
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
