@@ -58,7 +58,8 @@
         <h:form id="seachform">
             <p:growl id="searchgrowl" showDetail="true" />
             <p:menubar>
-                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward" rendered="#{queueBean.currentUser.role != 'demo'}"/>
+                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.currentUser.role != 'admin'}"/>
+                <p:menuitem value="Назад" outcome="adminPage" icon="pi pi-backward" rendered="#{queueBean.currentUser.role == 'admin'}"/>
                 <f:facet name="options">
 
                     <div class="p-mr-2 p-as-center">

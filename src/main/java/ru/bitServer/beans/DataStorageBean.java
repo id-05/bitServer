@@ -57,6 +57,7 @@ public class DataStorageBean implements UserDao {
 
             if(dataStorageResource!=null) {
                 String bufDataStorage = dataStorageResource.getRvalue();
+                directory = bufDataStorage;
                 File bufFile = new File(bufDataStorage);
                 totalSpace = (int) (bufFile.getTotalSpace() / (double) (1024 * 1024 * 1024)) + " Gb";
                 freeSpace = (int) (bufFile.getFreeSpace() / (double) (1024 * 1024 * 1024)) + " Gb";

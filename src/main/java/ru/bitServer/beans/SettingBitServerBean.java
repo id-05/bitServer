@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
+import static ru.bitServer.beans.MainBean.info;
 import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "settingBitServerBean")
@@ -286,18 +287,8 @@ public class SettingBitServerBean implements UserDao {
         this.selectedUsers = selectedUsers;
     }
 
-
-    public void onComplete() {
-        System.out.println("complete");
-    }
-
-    public void cancel() {
-        progress1 = 0;
-    }
-
     public void startProgress(){
-        System.out.println("start");
-        System.out.println(FORMAT2.format(startDate));
+        int sum = 0;
         Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
         Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
         Calendar cal1 = new GregorianCalendar();
@@ -316,7 +307,7 @@ public class SettingBitServerBean implements UserDao {
         progress1 = 0;
         if(!FORMAT.format(Date.from(bufInstant)).equals( FORMAT.format(Date.from(stopInstant)) )) {
             while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
-                readStudyFromDB(startInstant, bufInstant);
+                sum = sum + readStudyFromDB(startInstant, bufInstant);
                 startInstant = startInstant.plus(1, ChronoUnit.DAYS);
                 bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
                 i++;
@@ -324,9 +315,11 @@ public class SettingBitServerBean implements UserDao {
             }
         }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение","Синхронизация завершена! Всего добавлено: "+sum, info);
     }
 
-    public void readStudyFromDB(Instant startDate, Instant stopDate) {
+    public Integer readStudyFromDB(Instant startDate, Instant stopDate) {
+        int sum = 0;
         JsonObject query = new JsonObject();
         query.addProperty("Level", "Studies");
         query.addProperty("CaseSensitive", false);
@@ -334,15 +327,8 @@ public class SettingBitServerBean implements UserDao {
         query.addProperty("Limit", 0);
         JsonObject queryDetails = new JsonObject();
         String dateStr = FORMAT.format(Date.from(startDate)) + "-" + FORMAT.format(Date.from(stopDate));
-        System.out.println("readFromBase "+dateStr);
         queryDetails.addProperty("StudyDate", dateStr);
         queryDetails.addProperty("PatientID", "*");
-        StringBuilder modalities = new StringBuilder();
-
-        List<BitServerModality> modalityFromBase = getAllBitServerModality();
-        for(BitServerModality bufModality:modalityFromBase){
-            modalities.append(bufModality.getName()).append("\\");
-        }
         queryDetails.addProperty("Modality", "");
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
@@ -366,8 +352,10 @@ public class SettingBitServerBean implements UserDao {
                         bufStudy.getInstitutionName(), bufStudy.getDate(),
                         bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
                 addStudy(buf);
+                sum++;
             }
         }
+        return sum;
     }
 
     private ArrayList<OrthancStudy> getStudiesFromJson(String data) {

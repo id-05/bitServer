@@ -167,19 +167,19 @@ public class MainBean implements UserDao {
             System.out.println("Ошибка: "+e.getMessage());
         }
         try {
-            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            System.out.println("connection : "+mainServer.getIpaddress()+":"+mainServer.getPort());
-            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");
-            JsonParser parser = new JsonParser();
-            JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
-            mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
-            mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
-            mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
-            mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
-            mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
-            totalStudy = String.valueOf(mainServer.getCountStudies());
-            totalPatient = String.valueOf(mainServer.getCountPatients());
-            totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
+//            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+//            System.out.println("connection : "+mainServer.getIpaddress()+":"+mainServer.getPort());
+//            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");
+//            JsonParser parser = new JsonParser();
+//            JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
+//            mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
+//            mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
+//            mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
+//            mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
+//            mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
+//            totalStudy = String.valueOf(mainServer.getCountStudies());
+//            totalPatient = String.valueOf(mainServer.getCountPatients());
+//            totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
         }catch (Exception e){
             System.out.println("Ошибка: "+e.getMessage());
         }

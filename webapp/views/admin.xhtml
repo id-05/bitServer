@@ -26,6 +26,7 @@
                     <p:menuitem style="margin-right: 5px" value="Сетевые настройки" outcome="settings_network" icon="pi pi-sitemap"/>
                     <p:menuitem style="margin-right: 5px" value="DICOM-маршрутизация" outcome="settings_dicomroute" icon="pi pi-share-alt"/>
                     <p:menuitem style="margin-right: 5px" value="Редактор базы данных" rendered="true" outcome="settings_datebase" icon="pi pi-table"/>
+                    <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
 
                     <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}" rendered="false">
                         <p:menuitem value="saga" actionListener="#{autoriseBean.setTheme('saga')}" process="@this"/>

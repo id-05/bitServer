@@ -585,7 +585,6 @@ public class QueueBean implements UserDao {
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
             }
         }
-
         showMessage("Внимание","Всего отправлено: " + i,info);
         selectedVisibleStudies.clear();
         dataoutput();
