@@ -1,11 +1,13 @@
 package ru.bitServer.beans;
 
-import static ru.bitServer.beans.MainBean.mainServer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.button.Button;
+import org.primefaces.component.commandbutton.CommandButton;
+import org.primefaces.component.datatable.DataTable;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.DicomModaliti;
@@ -17,12 +19,19 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingsBean")
 @ViewScoped
@@ -95,10 +104,19 @@ public class SettingsOrthancBean implements UserDao {
     boolean metricsEnabled;
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
+    boolean blockEcho = false;
 
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
+
+    public boolean isBlockEcho() {
+        return blockEcho;
+    }
+
+    public void setBlockEcho(boolean blockEcho) {
+        this.blockEcho = blockEcho;
+    }
 
     public String getLuaScriptsFolder() {
         return luaScriptsFolder;
@@ -179,9 +197,31 @@ public class SettingsOrthancBean implements UserDao {
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml"+"?"+e.getMessage());
             }catch (Exception e2){
-                //System.out.println(e2.getMessage());
+
             }
         }
+    }
+
+    public void echoTest(DicomModaliti dicomModaliti){
+        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+        UIComponent component = view.findComponent(":form:accordion:dt-modaliti:echo");
+        CommandButton bt = (CommandButton) component.findComponent(":form:accordion:dt-modaliti:echo");
+        JsonObject query = new JsonObject();
+        query.addProperty("AET", dicomModaliti.getDicomtitle());
+        query.addProperty("CheckFind", false);
+        query.addProperty("Host", dicomModaliti.getIp());
+        query.addProperty("Manufacturer", dicomModaliti.getDicomproperty());
+        query.addProperty("Port", dicomModaliti.getDicomport());
+        query.addProperty("Timeout", 100);
+        StringBuilder sb;
+        sb = connection.makePostConnectionAndStringBuilder("/tools/dicom-echo", query.toString());
+        if(sb!=null) {
+            showMessage("Сообщение:","Echo-тест прошёл успешно!",info);
+        }else{
+            showMessage("Сообщение:","Устройство не ответило!",error);
+        }
+        bt.setDisabled(false);
+        PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
     }
 
     public void loadConfig() {

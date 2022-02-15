@@ -75,7 +75,6 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
         return sb;
