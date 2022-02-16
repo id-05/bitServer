@@ -532,24 +532,26 @@ public class SettingsOrthancBean implements UserDao {
                 &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
                 &(!selectedDicomModality.getDicomproperty().equals(""))&(!selectedDicomModality.getDicomname().contains("_"))&(!selectedDicomModality.getDicomname().contains(" ")))
         {
-            boolean verifiUnical = true;
-            for(DicomModaliti bufDicomModaliti:dicomModalities){
-                if (bufDicomModaliti.getDicomname().equals(selectedDicomModality.getDicomname())) {
-                    verifiUnical = false;
-                    break;
+            if(Integer.parseInt(selectedDicomModality.getDicomport())<65535) {
+                boolean verifiUnical = true;
+                for (DicomModaliti bufDicomModaliti : dicomModalities) {
+                    if (bufDicomModaliti.getDicomname().equals(selectedDicomModality.getDicomname())) {
+                        verifiUnical = false;
+                        break;
+                    }
                 }
+                if (verifiUnical) {
+                    dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(), selectedDicomModality.getDicomname(),
+                            selectedDicomModality.getIp(), selectedDicomModality.getDicomport(), selectedDicomModality.getDicomproperty()));
+                    PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
+                    PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+                } else {
+                    PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
+                    PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+                }
+            }else {
+                showMessage("Внимание","Значение порта может должно быть в диапазоне от 104 - 65335!",FacesMessage.SEVERITY_ERROR);
             }
-            if(verifiUnical ){
-                dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(),selectedDicomModality.getDicomname(),
-                        selectedDicomModality.getIp(),selectedDicomModality.getDicomport(),selectedDicomModality.getDicomproperty()));
-                PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
-            }else{
-                PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
-            }
-
-
         }else{
             showMessage("Внимание","Все поля должны быть заполнены! Не допустимо использование символа: '_' или пробела в имени подальности!",FacesMessage.SEVERITY_ERROR);
         }
