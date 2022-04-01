@@ -3,31 +3,21 @@ package ru.bitServer.beans;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.button.Button;
-import org.primefaces.component.commandbutton.CommandButton;
-import org.primefaces.component.datatable.DataTable;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
-import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancWebUser;
 import ru.bitServer.util.OrthancRestApi;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import java.io.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -104,19 +94,10 @@ public class SettingsOrthancBean implements UserDao {
     boolean metricsEnabled;
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
-    boolean blockEcho = false;
 
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
-
-    public boolean isBlockEcho() {
-        return blockEcho;
-    }
-
-    public void setBlockEcho(boolean blockEcho) {
-        this.blockEcho = blockEcho;
-    }
 
     public String getLuaScriptsFolder() {
         return luaScriptsFolder;
@@ -202,16 +183,14 @@ public class SettingsOrthancBean implements UserDao {
         }
     }
 
-    public void echoTest(DicomModaliti dicomModaliti){
-        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
-        UIComponent component = view.findComponent(":form:accordion:dt-modaliti:echo");
-        CommandButton bt = (CommandButton) component.findComponent(":form:accordion:dt-modaliti:echo");
+    public void echoTestClick(){
         JsonObject query = new JsonObject();
-        query.addProperty("AET", dicomModaliti.getDicomtitle());
+        System.out.println("selectedDicomModality.getDicomtitle() = "+selectedDicomModality.getDicomtitle());
+        query.addProperty("AET", selectedDicomModality.getDicomtitle());
         query.addProperty("CheckFind", false);
-        query.addProperty("Host", dicomModaliti.getIp());
-        query.addProperty("Manufacturer", dicomModaliti.getDicomproperty());
-        query.addProperty("Port", dicomModaliti.getDicomport());
+        query.addProperty("Host", selectedDicomModality.getIp());
+        query.addProperty("Manufacturer", selectedDicomModality.getDicomproperty());
+        query.addProperty("Port", selectedDicomModality.getDicomport());
         query.addProperty("Timeout", 100);
         StringBuilder sb;
         sb = connection.makePostConnectionAndStringBuilder("/tools/dicom-echo", query.toString());
@@ -220,8 +199,7 @@ public class SettingsOrthancBean implements UserDao {
         }else{
             showMessage("Сообщение:","Устройство не ответило!",error);
         }
-        bt.setDisabled(false);
-        PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
 
     public void loadConfig() {
@@ -431,35 +409,6 @@ public class SettingsOrthancBean implements UserDao {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    private static Boolean truestring(String str){
-        String buf = "/*";
-        boolean troubleSimbol = true;
-        char char3 = buf.charAt(1);
-        int j = str.indexOf("//");
-        int k = str.indexOf("http");
-        boolean ifSlash = false;
-        boolean ifHTTP = false;
-        boolean check = false;
-        if(j!=-1){
-            ifSlash = true;
-            check = true;
-        }
-        if(k!=-1){
-            ifHTTP = true;
-        }
-        if(ifSlash&ifHTTP){
-            check = j < k;
-        }
-        str.replaceAll("\\s+","");
-        if(str.length()>0){
-            char char1 = str.charAt(0);
-            if((char1 == char3)|(check)){
-                troubleSimbol = false;
-            }
-        }
-        return troubleSimbol;
-    }
-
     public List<DicomModaliti> getDicomModalitisFromJson(String jsonStr){
         List<DicomModaliti> bufList = new ArrayList<>();
         JsonParser parser = new JsonParser();
@@ -493,17 +442,8 @@ public class SettingsOrthancBean implements UserDao {
         return bufUsers;
     }
 
-//    public JsonObject setWebUserToJson(){
-//        JsonObject jsonObj = new JsonObject();
-//        for(int i=0; i<=webUsers.size()-1; i++){
-//            jsonObj.addProperty(webUsers.get(i).getLogin(), webUsers.get(i).getPass());
-//        }
-//        return  jsonObj;
-//    }
-
     public void AddNewWebUser(){
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
-
 
             boolean verifiUnical = true;
             for(OrthancWebUser bufOrthancWebUser:webUsers){
@@ -577,14 +517,6 @@ public class SettingsOrthancBean implements UserDao {
 
     public void openNewModaliti() {
         selectedDicomModality = new DicomModaliti("","","","","");
-    }
-
-    public JsonArray getPluginsFolder() {
-        return pluginsFolder;
-    }
-
-    public void setPluginsFolder(JsonArray pluginsFolder) {
-        this.pluginsFolder = pluginsFolder;
     }
 
     public String getServerName() {
@@ -1035,52 +967,12 @@ public class SettingsOrthancBean implements UserDao {
         this.mediaArchiveSize = mediaArchiveSize;
     }
 
-    public String getStorageAccessOnFind() {
-        return storageAccessOnFind;
-    }
-
-    public void setStorageAccessOnFind(String storageAccessOnFind) {
-        this.storageAccessOnFind = storageAccessOnFind;
-    }
-
     public boolean isHttpVerbose() {
         return httpVerbose;
     }
 
     public void setHttpVerbose(boolean httpVerbose) {
         this.httpVerbose = httpVerbose;
-    }
-
-    public boolean isTcpNoDelay() {
-        return tcpNoDelay;
-    }
-
-    public void setTcpNoDelay(boolean tcpNoDelay) {
-        this.tcpNoDelay = tcpNoDelay;
-    }
-
-    public int getHttpThreadsCount() {
-        return httpThreadsCount;
-    }
-
-    public void setHttpThreadsCount(int httpThreadsCount) {
-        this.httpThreadsCount = httpThreadsCount;
-    }
-
-    public boolean isSaveJobs() {
-        return saveJobs;
-    }
-
-    public void setSaveJobs(boolean saveJobs) {
-        this.saveJobs = saveJobs;
-    }
-
-    public boolean isMetricsEnabled() {
-        return metricsEnabled;
-    }
-
-    public void setMetricsEnabled(boolean metricsEnabled) {
-        this.metricsEnabled = metricsEnabled;
     }
 
     public boolean isAllowFindSopClassesInStudy() {

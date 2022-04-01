@@ -255,7 +255,9 @@
                             <p:commandButton id="viewinosimis"
                                              style="margin-right: 10px" styleClass="rounded-button ui-button-help"
                                              icon="pi pi-eye" process="@this"
+                                             update=":seachform:dt-studys"
                                              actionListener="#{queueBean.redirectToOsimis(bitServerStudy.sid)}">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
 

@@ -333,6 +333,7 @@ public class SettingBitServerBean implements UserDao {
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
+        System.out.println("вывод = "+sb);
         boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
         System.out.println("studiesFromRestApi "+studiesFromRestApi.size());

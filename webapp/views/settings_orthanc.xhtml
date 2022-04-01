@@ -419,16 +419,18 @@
                                     </p:commandButton>
                                     <p:commandButton icon="pi pi-wifi" process="echo"
                                                      widgetVar="widget"
-                                                     onclick="PF('widget').disable()"
+                                                     onclick="PF('statusDialog').show()"
                                                      style="margin-right: 10px" styleClass="rounded-button ui-button-info"
-                                                     id="echo" update=":form:growl, :form:accordion:dt-modaliti:echo"
-                                                     actionListener="#{settingsBean.echoTest(dicomModaliti)}">
+                                                     id="echo" update=":form:growl"
+                                                     action="#{settingsBean.echoTestClick}">
                                         <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
                                     </p:commandButton>
-                                    <p:tooltip for="echo" value="Echo тест"/>
+
                                 </p:column>
                             </p:dataTable>
-
+                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                                <p:graphicImage value="/resources/images/internet.gif" />
+                            </p:dialog>
                             <p:dialog id="dialogNewModaliti" header="Новая модальность" showEffect="fade" modal="true"
                                       widgetVar="manageModalitiDialog" responsive="true">
                                 <p:panelGrid id="manage-modaliti-content" class="ui-fluid" columns="2">
@@ -503,7 +505,7 @@
                             <p class="p-m-0">
                                 <p:toggleSwitch value="#{settingsBean.dicomAlwaysAllowEcho}"/>
                             </p>
-                            <div class="p-text-capitalize">Разерешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
+                            <div class="p-text-capitalize">Разрешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Всегда принимать DICOM данные для хранения</b>

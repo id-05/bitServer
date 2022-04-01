@@ -17,15 +17,11 @@ public class OrthancStudy {
     private String PatientName;
     private String PatientSex;
     private String InstitutionName;
-    private Date PatientBirthDate;
+    private Date   PatientBirthDate;
     private List<OrthancSerie> series;
 
     public String getInstitutionName() {
         return InstitutionName;
-    }
-
-    public void setInstitutionName(String institutionName) {
-        InstitutionName = institutionName;
     }
 
     public String getShortId() {
@@ -60,26 +56,6 @@ public class OrthancStudy {
         PatientBirthDate = patientBirthDate;
     }
 
-    public OrthancStudy(String s, String s1, String s2) {
-    }
-
-    public List<OrthancSerie> getSeries() {
-        return series;
-    }
-
-    public void setSeries(List<OrthancSerie> series) {
-        this.series = series;
-    }
-
-
-    public String getStudyDateToStr() {
-        return studyDateToStr;
-    }
-
-    public void setStudyDateToStr(String studyDateToStr) {
-        this.studyDateToStr = studyDateToStr;
-    }
-
     public String getModality() {
         return modality;
     }
@@ -87,32 +63,6 @@ public class OrthancStudy {
     public void setModality(String modality) {
         this.modality = modality;
     }
-
-    public OrthancStudy(String InstitutionName, String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
-        this.InstitutionName = InstitutionName;
-        this.studyDescription = studyDescription;
-        this.date = date;
-        this.modality = modality;
-        this.ShortId = patientID;
-        this.PatientName = patientName;
-        this.PatientBirthDate = birthDate;
-        this.PatientSex = sex;
-        this.accession = accession;
-        this.StudyOrthancId = StudyOrthancId;
-        SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
-        this.studyDateToStr = format.format(date);
-        this.series = new ArrayList<>();
-    }
-
-//    public OrthancStudy(String studyDescription, Date studyDateObject, String accessionNumber, String studyId) {
-//        this.studyDescription = studyDescription;
-//        this.date = studyDateObject;
-//        this.accession = accessionNumber;
-//        this.StudyOrthancId = studyId;
-//        SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
-//        this.studyDateToStr = format.format(date);
-//        this.series = new ArrayList<>();
-//    }
 
     public String getStudyDescription() {
         return studyDescription;
@@ -126,8 +76,28 @@ public class OrthancStudy {
         return date;
     }
 
-    public String getAccession() {
-        return accession;
+
+    public OrthancStudy(String InstitutionName, String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
+        //System.out.println("OrthancStudy");
+        this.InstitutionName = InstitutionName;
+        this.studyDescription = studyDescription;
+        this.date = date;
+        //System.out.println(" date = "+date);
+        //System.out.println(" birthDate = "+birthDate);
+        this.modality = modality;
+        this.ShortId = patientID;
+        this.PatientName = patientName;
+        this.PatientBirthDate = birthDate;
+        if(birthDate!=null) {
+            this.PatientBirthDate.setHours(23);
+        }
+        //System.out.println(" PatientBirthDate = "+birthDate);
+        this.PatientSex = sex;
+        this.accession = accession;
+        this.StudyOrthancId = StudyOrthancId;
+        SimpleDateFormat format =new SimpleDateFormat("dd/MM/yyyy");
+        this.studyDateToStr = format.format(date);
+        this.series = new ArrayList<>();
     }
 
 }

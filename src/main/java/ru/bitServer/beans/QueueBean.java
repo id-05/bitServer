@@ -380,6 +380,7 @@ public class QueueBean implements UserDao {
     }
 
     public void sortListener(){
+        System.out.println("sortListener");
         UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
         UIComponent component = view.findComponent(":seachform:dt-studys");
         DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
@@ -456,6 +457,7 @@ public class QueueBean implements UserDao {
         }
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStrMod);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        dataoutput();
     }
 
     private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
@@ -482,11 +484,13 @@ public class QueueBean implements UserDao {
             assert parentPatientDetails != null;
             if (parentPatientDetails.has("PatientBirthDate")) {
                 patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
+                System.out.println("patientDobString = "+patientDobString);
             }
 
             if(!patientDobString.equals("")){
                 try {
                     patientDob = FORMAT.parse(patientDobString);
+                    System.out.println("patientDobString = "+patientDob);
                 } catch (Exception e) {
                     System.out.println("Error to transfer date 1  "+parentPatientDetails);
                 }
@@ -513,12 +517,14 @@ public class QueueBean implements UserDao {
             Date studyDateObject = null;
             if (studyDetails.has("StudyDate")) {
                 studyDate = studyDetails.get("StudyDate").getAsString();
+                System.out.println("studyDate = "+studyDate);
             }
 
             try {
-                studyDateObject = FORMAT.parse("19000101");
-                assert studyDate != null;
+//                studyDateObject = FORMAT.parse("19000101");
+//                assert studyDate != null;
                 studyDateObject = FORMAT.parse(studyDate);
+                System.out.println("studyDateObject = "+studyDateObject);
             } catch (Exception e) {
                 System.out.println("Errot to transfer date 2");
             }
@@ -621,6 +627,7 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
+        System.out.println("sid = "+sid);
         String HttpOrHttps;
         if(mainServer.getHttpmode().equals("true")){
             HttpOrHttps = "https";

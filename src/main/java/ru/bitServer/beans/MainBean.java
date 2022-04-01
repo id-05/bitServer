@@ -1,7 +1,5 @@
 package ru.bitServer.beans;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.primefaces.model.DashboardModel;
 import ru.bitServer.dao.BitServerResources;
@@ -14,7 +12,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @ManagedBean(name = "mainBean", eager = true)
 @SessionScoped
@@ -107,7 +104,6 @@ public class MainBean implements UserDao {
     public void init() {
         versionInfo = "1.1";
         timeOnWork = 24;
-
 
 //        ResourceBundle RB = new ResourceBundle() {
 //            @Override
