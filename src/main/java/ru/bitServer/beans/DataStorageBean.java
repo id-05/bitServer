@@ -2,6 +2,8 @@ package ru.bitServer.beans;
 
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.util.LogTool;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -54,7 +56,6 @@ public class DataStorageBean implements UserDao {
     public void init() {
         try {
             BitServerResources dataStorageResource = getBitServerResource("datastorage");
-
             if(dataStorageResource!=null) {
                 String bufDataStorage = dataStorageResource.getRvalue();
                 directory = bufDataStorage;
@@ -64,15 +65,15 @@ public class DataStorageBean implements UserDao {
                 double bufDouble = (bufFile.getFreeSpace() / (double) bufFile.getTotalSpace());
                 usedSpace = (100 - (int) (bufDouble * 100)) + " %";
             }
-
         }catch (Exception e){
             ExternalContext ec = FacesContext.getCurrentInstance()
                     .getExternalContext();
+            LogTool.getLogger().warn("Error in DataStorageBean: "+e.getMessage());
             try{
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml"+"?"+e.getMessage());
             }catch (Exception e2){
-                System.out.println(e2.getMessage());
+                LogTool.getLogger().warn("Error during redirect from DataStorageBean: "+e2.getMessage());
             }
         }
     }

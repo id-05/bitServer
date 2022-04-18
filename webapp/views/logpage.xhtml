@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
       xmlns:p="http://primefaces.org/ui">
 
 <f:view>
@@ -27,33 +28,19 @@
 
     <h:body>
 
-        <h:form id="errorform">
+        <h:form id="logform">
 
             <div class="centercard">
                 <p:growl id="growl" showDetail="true" />
                 <div>
-
-                    <div class="p-field p-grid">
-                    <span class="ui-float-label" style="margin-top: 200px">
-                        <p:graphicImage name="logo.png" library="images"/>
-                    </span>
-                    </div>
-
-                    <div class="p-field p-grid">
-                    <span class="ui-float-label" style="width: 400px; margin-top: 20px">
-                        <p:outputLabel style="font-size: large; margin-bottom: 5px; margin-top: 5px" value="В работе сервиса возникла ошибка!"/>
-                    </span>
-                    </div>
-                    <br/>
-                    <div class="p-field p-grid">
-                    <span class="ui-float-label" style="width: 400px; margin-top: 20px">
-                        <p:link style="font-size: large; margin-left: 5px; margin-bottom: 5px; margin-top: 5px" outcome="logpage" value="Нажмите чтобы увидеть LOG-файл"/>
-                    </span>
-                    </div>
-                    <br/>
-
+                    <h:outputText style="font-size: large; margin-bottom: 5px; margin-top: 5px" value="bitServer log:" />
                 </div>
             </div>
+
+            <p:textEditor widgetVar="editor" secure="false" value="#{fn:replace(logBean.logtext,'\\n','&lt;br/&gt;')}">
+                <f:facet name="toolbar">
+                </f:facet>
+            </p:textEditor>
 
         </h:form>
 

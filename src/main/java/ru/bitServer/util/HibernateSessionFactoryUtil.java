@@ -28,7 +28,7 @@ public class HibernateSessionFactoryUtil {
 
             } catch (Exception e) {
                 System.out.println("Исключение! " + e);
-                //FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
+                LogTool.getLogger().debug("Error getSessionFactory() HibernateSFU "+e.getMessage());
             }
         }
         return sessionFactory;

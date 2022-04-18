@@ -8,6 +8,7 @@ import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.service.DicomrouteRule;
 import ru.bitServer.service.DicomruleParser;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -22,7 +23,6 @@ import java.util.List;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-
 @ManagedBean(name = "dicomrouteBean")
 @ViewScoped
 public class DicomrouteBean implements UserDao {
@@ -34,7 +34,6 @@ public class DicomrouteBean implements UserDao {
     StringBuilder luascriptFile;
     String luascripttextFile;
     List<DicomModaliti> modalities;
-    List<DicomModaliti> selectedModalities;
     List<String> modalitiesName;
     DicomrouteRule selectedRule;
 
@@ -48,14 +47,6 @@ public class DicomrouteBean implements UserDao {
 
     public void setModalitiesName(List<String> modalitiesName) {
         this.modalitiesName = modalitiesName;
-    }
-
-    public List<DicomModaliti> getSelectedModalities() {
-        return selectedModalities;
-    }
-
-    public void setSelectedModalities(List<DicomModaliti> selectedModalities) {
-        this.selectedModalities = selectedModalities;
     }
 
     public DicomrouteRule getSelectedRule() {
@@ -105,7 +96,7 @@ public class DicomrouteBean implements UserDao {
                 luascriptFile.append((char) c);
             }
         } catch (Exception e) {
-            System.out.println("error of read file = "+e.getMessage());
+            LogTool.getLogger().debug("Error read luascript file: "+e.getMessage());
         }
         luascripttextFile = luascriptFile.toString();
         DicomruleParser ruleParcer = new DicomruleParser(luascriptFile);
@@ -143,14 +134,13 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void saveSettingsCustomMode(){
-        System.out.println("pathToFile = " + pathToFile);
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
         {
             byte[] buffer = luascripttextFile.getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
         }
-        catch(IOException ex){
-            System.out.println(ex.getMessage());
+        catch(IOException e){
+            LogTool.getLogger().debug("Error saveSettingsCustomeMode DicomrouteBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения, перезагрузите сервис!",FacesMessage.SEVERITY_INFO);
     }
@@ -176,8 +166,8 @@ public class DicomrouteBean implements UserDao {
             byte[] buffer = bufStringBuilder.toString().getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
         }
-        catch(IOException ex){
-            System.out.println(ex.getMessage());
+        catch(IOException e){
+            LogTool.getLogger().debug("Error saveSettings DicomrouteBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения, перезагрузите сервис!",FacesMessage.SEVERITY_INFO);
     }

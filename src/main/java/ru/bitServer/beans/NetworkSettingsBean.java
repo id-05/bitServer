@@ -6,6 +6,7 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.service.NetworkAdapter;
 import ru.bitServer.service.NetworkSettingsParcer;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -88,36 +89,38 @@ public class NetworkSettingsBean implements UserDao {
 
     public void resAdapter() {
         showMessage("Внимание","Сетевой адаптер будет перезагружен!",FacesMessage.SEVERITY_INFO);
-
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/netresetscript");
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+            LogTool.getLogger().debug("Error resAdapter() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
     public void serviceMode() throws InterruptedException, IOException {
         showMessage("Внимание","Сервер переведен в сервисный режим!",FacesMessage.SEVERITY_INFO);
-
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+            LogTool.getLogger().debug("Error serviceMode() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
     public void normalMode() throws InterruptedException, IOException {
         showMessage("Внимание","Сервер переведен в нормальный режим!",FacesMessage.SEVERITY_INFO);
-
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/noneservicemode");
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+            LogTool.getLogger().debug("Error normalMode() NetworkSettingsBean: "+e.getMessage());
         }
-
     }
 
     public void addNewAdapter(){
@@ -153,7 +156,7 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void save() {
-        System.out.println("save");
+
     }
 
     public void onTabChange(){
@@ -167,8 +170,9 @@ public class NetworkSettingsBean implements UserDao {
             byte[] buffer = configFileText.getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
         }
-        catch(IOException ex){
-            System.out.println(ex.getMessage());
+        catch(IOException e){
+            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+            LogTool.getLogger().debug("Error saveSettingsCustomMode() NetworkSettingsBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
     }
@@ -209,8 +213,8 @@ public class NetworkSettingsBean implements UserDao {
             byte[] buffer = bufStringBuilder.toString().getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
         }
-        catch(IOException ex){
-            System.out.println(ex.getMessage());
+        catch(IOException e){
+            LogTool.getLogger().debug("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
     }

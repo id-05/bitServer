@@ -1,10 +1,9 @@
 package ru.bitServer.beans;
 
-import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -21,8 +20,6 @@ public class AutoriseBean implements UserDao {
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
-
-
     String inputUserName;
     String inputPassword;
 
@@ -77,11 +74,9 @@ public class AutoriseBean implements UserDao {
     public void validateUsernamePassword() throws IOException {
         try {
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
-            System.out.println(currentUser.getUname());
             if (currentUser.getUname()!=null) {
+                LogTool.getLogger().debug("User "+currentUser.getUname()+" enter into system");
                 HttpSession session = SessionUtils.getSession();
-
-                MainBean.LOG.info(currentUser.getUid() + " Пользователь зарегистрировался!");
                 session.setAttribute("userid", currentUser.getUid());
                 currentuserTheme = "saga";
 
@@ -110,10 +105,8 @@ public class AutoriseBean implements UserDao {
                 showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль", error );
             }
         }catch (Exception e){
-            if(inputUserName.equals("admin2")&inputPassword.equals("admin2"))
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
+            LogTool.getLogger().warn("Error during autorisation: inputUserName,inputPassword = "+inputUserName+", "+inputPassword);
         }
-
     }
 
     public void logout() throws IOException {

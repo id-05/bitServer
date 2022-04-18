@@ -1,7 +1,5 @@
 package ru.bitServer.beans;
 
-//import org.joda.time.Days;
-//import org.joda.time.LocalDate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,8 +7,8 @@ import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancStudy;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -32,7 +30,7 @@ public class SettingBitServerBean implements UserDao {
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
     final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    private int progress1;
+    int progress1;
     List<Users> usersList;
     List<Users> selectedUsers;
     Users selectedUser;
@@ -333,10 +331,8 @@ public class SettingBitServerBean implements UserDao {
         query.add("Query", queryDetails);
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
-        System.out.println("вывод = "+sb);
         boolean existInTable;
         studiesFromRestApi = getStudiesFromJson(sb.toString());
-        System.out.println("studiesFromRestApi "+studiesFromRestApi.size());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
             existInTable = false;
@@ -389,7 +385,7 @@ public class SettingBitServerBean implements UserDao {
                 try {
                     patientDob = FORMAT.parse(patientDobString);
                 } catch (Exception e) {
-                    System.out.println("Error to transfer date 1  "+parentPatientDetails);
+                    LogTool.getLogger().debug("Error to transfer date SettingsBitServerBean: "+e.getMessage());
                 }
             }
 
@@ -421,7 +417,7 @@ public class SettingBitServerBean implements UserDao {
                 assert studyDate != null;
                 studyDateObject = FORMAT.parse(studyDate);
             } catch (Exception e) {
-                System.out.println("Errot to transfer date 2");
+                LogTool.getLogger().debug("Error to transfer date-2 SettingsBitServerBean: "+e.getMessage());
             }
 
             String studyDescription = "N/A";
@@ -639,7 +635,6 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
-        System.out.println("save new user start");
         if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
@@ -743,7 +738,7 @@ public class SettingBitServerBean implements UserDao {
             PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
         }catch (Exception e){
             PrimeFaces.current().executeScript("PF('errorDeleteUsergroupDialog').show()");
-            System.out.println("error delete = "+e.getMessage());
+            LogTool.getLogger().debug("Error deleteUserGroupSettings SettingsBitServerBean: "+e.getMessage());
         }
     }
 

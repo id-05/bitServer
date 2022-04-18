@@ -75,6 +75,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
+            LogTool.getLogger().debug("Error makePostConnectionAndStringBuilder "+e.getMessage());
             return null;
         }
         return sb;
@@ -93,7 +94,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            log.info("Error during makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
+            LogTool.getLogger().debug("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
             return null;
         }
         return sb;
@@ -149,6 +150,7 @@ public class OrthancRestApi {
             os.flush();
             conn.getResponseMessage();
         } catch (Exception e) {
+            LogTool.getLogger().debug("Error sendDicom RestApi "+e.getMessage());
             e.printStackTrace();
         }
         return conn;

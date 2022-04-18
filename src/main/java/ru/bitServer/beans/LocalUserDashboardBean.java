@@ -2,6 +2,7 @@ package ru.bitServer.beans;
 
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -26,17 +27,15 @@ public class LocalUserDashboardBean implements UserDao {
     @PostConstruct
     public void init() {
         try {
-            System.out.println("local user dashboard");
             HttpSession session = SessionUtils.getSession();
             currentUser = getUserById(session.getAttribute("userid").toString());
         }catch (Exception e){
-            ExternalContext ec = FacesContext.getCurrentInstance()
-                    .getExternalContext();
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml");
             }catch (Exception e2){
-                System.out.println(e2.getMessage().toString());
+                LogTool.getLogger().debug("Error init() LocalUserDashboardBean: "+e2.getMessage());
             }
         }
     }

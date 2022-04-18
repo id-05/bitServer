@@ -1,10 +1,10 @@
 package ru.bitServer.beans;
 
-import org.apache.log4j.Logger;
 import org.primefaces.model.DashboardModel;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -34,7 +34,6 @@ public class MainBean implements UserDao {
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
-    public static final Logger LOG = Logger.getLogger(MainBean.class);
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -102,30 +101,8 @@ public class MainBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        versionInfo = "1.1";
+        versionInfo = "1.2";
         timeOnWork = 24;
-
-//        ResourceBundle RB = new ResourceBundle() {
-//            @Override
-//            protected Object handleGetObject(String key) {
-//                return null;
-//            }
-//
-//            @Override
-//            public Enumeration<String> getKeys() {
-//                return null;
-//            }
-//        };
-//        LOG.setResourceBundle(RB);
-
-        //model = new DefaultDashboardModel();
-        //DashboardColumn column1 = new DefaultDashboardColumn();
-        //DashboardColumn column2 = new DefaultDashboardColumn();
-        //DashboardColumn column3 = new DefaultDashboardColumn();
-        //column1.addWidget("sports");
-        //model.addColumn(column1);
-        //model.addColumn(column2);
-        //model.addColumn(column3);
 
         System.out.println("init main");
         mainServer = new OrthancServer();
@@ -160,24 +137,7 @@ public class MainBean implements UserDao {
                 }
             }
         }catch (Exception e){
-            System.out.println("Ошибка: "+e.getMessage());
-        }
-        try {
-//            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-//            System.out.println("connection : "+mainServer.getIpaddress()+":"+mainServer.getPort());
-//            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/statistics");
-//            JsonParser parser = new JsonParser();
-//            JsonObject orthancJson = parser.parse(sb.toString()).getAsJsonObject();
-//            mainServer.setCountInstances(orthancJson.get("CountInstances").getAsInt());
-//            mainServer.setCountPatients(orthancJson.get("CountPatients").getAsInt());
-//            mainServer.setCountSeries(orthancJson.get("CountSeries").getAsInt());
-//            mainServer.setCountStudies(orthancJson.get("CountStudies").getAsInt());
-//            mainServer.setTotalDiskSizeMB(orthancJson.get("TotalDiskSizeMB").getAsInt());
-//            totalStudy = String.valueOf(mainServer.getCountStudies());
-//            totalPatient = String.valueOf(mainServer.getCountPatients());
-//            totalSize = String.valueOf(mainServer.getTotalDiskSizeMB()/1024);
-        }catch (Exception e){
-            System.out.println("Ошибка: "+e.getMessage());
+            LogTool.getLogger().debug("Error init() MainBean: "+e.getMessage());
         }
         themeList = themeListinit();
         selectTheme = themeList.get(1);

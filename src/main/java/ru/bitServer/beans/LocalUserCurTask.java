@@ -6,6 +6,7 @@ import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -82,7 +83,6 @@ public class LocalUserCurTask implements UserDao {
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
-            System.out.println("перед add");
             addResult(currentStudy, file);
         }else{
             System.out.println("Возникла ошибка в выборе или типе файла!");
@@ -105,8 +105,7 @@ public class LocalUserCurTask implements UserDao {
                 input.read(buffer, 0, buffer.length);
                 output.write(buffer, 0, buffer.length);
             }catch (Exception e){
-
-                System.out.println("ошибка сохранения файла = "+e.getMessage());
+                LogTool.getLogger().debug("Error save file addResult LocalUserCurTask "+e.getMessage());
             }
             selectedVisibleStudy.setTyperesult(true);
             selectedVisibleStudy.setResult(folder.toString()+"/" + selectedVisibleStudy.getSid() + "." + extension);
@@ -119,6 +118,6 @@ public class LocalUserCurTask implements UserDao {
     }
 
     public void saveResult(){
-        System.out.print("save result");
+
     }
 }

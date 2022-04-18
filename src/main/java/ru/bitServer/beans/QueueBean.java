@@ -15,6 +15,7 @@ import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancStudy;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -275,16 +276,13 @@ public class QueueBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("start "+(new SimpleDateFormat("dd.MM.yy hh:mm").format(new Date())));
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
-
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
-
         firstdate = new Date();
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
@@ -296,7 +294,7 @@ public class QueueBean implements UserDao {
                 readStudyFromDB();
             }
         }catch (Exception e){
-            System.out.println("error update after open "+e.getMessage());
+            LogTool.getLogger().debug("Error init() QueueBean "+e.getMessage());
         }
 
         selectedModalitiName.clear();
@@ -310,7 +308,6 @@ public class QueueBean implements UserDao {
         selectedModalitiName.add("CR");
         selectedModalitiName.add("MG");
         selectedModalitiName.add("DX");
-
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -380,7 +377,6 @@ public class QueueBean implements UserDao {
     }
 
     public void sortListener(){
-        System.out.println("sortListener");
         UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
         UIComponent component = view.findComponent(":seachform:dt-studys");
         DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
@@ -411,53 +407,57 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        JsonObject query = new JsonObject();
-        query.addProperty("Level", "Studies");
-        query.addProperty("CaseSensitive", false);
-        query.addProperty("Expand", true);
-        query.addProperty("Limit", 0);
-        JsonObject queryDetails = new JsonObject();
-        Date lastdate = new Date();
-        Instant now = Instant.now();
-        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-        String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
-        queryDetails.addProperty("StudyDate", dateStr);
-        queryDetails.addProperty("PatientID", "*");
-        queryDetails.addProperty("Modality", "");
-        query.add("Query", queryDetails);
+        try {
+            JsonObject query = new JsonObject();
+            query.addProperty("Level", "Studies");
+            query.addProperty("CaseSensitive", false);
+            query.addProperty("Expand", true);
+            query.addProperty("Limit", 0);
+            JsonObject queryDetails = new JsonObject();
+            Date lastdate = new Date();
+            Instant now = Instant.now();
+            Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+            String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
+            queryDetails.addProperty("StudyDate", dateStr);
+            queryDetails.addProperty("PatientID", "*");
+            queryDetails.addProperty("Modality", "");
+            query.add("Query", queryDetails);
 
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-        boolean existInTable;
-        studiesFromRestApi = getStudiesFromJson(sb.toString());
-        studiesFromTableBitServer = getAllBitServerStudy();
-        for(OrthancStudy bufStudy:studiesFromRestApi){
-            existInTable = false;
-            for(BitServerStudy bBSS:studiesFromTableBitServer){
-                if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-                    existInTable = true;
-                    break;
+            StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+            boolean existInTable;
+            studiesFromRestApi = getStudiesFromJson(sb.toString());
+            studiesFromTableBitServer = getAllBitServerStudy();
+            for (OrthancStudy bufStudy : studiesFromRestApi) {
+                existInTable = false;
+                for (BitServerStudy bBSS : studiesFromTableBitServer) {
+                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+                        existInTable = true;
+                        break;
+                    }
+                }
+                if (!existInTable) {
+                    BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                            bufStudy.getInstitutionName(), bufStudy.getDate(),
+                            bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+                    addStudy(buf);
                 }
             }
-            if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                        bufStudy.getInstitutionName(), bufStudy.getDate(),
-                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
-                addStudy(buf);
-            }
-        }
 
-        String bufStrMod = "";
-        String bufStr="";
-        for(String buf:selectedModalitiName){
-            if(!bufStrMod.equals("")){
-                bufStrMod = "'" + buf + "'";
-            }else {
-                bufStrMod = bufStr + ",'" + buf + "'";
+            String bufStrMod = "";
+            String bufStr = "";
+            for (String buf : selectedModalitiName) {
+                if (!bufStrMod.equals("")) {
+                    bufStrMod = "'" + buf + "'";
+                } else {
+                    bufStrMod = bufStr + ",'" + buf + "'";
+                }
             }
+            visibleStudiesList = getBitServerStudy(typeSeach, filtrDate, firstdate, seconddate, bufStrMod);
+            PrimeFaces.current().ajax().update(":seachform:dt-studys");
+            dataoutput();
+        }catch (Exception e){
+            LogTool.getLogger().debug("Error readStudyFromDB QueueBean "+e.getMessage());
         }
-        visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate,bufStrMod);
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        dataoutput();
     }
 
     private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
@@ -484,15 +484,13 @@ public class QueueBean implements UserDao {
             assert parentPatientDetails != null;
             if (parentPatientDetails.has("PatientBirthDate")) {
                 patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
-                System.out.println("patientDobString = "+patientDobString);
             }
 
             if(!patientDobString.equals("")){
                 try {
                     patientDob = FORMAT.parse(patientDobString);
-                    System.out.println("patientDobString = "+patientDob);
                 } catch (Exception e) {
-                    System.out.println("Error to transfer date 1  "+parentPatientDetails);
+                    LogTool.getLogger().debug("Error to transfer date 1 QueueBean "+e.getMessage());
                 }
             }
 
@@ -517,16 +515,12 @@ public class QueueBean implements UserDao {
             Date studyDateObject = null;
             if (studyDetails.has("StudyDate")) {
                 studyDate = studyDetails.get("StudyDate").getAsString();
-                System.out.println("studyDate = "+studyDate);
             }
 
             try {
-//                studyDateObject = FORMAT.parse("19000101");
-//                assert studyDate != null;
                 studyDateObject = FORMAT.parse(studyDate);
-                System.out.println("studyDateObject = "+studyDateObject);
             } catch (Exception e) {
-                System.out.println("Errot to transfer date 2");
+                LogTool.getLogger().debug("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
             }
 
             String studyDescription = "N/A";
@@ -627,7 +621,6 @@ public class QueueBean implements UserDao {
     }
 
     public void redirectToOsimis(String sid) {
-        System.out.println("sid = "+sid);
         String HttpOrHttps;
         if(mainServer.getHttpmode().equals("true")){
             HttpOrHttps = "https";

@@ -9,6 +9,7 @@ import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -172,13 +173,12 @@ public class SettingsOrthancBean implements UserDao {
             webUsers = getWebUserFromJson(users.toString());
             dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         }catch (Exception e){
-            ExternalContext ec = FacesContext.getCurrentInstance()
-                    .getExternalContext();
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml"+"?"+e.getMessage());
             }catch (Exception e2){
-
+                LogTool.getLogger().debug("Error during init() SettingsOrthancBean "+e.getMessage());
             }
         }
     }
@@ -278,7 +278,7 @@ public class SettingsOrthancBean implements UserDao {
             locale = json.getLocale();
             pluginsFolder = json.getPluginsFolder();
         }catch (Exception e){
-            MainBean.LOG.info("Error from  SettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error during open orthanc.json! Try it! "+e.getMessage());
         }
     }
 
@@ -444,7 +444,6 @@ public class SettingsOrthancBean implements UserDao {
 
     public void AddNewWebUser(){
         if((!selectedUser.getLogin().equals(""))&(!selectedUser.getPass().equals(""))) {
-
             boolean verifiUnical = true;
             for(OrthancWebUser bufOrthancWebUser:webUsers){
                 if (bufOrthancWebUser.getLogin().equals(selectedUser.getLogin())) {

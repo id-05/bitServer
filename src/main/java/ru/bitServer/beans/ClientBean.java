@@ -17,6 +17,7 @@ import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -107,8 +108,6 @@ public class ClientBean implements UserDao {
             return DefaultStreamedContent.builder()
                     .contentType("image")
                     .stream(() -> {
-
-
                         try {
                             ByteArrayOutputStream os = new ByteArrayOutputStream();
                             File file = new File("D:\\dicom\\IM11.dcm");
@@ -119,7 +118,7 @@ public class ClientBean implements UserDao {
                             return new ByteArrayInputStream(os.toByteArray());
                         }
                         catch (Exception e) {
-                            System.out.println("dicomfile error create "+e.getMessage());
+                            LogTool.getLogger().debug("Dicomfile error create ClientBean "+e.getMessage());
                             return null;
                         }
                     })
