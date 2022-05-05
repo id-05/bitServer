@@ -5,6 +5,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -66,7 +67,6 @@ public class QueueremoteBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("QueueremoteBean");
         selectedVisibleStudy = new BitServerStudy();
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
@@ -99,7 +99,7 @@ public class QueueremoteBean implements UserDao {
                 input.read(buffer, 0, buffer.length);
                 output.write(buffer, 0, buffer.length);
             }catch (Exception e){
-                System.out.println("ошибка сохранения файла = "+e.getMessage());
+                LogTool.getLogger().warn("Error addResult QueueremoteBean "+e.getMessage());
             }
             selectedVisibleStudy.setTyperesult(true);
             selectedVisibleStudy.setResult(folder.toString()+"\\" + selectedVisibleStudy.getSid() + "." + extension);
@@ -142,13 +142,11 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        System.out.println("Вход");
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
-            System.out.println("перед add куыгде");
             addResult(selectedVisibleStudy, file);
         }else{
-            System.out.println("Возникла ошибка в выборе или типе файла!");
+            LogTool.getLogger().warn("Error handleFileUpload NetworkSettingsBean");
         }
     }
 

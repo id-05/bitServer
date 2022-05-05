@@ -80,7 +80,7 @@ public class NetworkSettingsBean implements UserDao {
                 newtworkSettingsFile.append((char) c);
             }
         } catch (Exception e) {
-            System.out.println("error of read file");
+            LogTool.getLogger().warn("Error of read file init() networkSettingsBean: "+e.getMessage());
         }
         configFileText = newtworkSettingsFile.toString();
         NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(newtworkSettingsFile);
@@ -94,8 +94,7 @@ public class NetworkSettingsBean implements UserDao {
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-            LogTool.getLogger().debug("Error resAdapter() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error resAdapter() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -104,10 +103,10 @@ public class NetworkSettingsBean implements UserDao {
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
             proc.waitFor();
+            LogTool.getLogger().debug("Admin: "+currentUser.getUid().toString()+" select service mode ");
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-            LogTool.getLogger().debug("Error serviceMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error serviceMode() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -116,10 +115,10 @@ public class NetworkSettingsBean implements UserDao {
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/noneservicemode");
             proc.waitFor();
+            LogTool.getLogger().debug("Admin: "+currentUser.getUid().toString()+" select normal mode ");
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-            LogTool.getLogger().debug("Error normalMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error normalMode() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -136,10 +135,12 @@ public class NetworkSettingsBean implements UserDao {
 
             if (verifiUnical) {
                 adapters.add(selectedAdapter);
+                LogTool.getLogger().debug("Admin: "+currentUser.getUid().toString()+" add new networkadapter "+selectedAdapter.getName());
             } else {
                 adapters.remove(selectedAdapter);
                 adapters.add(selectedAdapter);
                 adapters.sort(Comparator.comparing(NetworkAdapter::getName));
+                LogTool.getLogger().debug("Admin: "+currentUser.getUid().toString()+" change one of exist networkadapter "+selectedAdapter.getName());
             }
             PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
             PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
@@ -148,6 +149,7 @@ public class NetworkSettingsBean implements UserDao {
 
     public void deleteAdapter(){
         adapters.remove(selectedAdapter);
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" delete networkadapter "+selectedAdapter.getName());
         PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
     }
 
@@ -171,8 +173,7 @@ public class NetworkSettingsBean implements UserDao {
             fileOutputStream.write(buffer, 0, buffer.length);
         }
         catch(IOException e){
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-            LogTool.getLogger().debug("Error saveSettingsCustomMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error saveSettingsCustomMode() NetworkSettingsBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
     }
@@ -214,7 +215,7 @@ public class NetworkSettingsBean implements UserDao {
             fileOutputStream.write(buffer, 0, buffer.length);
         }
         catch(IOException e){
-            LogTool.getLogger().debug("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
     }

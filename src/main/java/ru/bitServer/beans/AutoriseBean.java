@@ -1,6 +1,7 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
+import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.LogTool;
@@ -61,7 +62,11 @@ public class AutoriseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-
+        try {
+            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+        }catch (Exception e){
+            saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
+        }
     }
 
     public void setTheme(String tName){
@@ -75,7 +80,6 @@ public class AutoriseBean implements UserDao {
         try {
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
             if (currentUser.getUname()!=null) {
-                LogTool.getLogger().debug("User "+currentUser.getUname()+" enter into system");
                 HttpSession session = SessionUtils.getSession();
                 session.setAttribute("userid", currentUser.getUid());
                 currentuserTheme = "saga";
@@ -89,6 +93,7 @@ public class AutoriseBean implements UserDao {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
                         break;
                     case "admin":
+                        LogTool.getLogger().debug("Admin "+ currentUser.getUname()+" autorise in system");
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
                         break;
                     case "client":

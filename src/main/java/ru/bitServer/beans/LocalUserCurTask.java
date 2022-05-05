@@ -85,7 +85,8 @@ public class LocalUserCurTask implements UserDao {
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             addResult(currentStudy, file);
         }else{
-            System.out.println("Возникла ошибка в выборе или типе файла!");
+            LogTool.getLogger().warn("Возникла ошибка в выборе или типе файла handleFileUpload localuser");
+
         }
     }
 
@@ -105,7 +106,7 @@ public class LocalUserCurTask implements UserDao {
                 input.read(buffer, 0, buffer.length);
                 output.write(buffer, 0, buffer.length);
             }catch (Exception e){
-                LogTool.getLogger().debug("Error save file addResult LocalUserCurTask "+e.getMessage());
+                LogTool.getLogger().warn("Error save file addResult LocalUserCurTask "+e.getMessage());
             }
             selectedVisibleStudy.setTyperesult(true);
             selectedVisibleStudy.setResult(folder.toString()+"/" + selectedVisibleStudy.getSid() + "." + extension);

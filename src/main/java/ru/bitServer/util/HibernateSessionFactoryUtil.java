@@ -5,9 +5,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import ru.bitServer.dao.*;
 
-import javax.faces.context.FacesContext;
-import java.io.IOException;
-
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
 
@@ -27,7 +24,6 @@ public class HibernateSessionFactoryUtil {
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
             } catch (Exception e) {
-                System.out.println("Исключение! " + e);
                 LogTool.getLogger().debug("Error getSessionFactory() HibernateSFU "+e.getMessage());
             }
         }

@@ -10,6 +10,7 @@ import org.primefaces.model.chart.*;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -159,27 +160,24 @@ public class RemoteUserDashboardBean implements UserDao {
                 timeLeft = new Date(timestamp);
             }
         }catch (Exception e){
-            //PrimeFaces.current().executeScript("alert('Ошибка: '"+e.getMessage()+"');");
-            ExternalContext ec = FacesContext.getCurrentInstance()
-                    .getExternalContext();
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             try{
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml?"+e.getMessage());
-                System.out.println(e.getMessage());
+                LogTool.getLogger().warn("Error init() remoteDashboard: "+e.getMessage());
             }catch (Exception e2){
-                System.out.println(e2.getMessage());
+                LogTool.getLogger().warn("Error init() remoteDashboard: "+e.getMessage());
             }
         }
 
         myStudies = getMyStudy(currentUser);
-
         allHasResultStudies = getAllBitServerStudy();
         allHasResultStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
         try {
             firstdate = allHasResultStudies.get(0).getSdate();
             seconddate = allHasResultStudies.get(allHasResultStudies.size() - 1).getSdate();
         }catch (Exception e){
-            System.out.println("error = "+e.getMessage());
+            LogTool.getLogger().warn("Error init() remoteDashboard: "+e.getMessage());
             firstdate = new Date();
             seconddate = new Date();
         }
@@ -290,8 +288,8 @@ public class RemoteUserDashboardBean implements UserDao {
                 long bufDatemillis = 0;
                 try {
                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    LogTool.getLogger().warn("Error initModel remoteDashboard: "+e.getMessage());
                 }
                 Integer bufCount = resultMap.get(bufDatemillis);
                 if(bufCount==null){
@@ -318,7 +316,6 @@ public class RemoteUserDashboardBean implements UserDao {
         message.setSeverity(FacesMessage.SEVERITY_INFO);
         message.setSummary("Reordered: " + event.getWidgetId());
         message.setDetail("Item index: " + event.getItemIndex() + ", Column index: " + event.getColumnIndex() + ", Sender index: " + event.getSenderColumnIndex());
-
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 }

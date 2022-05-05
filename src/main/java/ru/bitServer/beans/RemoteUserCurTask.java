@@ -10,6 +10,7 @@ import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Usergroup;
 import ru.bitServer.dao.Users;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -82,7 +83,7 @@ public class RemoteUserCurTask implements UserDao {
             System.out.println("перед add");
             addResult(currentStudy, file);
         }else{
-            System.out.println("Возникла ошибка в выборе или типе файла!");
+            LogTool.getLogger().warn("Error handleFileUpload rucurrenttaskBean");
         }
     }
 
@@ -102,8 +103,7 @@ public class RemoteUserCurTask implements UserDao {
                 input.read(buffer, 0, buffer.length);
                 output.write(buffer, 0, buffer.length);
             }catch (Exception e){
-
-                System.out.println("ошибка сохранения файла = "+e.getMessage());
+                LogTool.getLogger().warn("Error addResult rucurrenttaskBean: "+e.getMessage());
             }
             selectedVisibleStudy.setTyperesult(true);
             selectedVisibleStudy.setResult(folder.toString()+"/" + selectedVisibleStudy.getSid() + "." + extension);

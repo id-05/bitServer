@@ -34,8 +34,6 @@
             <p:dialog widgetVar="saveDialog" showEffect="fade" width="300"
                       message="Сохранить изменения?" header="Сохранить изменения?" severity="warn">
 
-
-
                     <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{settingsBean.saveConfig}"
                                  process="@this" oncomplete="PF('saveDialog').hide()" update="growl"/>
 

@@ -17,7 +17,6 @@ public class OrthancRestApi {
     private final String port;
     private final String login;
     private final String password;
-    private static final Logger log = Logger.getLogger(OrthancRestApi.class);
 
     public OrthancRestApi(String ipaddress, String port, String login, String password){
         this.ipaddress = ipaddress;
@@ -39,7 +38,7 @@ public class OrthancRestApi {
             }
             conn.disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            LogTool.getLogger().warn("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
             return null;
         }
         return stringBuilder;
@@ -75,7 +74,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            LogTool.getLogger().debug("Error makePostConnectionAndStringBuilder "+e.getMessage());
+            LogTool.getLogger().warn("Error makePostConnectionAndStringBuilder "+e.getMessage());
             return null;
         }
         return sb;
@@ -94,7 +93,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            LogTool.getLogger().debug("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
+            LogTool.getLogger().warn("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
             return null;
         }
         return sb;
@@ -150,8 +149,7 @@ public class OrthancRestApi {
             os.flush();
             conn.getResponseMessage();
         } catch (Exception e) {
-            LogTool.getLogger().debug("Error sendDicom RestApi "+e.getMessage());
-            e.printStackTrace();
+            LogTool.getLogger().warn("Error sendDicom RestApi "+e.getMessage());
         }
         return conn;
     }

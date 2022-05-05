@@ -157,4 +157,8 @@ public class Users {
         this.ugroup = Group;
         this.hasBlockStudy = bool;
     }
+
+    public String getSignature(){
+        return this.uname+"/"+ruName+"/"+ruMiddleName+"/"+ruFamily;
+    }
 }

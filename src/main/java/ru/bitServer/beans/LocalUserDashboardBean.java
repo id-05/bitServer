@@ -35,7 +35,7 @@ public class LocalUserDashboardBean implements UserDao {
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml");
             }catch (Exception e2){
-                LogTool.getLogger().debug("Error init() LocalUserDashboardBean: "+e2.getMessage());
+                LogTool.getLogger().warn("Error init() LocalUserDashboardBean: "+e2.getMessage());
             }
         }
     }

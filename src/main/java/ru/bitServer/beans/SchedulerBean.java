@@ -143,7 +143,6 @@ public class SchedulerBean implements UserDao {
         selectedRule.setClock(String.valueOf(selectedtime.getHour()));
         if(!selectedRule.getModality().equals("")&&!selectedRule.getSource().equals(""))
         {
-            System.out.println("unical");
             BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
             visibleRules.add(bufRule);
             saveNewRule(bufRule);

@@ -2,12 +2,14 @@ package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
-
+import ru.bitServer.util.LogTool;
+import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,18 +22,17 @@ public class DateBaseBean implements UserDao {
     List<BitServerResources> listResources = new ArrayList<>();
     BitServerResources selectedResource;
     BitServerResources selectedResources;
-
     List<BitServerStudy> listStudys = new ArrayList<>();
     BitServerStudy selectedStudy;
     BitServerStudy selectedStudys;
-
     List<BitServerScheduler> listSchedulers = new ArrayList<>();
     BitServerScheduler selectedScheduler;
     BitServerScheduler selectedSchedulers;
-
     List<BitServerModality> listModalitys = new ArrayList<>();
     BitServerModality selectedModality;
     BitServerModality selectedModalitys;
+    Users currentUser;
+    String currentUserId;
 
     public BitServerModality getSelectedModalitys() {
         return selectedModalitys;
@@ -131,7 +132,9 @@ public class DateBaseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("datebase bean");
+        HttpSession session = SessionUtils.getSession();
+        currentUserId = session.getAttribute("userid").toString();
+        currentUser = getUserById(currentUserId);
 
         listSchedulers = getAllBitServerSheduler();
         listResources = getAllBitServerResource();
@@ -149,7 +152,6 @@ public class DateBaseBean implements UserDao {
     }
 
     public void initDefaultResources(){
-        System.out.println("default");
         for(BitServerResources bufResources:listResources){
             deleteBitServerResource(bufResources);
         }
@@ -168,6 +170,7 @@ public class DateBaseBean implements UserDao {
         saveBitServiceResource(new BitServerResources("httpmode","false"));
         saveBitServiceResource(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         saveBitServiceResource(new BitServerResources("updateafteropen","true"));
+        saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
 
         listResources.add(new BitServerResources("orthancaddress","127.0.0.1"));
         listResources.add(new BitServerResources("port","8042"));
@@ -181,9 +184,11 @@ public class DateBaseBean implements UserDao {
         listResources.add(new BitServerResources("httpmode","false"));
         listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         listResources.add(new BitServerResources("updateafteropen","true"));
+        listResources.add(new BitServerResources("logpath","/dataimage/results/"));
 
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" select default resources");
     }
 
     public void initNewModality(){
@@ -202,11 +207,13 @@ public class DateBaseBean implements UserDao {
             }
             if(verifiUnical) {
                 saveBitServiceResource(selectedResource);
+                LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new resource");
                 listResources = getAllBitServerResource();
                 PrimeFaces.current().executeScript("PF('manageResourceDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-resources");
             }else{
                 updateBitServiceResource(selectedResource);
+                LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" update resource");
                 listResources = getAllBitServerResource();
                 PrimeFaces.current().executeScript("PF('manageResourceDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-resources");
@@ -223,6 +230,7 @@ public class DateBaseBean implements UserDao {
             listModalitys = getAllBitServerModality();
             PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-modality");
+            LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new modality "+selectedModality.getName());
         }else{
             showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
         }
@@ -266,12 +274,13 @@ public class DateBaseBean implements UserDao {
         deleteBitServerResource(selectedResource);
         listResources.remove(selectedResource);
         selectedResource = new BitServerResources();
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" delete Resource "+selectedResource.getRname());
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ресурс удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
 
     public void deleteModality(){
-        System.out.println("выбрали: "+selectedModality.getName());
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" delete Modality "+selectedModality.getName());
         deleteBitServerModality(selectedModality);
         listModalitys.remove(selectedModality);
         selectedModality = new BitServerModality();
@@ -283,6 +292,7 @@ public class DateBaseBean implements UserDao {
         if((selectedStudy.getId() != null) & (!selectedStudy.getModality().equals("")))
         {
             updateStudy(selectedStudy);
+            LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" update study in base "+selectedStudy.getSid());
             listStudys = getAllBitServerStudy();
             PrimeFaces.current().executeScript("PF('manageStudyDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-study");
@@ -293,6 +303,7 @@ public class DateBaseBean implements UserDao {
 
     public void deleteStudyFromBase(){
         deleteStudy(selectedStudy);
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" delete study from base "+selectedStudy.getSid());
         listStudys.remove(selectedStudy);
         selectedStudy = new BitServerStudy();
         showMessage("Внимание!","Исследование удалено!",FacesMessage.SEVERITY_ERROR);
@@ -305,6 +316,7 @@ public class DateBaseBean implements UserDao {
         for(BitServerStudy bufStudy:listStudys){
             deleteStudy(bufStudy);
         }
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" delete all study from base");
         listStudys.clear();
         selectedStudy = new BitServerStudy();
         showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);

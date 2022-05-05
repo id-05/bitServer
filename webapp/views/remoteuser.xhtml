@@ -7,6 +7,17 @@
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
       xmlns:p="http://primefaces.org/ui">
 
+<style type="text/css">
+    .ui-panel, div.ui-state-hover {
+        margin: 10px;
+        width: 200px;
+    }
+
+    .ui-dashboard-column {
+        width: 220px;
+    }
+</style>
+
 <f:view>
     <h:head>
         <title>bitServer</title>
@@ -30,7 +41,7 @@
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
                                 <p:commandButton icon="pi pi-user" disabled="true" value="Вы вошли как: #{remoteDashboard.currentUser.ruFamily} #{remoteDashboard.currentUser.ruName} #{remoteDashboard.currentUser.ruMiddleName}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
-                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{settingsBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
@@ -45,61 +56,16 @@
             </p:dialog>
 
             <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
-                <b:diskspace directory="#{settingsBean.directory}" totalSpace="#{settingsBean.totalSpace}" freeSpace="#{settingsBean.freespace}" usedSpace="#{settingsBean.usedSpace}"/>
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
             </p:dialog>
 
         </h:form>
 
             <h:form id="db">
 
-                <p:dashboard id="board" model="#{remoteDashboard.model}">
+                <p:dashboard id="board" model="#{remoteDashboard.model}" style="margin: 10px"> 
 
                     <p:ajax event="reorder" listener="#{remoteDashboard.handleReorder}" update=":remoteform:growlMessageId"/>
-
-                    <p:panel id="current" header="Текущая задача" style="width: 280px">
-                        <div class="p-field p-grid">
-                            <label for="countblock" class="p-col-fixed" style="width:180px">Заблокированно: </label>
-                            <div class="p-col">
-                                <p:outputLabel id="countblock" value="#{remoteDashboard.countBlock}"/>
-                            </div>
-                        </div>
-
-                        <div class="p-field p-grid">
-                            <label for="timeleft" class="p-col-fixed" style="width:180px">Время на описание:</label>
-                            <div class="p-col">
-                                <p:outputLabel id="timeleft" value="#{remoteDashboard.timeLeft}">
-                                    <f:convertDateTime dateStyle="full" timeZone="GMT+0" pattern="h:mm"  />
-                                </p:outputLabel>
-                            </div>
-                        </div>
-
-                    </p:panel>
-
-                    <p:panel id="mystatistics" header="Ваша статистика" style="width: 280px">
-
-                        <div class="p-field p-grid">
-                            <label for="countToday" class="p-col-fixed" style="width:180px">Сегодня описано: </label>
-                            <div class="p-col">
-                                <p:outputLabel id="countToday" value="#{remoteDashboard.countToday}"/>
-                            </div>
-                        </div>
-
-                        <div class="p-field p-grid">
-                            <label for="countMounth" class="p-col-fixed" style="width:180px">В этом месяце:</label>
-                            <div class="p-col">
-                                <p:outputLabel id="countMounth" value="#{remoteDashboard.countMounth}"/>
-                            </div>
-                        </div>
-
-                        <div class="p-field p-grid">
-                            <label for="countAll" class="p-col-fixed" style="width:180px">Всего:</label>
-                            <div class="p-col">
-                                <p:outputLabel id="countAll" value="#{remoteDashboard.countAll}"/>
-
-                            </div>
-                        </div>
-
-                    </p:panel>
 
                     <p:panel id="serverstatistics" header="Статистика сервера" style="width: 800px; height: 400px;">
                         <p:chart type="line" id="chart1" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
@@ -109,7 +75,7 @@
                             <p:datePicker id="dateSTART" value="#{remoteDashboard.firstdate}">
                                 <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
                             </p:datePicker>
-                            <label for="dateSTOP" class="p-col-fixed">ПО :</label>
+                            <label for="dateSTOP" class="p-col-fixed">  ПО :</label>
                             <p:datePicker id="dateSTOP" value="#{remoteDashboard.seconddate}">
                                 <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
                             </p:datePicker>
@@ -120,11 +86,10 @@
                                 <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update=":db:chart1"/>
                             </p:selectOneMenu>
                         </div>
+
                     </p:panel>
                 </p:dashboard>
-
             </h:form>
-
     </h:body>
 </f:view>
 

@@ -3,6 +3,7 @@ package ru.bitServer.dicom;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import ru.bitServer.util.LogTool;
 
 public class JsonSettings {
 
@@ -661,7 +662,7 @@ public class JsonSettings {
         try {
             orthancJson = parser.parse(data).getAsJsonObject();
         }catch (Exception e){
-            System.out.println("Ошибка парсинга = "+ e.getMessage());
+            LogTool.getLogger().warn("Error parse json JsonSetings: "+e.getMessage());
         }
         if (orthancJson.has("Name")) orthancName=orthancJson.get("Name").getAsString();
         if (orthancJson.has("StorageDirectory")) storageDirectory=orthancJson.get("StorageDirectory").getAsString();

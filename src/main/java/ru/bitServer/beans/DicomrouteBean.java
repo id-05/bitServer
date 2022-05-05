@@ -96,7 +96,7 @@ public class DicomrouteBean implements UserDao {
                 luascriptFile.append((char) c);
             }
         } catch (Exception e) {
-            LogTool.getLogger().debug("Error read luascript file: "+e.getMessage());
+            LogTool.getLogger().warn("Error read luascript file: "+e.getMessage());
         }
         luascripttextFile = luascriptFile.toString();
         DicomruleParser ruleParcer = new DicomruleParser(luascriptFile);
@@ -113,6 +113,7 @@ public class DicomrouteBean implements UserDao {
         rules.add(selectedRule);
         PrimeFaces.current().executeScript("PF('manageRule').hide()");
         PrimeFaces.current().ajax().update(":dicomroute:tabview1:dt-rules");
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new route "+selectedRule.getTag()+"/"+selectedRule.getTagValue());
     }
 
     public void deleteRuleFromList(){
@@ -140,7 +141,7 @@ public class DicomrouteBean implements UserDao {
             fileOutputStream.write(buffer, 0, buffer.length);
         }
         catch(IOException e){
-            LogTool.getLogger().debug("Error saveSettingsCustomeMode DicomrouteBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error saveSettingsCustomeMode DicomrouteBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения, перезагрузите сервис!",FacesMessage.SEVERITY_INFO);
     }
@@ -165,9 +166,10 @@ public class DicomrouteBean implements UserDao {
         {
             byte[] buffer = bufStringBuilder.toString().getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
+            LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" save dicomroute");
         }
         catch(IOException e){
-            LogTool.getLogger().debug("Error saveSettings DicomrouteBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error saveSettings DicomrouteBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения, перезагрузите сервис!",FacesMessage.SEVERITY_INFO);
     }

@@ -43,7 +43,7 @@ public class DicomruleParser {
                 }
             }
         }catch (Exception e){
-            LogTool.getLogger().debug("Error getRulesList() DicomRuleParser "+e.getMessage());
+            LogTool.getLogger().warn("Error getRulesList() DicomRuleParser "+e.getMessage());
         }
         return dicomrouteRuleList;
     }

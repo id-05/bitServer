@@ -137,7 +137,7 @@ public class MainBean implements UserDao {
                 }
             }
         }catch (Exception e){
-            LogTool.getLogger().debug("Error init() MainBean: "+e.getMessage());
+            LogTool.getLogger().warn("Error init() MainBean: "+e.getMessage());
         }
         themeList = themeListinit();
         selectTheme = themeList.get(1);

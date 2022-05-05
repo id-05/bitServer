@@ -6,17 +6,21 @@ import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.SessionUtils;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +99,7 @@ public class SettingsOrthancBean implements UserDao {
     boolean metricsEnabled;
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
+    Users currentUser;
 
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
@@ -166,6 +171,8 @@ public class SettingsOrthancBean implements UserDao {
 
     @PostConstruct
     public void init() {
+        HttpSession session = SessionUtils.getSession();
+        currentUser = getUserById(session.getAttribute("userid").toString());
         try {
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
@@ -174,6 +181,7 @@ public class SettingsOrthancBean implements UserDao {
             dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         }catch (Exception e){
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            LogTool.getLogger().debug("Error during init() SettingsOrthancBean "+e.getMessage());
             try{
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml"+"?"+e.getMessage());
@@ -185,7 +193,6 @@ public class SettingsOrthancBean implements UserDao {
 
     public void echoTestClick(){
         JsonObject query = new JsonObject();
-        System.out.println("selectedDicomModality.getDicomtitle() = "+selectedDicomModality.getDicomtitle());
         query.addProperty("AET", selectedDicomModality.getDicomtitle());
         query.addProperty("CheckFind", false);
         query.addProperty("Host", selectedDicomModality.getIp());
@@ -379,6 +386,7 @@ public class SettingsOrthancBean implements UserDao {
         StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
         saveBitServiceResource(new BitServerResources("datastorage",storageDirectory));
         showMessage("Сообщение","Изменения сохранены!", info);
+        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" save orthanc settings");
     }
 
     public void resetServer() throws IOException {
@@ -454,15 +462,15 @@ public class SettingsOrthancBean implements UserDao {
 
             if(verifiUnical ){
                 webUsers.add(new OrthancWebUser(selectedUser.getLogin(),selectedUser.getPass()));
+                LogTool.getLogger().debug("User "+currentUser.getUid()+"("+currentUser.getUname()+") add new user");
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accordion:dt-users");
             }else{
                 PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accordion:dt-users");
             }
-
         }else{
-            System.out.println("else new web user");
+            LogTool.getLogger().debug("User "+currentUser.getUid()+"("+currentUser.getUname()+") failure add new user");
         }
     }
 

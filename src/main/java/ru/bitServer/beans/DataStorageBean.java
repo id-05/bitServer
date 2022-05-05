@@ -66,8 +66,7 @@ public class DataStorageBean implements UserDao {
                 usedSpace = (100 - (int) (bufDouble * 100)) + " %";
             }
         }catch (Exception e){
-            ExternalContext ec = FacesContext.getCurrentInstance()
-                    .getExternalContext();
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             LogTool.getLogger().warn("Error in DataStorageBean: "+e.getMessage());
             try{
                 ec.redirect(ec.getRequestContextPath()

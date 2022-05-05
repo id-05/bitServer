@@ -287,27 +287,30 @@ public class QueueBean implements UserDao {
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
-
         try {
             BitServerResources bufResource = getBitServerResource("updateafteropen");
             if (bufResource.getRvalue().equals("true")) {
                 readStudyFromDB();
             }
         }catch (Exception e){
-            LogTool.getLogger().debug("Error init() QueueBean "+e.getMessage());
+            LogTool.getLogger().warn("Error init() QueueBean "+e.getMessage());
+        }
+        selectedModalitiName.clear();
+        List<BitServerModality> bufList =  getAllBitServerModality();
+        for(BitServerModality bufModaliti:bufList){
+            selectedModalitiName.add(bufModaliti.getName());
         }
 
-        selectedModalitiName.clear();
-        selectedModalitiName.add("CR");
-        selectedModalitiName.add("CT");
-        selectedModalitiName.add("MR");
-        selectedModalitiName.add("NM");
-        selectedModalitiName.add("PT");
-        selectedModalitiName.add("US");
-        selectedModalitiName.add("XA");
-        selectedModalitiName.add("CR");
-        selectedModalitiName.add("MG");
-        selectedModalitiName.add("DX");
+//        selectedModalitiName.add("CR");
+//        selectedModalitiName.add("CT");
+//        selectedModalitiName.add("MR");
+//        selectedModalitiName.add("NM");
+//        selectedModalitiName.add("PT");
+//        selectedModalitiName.add("US");
+//        selectedModalitiName.add("XA");
+//        selectedModalitiName.add("CR");
+//        selectedModalitiName.add("MG");
+//        selectedModalitiName.add("DX");
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -355,6 +358,7 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+        System.out.println(visibleStudiesList.size());
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
 
         if(filtrDate.equals("targetdate")){
@@ -424,6 +428,7 @@ public class QueueBean implements UserDao {
             query.add("Query", queryDetails);
 
             StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+            System.out.println(sb.toString());
             boolean existInTable;
             studiesFromRestApi = getStudiesFromJson(sb.toString());
             studiesFromTableBitServer = getAllBitServerStudy();
@@ -456,7 +461,7 @@ public class QueueBean implements UserDao {
             PrimeFaces.current().ajax().update(":seachform:dt-studys");
             dataoutput();
         }catch (Exception e){
-            LogTool.getLogger().debug("Error readStudyFromDB QueueBean "+e.getMessage());
+            LogTool.getLogger().warn("Error readStudyFromDB QueueBean "+e.getMessage());
         }
     }
 
@@ -520,7 +525,7 @@ public class QueueBean implements UserDao {
             try {
                 studyDateObject = FORMAT.parse(studyDate);
             } catch (Exception e) {
-                LogTool.getLogger().debug("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
+                LogTool.getLogger().warn("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
             }
 
             String studyDescription = "N/A";
@@ -549,7 +554,6 @@ public class QueueBean implements UserDao {
                     studyModality = serieMainDicomTags.get("Modality").getAsString();
                 }
             }
-
             OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
             studyList.add(studyObj);
         }

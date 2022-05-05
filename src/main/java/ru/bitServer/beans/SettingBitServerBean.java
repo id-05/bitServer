@@ -9,11 +9,14 @@ import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.SessionUtils;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -62,6 +65,15 @@ public class SettingBitServerBean implements UserDao {
     OrthancRestApi connection;
     ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
+    Users currentUser;
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
+    }
 
     private int number;
 
@@ -456,7 +468,6 @@ public class SettingBitServerBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("settingBitServerBean page");
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
         stopDate = new Date();
@@ -465,6 +476,8 @@ public class SettingBitServerBean implements UserDao {
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
+        HttpSession session = SessionUtils.getSession();
+        currentUser = getUserById(session.getAttribute("userid").toString());
 
         boolean updateRes = false;
         for(BitServerResources buf: bitServerResourcesList){
@@ -510,11 +523,10 @@ public class SettingBitServerBean implements UserDao {
                     try {
                         syncdate = format.parse(buf.getRvalue());
                     }catch (Exception e){
-                        System.out.println("Ошибка преобразования даты "+e.getMessage());
+                        LogTool.getLogger().warn("Error date transfer settingBitServerBean: "+e.getMessage());
                     }
                 }
                     break;
-
                 case "colstatus": colStatus = buf.getRvalue();
                     break;
                 case "colDateBirth": colDateBirth = buf.getRvalue();
@@ -644,6 +656,7 @@ public class SettingBitServerBean implements UserDao {
             usersList = prepareUserList();
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-users");
+            LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new user "+bufUser.getUname());
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }
