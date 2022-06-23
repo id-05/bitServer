@@ -45,6 +45,7 @@ public class QueueBean implements UserDao {
     Date seconddate;
     int typeSeach = 5;
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy.MM.dd");
     ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
@@ -358,7 +359,6 @@ public class QueueBean implements UserDao {
         PrimeFaces.current().ajax().update(":seachform:send-button");
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
-        System.out.println(visibleStudiesList.size());
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
 
         if(filtrDate.equals("targetdate")){
@@ -373,11 +373,12 @@ public class QueueBean implements UserDao {
                 datepickerVisible2 = false;
             }
         }
-        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
-        UIComponent component = view.findComponent(":seachform:dt-studys");
-        DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
-        dt.resetValue();
-        PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
+        sortListener();
+//        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+//        UIComponent component = view.findComponent(":seachform:dt-studys");
+//        DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
+//        dt.resetValue();
+//        PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
     }
 
     public void sortListener(){
@@ -682,7 +683,7 @@ public class QueueBean implements UserDao {
             HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
             InputStream inputStream = conn.getInputStream();
             return DefaultStreamedContent.builder()
-                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"."+"zip")
+                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
                     .contentType("application/zip")
                     .stream(() -> inputStream)
                     .build();

@@ -29,15 +29,15 @@ public class AuthorizationFilter implements Filter, UserDao {
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) {
         try {
-
             HttpServletRequest reqt = (HttpServletRequest) request;
             HttpServletResponse resp = (HttpServletResponse) response;
             HttpSession ses = reqt.getSession(false);
 
             String reqURI = reqt.getRequestURI();
-            if (reqURI.contains("/views/login.xhtml")
-                    || (ses != null && ses.getAttribute("userid") != null)
+            if (reqURI.contains("/views/login.xhtml") || (ses != null && ses.getAttribute("userid") != null)
                     || reqURI.contains("/public/")
+                    || reqURI.contains("/ariadna/")
+                    || reqURI.contains("/errorpage")
                     || reqURI.contains("javax.faces.resource"))
                 chain.doFilter(request, response);
             else

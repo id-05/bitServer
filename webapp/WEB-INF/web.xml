@@ -31,6 +31,19 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
 
+
+    <!-- add servlet -->
+    <servlet>
+        <servlet-name>linkServlet</servlet-name>
+        <servlet-class>LinkServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>linkServlet</servlet-name>
+        <url-pattern>/ariadna/viewer</url-pattern>
+    </servlet-mapping>
+
+
     <welcome-file-list>
         <welcome-file>views/login.xhtml</welcome-file>
     </welcome-file-list>
