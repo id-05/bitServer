@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -373,12 +374,8 @@ public class QueueBean implements UserDao {
                 datepickerVisible2 = false;
             }
         }
+        PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
         sortListener();
-//        UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
-//        UIComponent component = view.findComponent(":seachform:dt-studys");
-//        DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
-//        dt.resetValue();
-//        PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
     }
 
     public void sortListener(){
@@ -387,6 +384,13 @@ public class QueueBean implements UserDao {
         DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
         dt.resetValue();
         PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
+    }
+
+    public boolean filterByCustom(Object value, Object filter, Locale locale) {
+        //return true or false
+        System.out.println(value.toString());
+        System.out.println(filter.toString());
+        return value.toString().equals(filter.toString());
     }
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){

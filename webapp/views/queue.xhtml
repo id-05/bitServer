@@ -134,6 +134,7 @@
                                              icon="pi pi-send" action="#{queueBean.sendToAgent}"
                                              styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
                                              onclick="PF('statusDialog').show()"
+
                                              update="searchgrowl"
                                              rendered="#{queueBean.currentUser.role != 'demo'}"
                                              style="margin-right: 5px">
@@ -186,6 +187,7 @@
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения"
+
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
@@ -202,11 +204,17 @@
                                           value="#{bitServerStudy.rustatus}"/>
                         </p:column>
 
-                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center"
+                                  filterMatchMode="contains">
                             <h:outputText value="#{bitServerStudy.shortid}"/>
                         </p:column>
 
-                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}" filterBy="#{bitServerStudy.patientname}" style="text-align: center">
+                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}"
+                                  filterBy="#{bitServerStudy.patientname}"
+                                  filterFunction="#{queueBean.filterByCustom}"
+                                  style="text-align: center"
+                                  filterMatchMode="contains">
+
                             <h:outputText value="#{bitServerStudy.patientname}"/>
                         </p:column>
 
