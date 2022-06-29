@@ -4,10 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ibm.icu.text.Transliterator;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.data.FilterEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -270,6 +270,9 @@ public class QueueBean implements UserDao {
         this.typeSeach = typeSeach;
     }
 
+    public static final String CYRILLIC_TO_LATIN = "Cyrillic-Latin";
+    public static final String LATIN_TO_CYRILLIC = "Latin-Cyrillic";
+
     ////Status
     /// Заблокирован на описание - 3
     /// Описан - 2
@@ -384,13 +387,55 @@ public class QueueBean implements UserDao {
         DataTable dt = (DataTable) component.findComponent(":seachform:dt-studys");
         dt.resetValue();
         PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
+        PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
-        //return true or false
-        System.out.println(value.toString());
-        System.out.println(filter.toString());
-        return value.toString().equals(filter.toString());
+        boolean result = false;
+        if( isValid(value.toString().substring(0,1)) == isValid(filter.toString().substring(0,1))){
+            result = value.toString().contains(filter.toString());
+        }else{
+            if(isValid(value.toString().substring(0,1))){
+                Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
+                for (int i = 0; i < filter.toString().length(); i++){
+                    if(filter.toString().length()<=value.toString().length()) {
+                        char c = filter.toString().charAt(i);
+                        String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
+                        String bufValue = String.valueOf(value.toString().charAt(i));
+                        if(bufFilter.equals("%")){
+                            continue;
+                        }
+                        result = bufFilter.equals(bufValue);
+                    }
+                }
+            }else{
+                System.out.println("транслитерация фильтра на русский");
+                Transliterator toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
+                for (int i = 0; i < filter.toString().length(); i++){
+                    if(filter.toString().length()<=value.toString().length()) {
+                        char c = filter.toString().charAt(i);
+                        String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
+                        String bufValue = String.valueOf(value.toString().charAt(i));
+                        if(bufFilter.equals("%")){
+                            continue;
+                        }
+                        result = bufFilter.equals(bufValue);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public static boolean isValid(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (Character.UnicodeBlock.of(s.charAt(i)).equals(Character.UnicodeBlock.CYRILLIC) ||
+                    s.charAt(i) == '-') {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<BitServerStudy> convertIdGroupToRuName(List<BitServerStudy> sourceList){
