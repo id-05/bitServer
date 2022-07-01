@@ -409,7 +409,6 @@ public class QueueBean implements UserDao {
                     }
                 }
             }else{
-                System.out.println("транслитерация фильтра на русский");
                 Transliterator toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
                 for (int i = 0; i < filter.toString().length(); i++){
                     if(filter.toString().length()<=value.toString().length()) {
@@ -454,10 +453,29 @@ public class QueueBean implements UserDao {
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile file = event.getFile();
-        HttpURLConnection conn = connection.sendDicom("/instances", file.getContent());
-        conn.disconnect();
+        String newID = connection.sendDicom("/instances", file.getContent());
+        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
+        JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
+        OrthancStudy bufStudy = parseStudy(bufJson);
+        studiesFromTableBitServer = getAllBitServerStudy();
+        boolean existInTable = false;
+        for (BitServerStudy bBSS : studiesFromTableBitServer) {
+            if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+                existInTable = true;
+                break;
+            }
+        }
+        if (!existInTable) {
+            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                    bufStudy.getInstitutionName(), bufStudy.getDate(),
+                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+            addStudy(buf);
+        }
+
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
+
+        readStudyFromDB();
     }
 
     public void readStudyFromDB() {
@@ -478,7 +496,6 @@ public class QueueBean implements UserDao {
             query.add("Query", queryDetails);
 
             StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-            System.out.println(sb.toString());
             boolean existInTable;
             studiesFromRestApi = getStudiesFromJson(sb.toString());
             studiesFromTableBitServer = getAllBitServerStudy();
@@ -523,91 +540,96 @@ public class QueueBean implements UserDao {
 
         while (studiesIterator.hasNext()) {
             JsonObject studyData = (JsonObject) studiesIterator.next();
-            JsonObject parentPatientDetails = null;
-            if (studyData.has("PatientMainDicomTags")) {
-                parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
-            }
-            String parentPatientID = studyData.get("ParentPatient").getAsString();
-            String studyId = studyData.get("ID").getAsString();
-            JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
-            String patientSex = "N/A";
-            String patientName = "N/A";
-            String patientId = "N/A";
-            String patientDobString = "N/A";
-            Date patientDob = null;
-
-            assert parentPatientDetails != null;
-            if (parentPatientDetails.has("PatientBirthDate")) {
-                patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
-            }
-
-            if(!patientDobString.equals("")){
-                try {
-                    patientDob = FORMAT.parse(patientDobString);
-                } catch (Exception e) {
-                    LogTool.getLogger().debug("Error to transfer date 1 QueueBean "+e.getMessage());
-                }
-            }
-
-            if (parentPatientDetails.has("PatientSex")) {
-                patientSex = parentPatientDetails.get("PatientSex").getAsString();
-            }
-
-            if (parentPatientDetails.has("PatientName")) {
-                patientName = parentPatientDetails.get("PatientName").getAsString();
-            }
-
-            if (parentPatientDetails.has("PatientID")) {
-                patientId = parentPatientDetails.get("PatientID").getAsString();
-            }
-
-            String accessionNumber = "N/A";
-            if (studyDetails.has("AccessionNumber")) {
-                accessionNumber = studyDetails.get("AccessionNumber").getAsString();
-            }
-            String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
-            String studyDate = null;
-            Date studyDateObject = null;
-            if (studyDetails.has("StudyDate")) {
-                studyDate = studyDetails.get("StudyDate").getAsString();
-            }
-
-            try {
-                studyDateObject = FORMAT.parse(studyDate);
-            } catch (Exception e) {
-                LogTool.getLogger().warn("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
-            }
-
-            String studyDescription = "N/A";
-            if (studyDetails.has("StudyDescription")) {
-                studyDescription = studyDetails.get("StudyDescription").getAsString();
-            }
-
-            String studyInstitutionName = "N/A";
-            if (studyDetails.has("InstitutionName")) {
-                studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
-            }
-
-            String studyModality = "N/A";
-            if (studyData.has("Series")) {
-                JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
-                String bufSerie = SeriesArray.get(0).getAsString();
-                StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
-                JsonParser parserJsonSerie = new JsonParser();
-                JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
-                JsonObject serieMainDicomTags = null;
-                if (serie.has("MainDicomTags")) {
-                    serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
-                }
-                assert serieMainDicomTags != null;
-                if (serieMainDicomTags.has("Modality")) {
-                    studyModality = serieMainDicomTags.get("Modality").getAsString();
-                }
-            }
-            OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+            OrthancStudy studyObj = parseStudy(studyData);
             studyList.add(studyObj);
         }
         return studyList;
+    }
+
+    private OrthancStudy parseStudy(JsonObject studyData){
+        JsonObject parentPatientDetails = null;
+        if (studyData.has("PatientMainDicomTags")) {
+            parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
+        }
+        String parentPatientID = studyData.get("ParentPatient").getAsString();
+        String studyId = studyData.get("ID").getAsString();
+        JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
+        String patientSex = "N/A";
+        String patientName = "N/A";
+        String patientId = "N/A";
+        String patientDobString = "N/A";
+        Date patientDob = null;
+
+        assert parentPatientDetails != null;
+        if (parentPatientDetails.has("PatientBirthDate")) {
+            patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
+        }
+
+        if(!patientDobString.equals("")){
+            try {
+                patientDob = FORMAT.parse(patientDobString);
+            } catch (Exception e) {
+                LogTool.getLogger().debug("Error to transfer date 1 QueueBean "+e.getMessage());
+            }
+        }
+
+        if (parentPatientDetails.has("PatientSex")) {
+            patientSex = parentPatientDetails.get("PatientSex").getAsString();
+        }
+
+        if (parentPatientDetails.has("PatientName")) {
+            patientName = parentPatientDetails.get("PatientName").getAsString();
+        }
+
+        if (parentPatientDetails.has("PatientID")) {
+            patientId = parentPatientDetails.get("PatientID").getAsString();
+        }
+
+        String accessionNumber = "N/A";
+        if (studyDetails.has("AccessionNumber")) {
+            accessionNumber = studyDetails.get("AccessionNumber").getAsString();
+        }
+        String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
+        String studyDate = null;
+        Date studyDateObject = null;
+        if (studyDetails.has("StudyDate")) {
+            studyDate = studyDetails.get("StudyDate").getAsString();
+        }
+
+        try {
+            studyDateObject = FORMAT.parse(studyDate);
+        } catch (Exception e) {
+            LogTool.getLogger().warn("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
+        }
+
+        String studyDescription = "N/A";
+        if (studyDetails.has("StudyDescription")) {
+            studyDescription = studyDetails.get("StudyDescription").getAsString();
+        }
+
+        String studyInstitutionName = "N/A";
+        if (studyDetails.has("InstitutionName")) {
+            studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
+        }
+
+        String studyModality = "N/A";
+        if (studyData.has("Series")) {
+            JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
+            String bufSerie = SeriesArray.get(0).getAsString();
+            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
+            JsonParser parserJsonSerie = new JsonParser();
+            JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
+            JsonObject serieMainDicomTags = null;
+            if (serie.has("MainDicomTags")) {
+                serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
+            }
+            assert serieMainDicomTags != null;
+            if (serieMainDicomTags.has("Modality")) {
+                studyModality = serieMainDicomTags.get("Modality").getAsString();
+            }
+        }
+        OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+        return studyObj;
     }
 
     public void sendToAgent(){

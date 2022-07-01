@@ -38,7 +38,6 @@ public class BitServerStudy implements Serializable {
     private String statusstyle;
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
-        System.out.println(" sdate = "+ sdate);
 
         if(sid.length()>59){
             this.sid = sid.substring(0,59);

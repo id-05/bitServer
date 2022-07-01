@@ -1,5 +1,7 @@
 package ru.bitServer.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import ru.bitServer.dao.BitServerStudy;
 import java.io.BufferedReader;
@@ -130,8 +132,10 @@ public class OrthancRestApi {
         conn.disconnect();
     }
 
-    public HttpURLConnection sendDicom(String apiUrl, byte[] post) {
-        HttpURLConnection conn =null;
+    public String sendDicom(String apiUrl, byte[] post) {
+        HttpURLConnection conn;
+        StringBuilder sb = new StringBuilder();
+        String resultID ="";
         try {
             String fulladdress = "http://" + ipaddress + ":" + port;
             URL url=new URL(fulladdress+apiUrl);
@@ -146,12 +150,28 @@ public class OrthancRestApi {
             conn.setRequestProperty("content-type", "application/dicom");
             OutputStream os = conn.getOutputStream();
             os.write(post);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+
+            JsonParser parser = new JsonParser();
+            JsonObject orthancJson=new JsonObject();
+            try {
+                orthancJson = parser.parse(sb.toString()).getAsJsonObject();
+            }catch (Exception e){
+                LogTool.getLogger().warn("Error parse json JsonSetings: "+e.getMessage());
+            }
+
+            if (orthancJson.has("ParentStudy")) resultID = orthancJson.get("ParentStudy").getAsString();
             os.flush();
-            conn.getResponseMessage();
+
         } catch (Exception e) {
             LogTool.getLogger().warn("Error sendDicom RestApi "+e.getMessage());
         }
-        return conn;
+        return resultID;
     }
 
 }
