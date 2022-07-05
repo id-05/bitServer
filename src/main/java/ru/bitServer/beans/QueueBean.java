@@ -26,7 +26,10 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
+import java.awt.*;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
@@ -35,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.List;
+
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
@@ -67,15 +72,25 @@ public class QueueBean implements UserDao {
     boolean datepickerVisible2;
     List<String> selectedModalitiName = new ArrayList<>();
     String colStatus;
+    String colPreview;
     String colDateBirth;
     String colDate;
     String colDescription;
     String colModality;
     String colWhereSend;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    String testInstance = "ae02bd70-65d55621-064a5539-3e52a94f-e265860a";
 
     public String getColStatus() {
         return colStatus;
+    }
+
+    public String getColPreview() {
+        return colPreview;
+    }
+
+    public void setColPreview(String colPreview) {
+        this.colPreview = colPreview;
     }
 
     public void setColStatus(String colStatus) {
@@ -279,6 +294,8 @@ public class QueueBean implements UserDao {
     /// Отправлен на описание - 1
     /// Не описан - 0
 
+
+
     @PostConstruct
     public void init() {
         selectedVisibleStudy = new BitServerStudy();
@@ -306,21 +323,12 @@ public class QueueBean implements UserDao {
             selectedModalitiName.add(bufModaliti.getName());
         }
 
-//        selectedModalitiName.add("CR");
-//        selectedModalitiName.add("CT");
-//        selectedModalitiName.add("MR");
-//        selectedModalitiName.add("NM");
-//        selectedModalitiName.add("PT");
-//        selectedModalitiName.add("US");
-//        selectedModalitiName.add("XA");
-//        selectedModalitiName.add("CR");
-//        selectedModalitiName.add("MG");
-//        selectedModalitiName.add("DX");
-
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
                 case "colstatus": colStatus = buf.getRvalue();
+                    break;
+                case "colpreview": colPreview = buf.getRvalue();
                     break;
                 case "colDateBirth": colDateBirth = buf.getRvalue();
                     break;
@@ -336,6 +344,30 @@ public class QueueBean implements UserDao {
         }
 
     }
+
+//    public StreamedContent getChart() {
+//        try {
+//            return DefaultStreamedContent.builder()
+//                    .contentType("image/png")
+//                    .stream(() -> {
+//                        try {
+//                            File chartFile = new File("dynamichart");
+//                            image = connection.getPreview(testInstance);
+//                            ImageIO.write((RenderedImage) image,"test",chartFile);
+//                            return new FileInputStream(chartFile);
+//                        }
+//                        catch (Exception e) {
+//                            e.printStackTrace();
+//                            return null;
+//                        }
+//                    })
+//                    .build();
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public Boolean firstDateSelect() {
         filtrDate = "targetdate";
@@ -423,7 +455,6 @@ public class QueueBean implements UserDao {
                 }
             }
         }
-
         return result;
     }
 
@@ -471,10 +502,8 @@ public class QueueBean implements UserDao {
                     bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
             addStudy(buf);
         }
-
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
-
         readStudyFromDB();
     }
 
@@ -496,6 +525,7 @@ public class QueueBean implements UserDao {
             query.add("Query", queryDetails);
 
             StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+
             boolean existInTable;
             studiesFromRestApi = getStudiesFromJson(sb.toString());
             studiesFromTableBitServer = getAllBitServerStudy();
@@ -547,6 +577,7 @@ public class QueueBean implements UserDao {
     }
 
     private OrthancStudy parseStudy(JsonObject studyData){
+        System.out.println("123 "+studyData);
         JsonObject parentPatientDetails = null;
         if (studyData.has("PatientMainDicomTags")) {
             parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
@@ -617,6 +648,7 @@ public class QueueBean implements UserDao {
             JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
             String bufSerie = SeriesArray.get(0).getAsString();
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
+            System.out.println("/series/"+bufSerie+" =  "+sb.toString());
             JsonParser parserJsonSerie = new JsonParser();
             JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
             JsonObject serieMainDicomTags = null;
@@ -628,8 +660,7 @@ public class QueueBean implements UserDao {
                 studyModality = serieMainDicomTags.get("Modality").getAsString();
             }
         }
-        OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
-        return studyObj;
+        return new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
     }
 
     public void sendToAgent(){
@@ -731,19 +762,6 @@ public class QueueBean implements UserDao {
         }else{
             return null;
         }
-    }
-
-    public StreamedContent getResult2(BitServerStudy study) throws Exception {
-        String url="/tools/create-archive";
-        JsonArray idArray = new JsonArray();
-        idArray.add(study.getSid());
-        HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
-        InputStream inputStream = conn.getInputStream();
-        return DefaultStreamedContent.builder()
-                .name(study.getPatientname()+"-"+study.getSdescription()+"."+"zip")
-                .contentType("application/zip")
-                .stream(() -> inputStream)
-                .build();
     }
 
     public StreamedContent downloadStudy() throws Exception {

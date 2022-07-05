@@ -57,6 +57,7 @@ public class SettingBitServerBean implements UserDao {
     Date startDate;
     Date stopDate;
     String colStatus;
+    String colPreview;
     String colDateBirth;
     String colDate;
     String colDescription;
@@ -87,6 +88,14 @@ public class SettingBitServerBean implements UserDao {
 
     public String getColStatus() {
         return colStatus;
+    }
+
+    public String getColPreview() {
+        return colPreview;
+    }
+
+    public void setColPreview(String colPreview) {
+        this.colPreview = colPreview;
     }
 
     public void setColStatus(String colStatus) {
@@ -465,7 +474,6 @@ public class SettingBitServerBean implements UserDao {
         return studyList;
     }
 
-
     @PostConstruct
     public void init() {
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
@@ -480,14 +488,30 @@ public class SettingBitServerBean implements UserDao {
         currentUser = getUserById(session.getAttribute("userid").toString());
 
         boolean updateRes = false;
+        boolean haspreview = false;
+
+        for(BitServerResources buf: bitServerResourcesList){
+            if (buf.getRname().equals("colpreview")) {
+                haspreview = true;
+                break;
+            }
+        }
+
         for(BitServerResources buf: bitServerResourcesList){
             if (buf.getRname().equals("colstatus")) {
                 updateRes = true;
                 break;
             }
         }
+
+        if(!haspreview){
+            bitServerResourcesList.add(new BitServerResources("colpreview","true"));
+        }
+
+
         if(!updateRes){
             bitServerResourcesList.add(new BitServerResources("colstatus","false"));
+            bitServerResourcesList.add(new BitServerResources("colpreview","false"));
             bitServerResourcesList.add(new BitServerResources("colDateBirth","false"));
             bitServerResourcesList.add(new BitServerResources("colDate","false"));
             bitServerResourcesList.add(new BitServerResources("colDescription","false"));
@@ -528,6 +552,8 @@ public class SettingBitServerBean implements UserDao {
                 }
                     break;
                 case "colstatus": colStatus = buf.getRvalue();
+                    break;
+                case "colpreview": colPreview = buf.getRvalue();
                     break;
                 case "colDateBirth": colDateBirth = buf.getRvalue();
                     break;
@@ -621,6 +647,8 @@ public class SettingBitServerBean implements UserDao {
                 case "syncdate": buf.setRvalue(format.format(syncdate));
                     break;
                 case "colstatus": buf.setRvalue(colStatus);
+                    break;
+                case "colpreview": buf.setRvalue(colPreview);
                     break;
                 case "colDateBirth": buf.setRvalue(colDateBirth);
                     break;

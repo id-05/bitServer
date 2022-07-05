@@ -38,7 +38,6 @@ import java.util.Iterator;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-
 @ManagedBean(name = "clientBean", eager = true)
 @SessionScoped
 public class ClientBean implements UserDao {

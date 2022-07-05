@@ -424,7 +424,7 @@
                             </p:toggleSwitch>
                         </p>
                         <br/>
-                        <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить в длительному ожиданию открытия страницы</div>
+                        <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить к длительному ожиданию открытия страницы</div>
 
                         <p:divider align="left" type="dashed">
                             <b>Синхронизация</b>
@@ -484,6 +484,10 @@
                                     </p:column>
 
                                     <p:column>
+                                        <p:outputLabel for="previewTogle" style="margin-right: .5rem">Preview</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
                                         <p:outputLabel for="datebthTogle" style="margin-right: .5rem">Дата рождения</p:outputLabel>
                                     </p:column>
 
@@ -509,6 +513,12 @@
 
                                     <p:column>
                                         <p:toggleSwitch id="statusTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStatus}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="previewTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colPreview}">
                                             <p:ajax listener="#{settingBitServerBean.saveParam}" />
                                         </p:toggleSwitch>
                                     </p:column>
@@ -560,6 +570,11 @@
                                       rendered="#{settingBitServerBean.colStatus == 'true'}" >
                                 <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
                                               value="#{bitServerStudy.rustatus}"/>
+                            </p:column>
+
+                            <p:column headerText="Preview" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colPreview == 'true'}" >
+                                <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
                             </p:column>
 
                             <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">

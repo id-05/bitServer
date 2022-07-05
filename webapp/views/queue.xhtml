@@ -123,6 +123,7 @@
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectManyButton>
                         </div>
+
                     </p:card>
 
                     <p:toolbar>
@@ -202,6 +203,10 @@
                         <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
                             <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
                                           value="#{bitServerStudy.rustatus}"/>
+                        </p:column>
+
+                        <p:column headerText="Preview" style="text-align: center" rendered="#{queueBean.colPreview == 'true'}">
+                            <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
                         </p:column>
 
                         <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center"

@@ -1,11 +1,18 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import ru.bitServer.util.OrthancRestApi;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 @Entity
 public class BitServerStudy implements Serializable {
@@ -36,6 +43,7 @@ public class BitServerStudy implements Serializable {
     private Date datablock;
     private int userwhoblock;
     private String statusstyle;
+
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
 
@@ -72,6 +80,18 @@ public class BitServerStudy implements Serializable {
         this.anamnes = anamnes;
         this.result = result;
         this.status = status;
+    }
+
+    public String getPreview() {
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
+        JsonParser parserJsonSerie = new JsonParser();
+        JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+        JsonArray series= bufObj.get("Series").getAsJsonArray();
+        sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
+        bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+        JsonArray instances= bufObj.get("Instances").getAsJsonArray();
+        return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }
 
     public int getUserwhoblock() {

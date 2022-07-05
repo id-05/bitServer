@@ -67,14 +67,6 @@ public class MainBean implements UserDao {
         this.themeList = themeList;
     }
 
-    public String getBuffer() {
-        return buffer;
-    }
-
-    public void setBuffer(String buffer) {
-        this.buffer = buffer;
-    }
-
     public String getTotalStudy() {
         return totalStudy;
     }
@@ -101,7 +93,7 @@ public class MainBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        versionInfo = "1.2";
+        versionInfo = "1.3";
         timeOnWork = 24;
 
         System.out.println("init main");

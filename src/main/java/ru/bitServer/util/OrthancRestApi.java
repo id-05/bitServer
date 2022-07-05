@@ -2,12 +2,11 @@ package ru.bitServer.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.log4j.Logger;
 import ru.bitServer.dao.BitServerStudy;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -156,7 +155,6 @@ public class OrthancRestApi {
             while ((output = br.readLine()) != null) {
                 sb.append(output);
             }
-
             JsonParser parser = new JsonParser();
             JsonObject orthancJson=new JsonObject();
             try {
