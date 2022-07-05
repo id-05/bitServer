@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
@@ -26,10 +25,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
@@ -79,7 +75,6 @@ public class QueueBean implements UserDao {
     String colModality;
     String colWhereSend;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
-    String testInstance = "ae02bd70-65d55621-064a5539-3e52a94f-e265860a";
 
     public String getColStatus() {
         return colStatus;
@@ -342,32 +337,7 @@ public class QueueBean implements UserDao {
                     break;
             }
         }
-
     }
-
-//    public StreamedContent getChart() {
-//        try {
-//            return DefaultStreamedContent.builder()
-//                    .contentType("image/png")
-//                    .stream(() -> {
-//                        try {
-//                            File chartFile = new File("dynamichart");
-//                            image = connection.getPreview(testInstance);
-//                            ImageIO.write((RenderedImage) image,"test",chartFile);
-//                            return new FileInputStream(chartFile);
-//                        }
-//                        catch (Exception e) {
-//                            e.printStackTrace();
-//                            return null;
-//                        }
-//                    })
-//                    .build();
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
 
     public Boolean firstDateSelect() {
         filtrDate = "targetdate";
@@ -424,16 +394,16 @@ public class QueueBean implements UserDao {
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
         boolean result = false;
-        if( isValid(value.toString().substring(0,1)) == isValid(filter.toString().substring(0,1))){
-            result = value.toString().contains(filter.toString());
+        if( isValid(value.toString().substring(0,1).toUpperCase()) == isValid(filter.toString().substring(0,1).toUpperCase())){
+            result = value.toString().contains(filter.toString().toUpperCase());
         }else{
-            if(isValid(value.toString().substring(0,1))){
+            if(isValid(value.toString().substring(0,1).toUpperCase())){
                 Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
                 for (int i = 0; i < filter.toString().length(); i++){
                     if(filter.toString().length()<=value.toString().length()) {
-                        char c = filter.toString().charAt(i);
+                        char c = filter.toString().toUpperCase().charAt(i);
                         String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
-                        String bufValue = String.valueOf(value.toString().charAt(i));
+                        String bufValue = String.valueOf(value.toString().toUpperCase().charAt(i));
                         if(bufFilter.equals("%")){
                             continue;
                         }
@@ -444,9 +414,9 @@ public class QueueBean implements UserDao {
                 Transliterator toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
                 for (int i = 0; i < filter.toString().length(); i++){
                     if(filter.toString().length()<=value.toString().length()) {
-                        char c = filter.toString().charAt(i);
+                        char c = filter.toString().toUpperCase().charAt(i);
                         String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
-                        String bufValue = String.valueOf(value.toString().charAt(i));
+                        String bufValue = String.valueOf(value.toString().toUpperCase().charAt(i));
                         if(bufFilter.equals("%")){
                             continue;
                         }
@@ -487,7 +457,7 @@ public class QueueBean implements UserDao {
         String newID = connection.sendDicom("/instances", file.getContent());
         StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
         JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
-        OrthancStudy bufStudy = parseStudy(bufJson);
+        OrthancStudy bufStudy = connection.parseStudy(bufJson);
         studiesFromTableBitServer = getAllBitServerStudy();
         boolean existInTable = false;
         for (BitServerStudy bBSS : studiesFromTableBitServer) {
@@ -527,7 +497,7 @@ public class QueueBean implements UserDao {
             StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
 
             boolean existInTable;
-            studiesFromRestApi = getStudiesFromJson(sb.toString());
+            studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
             studiesFromTableBitServer = getAllBitServerStudy();
             for (OrthancStudy bufStudy : studiesFromRestApi) {
                 existInTable = false;
@@ -560,107 +530,6 @@ public class QueueBean implements UserDao {
         }catch (Exception e){
             LogTool.getLogger().warn("Error readStudyFromDB QueueBean "+e.getMessage());
         }
-    }
-
-    private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(data);
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-        ArrayList<OrthancStudy> studyList = new ArrayList<>();
-
-        while (studiesIterator.hasNext()) {
-            JsonObject studyData = (JsonObject) studiesIterator.next();
-            OrthancStudy studyObj = parseStudy(studyData);
-            studyList.add(studyObj);
-        }
-        return studyList;
-    }
-
-    private OrthancStudy parseStudy(JsonObject studyData){
-        System.out.println("123 "+studyData);
-        JsonObject parentPatientDetails = null;
-        if (studyData.has("PatientMainDicomTags")) {
-            parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
-        }
-        String parentPatientID = studyData.get("ParentPatient").getAsString();
-        String studyId = studyData.get("ID").getAsString();
-        JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
-        String patientSex = "N/A";
-        String patientName = "N/A";
-        String patientId = "N/A";
-        String patientDobString = "N/A";
-        Date patientDob = null;
-
-        assert parentPatientDetails != null;
-        if (parentPatientDetails.has("PatientBirthDate")) {
-            patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
-        }
-
-        if(!patientDobString.equals("")){
-            try {
-                patientDob = FORMAT.parse(patientDobString);
-            } catch (Exception e) {
-                LogTool.getLogger().debug("Error to transfer date 1 QueueBean "+e.getMessage());
-            }
-        }
-
-        if (parentPatientDetails.has("PatientSex")) {
-            patientSex = parentPatientDetails.get("PatientSex").getAsString();
-        }
-
-        if (parentPatientDetails.has("PatientName")) {
-            patientName = parentPatientDetails.get("PatientName").getAsString();
-        }
-
-        if (parentPatientDetails.has("PatientID")) {
-            patientId = parentPatientDetails.get("PatientID").getAsString();
-        }
-
-        String accessionNumber = "N/A";
-        if (studyDetails.has("AccessionNumber")) {
-            accessionNumber = studyDetails.get("AccessionNumber").getAsString();
-        }
-        String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
-        String studyDate = null;
-        Date studyDateObject = null;
-        if (studyDetails.has("StudyDate")) {
-            studyDate = studyDetails.get("StudyDate").getAsString();
-        }
-
-        try {
-            studyDateObject = FORMAT.parse(studyDate);
-        } catch (Exception e) {
-            LogTool.getLogger().warn("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
-        }
-
-        String studyDescription = "N/A";
-        if (studyDetails.has("StudyDescription")) {
-            studyDescription = studyDetails.get("StudyDescription").getAsString();
-        }
-
-        String studyInstitutionName = "N/A";
-        if (studyDetails.has("InstitutionName")) {
-            studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
-        }
-
-        String studyModality = "N/A";
-        if (studyData.has("Series")) {
-            JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
-            String bufSerie = SeriesArray.get(0).getAsString();
-            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
-            System.out.println("/series/"+bufSerie+" =  "+sb.toString());
-            JsonParser parserJsonSerie = new JsonParser();
-            JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
-            JsonObject serieMainDicomTags = null;
-            if (serie.has("MainDicomTags")) {
-                serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
-            }
-            assert serieMainDicomTags != null;
-            if (serieMainDicomTags.has("Modality")) {
-                studyModality = serieMainDicomTags.get("Modality").getAsString();
-            }
-        }
-        return new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
     }
 
     public void sendToAgent(){

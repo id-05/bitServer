@@ -1,16 +1,12 @@
 package ru.bitServer.beans;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -174,14 +170,6 @@ public class SettingBitServerBean implements UserDao {
         this.networksetpathfile = networksetpathfile;
     }
 
-    public Date getSyncdate() {
-        return syncdate;
-    }
-
-    public void setSyncdate(Date syncdate) {
-        this.syncdate = syncdate;
-    }
-
     public Date getStartDate() {
         return startDate;
     }
@@ -310,31 +298,36 @@ public class SettingBitServerBean implements UserDao {
         int sum = 0;
         Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
         Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
-        Calendar cal1 = new GregorianCalendar();
-        Calendar cal2 = new GregorianCalendar();
-        cal1.setTime(startDate);
-        cal2.setTime(stopDate);
-        int days = (int)( (cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
-        Instant bufInstant = startInstant.plus(1,ChronoUnit.DAYS);
-        double dProgress;
-        if(days!=0) {
-            dProgress = (double)100 / days;
-        }else{
-            dProgress = 0;
-        }
-        int i = 1;
-        progress1 = 0;
-        if(!FORMAT.format(Date.from(bufInstant)).equals( FORMAT.format(Date.from(stopInstant)) )) {
-            while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
-                sum = sum + readStudyFromDB(startInstant, bufInstant);
-                startInstant = startInstant.plus(1, ChronoUnit.DAYS);
-                bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
-                i++;
-                progress1 = (int) (dProgress * i);
+        if(!startInstant.equals(stopInstant)) {
+            Calendar cal1 = new GregorianCalendar();
+            Calendar cal2 = new GregorianCalendar();
+            cal1.setTime(startDate);
+            cal2.setTime(stopDate);
+            int days = (int) ((cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
+            Instant bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+            double dProgress;
+            if (days != 0) {
+                dProgress = (double) 100 / days;
+            } else {
+                dProgress = 0;
             }
+            int i = 1;
+            progress1 = 0;
+            if (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                    sum = sum + readStudyFromDB(startInstant, bufInstant);
+                    startInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    i++;
+                    progress1 = (int) (dProgress * i);
+                }
+            }
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + sum, info);
+        }else{
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение","Выбраны недопустимые даты!", info);
         }
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-        showMessage("Сообщение","Синхронизация завершена! Всего добавлено: "+sum, info);
     }
 
     public Integer readStudyFromDB(Instant startDate, Instant stopDate) {
@@ -353,7 +346,7 @@ public class SettingBitServerBean implements UserDao {
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
         assert sb != null;
         boolean existInTable;
-        studiesFromRestApi = getStudiesFromJson(sb.toString());
+        studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
             existInTable = false;
@@ -374,104 +367,6 @@ public class SettingBitServerBean implements UserDao {
             }
         }
         return sum;
-    }
-
-    private ArrayList<OrthancStudy> getStudiesFromJson(String data) {
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(data);
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-        ArrayList<OrthancStudy> studyList = new ArrayList<>();
-
-        while (studiesIterator.hasNext()) {
-            JsonObject studyData = (JsonObject) studiesIterator.next();
-            JsonObject parentPatientDetails = null;
-            if (studyData.has("PatientMainDicomTags")) {
-                parentPatientDetails = studyData.get("PatientMainDicomTags").getAsJsonObject();
-            }
-            String parentPatientID = studyData.get("ParentPatient").getAsString();
-            String studyId = studyData.get("ID").getAsString();
-            JsonObject studyDetails = studyData.get("MainDicomTags").getAsJsonObject();
-            String patientSex = "N/A";
-            String patientName = "N/A";
-            String patientId = "N/A";
-            String patientDobString = "N/A";
-            Date patientDob = null;
-
-            assert parentPatientDetails != null;
-            if (parentPatientDetails.has("PatientBirthDate")) {
-                patientDobString = parentPatientDetails.get("PatientBirthDate").getAsString();
-            }
-
-            if(!patientDobString.equals("")){
-                try {
-                    patientDob = FORMAT.parse(patientDobString);
-                } catch (Exception e) {
-                    LogTool.getLogger().debug("Error to transfer date SettingsBitServerBean: "+e.getMessage());
-                }
-            }
-
-            if (parentPatientDetails.has("PatientSex")) {
-                patientSex = parentPatientDetails.get("PatientSex").getAsString();
-            }
-
-            if (parentPatientDetails.has("PatientName")) {
-                patientName = parentPatientDetails.get("PatientName").getAsString();
-            }
-
-            if (parentPatientDetails.has("PatientID")) {
-                patientId = parentPatientDetails.get("PatientID").getAsString();
-            }
-
-            String accessionNumber = "N/A";
-            if (studyDetails.has("AccessionNumber")) {
-                accessionNumber = studyDetails.get("AccessionNumber").getAsString();
-            }
-            String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
-            String studyDate = null;
-            Date studyDateObject = null;
-            if (studyDetails.has("StudyDate")) {
-                studyDate = studyDetails.get("StudyDate").getAsString();
-            }
-
-            try {
-                studyDateObject = FORMAT.parse("19000101");
-                assert studyDate != null;
-                studyDateObject = FORMAT.parse(studyDate);
-            } catch (Exception e) {
-                LogTool.getLogger().debug("Error to transfer date-2 SettingsBitServerBean: "+e.getMessage());
-            }
-
-            String studyDescription = "N/A";
-            if (studyDetails.has("StudyDescription")) {
-                studyDescription = studyDetails.get("StudyDescription").getAsString();
-            }
-
-            String studyInstitutionName = "N/A";
-            if (studyDetails.has("InstitutionName")) {
-                studyInstitutionName = studyDetails.get("InstitutionName").getAsString();
-            }
-
-            String studyModality = "N/A";
-            if (studyData.has("Series")) {
-                JsonArray SeriesArray = studyData.get("Series").getAsJsonArray();
-                String bufSerie = SeriesArray.get(0).getAsString();
-                StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/series/"+bufSerie);
-                JsonParser parserJsonSerie = new JsonParser();
-                JsonObject serie = (JsonObject) parserJsonSerie.parse(sb.toString());
-                JsonObject serieMainDicomTags = null;
-                if (serie.has("MainDicomTags")) {
-                    serieMainDicomTags = serie.get("MainDicomTags").getAsJsonObject();
-                }
-                assert serieMainDicomTags != null;
-                if (serieMainDicomTags.has("Modality")) {
-                    studyModality = serieMainDicomTags.get("Modality").getAsString();
-                }
-            }
-
-            OrthancStudy studyObj = new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
-            studyList.add(studyObj);
-        }
-        return studyList;
     }
 
     @PostConstruct

@@ -120,23 +120,8 @@
                         </p>
                         <br/>
                         <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
+                        <br/>
 
-                        <br/>
-                        <p:divider align="left" type="dashed">
-                            <b>Дата начала синхронизации с Orthanc</b>
-                        </p:divider>
-                        <p class="p-m-0">
-                            <p:inplace editor="true" >
-                                <p:datePicker id="syncdate" value="#{settingBitServerBean.syncdate}" showIcon="true" style="margin-right: 10px">
-                                    <f:convertDateTime pattern="dd.MM.yyyy" />
-                                </p:datePicker>
-                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}" />
-                            </p:inplace>
-                        </p>
-                        <br/>
-                        <div >Исследования сделанные позднее этой даты, будут автоматически добавляться в Orthanc</div>
-
-                        <br/>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу сетевых настроек</b>
                         </p:divider>
