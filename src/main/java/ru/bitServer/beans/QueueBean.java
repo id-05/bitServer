@@ -42,7 +42,7 @@ import static ru.bitServer.beans.MainBean.*;
 @ViewScoped
 public class QueueBean implements UserDao {
 
-    String filtrDate = "today";
+    String filtrDate = "all";
     Date firstdate;
     Date seconddate;
     int typeSeach = 5;
@@ -337,6 +337,7 @@ public class QueueBean implements UserDao {
                     break;
             }
         }
+        dataoutput();
     }
 
     public Boolean firstDateSelect() {

@@ -63,32 +63,30 @@
 
             <h:form id="db">
 
-                <p:dashboard id="board" model="#{remoteDashboard.model}" style="margin: 10px"> 
+                <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" >
 
-                    <p:ajax event="reorder" listener="#{remoteDashboard.handleReorder}" update=":remoteform:growlMessageId"/>
+                    <p:panel id="serverstatistics" header="Статистика сервера" style="width: 1500px; height: 400px;" closable="true" >
+                        <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
 
-                    <p:panel id="serverstatistics" header="Статистика сервера" style="width: 800px; height: 400px;">
-                        <p:chart type="line" id="chart1" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
+                        <f:facet name="options">
+                            <p:menu>
+                                <p:submenu label="Периоды">
+                                    <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                                    <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                                </p:submenu>
 
-                        <div id="searchdatetype" class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-bottom: 2em; margin-top: 2em">
-                            <label for="dateSTART" class="p-col-fixed">C :</label>
-                            <p:datePicker id="dateSTART" value="#{remoteDashboard.firstdate}">
-                                <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
-                            </p:datePicker>
-                            <label for="dateSTOP" class="p-col-fixed">  ПО :</label>
-                            <p:datePicker id="dateSTOP" value="#{remoteDashboard.seconddate}">
-                                <p:ajax event="dateSelect" listener="#{remoteDashboard.dateSelect}" update=":db:chart1"/>
-                            </p:datePicker>
-                            <label for="option" class="p-col-fixed">Интервалы :</label>
-                            <p:selectOneMenu id="option" value="#{remoteDashboard.typeChart}">
-                                <f:selectItem itemLabel="Месяц" itemValue="mounth"/>
-                                <f:selectItem itemLabel="Год" itemValue="year"/>
-                                <p:ajax event="change" listener="#{remoteDashboard.chartOutput}" update=":db:chart1"/>
-                            </p:selectOneMenu>
-                        </div>
-
+                                <p:submenu label="Модальности">
+                                    <p:menuitem value="Все" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                                    <p:menuitem value="МРТ" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                                    <p:menuitem value="КТ" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                                    <p:menuitem value="Рентген(остальные)" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                                </p:submenu>
+                            </p:menu>
+                        </f:facet>
                     </p:panel>
+
                 </p:dashboard>
+
             </h:form>
     </h:body>
 </f:view>
