@@ -137,6 +137,10 @@ public class OrthancRestApi {
         conn.disconnect();
     }
 
+    public StringBuilder getStatistics(){
+        return makeGetConnectionAndStringBuilder("/statistics");
+    }
+
     public String sendDicom(String apiUrl, byte[] post) {
         HttpURLConnection conn;
         StringBuilder sb = new StringBuilder();

@@ -5,28 +5,51 @@ import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.chart.*;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.pie.PieChartDataSet;
+import ru.bitServer.dao.BitServerModality;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.Users;
 import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @ManagedBean(name = "statisticsBean")
-@ViewScoped
+@RequestScoped
 public class StatisticsBean implements UserDao {
 
     DashboardModel model;
     Users currentUser;
     List<BitServerStudy> allStudies = new ArrayList<>();
     LineChartModel lineModel;
+    private PieChartModel pieModality;
+    private PieChartModel pieSource;
     String typeChart = "mounth";
     Date firstdate;
     Date seconddate;
+    List<String> sourcelist = new ArrayList<>();
+
+    public List<String> getSourcelist() {
+        return sourcelist;
+    }
+
+    public void setSourcelist(List<String> sourcelist) {
+        this.sourcelist = sourcelist;
+    }
+
+    public PieChartModel getPieModality() {
+        return pieModality;
+    }
+
+    public PieChartModel getPieSource() {
+        return pieSource;
+    }
 
     public Users getCurrentUser() {
         return currentUser;
@@ -56,20 +79,28 @@ public class StatisticsBean implements UserDao {
     public void init()  {
         allStudies = getAllBitServerStudy();
         allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-        firstdate = new Date();
-        seconddate = new Date();
-        firstdate = allStudies.get(0).getSdate();
-        seconddate = allStudies.get(allStudies.size() - 1).getSdate();
+        try {
+            firstdate = allStudies.get(0).getSdate();
+            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
+        }catch (Exception e){
+            firstdate = new Date();
+            seconddate = new Date();
+        }
         lineModel = initModel("MM.yyyy");
         preInitModel();
         model = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
+        DashboardColumn column2 = new DefaultDashboardColumn();
+        DashboardColumn column3 = new DefaultDashboardColumn();
         column1.addWidget("serverstatistics");
+        column2.addWidget("modality");
+        column3.addWidget("source");
         model.addColumn(column1);
+        model.addColumn(column2);
+        model.addColumn(column3);
     }
 
     public void preInitModel(){
-        lineModel.setTitle("Исследования");
         lineModel.setLegendPosition("e");
         lineModel.setShowPointLabels(true);
         lineModel.getAxes().put(AxisType.X, new CategoryAxis("Период"));
@@ -77,6 +108,38 @@ public class StatisticsBean implements UserDao {
         lineModel.getAxis(AxisType.Y).setLabel("Количество исследований");
         lineModel.getAxis(AxisType.Y).setMin(0);
         lineModel.getAxis(AxisType.Y).setTickAngle(1);
+        initPieModality();
+        initPieSource();
+    }
+
+    public void initPieModality(){
+        pieModality = new PieChartModel();
+        List<BitServerModality> modalityList = getAllBitServerModality();
+        for(BitServerModality bufModality:modalityList){
+            pieModality.set(bufModality.getName(),getBitServerStudyModality(bufModality.getName()).size());
+        }
+        pieModality.setLegendPosition("e");
+        pieModality.setShowDatatip(true);
+        pieModality.setShowDataLabels(true);
+        pieModality.setDataFormat("value");
+    }
+
+    public void initPieSource(){
+        pieSource = new PieChartModel();
+        List<String> buflist = new ArrayList<>();
+        List<BitServerStudy> bufStudyList = getAllBitServerStudy();
+        for(BitServerStudy bufStudy:bufStudyList){
+            buflist.add(bufStudy.getSource());
+        }
+        Set<String> set = new LinkedHashSet<>(buflist);
+        sourcelist.addAll(set);
+        for(String bufSource:sourcelist){
+            pieSource.set(bufSource,getBitServerStudySource(bufSource).size());
+        }
+        pieSource.setLegendPosition("e");
+        pieSource.setShowDatatip(true);
+        pieSource.setShowDataLabels(true);
+        pieSource.setDataFormat("value");
     }
 
     public void setMounths(){

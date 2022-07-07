@@ -70,7 +70,7 @@
 
             <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" >
 
-                <p:panel id="serverstatistics" header="Статистика сервера" style="width: 1500px; height: 400px;" closable="true" >
+                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
                     <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
 
                     <f:facet name="options">
@@ -88,7 +88,19 @@
                             </p:submenu>
                         </p:menu>
                     </f:facet>
+
                 </p:panel>
+
+                <p:panel id="modality" header="Распределение по модальностям"
+                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+                    <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieModality}" />
+                </p:panel>
+
+                <p:panel id="source" header="Распределение по источникам"
+                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+                    <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieSource}" />
+                </p:panel>
+
 
             </p:dashboard>
 

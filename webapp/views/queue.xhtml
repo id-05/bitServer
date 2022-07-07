@@ -156,7 +156,18 @@
 
                             <p:commandButton value="Обновить" actionListener="#{queueBean.readStudyFromDB}"
                                              process="@this" update="searchgrowl"
+                                             onclick="PF('statusDialog').show()"
                                              icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
+
+                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                                <h1 class="p-text-center">
+                                    <h:outputLabel for="txt_count" value="Выполненно:  "/>
+                                    <h:outputText id="txt_count" value="#{queueBean.number}"/>
+                                </h1>
+
+                                <p:poll interval="1" listener="#{queueBean.increment}" update="txt_count"/>
+                            </p:dialog>
+
                         </p:toolbarGroup>
                     </p:toolbar>
 

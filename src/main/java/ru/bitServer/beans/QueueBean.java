@@ -1,6 +1,7 @@
 package ru.bitServer.beans;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
@@ -36,6 +37,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 
+import static ru.bitServer.beans.AutoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
@@ -75,6 +77,17 @@ public class QueueBean implements UserDao {
     String colModality;
     String colWhereSend;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
+    private int number;
+    int progress;
+
+    public void increment() {
+        number = progress;
+    }
+
+    public String getNumber() {
+        return number+"%";
+    }
+
 
     public String getColStatus() {
         return colStatus;
@@ -298,6 +311,8 @@ public class QueueBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        StringBuilder sb = connection.getStatistics();
+        System.out.println(sb.toString());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
         firstdate = new Date();
@@ -479,58 +494,91 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        try {
-            JsonObject query = new JsonObject();
-            query.addProperty("Level", "Studies");
-            query.addProperty("CaseSensitive", false);
-            query.addProperty("Expand", true);
-            query.addProperty("Limit", 0);
-            JsonObject queryDetails = new JsonObject();
-            Date lastdate = new Date();
-            Instant now = Instant.now();
-            Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-            String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
-            queryDetails.addProperty("StudyDate", dateStr);
-            queryDetails.addProperty("PatientID", "*");
-            queryDetails.addProperty("Modality", "");
-            query.add("Query", queryDetails);
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
 
-            StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-
-            boolean existInTable;
-            studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
-            studiesFromTableBitServer = getAllBitServerStudy();
-            for (OrthancStudy bufStudy : studiesFromRestApi) {
-                existInTable = false;
-                for (BitServerStudy bBSS : studiesFromTableBitServer) {
-                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-                        existInTable = true;
-                        break;
-                    }
-                }
-                if (!existInTable) {
-                    BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                            bufStudy.getInstitutionName(), bufStudy.getDate(),
-                            bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-                    addStudy(buf);
-                }
-            }
-
-            String bufStrMod = "";
-            String bufStr = "";
-            for (String buf : selectedModalitiName) {
-                if (!bufStrMod.equals("")) {
-                    bufStrMod = "'" + buf + "'";
-                } else {
-                    bufStrMod = bufStr + ",'" + buf + "'";
-                }
-            }
-            visibleStudiesList = getBitServerStudy(typeSeach, filtrDate, firstdate, seconddate, bufStrMod);
-            PrimeFaces.current().ajax().update(":seachform:dt-studys");
-            dataoutput();
-        }catch (Exception e){
-            LogTool.getLogger().warn("Error readStudyFromDB QueueBean "+e.getMessage());
+        ArrayList<String> idOrthancStudy = new ArrayList<>();
+        while (studiesIterator.hasNext()) {
+            String studyData =  studiesIterator.next().getAsString();
+            idOrthancStudy.add(studyData);
         }
+
+        studiesFromTableBitServer = getAllBitServerStudy();
+        ArrayList<String> idBitServerStudy = new ArrayList<>();
+        for(BitServerStudy bufStudy:getAllBitServerStudy()){
+            idBitServerStudy.add(bufStudy.getSid());
+        }
+        idOrthancStudy.removeAll(idBitServerStudy);
+        double dProgress = (double) 100 / idOrthancStudy.size();
+        progress = 0;
+        int i = 0;
+        for(String bufId:idOrthancStudy){
+            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
+            parserJson = new JsonParser();
+            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
+            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
+            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                    bufStudy.getInstitutionName(), bufStudy.getDate(),
+                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+            addStudy(buf);
+            i++;
+            progress = (int) (dProgress * i);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+//        try {
+//            JsonObject query = new JsonObject();
+//            query.addProperty("Level", "Studies");
+//            query.addProperty("CaseSensitive", false);
+//            query.addProperty("Expand", true);
+//            query.addProperty("Limit", 0);
+//            JsonObject queryDetails = new JsonObject();
+//            Date lastdate = new Date();
+//            Instant now = Instant.now();
+//            Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+//            String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
+//            queryDetails.addProperty("StudyDate", dateStr);
+//            queryDetails.addProperty("PatientID", "*");
+//            queryDetails.addProperty("Modality", "");
+//            query.add("Query", queryDetails);
+//
+//            StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+//
+//            boolean existInTable;
+//            studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
+//            studiesFromTableBitServer = getAllBitServerStudy();
+//            for (OrthancStudy bufStudy : studiesFromRestApi) {
+//                existInTable = false;
+//                for (BitServerStudy bBSS : studiesFromTableBitServer) {
+//                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+//                        existInTable = true;
+//                        break;
+//                    }
+//                }
+//                if (!existInTable) {
+//                    BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+//                            bufStudy.getInstitutionName(), bufStudy.getDate(),
+//                            bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+//                    addStudy(buf);
+//                }
+//            }
+//
+//            String bufStrMod = "";
+//            String bufStr = "";
+//            for (String buf : selectedModalitiName) {
+//                if (!bufStrMod.equals("")) {
+//                    bufStrMod = "'" + buf + "'";
+//                } else {
+//                    bufStrMod = bufStr + ",'" + buf + "'";
+//                }
+//            }
+//            visibleStudiesList = getBitServerStudy(typeSeach, filtrDate, firstdate, seconddate, bufStrMod);
+//            PrimeFaces.current().ajax().update(":seachform:dt-studys");
+//            dataoutput();
+//        }catch (Exception e){
+//            LogTool.getLogger().warn("Error readStudyFromDB QueueBean "+e.getMessage());
+//        }
     }
 
     public void sendToAgent(){

@@ -1,6 +1,9 @@
 package ru.bitServer.beans;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancStudy;
@@ -63,15 +66,6 @@ public class SettingBitServerBean implements UserDao {
     ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     Users currentUser;
-
-    public Users getCurrentUser() {
-        return currentUser;
-    }
-
-    public void setCurrentUser(Users currentUser) {
-        this.currentUser = currentUser;
-    }
-
     private int number;
 
     public void increment() {
@@ -80,6 +74,14 @@ public class SettingBitServerBean implements UserDao {
 
     public String getNumber() {
         return number+"%";
+    }
+
+    public Users getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Users currentUser) {
+        this.currentUser = currentUser;
     }
 
     public String getColStatus() {
@@ -294,6 +296,43 @@ public class SettingBitServerBean implements UserDao {
         this.selectedUsers = selectedUsers;
     }
 
+    public void startProgress2() {
+
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+
+        ArrayList<String> idOrthancStudy = new ArrayList<>();
+        while (studiesIterator.hasNext()) {
+            String studyData =  studiesIterator.next().getAsString();
+            idOrthancStudy.add(studyData);
+        }
+
+        studiesFromTableBitServer = getAllBitServerStudy();
+        ArrayList<String> idBitServerStudy = new ArrayList<>();
+        for(BitServerStudy bufStudy:getAllBitServerStudy()){
+            idBitServerStudy.add(bufStudy.getSid());
+        }
+        idOrthancStudy.removeAll(idBitServerStudy);
+        double dProgress = (double) 100 / idOrthancStudy.size();
+        progress1 = 0;
+        int i = 0;
+        for(String bufId:idOrthancStudy){
+            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
+            parserJson = new JsonParser();
+            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
+            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
+            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                    bufStudy.getInstitutionName(), bufStudy.getDate(),
+                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+            addStudy(buf);
+            i++;
+            progress1 = (int) (dProgress * i);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+    }
+
     public void startProgress(){
         int sum = 0;
         Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
@@ -343,10 +382,15 @@ public class SettingBitServerBean implements UserDao {
         queryDetails.addProperty("PatientID", "*");
         queryDetails.addProperty("Modality", "");
         query.add("Query", queryDetails);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        StringBuilder sb = null;
+
+        System.out.println("here^ "+ "/tools/find"+ query.toString());
+        sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        System.out.println("here^ "+ sb.toString());
         assert sb != null;
         boolean existInTable;
         studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
+
         studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
             existInTable = false;

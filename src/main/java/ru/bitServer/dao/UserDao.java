@@ -216,6 +216,22 @@ public interface UserDao {
         session.close();
     }
 
+    default List<BitServerStudy> getBitServerStudyModality(String value) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM BitServerStudy U WHERE U.modality = '" + value + "'";
+        Query query = session.createQuery(hql);
+        List<BitServerStudy> results = query.list();
+        return results;
+    }
+
+    default List<BitServerStudy> getBitServerStudySource(String value) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM BitServerStudy U WHERE U.source = '" + value + "'";
+        Query query = session.createQuery(hql);
+        List<BitServerStudy> results = query.list();
+        return results;
+    }
+
     default List<BitServerStudy> getBitServerStudy(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         switch (dateSeachType){

@@ -91,7 +91,7 @@ public class BitServerStudy implements Serializable {
         sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
         bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
         JsonArray instances= bufObj.get("Instances").getAsJsonArray();
-        return "http://"+"@"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
+        return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }
 
     public int getUserwhoblock() {
