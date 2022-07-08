@@ -32,8 +32,6 @@ import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 
@@ -527,6 +525,8 @@ public class QueueBean implements UserDao {
         }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        dataoutput();
 //        try {
 //            JsonObject query = new JsonObject();
 //            query.addProperty("Level", "Studies");

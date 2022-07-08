@@ -5,8 +5,6 @@ import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.chart.*;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.pie.PieChartDataSet;
 import ru.bitServer.dao.BitServerModality;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
@@ -15,7 +13,6 @@ import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.ViewScoped;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -75,6 +72,8 @@ public class StatisticsBean implements UserDao {
         this.lineModel = lineModel;
     }
 
+
+
     @PostConstruct
     public void init()  {
         allStudies = getAllBitServerStudy();
@@ -116,7 +115,7 @@ public class StatisticsBean implements UserDao {
         pieModality = new PieChartModel();
         List<BitServerModality> modalityList = getAllBitServerModality();
         for(BitServerModality bufModality:modalityList){
-            pieModality.set(bufModality.getName(),getBitServerStudyModality(bufModality.getName()).size());
+            pieModality.set(bufModality.getName(), allStudies.stream().filter(BitServerStudy->BitServerStudy.getModality().equals(bufModality.getName())).count());
         }
         pieModality.setLegendPosition("e");
         pieModality.setShowDatatip(true);
@@ -127,20 +126,23 @@ public class StatisticsBean implements UserDao {
     public void initPieSource(){
         pieSource = new PieChartModel();
         List<String> buflist = new ArrayList<>();
-        List<BitServerStudy> bufStudyList = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:bufStudyList){
+        for(BitServerStudy bufStudy:allStudies){
             buflist.add(bufStudy.getSource());
         }
         Set<String> set = new LinkedHashSet<>(buflist);
         sourcelist.addAll(set);
+
         for(String bufSource:sourcelist){
-            pieSource.set(bufSource,getBitServerStudySource(bufSource).size());
+            pieSource.set(bufSource, getBitServerStudySource(bufSource).size());
         }
+
         pieSource.setLegendPosition("e");
         pieSource.setShowDatatip(true);
         pieSource.setShowDataLabels(true);
         pieSource.setDataFormat("value");
     }
+
+
 
     public void setMounths(){
         typeChart = "mounth";

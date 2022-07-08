@@ -5,33 +5,37 @@
       xmlns:composite = "http://java.sun.com/jsf/composite">
 
 <composite:interface>
-    <composite:attribute name = "totalSpace" />
-    <composite:attribute name = "usedSpace" />
-    <composite:attribute name = "freeSpace" />
-    <composite:attribute name = "directory" />
+    <composite:attribute name = "usernameLabel" />
+    <composite:attribute name = "usernameValue" />
 </composite:interface>
 
 <composite:implementation>
-
-        <p:panel header="Статистика сервера" style="width: 1500px; height: 400px;" closable="true" >
-            <p:chart type="line" id="chart1" model="#{remoteDashboard.lineModel}" style="height:400px;"/>
+    <h:form>
+        <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
+            <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
 
             <f:facet name="options">
                 <p:menu>
                     <p:submenu label="Периоды">
-                        <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{remoteDashboard.setMounths}" update=":db:chart1"/>
-                        <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{remoteDashboard.setYears}" update=":db:chart1"/>
+                        <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                        <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
                     </p:submenu>
 
-                    <p:submenu label="Модальности">
-                        <p:menuitem value="Все" icon="pi pi-calendar" actionListener="#{remoteDashboard.setMounths}" update=":db:chart1"/>
-                        <p:menuitem value="МРТ" icon="pi pi-calendar-minus" actionListener="#{remoteDashboard.setYears}" update=":db:chart1"/>
-                        <p:menuitem value="КТ" icon="pi pi-calendar-minus" actionListener="#{remoteDashboard.setYears}" update=":db:chart1"/>
-                        <p:menuitem value="Рентген(остальные)" icon="pi pi-calendar-minus" actionListener="#{remoteDashboard.setYears}" update=":db:chart1"/>
-                    </p:submenu>
+
                 </p:menu>
             </f:facet>
+
         </p:panel>
 
+        <p:panel id="modality" header="Распределение по модальностям"
+                 style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+            <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieModality}" />
+        </p:panel>
+
+        <p:panel id="source" header="Распределение по источникам"
+                 style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+            <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieSource}" />
+        </p:panel>
+    </h:form>
 </composite:implementation>
 </html>

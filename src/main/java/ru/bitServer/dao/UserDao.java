@@ -70,7 +70,7 @@ public interface UserDao {
 
     default List<Usergroup> getRealBitServerUsergroupList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Query query = null;
+        Query query;
         String hql= "from Usergroup  where forlocal=:forgroup and status=:pstatus";
         query = session.createQuery(hql);
         query.setParameter("pstatus", "active");

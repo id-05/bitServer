@@ -320,4 +320,5 @@ public class BitServerStudy implements Serializable {
     public BitServerStudy(){
 
     }
+
 }
