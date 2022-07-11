@@ -278,6 +278,7 @@
                         <div ><strong>Локальный только просмотр</strong> - видит все исследования, вместе с ПД, но не может отправлять и брать на анализ</div>
                         <div ><strong>Удаленный пользователь</strong> - видит только исследования отправленные на диагностику в его группу, без ПД</div>
                         <div ><strong>Клиент</strong> - может загружать исследования и видит результаты только загруженных им исследований</div>
+                        <div ><strong>demo</strong> - в качестве домашней страницы, видит "очередь" имеет самый мнимальный функционал</div>
                     </p:outputPanel>
                 </p:tab>
 
@@ -412,7 +413,7 @@
                         <div >Включите, для обновления базы при открытиии страницы очереди. Это может приводить к длительному ожиданию открытия страницы</div>
 
                         <p:divider align="left" type="dashed">
-                            <b>Синхронизация</b>
+                            <b>Синхронизация за выбранный период</b>
                         </p:divider>
 
                         <p:outputLabel for="startdate">Дата начала синхронизации: </p:outputLabel>
@@ -431,14 +432,16 @@
                             <p:ajax event="save" />
                         </p:inplace>
 
-                        <p:divider />
+                        <br/>
+                        <br/>
 
                         <p:commandButton value="Старт"
                                          process="@this"
-                                         action="#{settingBitServerBean.startProgress2}"
+                                         action="#{settingBitServerBean.syncPeriod}"
                                          onclick="PF('statusDialog').show()"
-                                         widgetVar="startButton2" styleClass="p-mr-2" ajax="false"/>
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
                         <br/>
+
 
                         <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
                             <h1 class="p-text-center">
@@ -451,6 +454,48 @@
 
                         <br/>
                         <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация всех данных</b>
+                        </p:divider>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         action="#{settingBitServerBean.syncAll}"
+                                         onclick="PF('statusDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Показывать статистику пользователям</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.showStat}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, все пользователи видят статистику сервера на своей домашней странице</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Удаление всех DICOM-данных</b>
+                        </p:divider>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         action="#{settingBitServerBean.dateBaseFactoryReset}"
+                                         onclick="PF('statusDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока процедура не завершится</div>
 
                     </p:outputPanel>
                 </p:tab>
@@ -460,7 +505,7 @@
 
                         <p class="p-m-0" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px">
 
-                            <p:panelGrid id="manageTG"  styleClass="ui-panelgrid-blank ui-fluid" style="border:0px none; background-color:transparent;">
+                            <p:panelGrid id="manageTG"  styleClass="ui-panelgrid-blank ui-fluid" style="border:0 none; background-color:transparent;">
 
                                 <p:row>
 

@@ -63,7 +63,7 @@
 
             <h:form id="db">
 
-                <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" >
+                <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}>
 
                     <p:panel id="serverstatistics" header="Статистика сервера" style="width: 1500px; height: 400px;" closable="true" >
                         <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>

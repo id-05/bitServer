@@ -51,7 +51,7 @@ public class OrthancRestApi {
         return stringBuilder;
     }
 
-    private HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
+    public HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
         HttpURLConnection conn;
         String fulladdress = "http://"+ ipaddress+":"+ port;
         URL url = new URL(fulladdress+apiUrl);
@@ -123,9 +123,9 @@ public class OrthancRestApi {
         return conn;
     }
 
-    public void deleteStudyFromOrthanc(BitServerStudy study) throws IOException {
+    public void deleteStudyFromOrthanc(String studyId) throws IOException {
         String fulladdress = "http://" + ipaddress + ":" + port;
-        URL url = new URL(fulladdress + "/studies/" + study.getAnonimstudyid());
+        URL url = new URL(fulladdress + "/studies/" + studyId);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("DELETE");

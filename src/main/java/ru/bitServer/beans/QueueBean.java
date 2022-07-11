@@ -309,8 +309,6 @@ public class QueueBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-        StringBuilder sb = connection.getStatistics();
-        System.out.println(sb.toString());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
         firstdate = new Date();
@@ -682,18 +680,32 @@ public class QueueBean implements UserDao {
         }
     }
 
+//    public StreamedContent downloadStudy() throws Exception {
+//        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+//            String url="/tools/create-archive";
+//            JsonArray idArray = new JsonArray();
+//            idArray.add(bufStudy.getSid());
+//            HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+//            InputStream inputStream = conn.getInputStream();
+//            return DefaultStreamedContent.builder()
+//                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
+//                    .contentType("application/zip")
+//                    .stream(() -> inputStream)
+//                    .build();
+//    }
+
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-            String url="/tools/create-archive";
-            JsonArray idArray = new JsonArray();
-            idArray.add(bufStudy.getSid());
-            HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
-            InputStream inputStream = conn.getInputStream();
-            return DefaultStreamedContent.builder()
-                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
-                    .contentType("application/zip")
-                    .stream(() -> inputStream)
-                    .build();
+        String url="/studies/"+bufStudy.getSid();
+       // JsonArray idArray = new JsonArray();
+       // idArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makeGetConnection(url);
+        InputStream inputStream = conn.getInputStream();
+        return DefaultStreamedContent.builder()
+                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate()))
+                .contentType("application/dcm")
+                .stream(() -> inputStream)
+                .build();
     }
 
     public void comebackStudy() throws IOException {
@@ -702,7 +714,7 @@ public class QueueBean implements UserDao {
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
                 updateStudy(bufStudy);
-                connection.deleteStudyFromOrthanc(bufStudy);
+                connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
                 Users bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
                 bufUser.setBlockStudy("0");

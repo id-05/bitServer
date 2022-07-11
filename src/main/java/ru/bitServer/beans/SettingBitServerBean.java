@@ -16,6 +16,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
@@ -26,6 +30,8 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ViewScoped
 public class SettingBitServerBean implements UserDao {
 
+    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     int progress1;
     List<Users> usersList;
     List<Users> selectedUsers;
@@ -36,6 +42,7 @@ public class SettingBitServerBean implements UserDao {
     Usergroup selectedUsergroup;
     String httpmode;
     String updateQueueAfterOpen;
+    String showStat;
     String osimisAddress;
     String orthancAddress;
     String orthancWebPort;
@@ -60,6 +67,14 @@ public class SettingBitServerBean implements UserDao {
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     Users currentUser;
     private int number;
+
+    public String getShowStat() {
+        return showStat;
+    }
+
+    public void setShowStat(String showStat) {
+        this.showStat = showStat;
+    }
 
     public void increment() {
         number = progress1;
@@ -289,7 +304,7 @@ public class SettingBitServerBean implements UserDao {
         this.selectedUsers = selectedUsers;
     }
 
-    public void startProgress2() {
+    public void syncAll() {
 
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
@@ -324,6 +339,103 @@ public class SettingBitServerBean implements UserDao {
         }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+    }
+
+    public void syncPeriod(){
+        int sum = 0;
+        Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
+        Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
+        if(!startInstant.equals(stopInstant)) {
+            Calendar cal1 = new GregorianCalendar();
+            Calendar cal2 = new GregorianCalendar();
+            cal1.setTime(startDate);
+            cal2.setTime(stopDate);
+            int days = (int) ((cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
+            Instant bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+            double dProgress;
+            if (days != 0) {
+                dProgress = (double) 100 / days;
+            } else {
+                dProgress = 0;
+            }
+            int i = 1;
+            progress1 = 0;
+            if (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                    sum = sum + readStudyFromDB(startInstant, bufInstant);
+                    startInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    i++;
+                    progress1 = (int) (dProgress * i);
+                }
+            }
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + sum, info);
+        }else{
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение","Выбраны недопустимые даты!", info);
+        }
+    }
+
+    public void dateBaseFactoryReset() throws IOException {
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+        double dProgress = (double) 100 / studies.size();
+        progress1 = 0;
+        int i = 0;
+        while (studiesIterator.hasNext()) {
+            String studyData =  studiesIterator.next().getAsString();
+            connection.deleteStudyFromOrthanc(studyData);
+            i++;
+            progress1 = (int) (dProgress * i);
+        }
+        List<BitServerStudy> listStudys = getAllBitServerStudy();
+        for(BitServerStudy bufStudy:listStudys){
+            deleteStudy(bufStudy);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение", "Удаление завершено! Всего удалено: " + i, info);
+    }
+
+    public Integer readStudyFromDB(Instant startDate, Instant stopDate) {
+        int sum = 0;
+        ArrayList<OrthancStudy> studiesFromRestApi;
+        JsonObject query = new JsonObject();
+        query.addProperty("Level", "Studies");
+        query.addProperty("CaseSensitive", false);
+        query.addProperty("Expand", true);
+        query.addProperty("Limit", 0);
+        JsonObject queryDetails = new JsonObject();
+        String dateStr = FORMAT.format(Date.from(startDate)) + "-" + FORMAT.format(Date.from(stopDate));
+        queryDetails.addProperty("StudyDate", dateStr);
+        queryDetails.addProperty("PatientID", "*");
+        queryDetails.addProperty("Modality", "");
+        query.add("Query", queryDetails);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        assert sb != null;
+        boolean existInTable;
+        studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
+        studiesFromTableBitServer = getAllBitServerStudy();
+        for(OrthancStudy bufStudy:studiesFromRestApi){
+            existInTable = false;
+            if(studiesFromTableBitServer.size()>0) {
+                for (BitServerStudy bBSS : studiesFromTableBitServer) {
+                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+                        existInTable = true;
+                        break;
+                    }
+                }
+            }
+            if(!existInTable) {
+                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
+                addStudy(buf);
+                sum++;
+            }
+        }
+        return sum;
     }
 
     @PostConstruct
@@ -372,11 +484,15 @@ public class SettingBitServerBean implements UserDao {
 
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
+
                 case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
                 case "updateafteropen": updateQueueAfterOpen = buf.getRvalue();
                     break;
                 case "httpmode": httpmode = buf.getRvalue();
+                    break;
+                case "showStat": showStat = buf.getRvalue();
+
                     break;
                 case "luascriptpathfile": luaScriptPath = buf.getRvalue();
                     break;
@@ -510,6 +626,8 @@ public class SettingBitServerBean implements UserDao {
                 case "colModality": buf.setRvalue(colModality);
                     break;
                 case "colWhereSend": buf.setRvalue(colWhereSend);
+                    break;
+                case "showStat": buf.setRvalue(showStat);
                     break;
             }
             updateBitServiceResource(buf);

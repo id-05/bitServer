@@ -5,10 +5,7 @@ import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
 import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.chart.*;
-import ru.bitServer.dao.BitServerModality;
-import ru.bitServer.dao.BitServerStudy;
-import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.*;
 import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -31,6 +28,15 @@ public class StatisticsBean implements UserDao {
     Date firstdate;
     Date seconddate;
     List<String> sourcelist = new ArrayList<>();
+    boolean showStat;
+
+    public boolean isShowStat() {
+        return showStat;
+    }
+
+    public void setShowStat(boolean showStat) {
+        this.showStat = showStat;
+    }
 
     public List<String> getSourcelist() {
         return sourcelist;
@@ -72,12 +78,16 @@ public class StatisticsBean implements UserDao {
         this.lineModel = lineModel;
     }
 
-
-
     @PostConstruct
     public void init()  {
         allStudies = getAllBitServerStudy();
         allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
+        try {
+            BitServerResources bufResource = getBitServerResource("showStat");
+            showStat = bufResource.getRvalue().equals("true");
+        }catch (Exception e){
+            LogTool.getLogger().warn("Error init() QueueBean "+e.getMessage());
+        }
         try {
             firstdate = allStudies.get(0).getSdate();
             seconddate = allStudies.get(allStudies.size() - 1).getSdate();
@@ -141,8 +151,6 @@ public class StatisticsBean implements UserDao {
         pieSource.setShowDataLabels(true);
         pieSource.setDataFormat("value");
     }
-
-
 
     public void setMounths(){
         typeChart = "mounth";

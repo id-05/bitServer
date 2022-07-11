@@ -106,7 +106,7 @@ public class QueueremoteBean implements UserDao {
         }else{
             selectedVisibleStudy.setTyperesult(false);
         }
-        connection.deleteStudyFromOrthanc(selectedVisibleStudy);
+        connection.deleteStudyFromOrthanc(selectedVisibleStudy.getAnonimstudyid());
         updateStudy(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('sidebar').hide()");
         showMessage("Информация","Заключение было прикреплено к исследованию! Статус исследования был изменен на 'Описано'",info);

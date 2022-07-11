@@ -68,7 +68,7 @@
 
         <h:form id="db">
 
-            <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" >
+            <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}">
 
                 <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
                     <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
@@ -82,8 +82,6 @@
                         </p:menu>
 
                     </f:facet>
-
-
 
                 </p:panel>
 

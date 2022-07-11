@@ -170,7 +170,10 @@ public class DateBaseBean implements UserDao {
         saveBitServiceResource(new BitServerResources("httpmode","false"));
         saveBitServiceResource(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         saveBitServiceResource(new BitServerResources("updateafteropen","true"));
+        saveBitServiceResource(new BitServerResources("showStat","true"));
         saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
+        saveBitServiceResource(new BitServerResources("datastorage","/dataimage"));
+
 
         listResources.add(new BitServerResources("orthancaddress","127.0.0.1"));
         listResources.add(new BitServerResources("port","8042"));
@@ -184,7 +187,9 @@ public class DateBaseBean implements UserDao {
         listResources.add(new BitServerResources("httpmode","false"));
         listResources.add(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua"));
         listResources.add(new BitServerResources("updateafteropen","true"));
+        listResources.add(new BitServerResources("showStat","true"));
         listResources.add(new BitServerResources("logpath","/dataimage/results/"));
+        listResources.add(new BitServerResources("datastorage","/dataimage"));
 
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
