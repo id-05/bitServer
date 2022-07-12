@@ -83,7 +83,7 @@ public interface UserDao {
     default Users validateUserAndGetIfExist(String ulogin, String upassword) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         String hql = "FROM Users U WHERE U.uname = '" + ulogin + "' and U.password = '" + upassword + "'";
-        Query query = session.createQuery(hql);
+        Query query =  session.createQuery(hql);
         List<Users> results = query.list();
 
         if (results.size() > 0) {
@@ -190,6 +190,28 @@ public interface UserDao {
         criteriaQuery.select(root);
         Query<BitServerModality> BitServerDBresources = session.createQuery(criteriaQuery);
         return BitServerDBresources.list();
+    }
+
+    default StringBuilder getAllBitServerModality(String name) {
+
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BitServerModality> criteriaQuery = builder.createQuery(BitServerModality.class);
+        Root<BitServerModality> root = criteriaQuery.from(BitServerModality.class);
+        criteriaQuery.select(root);
+        Query<BitServerModality> BitServerDBresources = session.createQuery(criteriaQuery);
+        //List<String> selectedModalitiName = new ArrayList<>();
+        StringBuilder bufStr = new StringBuilder();
+        for(BitServerModality bufModaliti:BitServerDBresources.list()){
+            //selectedModalitiName.add(bufModaliti.getName());
+            if (BitServerDBresources.list().size() < 1) {
+                bufStr = new StringBuilder("" + bufModaliti.getName() + "");
+            } else{
+                bufStr.append(",").append(bufModaliti.getName());
+            }
+        }
+
+        return bufStr;
     }
 
     default void updateBitServerModality(BitServerModality bitServerModality) {

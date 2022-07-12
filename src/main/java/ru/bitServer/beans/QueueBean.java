@@ -40,15 +40,13 @@ import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
 @ViewScoped
-public class QueueBean implements UserDao {
+public class QueueBean implements UserDao, DataAction {
 
     String filtrDate = "all";
     Date firstdate;
     Date seconddate;
     int typeSeach = 5;
-    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
     final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy.MM.dd");
-    ArrayList<OrthancStudy> studiesFromRestApi = new ArrayList<>();
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
@@ -300,17 +298,18 @@ public class QueueBean implements UserDao {
     /// Отправлен на описание - 1
     /// Не описан - 0
 
-
-
     @PostConstruct
-    public void init() {
+    private void init() {
+        System.out.println("queueBean");
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
+
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
+
         firstdate = new Date();
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
@@ -322,11 +321,6 @@ public class QueueBean implements UserDao {
             }
         }catch (Exception e){
             LogTool.getLogger().warn("Error init() QueueBean "+e.getMessage());
-        }
-        selectedModalitiName.clear();
-        List<BitServerModality> bufList =  getAllBitServerModality();
-        for(BitServerModality bufModaliti:bufList){
-            selectedModalitiName.add(bufModaliti.getName());
         }
 
         bitServerResourcesList = getAllBitServerResource();
@@ -364,21 +358,11 @@ public class QueueBean implements UserDao {
     }
 
     public void dataoutput() {
-        StringBuilder bufStr = new StringBuilder();
-        for(String buf:selectedModalitiName) {
-            if (bufStr.length()<1) {
-                bufStr = new StringBuilder("" + buf + "");
-            } else{
-                bufStr.append(",").append(buf);
-            }
-        }
-
-        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        PrimeFaces.current().ajax().update(":seachform:send-button");
+        StringBuilder bufStr = getAllBitServerModality("name");
+        resetViewTable();
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
-
         if(filtrDate.equals("targetdate")){
             datepickerVisible1 = true;
             datepickerVisible2 = false;
@@ -490,93 +474,11 @@ public class QueueBean implements UserDao {
     }
 
     public void readStudyFromDB() {
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-
-        ArrayList<String> idOrthancStudy = new ArrayList<>();
-        while (studiesIterator.hasNext()) {
-            String studyData =  studiesIterator.next().getAsString();
-            idOrthancStudy.add(studyData);
-        }
-
-        studiesFromTableBitServer = getAllBitServerStudy();
-        ArrayList<String> idBitServerStudy = new ArrayList<>();
-        for(BitServerStudy bufStudy:getAllBitServerStudy()){
-            idBitServerStudy.add(bufStudy.getSid());
-        }
-        idOrthancStudy.removeAll(idBitServerStudy);
-        double dProgress = (double) 100 / idOrthancStudy.size();
-        progress = 0;
-        int i = 0;
-        for(String bufId:idOrthancStudy){
-            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
-            parserJson = new JsonParser();
-            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
-            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
-            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                    bufStudy.getInstitutionName(), bufStudy.getDate(),
-                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-            addStudy(buf);
-            i++;
-            progress = (int) (dProgress * i);
-        }
+        int i = syncDataBase(connection);
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         dataoutput();
-//        try {
-//            JsonObject query = new JsonObject();
-//            query.addProperty("Level", "Studies");
-//            query.addProperty("CaseSensitive", false);
-//            query.addProperty("Expand", true);
-//            query.addProperty("Limit", 0);
-//            JsonObject queryDetails = new JsonObject();
-//            Date lastdate = new Date();
-//            Instant now = Instant.now();
-//            Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-//            String dateStr = FORMAT.format(Date.from(yesterday)) + "-" + FORMAT.format(lastdate);
-//            queryDetails.addProperty("StudyDate", dateStr);
-//            queryDetails.addProperty("PatientID", "*");
-//            queryDetails.addProperty("Modality", "");
-//            query.add("Query", queryDetails);
-//
-//            StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-//
-//            boolean existInTable;
-//            studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
-//            studiesFromTableBitServer = getAllBitServerStudy();
-//            for (OrthancStudy bufStudy : studiesFromRestApi) {
-//                existInTable = false;
-//                for (BitServerStudy bBSS : studiesFromTableBitServer) {
-//                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-//                        existInTable = true;
-//                        break;
-//                    }
-//                }
-//                if (!existInTable) {
-//                    BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-//                            bufStudy.getInstitutionName(), bufStudy.getDate(),
-//                            bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-//                    addStudy(buf);
-//                }
-//            }
-//
-//            String bufStrMod = "";
-//            String bufStr = "";
-//            for (String buf : selectedModalitiName) {
-//                if (!bufStrMod.equals("")) {
-//                    bufStrMod = "'" + buf + "'";
-//                } else {
-//                    bufStrMod = bufStr + ",'" + buf + "'";
-//                }
-//            }
-//            visibleStudiesList = getBitServerStudy(typeSeach, filtrDate, firstdate, seconddate, bufStrMod);
-//            PrimeFaces.current().ajax().update(":seachform:dt-studys");
-//            dataoutput();
-//        }catch (Exception e){
-//            LogTool.getLogger().warn("Error readStudyFromDB QueueBean "+e.getMessage());
-//        }
     }
 
     public void sendToAgent(){
@@ -612,6 +514,10 @@ public class QueueBean implements UserDao {
         selectedVisibleStudies.clear();
         dataoutput();
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        resetViewTable();
+    }
+
+    public void resetViewTable(){
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
@@ -680,32 +586,18 @@ public class QueueBean implements UserDao {
         }
     }
 
-//    public StreamedContent downloadStudy() throws Exception {
-//        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-//            String url="/tools/create-archive";
-//            JsonArray idArray = new JsonArray();
-//            idArray.add(bufStudy.getSid());
-//            HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
-//            InputStream inputStream = conn.getInputStream();
-//            return DefaultStreamedContent.builder()
-//                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
-//                    .contentType("application/zip")
-//                    .stream(() -> inputStream)
-//                    .build();
-//    }
-
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-        String url="/studies/"+bufStudy.getSid();
-       // JsonArray idArray = new JsonArray();
-       // idArray.add(bufStudy.getSid());
-        HttpURLConnection conn = connection.makeGetConnection(url);
-        InputStream inputStream = conn.getInputStream();
-        return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate()))
-                .contentType("application/dcm")
-                .stream(() -> inputStream)
-                .build();
+            String url="/tools/create-archive";
+            JsonArray idArray = new JsonArray();
+            idArray.add(bufStudy.getSid());
+            HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+            InputStream inputStream = conn.getInputStream();
+            return DefaultStreamedContent.builder()
+                    .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
+                    .contentType("application/zip")
+                    .stream(() -> inputStream)
+                    .build();
     }
 
     public void comebackStudy() throws IOException {
@@ -723,9 +615,7 @@ public class QueueBean implements UserDao {
         }
         selectedVisibleStudies.clear();
         dataoutput();
-        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        PrimeFaces.current().ajax().update(":seachform:send-button");
+        resetViewTable();
     }
 
     public void markAsHasResult() {
@@ -736,9 +626,7 @@ public class QueueBean implements UserDao {
         }
         selectedVisibleStudies.clear();
         dataoutput();
-        PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
-        PrimeFaces.current().ajax().update(":seachform:dt-studys");
-        PrimeFaces.current().ajax().update(":seachform:send-button");
+        resetViewTable();
     }
 
     public void getStudyToDiag() throws IOException {

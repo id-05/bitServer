@@ -24,7 +24,6 @@ public class MainBean implements UserDao {
     public String totalPatient = "0";
     public String totalSize = "0";
     public DashboardModel model;
-    public String buffer;
     public String selectTheme;
     public ArrayList<String> themeList;
     public String versionInfo;

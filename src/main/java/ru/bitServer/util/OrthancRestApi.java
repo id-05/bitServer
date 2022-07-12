@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dicom.OrthancStudy;
 
 import java.io.*;
@@ -97,7 +96,7 @@ public class OrthancRestApi {
             while ((output = br.readLine()) != null) {
                 sb.append(output);
             }
-            conn.disconnect();
+            //conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
             LogTool.getLogger().warn("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
@@ -227,7 +226,7 @@ public class OrthancRestApi {
         }
         String studyInstanceUid = studyDetails.get("StudyInstanceUID").getAsString();
         String studyDate = null;
-        Date studyDateObject = null;
+        Date studyDateObject = new Date();
         if (studyDetails.has("StudyDate")) {
             studyDate = studyDetails.get("StudyDate").getAsString();
         }
@@ -264,7 +263,12 @@ public class OrthancRestApi {
                 studyModality = serieMainDicomTags.get("Modality").getAsString();
             }
         }
-        return new OrthancStudy(studyInstitutionName, studyDescription, studyModality, studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+        if (!patientName.equals("ANONIM")) {
+            return new OrthancStudy(studyInstitutionName, studyDescription, studyModality,
+                    studyDateObject, accessionNumber, studyId, patientName, patientId, patientDob, patientSex, parentPatientID, studyInstanceUid);
+        }else{
+            return new OrthancStudy("ANONIM");
+        }
     }
 
     public ArrayList<OrthancStudy> getStudiesFromJson(String data) {

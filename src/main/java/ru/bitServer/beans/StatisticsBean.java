@@ -185,7 +185,8 @@ public class StatisticsBean implements UserDao {
         Map<Long, Integer> resultMap = new TreeMap<>();
         DateFormat formatter = new SimpleDateFormat(pattern);
         for(BitServerStudy bufStudy:allStudies){
-            if(bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))){
+            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
+                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
                 long bufDatemillis = 0;
                 try {
                     bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();

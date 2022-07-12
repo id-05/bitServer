@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
+import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
@@ -23,8 +24,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
-import static ru.bitServer.beans.MainBean.info;
-import static ru.bitServer.beans.MainBean.mainServer;
+import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingBitServerBean")
 @ViewScoped
@@ -67,6 +67,87 @@ public class SettingBitServerBean implements UserDao {
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     Users currentUser;
     private int number;
+    String remoteaddr;
+    String remoteport;
+    String remotelogin;
+    String remotepass;
+    Date startDelDate;
+    Date stopDelDate;
+    int countStudyForTransmite;
+    String remoteTransStatus;
+    String vremoteTransStatus;
+
+    public String getVremoteTransStatus() {
+        return vremoteTransStatus;
+    }
+
+    public void setVremoteTransStatus(String vremoteTransStatus) {
+        this.vremoteTransStatus = vremoteTransStatus;
+    }
+
+    public String getRemoteTransStatus() {
+        return remoteTransStatus;
+    }
+
+    public void setRemoteTransStatus(String remoteTransStatus) {
+        this.remoteTransStatus = remoteTransStatus;
+    }
+
+    public int getCountStudyForTransmite() {
+        return countStudyForTransmite;
+    }
+
+    public void setCountStudyForTransmite(int countStudyForTransmite) {
+        this.countStudyForTransmite = countStudyForTransmite;
+    }
+
+    public Date getStartDelDate() {
+        return startDelDate;
+    }
+
+    public void setStartDelDate(Date startDelDate) {
+        this.startDelDate = startDelDate;
+    }
+
+    public Date getStopDelDate() {
+        return stopDelDate;
+    }
+
+    public void setStopDelDate(Date stopDelDate) {
+        this.stopDelDate = stopDelDate;
+    }
+
+    public String getRemoteaddr() {
+        return remoteaddr;
+    }
+
+    public void setRemoteaddr(String remoteaddr) {
+        this.remoteaddr = remoteaddr;
+    }
+
+    public String getRemoteport() {
+        return remoteport;
+    }
+
+    public void setRemoteport(String remoteport) {
+        this.remoteport = remoteport;
+    }
+
+    public String getRemotelogin() {
+        return remotelogin;
+    }
+
+    public void setRemotelogin(String remotelogin) {
+        this.remotelogin = remotelogin;
+    }
+
+    public String getRemotepass() {
+        return remotepass;
+    }
+
+    public void setRemotepass(String remotepass) {
+        this.remotepass = remotepass;
+    }
 
     public String getShowStat() {
         return showStat;
@@ -78,6 +159,10 @@ public class SettingBitServerBean implements UserDao {
 
     public void increment() {
         number = progress1;
+    }
+
+    public void incrementRT() {
+        vremoteTransStatus = remoteTransStatus;
     }
 
     public String getNumber() {
@@ -304,142 +389,9 @@ public class SettingBitServerBean implements UserDao {
         this.selectedUsers = selectedUsers;
     }
 
-    public void syncAll() {
-
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-
-        ArrayList<String> idOrthancStudy = new ArrayList<>();
-        while (studiesIterator.hasNext()) {
-            String studyData =  studiesIterator.next().getAsString();
-            idOrthancStudy.add(studyData);
-        }
-
-        studiesFromTableBitServer = getAllBitServerStudy();
-        ArrayList<String> idBitServerStudy = new ArrayList<>();
-        for(BitServerStudy bufStudy:getAllBitServerStudy()){
-            idBitServerStudy.add(bufStudy.getSid());
-        }
-        idOrthancStudy.removeAll(idBitServerStudy);
-        double dProgress = (double) 100 / idOrthancStudy.size();
-        progress1 = 0;
-        int i = 0;
-        for(String bufId:idOrthancStudy){
-            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
-            parserJson = new JsonParser();
-            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
-            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
-            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                    bufStudy.getInstitutionName(), bufStudy.getDate(),
-                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-            addStudy(buf);
-            i++;
-            progress1 = (int) (dProgress * i);
-        }
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
-    }
-
-    public void syncPeriod(){
-        int sum = 0;
-        Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
-        Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
-        if(!startInstant.equals(stopInstant)) {
-            Calendar cal1 = new GregorianCalendar();
-            Calendar cal2 = new GregorianCalendar();
-            cal1.setTime(startDate);
-            cal2.setTime(stopDate);
-            int days = (int) ((cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
-            Instant bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
-            double dProgress;
-            if (days != 0) {
-                dProgress = (double) 100 / days;
-            } else {
-                dProgress = 0;
-            }
-            int i = 1;
-            progress1 = 0;
-            if (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
-                while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
-                    sum = sum + readStudyFromDB(startInstant, bufInstant);
-                    startInstant = startInstant.plus(1, ChronoUnit.DAYS);
-                    bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
-                    i++;
-                    progress1 = (int) (dProgress * i);
-                }
-            }
-            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-            showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + sum, info);
-        }else{
-            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-            showMessage("Сообщение","Выбраны недопустимые даты!", info);
-        }
-    }
-
-    public void dateBaseFactoryReset() throws IOException {
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-        double dProgress = (double) 100 / studies.size();
-        progress1 = 0;
-        int i = 0;
-        while (studiesIterator.hasNext()) {
-            String studyData =  studiesIterator.next().getAsString();
-            connection.deleteStudyFromOrthanc(studyData);
-            i++;
-            progress1 = (int) (dProgress * i);
-        }
-        List<BitServerStudy> listStudys = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:listStudys){
-            deleteStudy(bufStudy);
-        }
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-        showMessage("Сообщение", "Удаление завершено! Всего удалено: " + i, info);
-    }
-
-    public Integer readStudyFromDB(Instant startDate, Instant stopDate) {
-        int sum = 0;
-        ArrayList<OrthancStudy> studiesFromRestApi;
-        JsonObject query = new JsonObject();
-        query.addProperty("Level", "Studies");
-        query.addProperty("CaseSensitive", false);
-        query.addProperty("Expand", true);
-        query.addProperty("Limit", 0);
-        JsonObject queryDetails = new JsonObject();
-        String dateStr = FORMAT.format(Date.from(startDate)) + "-" + FORMAT.format(Date.from(stopDate));
-        queryDetails.addProperty("StudyDate", dateStr);
-        queryDetails.addProperty("PatientID", "*");
-        queryDetails.addProperty("Modality", "");
-        query.add("Query", queryDetails);
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
-        assert sb != null;
-        boolean existInTable;
-        studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
-        studiesFromTableBitServer = getAllBitServerStudy();
-        for(OrthancStudy bufStudy:studiesFromRestApi){
-            existInTable = false;
-            if(studiesFromTableBitServer.size()>0) {
-                for (BitServerStudy bBSS : studiesFromTableBitServer) {
-                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-                        existInTable = true;
-                        break;
-                    }
-                }
-            }
-            if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                        bufStudy.getInstitutionName(), bufStudy.getDate(),
-                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
-                addStudy(buf);
-                sum++;
-            }
-        }
-        return sum;
-    }
-
     @PostConstruct
     public void init() {
+        System.out.println("settingBitServerBean");
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
         stopDate = new Date();
@@ -450,6 +402,10 @@ public class SettingBitServerBean implements UserDao {
         bitServerResourcesList = getAllBitServerResource();
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
+        remoteaddr = "185.59.139.156";
+        remoteport = "8042";
+        remotelogin = "doctor";
+        remotepass = "doctor";
 
         boolean updateRes = false;
         boolean haspreview = false;
@@ -517,7 +473,7 @@ public class SettingBitServerBean implements UserDao {
                         LogTool.getLogger().warn("Error date transfer settingBitServerBean: "+e.getMessage());
                     }
                 }
-                    break;
+                break;
                 case "colstatus": colStatus = buf.getRvalue();
                     break;
                 case "colpreview": colPreview = buf.getRvalue();
@@ -534,6 +490,212 @@ public class SettingBitServerBean implements UserDao {
                     break;
             }
         }
+    }
+
+    public void syncAll() {
+
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+
+        ArrayList<String> idOrthancStudy = new ArrayList<>();
+        while (studiesIterator.hasNext()) {
+            String studyData =  studiesIterator.next().getAsString();
+            idOrthancStudy.add(studyData);
+        }
+
+        studiesFromTableBitServer = getAllBitServerStudy();
+        ArrayList<String> idBitServerStudy = new ArrayList<>();
+        for(BitServerStudy bufStudy:getAllBitServerStudy()){
+            idBitServerStudy.add(bufStudy.getSid());
+        }
+        idOrthancStudy.removeAll(idBitServerStudy);
+        double dProgress = (double) 100 / idOrthancStudy.size();
+        progress1 = 0;
+        int i = 0;
+        for(String bufId:idOrthancStudy){
+            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
+            parserJson = new JsonParser();
+            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
+            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
+            if(!bufStudy.getPatientName().equals("ANONIM")){
+                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+                addStudy(buf);
+                i++;
+            }
+            progress1 = (int) (dProgress * i);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+    }
+
+    public void syncPeriod(){
+        int sum = 0;
+        Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
+        Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
+        if(!startInstant.equals(stopInstant)) {
+            Calendar cal1 = new GregorianCalendar();
+            Calendar cal2 = new GregorianCalendar();
+            cal1.setTime(startDate);
+            cal2.setTime(stopDate);
+            int days = (int) ((cal2.getTime().getTime() - cal1.getTime().getTime()) / (1000 * 60 * 60 * 24));
+            Instant bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+            double dProgress;
+            if (days != 0) {
+                dProgress = (double) 100 / days;
+            } else {
+                dProgress = 0;
+            }
+            int i = 1;
+            progress1 = 0;
+            if (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                while (!FORMAT.format(Date.from(bufInstant)).equals(FORMAT.format(Date.from(stopInstant)))) {
+                    sum = sum + readStudyFromDB(startInstant, bufInstant);
+                    startInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    bufInstant = startInstant.plus(1, ChronoUnit.DAYS);
+                    i++;
+                    progress1 = (int) (dProgress * i);
+                }
+            }
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + sum, info);
+        }else{
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение","Выбраны недопустимые даты!", info);
+        }
+    }
+
+    public void dateBaseFactoryReset() throws IOException {
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+        double dProgress = (double) 100 / studies.size();
+        progress1 = 0;
+        int i = 0;
+        while (studiesIterator.hasNext()) {
+            String studyId =  studiesIterator.next().getAsString();
+            connection.deleteStudyFromOrthanc(studyId);
+            i++;
+            progress1 = (int) (dProgress * i);
+        }
+        List<BitServerStudy> listStudys = getAllBitServerStudy();
+        for(BitServerStudy bufStudy:listStudys){
+            deleteStudy(bufStudy);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        showMessage("Сообщение", "Удаление завершено! Всего удалено: " + i, info);
+    }
+
+    public void deleteDicomPeriod() throws IOException {
+        int sum;
+        Instant startInstant = Instant.parse(FORMAT2.format(startDate)+".00Z");
+        Instant stopInstant = Instant.parse(FORMAT2.format(stopDate)+".00Z");
+        int i=0;
+
+        if(!startInstant.equals(stopInstant)) {
+            StringBuilder bufStr = getAllBitServerModality("name");
+
+            List<BitServerStudy> bufStudyList = getBitServerStudy(5, "range", startDate, stopDate, bufStr.toString());
+            sum = bufStudyList.size();
+            System.out.println("sum = "+sum);
+            double dProgress = (double) 100 / bufStudyList.size();
+            progress1 = 0;
+
+            for(BitServerStudy bufStudy:bufStudyList){
+                connection.deleteStudyFromOrthanc(bufStudy.getSid());
+                deleteStudy(bufStudy);
+                i++;
+                progress1 = (int) (dProgress * i);
+            }
+
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение", "Удаление завершено! Всего удалено: " + sum, info);
+        }else {
+            PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+            showMessage("Сообщение", "Выбраны недопустимые даты!", info);
+        }
+    }
+
+    public void startRemoteSync(){
+        int i = 0;
+        progress1 = 0;
+        OrthancRestApi remoteCon = new OrthancRestApi(remoteaddr,remoteport,remotelogin,remotepass);
+        OrthancSettings orthancSettings = new OrthancSettings(connection);
+        JsonParser parserJson = new JsonParser();
+        JsonArray studies = (JsonArray) parserJson.parse(remoteCon.makeGetConnectionAndStringBuilder("/studies/").toString());
+        Iterator<JsonElement> studiesIterator = studies.iterator();
+        ArrayList<String> remoteStudyList = new ArrayList<>();
+        while (studiesIterator.hasNext()) {
+            remoteStudyList.add(studiesIterator.next().getAsString());
+        }
+        ArrayList<String> localStudyList = new ArrayList<>();
+        List<BitServerStudy> bufStudyList = getAllBitServerStudy();
+        for(BitServerStudy bufStudy:bufStudyList){
+            localStudyList.add(bufStudy.getSid());
+        }
+        remoteStudyList.removeAll(localStudyList);
+        if(remoteStudyList.size()>0) {
+            double dProgress = (double) 100 / studies.size();
+            for (String bufId : remoteStudyList) {
+                remoteTransStatus = i + " из " + remoteStudyList.size() + " (" + progress1 + "%)";
+                try {
+                    remoteCon.makePostConnectionAndStringBuilderWithIOE("/modalities/" +
+                            orthancSettings.getDicomAet() + "/store", bufId);
+                    remoteTransStatus = i + " из " + remoteStudyList.size() + " (" + progress1 + "%)";
+                } catch (IOException e) {
+                    showMessage("Сообщение:", "Возникла ошибка при отправке! " + e.getMessage(), error);
+                    remoteTransStatus = "Возникла ошибка при отправке!";
+                }
+                i++;
+                progress1 = (int) (dProgress * i);
+            }
+        }else{
+            showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
+        }
+
+        PrimeFaces.current().executeScript("PF('statusDialogRemoteTrans').hide()");
+    }
+
+    public Integer readStudyFromDB(Instant startDate, Instant stopDate) {
+        int sum = 0;
+        ArrayList<OrthancStudy> studiesFromRestApi;
+        JsonObject query = new JsonObject();
+        query.addProperty("Level", "Studies");
+        query.addProperty("CaseSensitive", false);
+        query.addProperty("Expand", true);
+        query.addProperty("Limit", 0);
+        JsonObject queryDetails = new JsonObject();
+        String dateStr = FORMAT.format(Date.from(startDate)) + "-" + FORMAT.format(Date.from(stopDate));
+        queryDetails.addProperty("StudyDate", dateStr);
+        queryDetails.addProperty("PatientID", "*");
+        queryDetails.addProperty("Modality", "");
+        query.add("Query", queryDetails);
+        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
+        assert sb != null;
+        boolean existInTable;
+        studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
+        studiesFromTableBitServer = getAllBitServerStudy();
+        for(OrthancStudy bufStudy:studiesFromRestApi){
+            existInTable = false;
+            if(studiesFromTableBitServer.size()>0) {
+                for (BitServerStudy bBSS : studiesFromTableBitServer) {
+                    if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+                        existInTable = true;
+                        break;
+                    }
+                }
+            }
+            if(!existInTable) {
+                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
+                addStudy(buf);
+                sum++;
+            }
+        }
+        return sum;
     }
 
     public List<Users> prepareUserList(){

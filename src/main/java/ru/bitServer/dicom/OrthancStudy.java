@@ -92,4 +92,8 @@ public class OrthancStudy {
         this.studyDateToStr = format.format(date);
     }
 
+    public OrthancStudy(String PatientName){
+        this.PatientName = PatientName;
+    }
+
 }

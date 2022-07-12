@@ -85,6 +85,10 @@ public class OrthancSettings {
     public boolean metricsEnabled;
     public boolean AllowFindSopClassesInStudy;
 
+    public String getDicomAet() {
+        return DicomAet;
+    }
+
     public List<OrthancWebUser> webUsers;
 
     public List<OrthancWebUser> selectedWebUsers;

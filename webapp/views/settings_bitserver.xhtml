@@ -493,9 +493,99 @@
                                          onclick="PF('statusDialog').show()"
                                          widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
                         <br/>
+                        <br/>
+                        <div >Будьте внимательны при использовании, данная процедура - необратима!</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Удаление DICOM-данных за выбранный период</b>
+                        </p:divider>
+
+                        <p:outputLabel for="startdate">Дата начала удаления: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="startdeldate" value="#{settingBitServerBean.startDate}" showIcon="true" style="font-weight: bold; margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <p:outputLabel for="stopdate">  Дата окончания удаления: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="stopdeldate" value="#{settingBitServerBean.stopDate}" showIcon="true" style="margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <br/>
+                        <br/>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         action="#{settingBitServerBean.deleteDicomPeriod}"
+                                         onclick="PF('statusDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
 
                         <br/>
                         <div >Не закрываейте эту вкладку, пока процедура не завершится</div>
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация с удаленным DICOM-сервером</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                        <p:outputLabel for="remoteaddr">Адрес удаленного сервера: </p:outputLabel>
+
+                            <p:inplace editor="true" id="remoteaddr">
+                                <p:inputText  value="#{settingBitServerBean.remoteaddr}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                        <p:outputLabel for="remoteport">Порт удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remoteport" >
+                                <p:inputText value="#{settingBitServerBean.remoteport}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                        <p:outputLabel for="remotelogin">Логин удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remotelogin">
+                                <p:inputText value="#{settingBitServerBean.remotelogin}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                        <p:outputLabel for="remotepass">Пароль удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remotepass">
+                                <p:inputText  value="#{settingBitServerBean.remotepass}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         action="#{settingBitServerBean.startRemoteSync}"
+                                         onclick="PF('statusDialogRemoteTrans').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
+                        <p:dialog modal="true" widgetVar="statusDialogRemoteTrans" draggable="false" closable="false">
+                            <h1 class="p-text-center">
+                                <h:outputLabel for="txt_countRT" value="Статус:  "/>
+                                <h:outputText id="txt_countRT" value="#{settingBitServerBean.vremoteTransStatus}"/>
+                            </h1>
+                            <p:poll interval="1" listener="#{settingBitServerBean.incrementRT}" update="txt_countRT"/>
+                        </p:dialog>
+
+                        <br/>
+                        <div >Введите данные для доступа к серверу и нажмите Старт. Синхронизацию можно остановить в любой момент просто закрыв страницу, а после продолжить, причем
+                        ранее переданные данные не будут переданы повторно</div>
 
                     </p:outputPanel>
                 </p:tab>
