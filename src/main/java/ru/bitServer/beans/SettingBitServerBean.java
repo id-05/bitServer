@@ -33,6 +33,8 @@ public class SettingBitServerBean implements UserDao {
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
     final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     int progress1;
+    int progress2;
+    String progressStr;
     List<Users> usersList;
     List<Users> selectedUsers;
     Users selectedUser;
@@ -66,7 +68,7 @@ public class SettingBitServerBean implements UserDao {
     OrthancRestApi connection;
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     Users currentUser;
-    private int number;
+    int number;
     String remoteaddr;
     String remoteport;
     String remotelogin;
@@ -76,6 +78,30 @@ public class SettingBitServerBean implements UserDao {
     int countStudyForTransmite;
     String remoteTransStatus;
     String vremoteTransStatus;
+
+    public String getProgressStr() {
+        return progressStr;
+    }
+
+    public void setProgressStr(String progressStr) {
+        this.progressStr = progressStr;
+    }
+
+    public int getProgress2() {
+        return progress2;
+    }
+
+    public void setProgress2(int progress2) {
+        this.progress2 = progress2;
+    }
+
+    public int getProgress1() {
+        return progress1;
+    }
+
+    public void setProgress1(int progress1) {
+        this.progress1 = progress1;
+    }
 
     public String getVremoteTransStatus() {
         return vremoteTransStatus;
@@ -493,7 +519,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void syncAll() {
-
+        PrimeFaces.current().executeScript("PF('startButtonSA').disable()");
         JsonParser parserJson = new JsonParser();
         JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
         Iterator<JsonElement> studiesIterator = studies.iterator();
@@ -511,7 +537,7 @@ public class SettingBitServerBean implements UserDao {
         }
         idOrthancStudy.removeAll(idBitServerStudy);
         double dProgress = (double) 100 / idOrthancStudy.size();
-        progress1 = 0;
+        progress1 = 1;
         int i = 0;
         for(String bufId:idOrthancStudy){
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
@@ -525,9 +551,9 @@ public class SettingBitServerBean implements UserDao {
                 addStudy(buf);
                 i++;
             }
-            progress1 = (int) (dProgress * i);
+            progress1 = (int) (dProgress * i + dProgress);
         }
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+        PrimeFaces.current().executeScript("PF('startButtonSA').enable()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
     }
 
@@ -619,8 +645,9 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void startRemoteSync(){
+        PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
         int i = 0;
-        progress1 = 0;
+        progress2 = 0;
         OrthancRestApi remoteCon = new OrthancRestApi(remoteaddr,remoteport,remotelogin,remotepass);
         OrthancSettings orthancSettings = new OrthancSettings(connection);
         JsonParser parserJson = new JsonParser();
@@ -639,23 +666,24 @@ public class SettingBitServerBean implements UserDao {
         if(remoteStudyList.size()>0) {
             double dProgress = (double) 100 / studies.size();
             for (String bufId : remoteStudyList) {
-                remoteTransStatus = i + " из " + remoteStudyList.size() + " (" + progress1 + "%)";
+                remoteTransStatus = "Передано: "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
+                System.out.println(remoteTransStatus);
                 try {
                     remoteCon.makePostConnectionAndStringBuilderWithIOE("/modalities/" +
                             orthancSettings.getDicomAet() + "/store", bufId);
-                    remoteTransStatus = i + " из " + remoteStudyList.size() + " (" + progress1 + "%)";
+                    remoteTransStatus ="Передано: "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
                 } catch (IOException e) {
                     showMessage("Сообщение:", "Возникла ошибка при отправке! " + e.getMessage(), error);
                     remoteTransStatus = "Возникла ошибка при отправке!";
                 }
                 i++;
-                progress1 = (int) (dProgress * i);
+                progress2 = (int) (dProgress * i);
             }
         }else{
             showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
         }
-
-        PrimeFaces.current().executeScript("PF('statusDialogRemoteTrans').hide()");
+        PrimeFaces.current().executeScript("PF('startButtonRS').enable()");
+        //PrimeFaces.current().executeScript("PF('statusDialogRemoteTrans').hide()");
     }
 
     public Integer readStudyFromDB(Instant startDate, Instant stopDate) {

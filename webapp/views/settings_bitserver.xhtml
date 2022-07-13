@@ -461,11 +461,18 @@
                         </p:divider>
 
                         <p:commandButton value="Старт"
+                                         async="true"
                                          process="@this"
                                          action="#{settingBitServerBean.syncAll}"
-                                         onclick="PF('statusDialog').show()"
-                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                                         onclick="PF('pbAjax2').start();"
+                                         widgetVar="startButtonSA" styleClass="p-mr-2" ajax="false"/>
                         <br/>
+
+                        <p:progressBar  widgetVar="pbAjax2" ajax="true" value="#{settingBitServerBean.progress1}"
+                                        interval="500" labelTemplate="{value}%"
+                                        styleClass="p-mt-3" global="false">
+                            <p:ajax event="complete" oncomplete="PF('startButtonSA').enable()"/>
+                        </p:progressBar>
 
                         <br/>
                         <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
@@ -569,21 +576,25 @@
                         <br/>
 
                         <p:commandButton value="Старт"
+                                         async="true"
                                          process="@this"
                                          action="#{settingBitServerBean.startRemoteSync}"
-                                         onclick="PF('statusDialogRemoteTrans').show()"
-                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
-                        <br/>
+                                         onclick="PF('pbAjax').start();"
+                                         widgetVar="startButtonRS" styleClass="p-mr-2" ajax="false"/>
 
-                        <p:dialog modal="true" widgetVar="statusDialogRemoteTrans" draggable="false" closable="false">
-                            <h1 class="p-text-center">
-                                <h:outputLabel for="txt_countRT" value="Статус:  "/>
-                                <h:outputText id="txt_countRT" value="#{settingBitServerBean.vremoteTransStatus}"/>
-                            </h1>
-                            <p:poll interval="1" listener="#{settingBitServerBean.incrementRT}" update="txt_countRT"/>
-                        </p:dialog>
+
+                        <p:progressBar widgetVar="pbAjax" ajax="true" value="#{settingBitServerBean.progress2}"
+                                       interval="500" labelTemplate="{value}%"
+                                       styleClass="p-mt-3" global="false">
+                            <p:ajax event="complete" oncomplete="PF('startButtonRS').enable()" />
+                        </p:progressBar>
 
                         <br/>
+                        <h:outputText id="txt_result" value="#{settingBitServerBean.vremoteTransStatus}"/>
+                        <p:poll interval="1" listener="#{settingBitServerBean.incrementRT}" update="txt_result"/>
+                        <br/>
+                        <br/>
+
                         <div >Введите данные для доступа к серверу и нажмите Старт. Синхронизацию можно остановить в любой момент просто закрыв страницу, а после продолжить, причем
                         ранее переданные данные не будут переданы повторно</div>
 
