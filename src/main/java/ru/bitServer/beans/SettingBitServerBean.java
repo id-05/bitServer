@@ -12,8 +12,10 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -418,6 +420,7 @@ public class SettingBitServerBean implements UserDao {
     @PostConstruct
     public void init() {
         System.out.println("settingBitServerBean");
+        remoteTransStatus = "Статус: не запущено";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
         stopDate = new Date();
@@ -537,7 +540,7 @@ public class SettingBitServerBean implements UserDao {
         }
         idOrthancStudy.removeAll(idBitServerStudy);
         double dProgress = (double) 100 / idOrthancStudy.size();
-        progress1 = 1;
+        progress1 = 0;
         int i = 0;
         for(String bufId:idOrthancStudy){
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
@@ -644,46 +647,54 @@ public class SettingBitServerBean implements UserDao {
         }
     }
 
+    //@Asynchronous
     public void startRemoteSync(){
         PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
+
         int i = 0;
         progress2 = 0;
         OrthancRestApi remoteCon = new OrthancRestApi(remoteaddr,remoteport,remotelogin,remotepass);
         OrthancSettings orthancSettings = new OrthancSettings(connection);
         JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(remoteCon.makeGetConnectionAndStringBuilder("/studies/").toString());
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-        ArrayList<String> remoteStudyList = new ArrayList<>();
-        while (studiesIterator.hasNext()) {
-            remoteStudyList.add(studiesIterator.next().getAsString());
-        }
-        ArrayList<String> localStudyList = new ArrayList<>();
-        List<BitServerStudy> bufStudyList = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:bufStudyList){
-            localStudyList.add(bufStudy.getSid());
-        }
-        remoteStudyList.removeAll(localStudyList);
-        if(remoteStudyList.size()>0) {
-            double dProgress = (double) 100 / studies.size();
-            for (String bufId : remoteStudyList) {
-                remoteTransStatus = "Передано: "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
-                System.out.println(remoteTransStatus);
-                try {
-                    remoteCon.makePostConnectionAndStringBuilderWithIOE("/modalities/" +
-                            orthancSettings.getDicomAet() + "/store", bufId);
-                    remoteTransStatus ="Передано: "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
-                } catch (IOException e) {
-                    showMessage("Сообщение:", "Возникла ошибка при отправке! " + e.getMessage(), error);
-                    remoteTransStatus = "Возникла ошибка при отправке!";
-                }
-                i++;
-                progress2 = (int) (dProgress * i);
+        String remotestudies = remoteCon.makeGetConnectionAndStringBuilder("/studies/").toString();
+        if(!remotestudies.equals("error")){
+            JsonArray studies = (JsonArray) parserJson.parse(remotestudies);
+            Iterator<JsonElement> studiesIterator = studies.iterator();
+            ArrayList<String> remoteStudyList = new ArrayList<>();
+            while (studiesIterator.hasNext()) {
+                remoteStudyList.add(studiesIterator.next().getAsString());
             }
+            ArrayList<String> localStudyList = new ArrayList<>();
+            List<BitServerStudy> bufStudyList = getAllBitServerStudy();
+            for(BitServerStudy bufStudy:bufStudyList){
+                localStudyList.add(bufStudy.getSid());
+            }
+            remoteStudyList.removeAll(localStudyList);
+            if(remoteStudyList.size()>0) {
+                double dProgress = (double) 100 / studies.size();
+                for (String bufId : remoteStudyList) {
+                    remoteTransStatus = "Статус: передано "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
+                    System.out.println(remoteTransStatus);
+                    try {
+                        remoteCon.makePostConnectionAndStringBuilderWithIOE("/modalities/" +
+                                orthancSettings.getDicomAet() + "/store", bufId);
+                        remoteTransStatus ="Статус:  Передано "+ i + " из " + remoteStudyList.size() + " (" + progress2 + "%)";
+                    } catch (IOException e) {
+                        showMessage("Сообщение:", "Возникла ошибка при отправке! " + e.getMessage(), error);
+                        remoteTransStatus = "Возникла ошибка при отправке!";
+                    }
+                    i++;
+                    progress2 = (int) (dProgress * i);
+                }
+            }else{
+                showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
+            }
+                PrimeFaces.current().executeScript("PF('startButtonRS').enable()");
         }else{
-            showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
+            remoteTransStatus = "Статус: Ошибка соединения!";
+            PrimeFaces.current().executeScript("PF('startButtonRS').enable()");
+            showMessage("Сообщение:", "Проблемы с доступом! Проверьте настройки соединения!", warning);
         }
-        PrimeFaces.current().executeScript("PF('startButtonRS').enable()");
-        //PrimeFaces.current().executeScript("PF('statusDialogRemoteTrans').hide()");
     }
 
     public Integer readStudyFromDB(Instant startDate, Instant stopDate) {

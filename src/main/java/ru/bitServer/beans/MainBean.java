@@ -2,27 +2,31 @@ package ru.bitServer.beans;
 
 import org.primefaces.model.DashboardModel;
 import ru.bitServer.dao.BitServerResources;
+import ru.bitServer.dao.BitServerStudy;
+import ru.bitServer.dao.DataAction;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @ManagedBean(name = "mainBean", eager = true)
-@SessionScoped
-public class MainBean implements UserDao {
+@ApplicationScoped
+public class MainBean implements UserDao, DataAction {
 
     public static OrthancServer mainServer;
     public static String pathToSaveResult;
     public static String osimisAddress;
-    public String totalStudy = "0";
-    public String totalPatient = "0";
-    public String totalSize = "0";
     public DashboardModel model;
     public String selectTheme;
     public ArrayList<String> themeList;
@@ -33,6 +37,14 @@ public class MainBean implements UserDao {
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
+    List<BitServerStudy> allStudies = new ArrayList<>();
+    public static Map<Long, Integer> resultMapLong = new TreeMap<>();
+    public static Map<Long, Integer> resultMapShort = new TreeMap<>();
+
+
+    public void setResultMapShort(Map<Long, Integer> resultMapShort) {
+        this.resultMapShort = resultMapShort;
+    }
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -60,34 +72,6 @@ public class MainBean implements UserDao {
 
     public ArrayList<String> getThemeList() {
         return themeList;
-    }
-
-    public void setThemeList(ArrayList<String> themeList) {
-        this.themeList = themeList;
-    }
-
-    public String getTotalStudy() {
-        return totalStudy;
-    }
-
-    public void setTotalStudy(String totalStudy) {
-        this.totalStudy = totalStudy;
-    }
-
-    public String getTotalPatient() {
-        return totalPatient;
-    }
-
-    public void setTotalPatient(String totalPatient) {
-        this.totalPatient = totalPatient;
-    }
-
-    public String getTotalSize() {
-        return totalSize;
-    }
-
-    public void setTotalSize(String totalSize) {
-        this.totalSize = totalSize;
     }
 
     @PostConstruct
@@ -132,6 +116,71 @@ public class MainBean implements UserDao {
         }
         themeList = themeListinit();
         selectTheme = themeList.get(1);
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, 1, TimeUnit.MINUTES);
+    }
+
+    public class BaseUpdate implements Runnable {
+
+        @Override
+        public void run() {
+            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            syncDataBase(connection);
+            allStudies = getAllBitServerStudy();
+            allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
+            LogTool.getLogger().debug("allStudies.size =  "+allStudies.size());
+            resultMapLong.clear();
+            resultMapShort.clear();
+            resultMapLong = getStatMap(allStudies,"MM.yyyy");
+            resultMapShort = getStatMap(allStudies,"yyyy");
+        }
+    }
+
+    public static Map<Long, Integer> getResultMap(String pattern){
+        Map<Long, Integer> resultMap = new TreeMap<>();
+        switch (pattern){
+            case("MM.yyyy"):
+                resultMap = resultMapLong;
+                break;
+            case("yyyy"):
+                resultMap = resultMapShort;
+                break;
+        }
+        return resultMap;
+    }
+
+    public Map<Long, Integer> getStatMap(List<BitServerStudy> allStudies,String dateformat){
+        Map<Long, Integer> resultMap = new TreeMap<>();
+        DateFormat formatter = new SimpleDateFormat(dateformat);
+        Date firstdate;
+        Date seconddate;
+        try {
+            firstdate = allStudies.get(0).getSdate();
+            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
+        }catch (Exception e){
+            firstdate = new Date();
+            seconddate = new Date();
+        }
+        for(BitServerStudy bufStudy:allStudies){
+            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
+                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
+                long bufDatemillis = 0;
+                try {
+                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
+                } catch (Exception e) {
+                    LogTool.getLogger().warn("Error getStatMap: "+e.getMessage());
+                }
+                Integer bufCount = resultMap.get(bufDatemillis);
+                if(bufCount==null){
+                    resultMap.put(bufDatemillis,1);
+                }else{
+                    bufCount = bufCount + 1;
+                    resultMap.replace(bufDatemillis,bufCount);
+                }
+            }
+        }
+        return resultMap;
     }
 
     public ArrayList<String> themeListinit(){

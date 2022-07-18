@@ -45,7 +45,8 @@ public class OrthancRestApi {
             conn.disconnect();
         } catch (Exception e) {
             LogTool.getLogger().warn("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
-            return null;
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("error");
         }
         return stringBuilder;
     }

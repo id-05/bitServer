@@ -496,9 +496,20 @@
 
                         <p:commandButton value="Старт"
                                          process="@this"
-                                         action="#{settingBitServerBean.dateBaseFactoryReset}"
-                                         onclick="PF('statusDialog').show()"
-                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                                         oncomplete="PF('deleteDicomAllDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2"/>
+
+                        <p:dialog widgetVar="deleteDicomAllDialog" showEffect="fade" width="300"
+                                  header="Вы собираетесь удалить dicom-данные, эта процедура необратима, продолжить?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.dateBaseFactoryReset}"
+                                             onclick="PF('statusDialog').show()"
+                                             oncomplete="PF('deleteDicomAllDialog').hide()"
+                                             ajax="false"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteDicomAllDialog').hide()"/>
+                        </p:dialog>
+
                         <br/>
                         <br/>
                         <div >Будьте внимательны при использовании, данная процедура - необратима!</div>
@@ -529,10 +540,20 @@
 
                         <p:commandButton value="Старт"
                                          process="@this"
-                                         action="#{settingBitServerBean.deleteDicomPeriod}"
-                                         onclick="PF('statusDialog').show()"
-                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                                         oncomplete="PF('deleteDicomPeriodDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" />
                         <br/>
+
+                        <p:dialog widgetVar="deleteDicomPeriodDialog" showEffect="fade" width="300"
+                                  header="Вы собираетесь удалить dicom-данные, эта процедура необратима, продолжить?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteDicomPeriod}"
+                                             onclick="PF('statusDialog').show()"
+                                             oncomplete="PF('deleteDicomPeriodDialog').hide()"
+                                             ajax="false"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteDicomPeriodDialog').hide()"/>
+                        </p:dialog>
 
 
                         <br/>
@@ -580,10 +601,11 @@
                                          process="@this"
                                          action="#{settingBitServerBean.startRemoteSync}"
                                          onclick="PF('pbAjax').start();"
-                                         widgetVar="startButtonRS" styleClass="p-mr-2" ajax="false"/>
+                                         widgetVar="startButtonRS" styleClass="p-mr-2" ajax="true"
+                                            update="form:growl2"/>
 
 
-                        <p:progressBar widgetVar="pbAjax" ajax="true" value="#{settingBitServerBean.progress2}"
+                        <p:progressBar id="pbar" widgetVar="pbAjax" ajax="true" value="#{settingBitServerBean.progress2}"
                                        interval="500" labelTemplate="{value}%"
                                        styleClass="p-mt-3" global="false">
                             <p:ajax event="complete" oncomplete="PF('startButtonRS').enable()" />

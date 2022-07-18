@@ -156,16 +156,15 @@
 
                             <p:commandButton value="Обновить" actionListener="#{queueBean.readStudyFromDB}"
                                              process="@this" update="searchgrowl"
-                                             onclick="PF('statusDialog').show()"
-                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
+                                             widgetVar="updateBut"
+                                             id="updateBut"
+                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="true"/>
 
                             <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
                                 <h1 class="p-text-center">
                                     <h:outputLabel for="txt_count" value="Выполненно:  "/>
                                     <h:outputText id="txt_count" value="#{queueBean.number}"/>
                                 </h1>
-
-                                <p:poll interval="1" listener="#{queueBean.increment}" update="txt_count"/>
                             </p:dialog>
 
                         </p:toolbarGroup>
@@ -196,9 +195,11 @@
                         </div>
                     </p:dialog>
 
+                    <p:poll interval="30" listener="#{queueBean.dataoutput}" update="dt-studys"/>
+
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
-                                 emptyMessage="Нет записей для отображения"
+                                 emptyMessage="Нет записей для отображения" ajax="true"
 
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">

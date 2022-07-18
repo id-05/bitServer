@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
@@ -20,6 +19,7 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,8 +34,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-
-import static ru.bitServer.beans.AutoriseBean.showMessage;
+import java.util.concurrent.ScheduledExecutorService;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
@@ -298,9 +297,12 @@ public class QueueBean implements UserDao, DataAction {
     /// Отправлен на описание - 1
     /// Не описан - 0
 
+    private ScheduledExecutorService scheduler;
+
     @PostConstruct
     private void init() {
         System.out.println("queueBean");
+
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
@@ -474,8 +476,8 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void readStudyFromDB() {
+        PrimeFaces.current().ajax().update(":seachform:updateBut");
         int i = syncDataBase(connection);
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         dataoutput();
