@@ -313,8 +313,6 @@ public class DateBaseBean implements UserDao {
         selectedStudy = new BitServerStudy();
         showMessage("Внимание!","Исследование удалено!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-study");
-
-        //добавить удаление из базы Orthanc
     }
 
     public void deleteAllStudy(){
@@ -326,5 +324,6 @@ public class DateBaseBean implements UserDao {
         selectedStudy = new BitServerStudy();
         showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-study");
+        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" delete all record from bitserverstudy");
     }
 }

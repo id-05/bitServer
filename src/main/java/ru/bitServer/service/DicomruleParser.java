@@ -1,7 +1,6 @@
 package ru.bitServer.service;
 
 import ru.bitServer.util.LogTool;
-
 import java.util.ArrayList;
 
 public class DicomruleParser {

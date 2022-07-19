@@ -51,8 +51,8 @@
                 background: #FFCDD2;
                 color: #C63737; }
             .product-badge.status-inprocess {
-                background: #FEEDAF;
-                color: #8A5340; }
+                background: #feedaf;
+                color: #8a5340; }
         </style>
 
         <h:form id="seachform">
@@ -110,16 +110,8 @@
 
                         <div class="p-formgroup-inline" style="margin-left: 1em; margin-right: 1em; margin-top: 1em">
                             <p:selectManyButton value="#{queueBean.selectedModalitiName}" style="margin-left: 1em; margin-right: 1em; margin-top: 1em; width: 500px; margin-bottom: 1em;"
-                                                rendered="#{queueBean.currentUser.role == 'demo'}">
-                                <f:selectItem itemLabel="CR" itemValue="CR"/>
-                                <f:selectItem itemLabel="CT" itemValue="CT"/>
-                                <f:selectItem itemLabel="MR" itemValue="MR"/>
-                                <f:selectItem itemLabel="NM" itemValue="NM"/>
-                                <f:selectItem itemLabel="PT" itemValue="PT"/>
-                                <f:selectItem itemLabel="US" itemValue="US"/>
-                                <f:selectItem itemLabel="XA" itemValue="XA"/>
-                                <f:selectItem itemLabel="MG" itemValue="MG"/>
-                                <f:selectItem itemLabel="DX" itemValue="DX"/>
+                                                rendered="#{queueBean.currentUser.role == 'demo'}" dynamic="true">
+                                <f:selectItems value="#{queueBean.modalityName}"/>
                                 <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
                             </p:selectManyButton>
                         </div>
@@ -199,7 +191,7 @@
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
-                                 emptyMessage="Нет записей для отображения" ajax="true"
+                                 emptyMessage="Нет записей для отображения" ajax="false"
 
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
@@ -290,16 +282,16 @@
                                              ajax="false" style="margin-right: 10px"
                                              styleClass="edit-button rounded-button ui-button-success"
                                              icon="pi pi-file"
-
+                                             rendered="#{queueBean.currentUser.role != 'demo'}"
                                              disabled="#{!not empty bitServerStudy.result}">
                                 <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
-
                             <p:tooltip for="result" value="Результат/Описание"/>
 
                             <p:commandButton id="gettowork"
                                              icon="pi pi-pencil"
+                                             style="margin-right: 10px"
                                              styleClass="rounded-button" process="@this"
                                              rendered="#{queueBean.currentUser.role != 'demo'}"
                                              disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
@@ -309,6 +301,15 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip for="gettowork" value="Взять на описание"/>
+
+                            <p:commandButton id="delete"
+                                             icon="pi pi-trash"
+                                             styleClass="rounded-button ui-button-danger" process="@this"
+                                             rendered="#{queueBean.currentUser.role == 'admin'}"
+                                             oncomplete="PF('confirmtodelstudy').show()">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip for="delete" value="Удалить"/>
 
                         </p:column>
                     </p:dataTable>
@@ -387,7 +388,7 @@
                     <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
                               widgetVar="manageAnamnes" responsive="true">
                             <div class="p-d-flex p-flex-column">
-                                <div class="p-mb-2">Укажите здесь например:</div>
+                                <div class="p-mb-2">Укажите здесь, например:</div>
                                 <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
                                 <div class="p-mb-2">- причина обращения за обследованием</div>
                                 <div class="p-mb-2">- текущее состояние пациента</div>
@@ -436,6 +437,16 @@
                                 <p:commandButton value="Согласиться" action="#{queueBean.getStudyToDiag}"/>
                             </div>
                         </div>
+
+                    </p:dialog>
+
+                    <p:dialog widgetVar="confirmtodelstudy" showEffect="fade" width="300"
+                              message="Удилать исследвоание?" header="Удилать исследвоание?" severity="warn">
+                        <p:commandButton value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
+                                         oncomplete="PF('confirmtodelstudy').hide()"/>
+                        <span style="padding: 20px;">&nbsp;</span>
+                        <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('confirmtodelstudy').hide()"/>
 
                     </p:dialog>
 

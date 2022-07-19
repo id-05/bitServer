@@ -4,11 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.primefaces.PrimeFaces;
 import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.OrthancRestApi;
+
+import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 public interface DataAction extends UserDao{
 
@@ -45,6 +50,28 @@ public interface DataAction extends UserDao{
             }
         }
         return i;
+    }
+
+    public default void redirectToOsimis(String sid) {
+        String HttpOrHttps;
+        if(mainServer.getHttpmode().equals("true")){
+            HttpOrHttps = "https";
+        }else{
+            HttpOrHttps = "http";
+        }
+        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
+        int i = referrer.indexOf("/bitServer/");
+        int j = referrer.indexOf("://");
+        String address = referrer.substring(j+3,i);
+        if(address.contains(":")){
+            BitServerResources bufResources = getBitServerResource("port");
+            String port = bufResources.getRvalue();
+            int k = address.indexOf(":");
+            String addressCutPort = address.substring(0,k);
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        }else{
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+        }
     }
 
 }

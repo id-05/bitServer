@@ -12,10 +12,8 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -36,7 +34,6 @@ public class SettingBitServerBean implements UserDao {
     final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     int progress1;
     int progress2;
-    String progressStr;
     List<Users> usersList;
     List<Users> selectedUsers;
     Users selectedUser;
@@ -45,7 +42,6 @@ public class SettingBitServerBean implements UserDao {
     List<Usergroup> selectedUsergroups;
     Usergroup selectedUsergroup;
     String httpmode;
-    String updateQueueAfterOpen;
     String showStat;
     String osimisAddress;
     String orthancAddress;
@@ -75,19 +71,8 @@ public class SettingBitServerBean implements UserDao {
     String remoteport;
     String remotelogin;
     String remotepass;
-    Date startDelDate;
-    Date stopDelDate;
-    int countStudyForTransmite;
     String remoteTransStatus;
     String vremoteTransStatus;
-
-    public String getProgressStr() {
-        return progressStr;
-    }
-
-    public void setProgressStr(String progressStr) {
-        this.progressStr = progressStr;
-    }
 
     public int getProgress2() {
         return progress2;
@@ -111,38 +96,6 @@ public class SettingBitServerBean implements UserDao {
 
     public void setVremoteTransStatus(String vremoteTransStatus) {
         this.vremoteTransStatus = vremoteTransStatus;
-    }
-
-    public String getRemoteTransStatus() {
-        return remoteTransStatus;
-    }
-
-    public void setRemoteTransStatus(String remoteTransStatus) {
-        this.remoteTransStatus = remoteTransStatus;
-    }
-
-    public int getCountStudyForTransmite() {
-        return countStudyForTransmite;
-    }
-
-    public void setCountStudyForTransmite(int countStudyForTransmite) {
-        this.countStudyForTransmite = countStudyForTransmite;
-    }
-
-    public Date getStartDelDate() {
-        return startDelDate;
-    }
-
-    public void setStartDelDate(Date startDelDate) {
-        this.startDelDate = startDelDate;
-    }
-
-    public Date getStopDelDate() {
-        return stopDelDate;
-    }
-
-    public void setStopDelDate(Date stopDelDate) {
-        this.stopDelDate = stopDelDate;
     }
 
     public String getRemoteaddr() {
@@ -259,14 +212,6 @@ public class SettingBitServerBean implements UserDao {
 
     public void setColWhereSend(String colWhereSend) {
         this.colWhereSend = colWhereSend;
-    }
-
-    public String getUpdateQueueAfterOpen() {
-        return updateQueueAfterOpen;
-    }
-
-    public void setUpdateQueueAfterOpen(String updateQueueAfterOpen) {
-        this.updateQueueAfterOpen = updateQueueAfterOpen;
     }
 
     public String getLuaScriptPath() {
@@ -472,8 +417,6 @@ public class SettingBitServerBean implements UserDao {
 
                 case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
-                case "updateafteropen": updateQueueAfterOpen = buf.getRvalue();
-                    break;
                 case "httpmode": httpmode = buf.getRvalue();
                     break;
                 case "showStat": showStat = buf.getRvalue();
@@ -533,7 +476,6 @@ public class SettingBitServerBean implements UserDao {
             idOrthancStudy.add(studyData);
         }
 
-        studiesFromTableBitServer = getAllBitServerStudy();
         ArrayList<String> idBitServerStudy = new ArrayList<>();
         for(BitServerStudy bufStudy:getAllBitServerStudy()){
             idBitServerStudy.add(bufStudy.getSid());
@@ -558,6 +500,7 @@ public class SettingBitServerBean implements UserDao {
         }
         PrimeFaces.current().executeScript("PF('startButtonSA').enable()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start syncAll()");
     }
 
     public void syncPeriod(){
@@ -590,6 +533,7 @@ public class SettingBitServerBean implements UserDao {
             }
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
             showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + sum, info);
+            LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start syncPeriod()");
         }else{
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
             showMessage("Сообщение","Выбраны недопустимые даты!", info);
@@ -615,6 +559,7 @@ public class SettingBitServerBean implements UserDao {
         }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Удаление завершено! Всего удалено: " + i, info);
+        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start dateBaseFactoryReset()");
     }
 
     public void deleteDicomPeriod() throws IOException {
@@ -641,13 +586,13 @@ public class SettingBitServerBean implements UserDao {
 
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
             showMessage("Сообщение", "Удаление завершено! Всего удалено: " + sum, info);
+            LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start deleteDicomPeriod()");
         }else {
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
             showMessage("Сообщение", "Выбраны недопустимые даты!", info);
         }
     }
 
-    //@Asynchronous
     public void startRemoteSync(){
         PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
 
@@ -658,6 +603,7 @@ public class SettingBitServerBean implements UserDao {
         JsonParser parserJson = new JsonParser();
         String remotestudies = remoteCon.makeGetConnectionAndStringBuilder("/studies/").toString();
         if(!remotestudies.equals("error")){
+            LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start startRemoteSync()");
             JsonArray studies = (JsonArray) parserJson.parse(remotestudies);
             Iterator<JsonElement> studiesIterator = studies.iterator();
             ArrayList<String> remoteStudyList = new ArrayList<>();
@@ -688,6 +634,7 @@ public class SettingBitServerBean implements UserDao {
                 }
             }else{
                 showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
+                LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start startRemoteSync() - finish");
             }
                 PrimeFaces.current().executeScript("PF('startButtonRS').enable()");
         }else{
@@ -794,8 +741,6 @@ public class SettingBitServerBean implements UserDao {
             switch (buf.getRname()){
                 case "orthancaddress": buf.setRvalue(orthancAddress);
                     break;
-                case "updateafteropen": buf.setRvalue(updateQueueAfterOpen);
-                    break;
                 case "httpmode": buf.setRvalue(httpmode);
                     break;
                 case "luascriptpathfile": buf.setRvalue(luaScriptPath);
@@ -854,7 +799,7 @@ public class SettingBitServerBean implements UserDao {
             usersList = prepareUserList();
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-users");
-            LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new user "+bufUser.getUname());
+            LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new user "+bufUser.getUname());
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }

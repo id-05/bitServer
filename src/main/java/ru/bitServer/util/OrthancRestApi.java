@@ -286,4 +286,6 @@ public class OrthancRestApi {
         return studyList;
     }
 
+
+
 }

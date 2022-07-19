@@ -119,28 +119,6 @@ public class QueueremoteBean implements UserDao {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void redirectToOsimis(String sid) {
-        String HttpOrHttps;
-        if(mainServer.getHttpmode().equals("true")){
-            HttpOrHttps = "https";
-        }else{
-            HttpOrHttps = "http";
-        }
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-        int i = referrer.indexOf("/bitServer/");
-        int j = referrer.indexOf("://");
-        String address = referrer.substring(j+3,i);
-        if(address.contains(":")){
-            BitServerResources bufResources = getBitServerResource("port");
-            String port = bufResources.getRvalue();
-            int k = address.indexOf(":");
-            String addressCutPort = address.substring(0,k);
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
-        }else{
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
-        }
-    }
-
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         UploadedFile file = event.getFile();
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {

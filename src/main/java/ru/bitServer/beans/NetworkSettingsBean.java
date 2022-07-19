@@ -39,14 +39,6 @@ public class NetworkSettingsBean implements UserDao {
         this.configFileText = configFileText;
     }
 
-    public boolean isAdvancedmode() {
-        return advancedmode;
-    }
-
-    public void setAdvancedmode(boolean advancedmode) {
-        this.advancedmode = advancedmode;
-    }
-
     public NetworkAdapter getSelectedAdapter() {
         return selectedAdapter;
     }
@@ -98,7 +90,7 @@ public class NetworkSettingsBean implements UserDao {
         }
     }
 
-    public void serviceMode() throws InterruptedException, IOException {
+    public void serviceMode() {
         showMessage("Внимание","Сервер переведен в сервисный режим!",FacesMessage.SEVERITY_INFO);
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
@@ -110,7 +102,7 @@ public class NetworkSettingsBean implements UserDao {
         }
     }
 
-    public void normalMode() throws InterruptedException, IOException {
+    public void normalMode() {
         showMessage("Внимание","Сервер переведен в нормальный режим!",FacesMessage.SEVERITY_INFO);
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/noneservicemode");

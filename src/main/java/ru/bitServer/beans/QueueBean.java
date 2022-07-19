@@ -19,7 +19,6 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
-import javax.ejb.Asynchronous;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,7 +33,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
@@ -74,15 +72,19 @@ public class QueueBean implements UserDao, DataAction {
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     private int number;
     int progress;
+    List<String> modalityName = new ArrayList<>();
 
-    public void increment() {
-        number = progress;
+    public List<String> getModalityName() {
+        return modalityName;
+    }
+
+    public void setModalityName(List<String> modalityName) {
+        this.modalityName = modalityName;
     }
 
     public String getNumber() {
         return number+"%";
     }
-
 
     public String getColStatus() {
         return colStatus;
@@ -297,12 +299,13 @@ public class QueueBean implements UserDao, DataAction {
     /// Отправлен на описание - 1
     /// Не описан - 0
 
-    private ScheduledExecutorService scheduler;
-
     @PostConstruct
     private void init() {
         System.out.println("queueBean");
-
+        for(BitServerModality bufModality:getAllBitServerModality()){
+            modalityName.add(bufModality.getName());
+        }
+        selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
@@ -316,14 +319,6 @@ public class QueueBean implements UserDao, DataAction {
         seconddate = new Date();
         usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
-        try {
-            BitServerResources bufResource = getBitServerResource("updateafteropen");
-            if (bufResource.getRvalue().equals("true")) {
-                readStudyFromDB();
-            }
-        }catch (Exception e){
-            LogTool.getLogger().warn("Error init() QueueBean "+e.getMessage());
-        }
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -360,10 +355,14 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void dataoutput() {
+        System.out.println(selectedModalitiName);
         StringBuilder bufStr = getAllBitServerModality("name");
         resetViewTable();
         selectedVisibleStudies.clear();
         visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+
+        visibleStudiesList.removeIf(bufStudy -> !selectedModalitiName.contains(bufStudy.getModality()));
+
         visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
         if(filtrDate.equals("targetdate")){
             datepickerVisible1 = true;
@@ -391,12 +390,13 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
-        boolean result = false;
+        boolean result;
         if( isValid(value.toString().substring(0,1).toUpperCase()) == isValid(filter.toString().substring(0,1).toUpperCase())){
             result = value.toString().contains(filter.toString().toUpperCase());
         }else{
             if(isValid(value.toString().substring(0,1).toUpperCase())){
                 Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
+                result = true;
                 for (int i = 0; i < filter.toString().length(); i++){
                     if(filter.toString().length()<=value.toString().length()) {
                         char c = filter.toString().toUpperCase().charAt(i);
@@ -405,11 +405,12 @@ public class QueueBean implements UserDao, DataAction {
                         if(bufFilter.equals("%")){
                             continue;
                         }
-                        result = bufFilter.equals(bufValue);
+                        result = result & bufFilter.equals(bufValue);
                     }
                 }
             }else{
                 Transliterator toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
+                result = true;
                 for (int i = 0; i < filter.toString().length(); i++){
                     if(filter.toString().length()<=value.toString().length()) {
                         char c = filter.toString().toUpperCase().charAt(i);
@@ -418,7 +419,7 @@ public class QueueBean implements UserDao, DataAction {
                         if(bufFilter.equals("%")){
                             continue;
                         }
-                        result = bufFilter.equals(bufValue);
+                        result = result & bufFilter.equals(bufValue);
                     }
                 }
             }
@@ -551,28 +552,6 @@ public class QueueBean implements UserDao, DataAction {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void redirectToOsimis(String sid) {
-        String HttpOrHttps;
-        if(mainServer.getHttpmode().equals("true")){
-            HttpOrHttps = "https";
-        }else{
-            HttpOrHttps = "http";
-        }
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-        int i = referrer.indexOf("/bitServer/");
-        int j = referrer.indexOf("://");
-        String address = referrer.substring(j+3,i);
-        if(address.contains(":")){
-            BitServerResources bufResources = getBitServerResource("port");
-            String port = bufResources.getRvalue();
-            int k = address.indexOf(":");
-            String addressCutPort = address.substring(0,k);
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
-        }else{
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
-        }
-    }
-
     public StreamedContent getResult(BitServerStudy study) throws IOException {
         if(study.isTyperesult()){
             Path path = Paths.get(study.getResult());
@@ -640,6 +619,16 @@ public class QueueBean implements UserDao, DataAction {
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
+    }
+
+    public void DelStudy() throws IOException {
+        deleteStudy(selectedVisibleStudy);
+        connection.deleteStudyFromOrthanc(selectedVisibleStudy.getSid());
+        visibleStudiesList.remove(selectedVisibleStudy);
+        selectedVisibleStudy = new BitServerStudy();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Исследование удалено!"));
+        PrimeFaces.current().ajax().update(":seachform:dt-studys");
+        dataoutput();
     }
 
     public void chooseAETitle()  {

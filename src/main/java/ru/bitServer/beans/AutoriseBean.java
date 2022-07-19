@@ -76,7 +76,7 @@ public class AutoriseBean implements UserDao {
         PrimeFaces.current().executeScript("location.reload();");
     }
 
-    public void validateUsernamePassword() throws IOException {
+    public void validateUsernamePassword() {
         try {
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
             if (currentUser.getUname()!=null) {

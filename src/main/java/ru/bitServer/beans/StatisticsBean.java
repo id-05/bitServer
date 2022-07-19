@@ -86,7 +86,7 @@ public class StatisticsBean implements UserDao {
             BitServerResources bufResource = getBitServerResource("showStat");
             showStat = bufResource.getRvalue().equals("true");
         }catch (Exception e){
-            LogTool.getLogger().warn("Error init() QueueBean "+e.getMessage());
+            LogTool.getLogger().error("Error init() QueueBean "+e.getMessage());
         }
         try {
             firstdate = allStudies.get(0).getSdate();
@@ -122,6 +122,7 @@ public class StatisticsBean implements UserDao {
     }
 
     public void initPieModality(){
+        allStudies = getAllBitServerStudy();
         pieModality = new PieChartModel();
         List<BitServerModality> modalityList = getAllBitServerModality();
         for(BitServerModality bufModality:modalityList){
@@ -134,6 +135,7 @@ public class StatisticsBean implements UserDao {
     }
 
     public void initPieSource(){
+        allStudies = getAllBitServerStudy();
         pieSource = new PieChartModel();
         List<String> buflist = new ArrayList<>();
         for(BitServerStudy bufStudy:allStudies){
@@ -178,56 +180,13 @@ public class StatisticsBean implements UserDao {
         }
     }
 
-//    private LineChartModel initModel(String pattern) {
-//        LineChartModel bufModel = new LineChartModel();
-//        ChartSeries bufSeries = new ChartSeries();
-//        bufSeries.setLabel("Исследования");
-//        Map<Long, Integer> resultMap = new HashMap<>();
-//        switch (pattern) {
-//            case "MM.yyyy":
-//                resultMap = MainBean.resultMapLong;
-//                break;
-//            case "yyyy":
-//                resultMap = MainBean.resultMapShort;
-//                break;
-//        }
-//
-//        DateFormat formatter = new SimpleDateFormat(pattern);
-//
-//        for(Map.Entry<Long, Integer> item : resultMap.entrySet()){
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.setTimeInMillis(item.getKey());
-//            Date bufDate = calendar.getTime();
-//            bufSeries.set(formatter.format(bufDate),  item.getValue());
-//        }
-//        bufModel.addSeries(bufSeries);
-//        return bufModel;
-//    }
 private LineChartModel initModel(String pattern) {
     LineChartModel bufModel = new LineChartModel();
     ChartSeries bufSeries = new ChartSeries();
     bufSeries.setLabel("Исследования");
-    Map<Long, Integer> resultMap = new TreeMap<>();
+    Map<Long, Integer> resultMap;
     DateFormat formatter = new SimpleDateFormat(pattern);
     resultMap = MainBean.getResultMap(pattern);
-//    for(BitServerStudy bufStudy:allStudies){
-//        if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
-//                ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
-//            long bufDatemillis = 0;
-//            try {
-//                bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
-//            } catch (Exception e) {
-//                LogTool.getLogger().warn("Error initModel statisticsBean: "+e.getMessage());
-//            }
-//            Integer bufCount = resultMap.get(bufDatemillis);
-//            if(bufCount==null){
-//                resultMap.put(bufDatemillis,1);
-//            }else{
-//                bufCount = bufCount + 1;
-//                resultMap.replace(bufDatemillis,bufCount);
-//            }
-//        }
-//    }
     if(resultMap.size()>0) {
         for (Map.Entry<Long, Integer> item : resultMap.entrySet()) {
             Calendar calendar = Calendar.getInstance();

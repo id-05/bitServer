@@ -17,7 +17,7 @@ public class LogTool implements UserDao {
         LogTool.setFileName(fileName);
         RollingFileAppender appender = new RollingFileAppender();
         appender.setAppend(true);
-        appender.setMaxFileSize("1MB");
+        appender.setMaxFileSize("2MB");
         appender.setMaxBackupIndex(1);
         appender.setFile(fileName + "bitServer.log");
         appender.activateOptions();

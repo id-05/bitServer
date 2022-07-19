@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,11 +39,6 @@ public class MainBean implements UserDao, DataAction {
     List<BitServerStudy> allStudies = new ArrayList<>();
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
-
-
-    public void setResultMapShort(Map<Long, Integer> resultMapShort) {
-        this.resultMapShort = resultMapShort;
-    }
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -129,7 +123,6 @@ public class MainBean implements UserDao, DataAction {
             syncDataBase(connection);
             allStudies = getAllBitServerStudy();
             allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-            LogTool.getLogger().debug("allStudies.size =  "+allStudies.size());
             resultMapLong.clear();
             resultMapShort.clear();
             resultMapLong = getStatMap(allStudies,"MM.yyyy");
