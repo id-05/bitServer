@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:submenu label="Настройки" icon="pi pi-cog">
+                        <p:menuitem style="margin-right: 5px" value="Orthanc настройки" outcome="settings_orthanc" icon="pi pi-cog"/>
+                        <p:menuitem style="margin-right: 5px" value="BitServer настройки" outcome="settings_bitserver" icon="pi pi-cog"/>
+                        <p:menuitem style="margin-right: 5px" value="Сетевые настройки" outcome="settings_network" icon="pi pi-sitemap"/>
+                        <p:menuitem style="margin-right: 5px" value="Tomcat Restart" actionListener="#{settingBitServerBean.applicationReboot()}" icon="pi pi-refresh" process="@this" update="growlMessageId"/>
+                    </p:submenu>
+
+                    <p:menuitem style="margin-right: 5px" value="DICOM-маршрутизация" outcome="settings_dicomroute" icon="pi pi-share-alt"/>
+                    <p:menuitem style="margin-right: 5px" value="Редактор базы данных" rendered="true" outcome="settings_datebase" icon="pi pi-table"/>
+                    <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
+                    <p:submenu label="Управление питанием" icon="pi power-off">
+                        <p:menuitem style="margin-right: 5px" value="Перезагрузка" actionListener="#{settingBitServerBean.powerReboot()}" icon="pi pi-refresh" process="@this" update="growlMessageId"/>
+                        <p:menuitem style="margin-right: 5px" value="Выключение" actionListener="#{settingBitServerBean.powerShotdown()}" icon="pi pi-power-off" process="@this" update="growlMessageId"/>
+                    </p:submenu>
+                    <p:menuitem style="margin-right: 5px" value="LOG" outcome="logpage" icon="pi pi-info-circle"/>
+
+
+                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}" rendered="false">
+                        <p:menuitem value="saga" actionListener="#{autoriseBean.setTheme('saga')}" process="@this"/>
+                        <p:menuitem value="arya" actionListener="#{autoriseBean.setTheme('arya')}" process="@this"/>
+                        <p:menuitem value="vela" actionListener="#{autoriseBean.setTheme('vela')}" process="@this"/>
+                        <p:menuitem value="nova-light" actionListener="#{autoriseBean.setTheme('nova-light')}" process="@this"/>
+                        <p:menuitem value="nova-dark" actionListener="#{autoriseBean.setTheme('nova-dark')}" process="@this"/>
+                        <p:menuitem value="nova-colored" actionListener="#{autoriseBean.setTheme('nova-colored')}" process="@this"/>
+                        <p:menuitem value="luna-blue" actionListener="#{autoriseBean.setTheme('luna-blue')}" process="@this"/>
+                        <p:menuitem value="luna-amber" actionListener="#{autoriseBean.setTheme('luna-amber')}" process="@this"/>
+                        <p:menuitem value="luna-green" actionListener="#{autoriseBean.setTheme('luna-green')}" process="@this"/>
+                        <p:menuitem value="luna-pink" actionListener="#{autoriseBean.setTheme('luna-pink')}" process="@this"/>
+                    </p:submenu>
+
+                    <f:facet name="options">
+
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+
+        <h:form id="db">
+
+            <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}">
+
+                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
+                    <p:lineChart id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
+
+                    <f:facet name="options">
+                        <p:menu>
+                            <p:submenu label="Периоды">
+                                <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                                <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                            </p:submenu>
+                        </p:menu>
+
+                    </f:facet>
+
+                </p:panel>
+
+                <p:panel id="modality" header="Распределение по модальностям"
+                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+                    <p:pieChart model="#{statisticsBean.pieModality}" style="width: 100%; height: 500px;"/>
+                </p:panel>
+
+            </p:dashboard>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

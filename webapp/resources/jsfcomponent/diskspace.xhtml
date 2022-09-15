@@ -1,0 +1,27 @@
+<html xmlns = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite = "http://java.sun.com/jsf/composite">
+
+<composite:interface>
+    <composite:attribute name = "totalSpace" />
+    <composite:attribute name = "usedSpace" />
+    <composite:attribute name = "freeSpace" />
+    <composite:attribute name = "directory" />
+</composite:interface>
+
+<composite:implementation>
+    <h:form>
+        <div class="p-d-flex p-jc-center">
+
+        </div>
+        <div class="p-text-bold" align="left">Директория сохранения DICOM-файлов : #{cc.attrs.directory}</div>
+        <div class="p-text-bold" align="left">Полный размер дискового пространства : #{cc.attrs.totalSpace}</div>
+        <div class="p-text-bold" align="left">Свободное дисковое пространство      : #{cc.attrs.freeSpace}</div>
+        <div class="p-text-bold" align="left">Занято в процентах                   : #{cc.attrs.usedSpace}</div>
+        <br/>
+
+    </h:form>
+</composite:implementation>
+</html>

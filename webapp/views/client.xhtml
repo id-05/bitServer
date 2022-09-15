@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+    <style type="text/css">
+        .ui-panel{
+            margin: 10px;
+            width: 200px;
+        }
+
+    </style>
+
+
+    <h:body>
+
+        <h:form id="remoteform">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:menuitem style="margin-right: 5px" value="Новое исследование" outcome="neworder" icon="pi pi-plus"/>
+                    <p:menuitem style="margin-right: 5px" value="Ваши исследования" outcome="clientorders" icon="pi pi-bars"/>
+                    <p:menuitem style="margin-right: 5px" value="Результаты" outcome="clientresults" icon="pi pi-check-square"/>
+                    <f:facet name="options">
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <div class="ui-fluid p-formgrid p-grid">
+
+                <div class="p-col">
+                    <div class="p-d-flex p-jc-center">
+                        <p:graphicImage name="111.png" library="images"/>
+                    </div>
+
+                </div>
+
+                <div class="p-col">
+                    <div class="p-d-flex p-jc-center">
+                        <p:graphicImage name="222.png" library="images"/>
+                    </div>
+                </div>
+
+                <div class="p-col">
+                    <div class="p-d-flex p-jc-center">
+                        <p:graphicImage name="333.png" library="images"/>
+                    </div>
+                </div>
+
+            </div>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

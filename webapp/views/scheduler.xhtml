@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+
+    <h:head>
+        <title>bitServer Settings</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growl2" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="localuser" icon="pi pi-backward"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <p:outputPanel>
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Новое правило" immediate="true" icon="pi pi-plus" actionListener="#{schedulerBean.initNewRule}"
+                                         update="dialogNewRule" oncomplete="PF('manageRuleDialog').show()"
+                                         styleClass="ui-button-success" style="margin-right: .5rem">
+                            <p:resetInput target="dialogNewRule"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dataTable id="dt-rules" widgetVar="dtRules" var="bitServerScheduler" value="#{schedulerBean.visibleRules}"
+                             reflow="true"
+                             emptyMessage="Нет записей для отображения"
+                             selection="#{schedulerBean.selectedRules}" rowKey="#{BitServerScheduler.destinationgroup}"
+                             rows="10" rowSelectMode="add" >
+
+                    <p:column headerText="Модальность" sortBy="#{bitServerScheduler.modality}" style="text-align: center">
+                        <h:outputText value="#{bitServerScheduler.modality}" />
+                    </p:column>
+
+                    <p:column headerText="Источник" sortBy="#{bitServerScheduler.source}" style="text-align: center">
+                        <h:outputText value="#{bitServerScheduler.source}" />
+                    </p:column>
+
+                    <p:column headerText="Условие" sortBy="#{bitServerScheduler.timecondition}" style="text-align: center">
+                        <h:outputText value="#{bitServerScheduler.timecondition}"/>
+                    </p:column>
+
+                    <p:column headerText="Время"  style="text-align: center">
+                        <h:outputText value="#{bitServerScheduler.clock}:#{bitServerScheduler.minute}"/>
+
+                    </p:column>
+
+                    <p:column headerText="Группа направления" sortBy="#{bitServerScheduler.destinationgroup}" style="text-align: center">
+                        <h:outputText value="#{bitServerScheduler.destinationgroup}"/>
+                    </p:column>
+
+                    <p:column exportable="false">
+
+                        <p:commandButton icon="pi pi-pencil" update=":form:manage-rule-content"
+                                         oncomplete="PF('manageRuleDialog').show()" style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this"
+                                         action="#{schedulerBean.setTimeToDialog}">
+                            <f:setPropertyActionListener value="#{bitServerScheduler}" target="#{schedulerBean.selectedRule}"/>
+
+                        </p:commandButton>
+
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                         oncomplete="PF('deleteRuleDialog').show()" >
+                            <f:setPropertyActionListener value="#{bitServerScheduler}" target="#{schedulerBean.selectedRule}"/>
+                        </p:commandButton>
+
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:dialog id="dialogNewRule" header="Правило по времени" showEffect="fade" modal="true"
+                          widgetVar="manageRuleDialog" responsive="true">
+                    <p:panelGrid id="manage-rule-content" class="ui-fluid" columns="2">
+
+                        <p:outputLabel for="modality" style="margin-right: .5rem">Модальности</p:outputLabel>
+                        <p:selectOneMenu id="modality" value="#{schedulerBean.selectedRule.modality}" dynamic="true">
+                            <f:selectItem itemLabel="Выберите" itemValue=""/>
+                            <f:selectItems value="#{schedulerBean.modalitylist}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="source" style="margin-right: .5rem">Источники</p:outputLabel>
+                        <p:selectOneMenu id="source" value="#{schedulerBean.selectedRule.source}" dynamic="true">
+                            <f:selectItem itemLabel="Выберите" itemValue=""/>
+                            <f:selectItems value="#{schedulerBean.sourcelist}"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="rule" style="margin-right: .5rem">Условие</p:outputLabel>
+                        <p:selectOneMenu id="rule" value="#{schedulerBean.selectedRule.timecondition}" effect="fold">
+                            <f:selectItem itemLabel="Выберите" itemValue=""/>
+                            <f:selectItem itemLabel="После" itemValue="После"/>
+                            <f:selectItem itemLabel="До" itemValue="До"/>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="time" style="margin-right: .5rem">Время</p:outputLabel>
+                        <p:datePicker id="time" value="#{schedulerBean.selectedtime}" timeOnly="true" pattern="HH:mm"/>
+
+                        <p:outputLabel for="ugroup" style="margin-right: .5rem">Направлять в</p:outputLabel>
+                        <p:selectOneMenu id="ugroup" value="#{schedulerBean.selectedRule.destinationgroup}" dynamic="true">
+                            <f:selectItem itemLabel="Выберите" itemValue=""/>
+                            <f:selectItems value="#{schedulerBean.usergroupListRuName}"/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <f:facet name="footer">
+
+                        <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{schedulerBean.addNewRule}"
+                                         update=":form:growl2">
+                            <p:resetInput target="dialogNewRule"/>
+                        </p:commandButton>
+
+                        <span style="padding: 20px;">&nbsp;</span>
+
+                        <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageRuleDialog').hide()"
+                                         class="ui-button-secondary" update="dialogNewRule">
+                            <p:resetInput target="dialogNewRule"/>
+                        </p:commandButton>
+
+                    </f:facet>
+                </p:dialog>
+
+                <p:dialog widgetVar="deleteRuleDialog" showEffect="fade" width="300"
+                          message="Удалить правило?" header="Удалить правило?" severity="warn">
+                    <p:commandButton value="Да" icon="pi pi-check" actionListener="#{schedulerBean.deleteSelectedRule}"
+                                     oncomplete="PF('deleteRuleDialog').hide()"/>
+                    <span style="padding: 20px;">&nbsp;</span>
+                    <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteRuleDialog').hide()"/>
+                </p:dialog>
+
+                <div class="p-d-flex"></div>
+                <div >Список правил по времени</div>
+                <br/>
+                <div > </div>
+                <div ><strong>Обратите внимание, что правила применяются по старшинству, сверху вниз.</strong></div>
+                <div ><strong>Так же к одному исследованию можно применить только одно правило,</strong></div>
+                <div ><strong>то есть, после первого совпадения условий, все правила расположенные ниже по списку, будут отброшены.</strong></div>
+            </p:outputPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

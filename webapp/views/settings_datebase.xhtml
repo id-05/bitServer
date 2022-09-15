@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+
+    <h:head>
+        <title>bitServer DateBase</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growl2" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <p:accordionPanel widgetVar="serverSettings" id="accord" activeIndex="-1">
+                <p:tab title="BitServerResources">
+                    <p:outputPanel>
+
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{datebaseBean.initNewResources}"
+                                                 update="dialogNewResource" oncomplete="PF('manageResourceDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewResource"/>
+                                </p:commandButton>
+
+                                <p:commandButton value="Очистить и Заполнить значениями по умолчанию" immediate="true" icon="pi pi-info-circle"
+                                                 oncomplete="PF('defaultResource').show()"
+
+                                                 styleClass="ui-button-warning" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewResource"/>
+                                </p:commandButton>
+
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-resources" widgetVar="dtResources" var="resources" value="#{datebaseBean.listResources}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{datebaseBean.selectedResources}" rowKey="#{BitServerResources.rname}"
+                                     rows="10"
+                                     size="small"
+                                     rowSelectMode="add"
+                                     paginator="true"
+                                     paginatorPosition="bottom">
+
+                            <p:column headerText="rvalue" sortBy="#{resources.rname}" style="text-align: center">
+                                <h:outputText value="#{resources.rname}" />
+                            </p:column>
+
+                            <p:column headerText="rname" sortBy="#{resources.rvalue}" style="text-align: center">
+                                <h:outputText value="#{resources.rvalue}" />
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-resource-content"
+                                                 oncomplete="PF('manageResourceDialog').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{resources}" target="#{datebaseBean.selectedResource}"/>
+                                    <p:resetInput target=":form:accord:manage-resource-content"/>
+                                </p:commandButton>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteResourceDialog').show()">
+                                    <f:setPropertyActionListener value="#{resources}" target="#{datebaseBean.selectedResource}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:dialog widgetVar="defaultResource" showEffect="fade" width="300"
+                                  message="Сбросить значения ресурсов на значения по умолчанию?" header="Сбросить значения ресурсов на значения по умолчанию?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.initDefaultResources}"
+                                             oncomplete="PF('defaultResource').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('defaultResource').hide()"/>
+                        </p:dialog>
+
+                        <p:dialog id="dialogNewResource" header="Пользователь" showEffect="fade" modal="true"
+                                  widgetVar="manageResourceDialog" responsive="true">
+                            <p:panelGrid id="manage-resource-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="rname" style="margin-right: .5rem">rname</p:outputLabel>
+                                <p:inputText id="rname" value="#{datebaseBean.selectedResource.rname}" />
+
+                                <p:outputLabel for="rvalue" style="margin-right: .5rem">rvalue</p:outputLabel>
+                                <p:inputText id="rvalue" value="#{datebaseBean.selectedResource.rvalue}" />
+
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{datebaseBean.addNewResource}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewResource"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageResourceDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewResource">
+                                    <p:resetInput target="dialogNewResource"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteResourceDialog" showEffect="fade" width="300"
+                                  message="Удалить ресурс?" header="Удалить ресурс?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteResource}"
+                                             oncomplete="PF('deleteResourceDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteResourceDialog').hide()"/>
+                        </p:dialog>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="BitServerStudy">
+                    <p:outputPanel>
+
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Delete all" immediate="true" icon="pi pi-trash" oncomplete="PF('deleteAllStudyDialog').show()"
+                                                 update=":form:accord:manage-study-content"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                </p:commandButton>
+
+                                <p:commandButton value="Заполнить рандомно" immediate="true" icon="pi pi-trash" actionListener="#{datebaseBean.setRandomData}"
+                                                 update=":form:accord:manage-study-content"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                </p:commandButton>
+
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-study" widgetVar="dtStudy" var="study" value="#{datebaseBean.listStudys}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{datebaseBean.selectedStudys}" rowKey="#{BitServerStudy.sid}"
+                                     rows="10"
+                                     size="small"
+                                     rowSelectMode="add"
+                                     paginator="true"
+                                     paginatorPosition="bottom"
+                                     scrollable="true"
+                                     tableStyle = "width: auto! important;">
+
+                            <p:column headerText="id" sortBy="#{study.id}" style="width: max-content">
+                                <h:outputText value="#{study.id}" />
+                            </p:column>
+
+                            <p:column headerText="modality" sortBy="#{study.modality}" style="width: max-content">
+                                <h:outputText value="#{study.modality}" />
+                            </p:column>
+
+                            <p:column headerText="source" sortBy="#{study.source}" style="width: max-content">
+                                <h:outputText value="#{study.source}" />
+                            </p:column>
+
+                            <p:column headerText="patientname" sortBy="#{study.patientname}" style="width: max-content">
+                                <h:outputText value="#{study.patientname}" />
+                            </p:column>
+
+                            <p:column headerText="typeresult" sortBy="#{study.typeresult}" style="width: max-content">
+                                <h:outputText value="#{study.typeresult}" />
+                            </p:column>
+
+                            <p:column headerText="result" sortBy="#{study.result}" style="width: max-content">
+                                <h:outputText value="#{study.result}" />
+                            </p:column>
+
+                            <p:column headerText="patientbirthdate" sortBy="#{study.patientbirthdate}" style="width: max-content">
+                                <h:outputText value="#{study.patientbirthdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="patientsex" sortBy="#{study.patientsex}" style="width: max-content">
+                                <h:outputText value="#{study.patientsex}" />
+                            </p:column>
+
+                            <p:column headerText="sid" sortBy="#{study.sid}" style="width: max-content">
+                                <h:outputText value="#{study.sid}" />
+                            </p:column>
+
+                            <p:column headerText="usergroupwhosees" sortBy="#{study.usergroupwhosees}" style="width: max-content">
+                                <h:outputText value="#{study.usergroupwhosees}" />
+                            </p:column>
+
+                            <p:column headerText="rustatus" sortBy="#{study.rustatus}" style="width: max-content">
+                                <h:outputText value="#{study.rustatus}" />
+                            </p:column>
+
+                            <p:column headerText="status" sortBy="#{study.status}" style="width: max-content">
+                                <h:outputText value="#{study.status}" />
+                            </p:column>
+
+                            <p:column headerText="sdate" sortBy="#{study.sdate}" style="width: max-content">
+                                <h:outputText value="#{study.sdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="dateaddinbase" sortBy="#{study.dateaddinbase}" style="width: max-content">
+                                <h:outputText value="#{study.dateaddinbase}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="datesent" sortBy="#{study.datesent}" style="width: max-content">
+                                <h:outputText value="#{study.datesent}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="datablock" sortBy="#{study.datablock}" style="width: max-content">
+                                <h:outputText value="#{study.datablock}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="dateresult" sortBy="#{study.dateresult}" style="width: max-content">
+                                <h:outputText value="#{study.dateresult}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="sdescription" sortBy="#{study.sdescription}" style="width: max-content">
+                                <h:outputText value="#{study.sdescription}" />
+                            </p:column>
+
+                            <p:column headerText="shortid" sortBy="#{study.shortid}" style="width: max-content">
+                                <h:outputText value="#{study.shortid}" />
+                            </p:column>
+
+                            <p:column headerText="userwhosent" sortBy="#{study.userwhosent}" style="width: max-content">
+                                <h:outputText value="#{study.userwhosent}" />
+                            </p:column>
+
+                            <p:column headerText="userwhoblock" sortBy="#{study.userwhoblock}" style="width: max-content">
+                                <h:outputText value="#{study.userwhoblock}" />
+                            </p:column>
+
+                            <p:column headerText="userwhodiagnost" sortBy="#{study.userwhodiagnost}" style="width: max-content">
+                                <h:outputText value="#{study.userwhodiagnost}" />
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-study-content"
+                                                 oncomplete="PF('manageStudyDialog').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{study}" target="#{datebaseBean.selectedStudy}"/>
+                                    <p:resetInput target=":form:accord:manage-study-content"/>
+                                </p:commandButton>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-study-content"
+                                                 oncomplete="PF('deleteStudyDialog').show()">
+                                    <f:setPropertyActionListener value="#{study}" target="#{datebaseBean.selectedStudy}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:dialog id="dialogUpdateStudy" header="study" showEffect="fade" modal="true"
+                                  widgetVar="manageStudyDialog" responsive="true">
+                            <p:panelGrid id="manage-study-content" class="ui-fluid" columns="2">
+
+                                <p:outputLabel for="id" style="margin-right: .5rem">id</p:outputLabel>
+                                <p:inputText id="id" value="#{datebaseBean.selectedStudy.id}" />
+
+                                <p:outputLabel for="modality" style="margin-right: .5rem">modality</p:outputLabel>
+                                <p:inputText id="modality" value="#{datebaseBean.selectedStudy.modality}" />
+
+                                <p:outputLabel for="source" style="margin-right: .5rem">source</p:outputLabel>
+                                <p:inputText id="source" value="#{datebaseBean.selectedStudy.source}" />
+
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{datebaseBean.updateStudyInBase}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogUpdateStudy"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageStudyDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogUpdateStudy">
+                                    <p:resetInput target="dialogUpdateStudy"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteStudyDialog" showEffect="fade" width="300"
+                                  message="Delete study?" header="Delete study?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteStudyFromBase}"
+                                             oncomplete="PF('deleteStudyDialog').hide()" update=":form:growl2"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteStudyDialog').hide()"/>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteAllStudyDialog" showEffect="fade" width="300"
+                                  message="Удалить все записи?" header="Удалить все записи?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteAllStudy}"
+                                             oncomplete="PF('deleteAllStudyDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteAllStudyDialog').hide()"/>
+                        </p:dialog>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="BitServerScheduler">
+                    <p:outputPanel>
+                        <p:dataTable id="dt-scheduler" widgetVar="dtScheduler" var="scheduler" value="#{datebaseBean.listSchedulers}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{datebaseBean.selectedSchedulers}" rowKey="#{BitServerScheduler.schedulerid}"
+                                     rows="10"
+                                     rowSelectMode="add"
+                                     paginator="true"
+                                     size="small"
+                                     paginatorAlwaysVisible="false"
+                                     paginatorPosition="bottom">
+
+                            <p:column headerText="schedulerid" sortBy="#{scheduler.schedulerid}" style="text-align: center">
+                                <h:outputText value="#{scheduler.schedulerid}" />
+                            </p:column>
+
+                            <p:column headerText="modality" sortBy="#{scheduler.modality}" style="text-align: center">
+                                <h:outputText value="#{scheduler.modality}" />
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-scheduler-content"
+                                                 oncomplete="PF('manageSchedulerDialog').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{scheduler}" target="#{datebaseBean.selectedScheduler}"/>
+                                    <p:resetInput target=":form:accord:manage-scheduler-content"/>
+                                </p:commandButton>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-scheduler-content"
+                                                 oncomplete="PF('deleteSchedulerDialog').show()">
+                                    <f:setPropertyActionListener value="#{scheduler}" target="#{datebaseBean.selectedScheduler}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:dialog id="dialogNewScheduler" header="Правило по времени" showEffect="fade" modal="true"
+                                  widgetVar="manageSchedulerDialog" responsive="true">
+                            <p:panelGrid id="manage-scheduler-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="schedulerid" style="margin-right: .5rem">schedulerid</p:outputLabel>
+                                <p:inputText id="schedulerid" value="#{datebaseBean.selectedScheduler.schedulerid}" />
+
+                                <p:outputLabel for="modalitys" style="margin-right: .5rem">modality</p:outputLabel>
+                                <p:inputText id="modalitys" value="#{datebaseBean.selectedScheduler.modality}" />
+
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{datebaseBean.addNewScheduler}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewScheduler"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageSchedulerDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewScheduler">
+                                    <p:resetInput target="dialogNewScheduler"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteSchedulerDialog" showEffect="fade" width="300"
+                                  message="Удалить правило?" header="Удалить правило?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteScheduler}"
+                                             oncomplete="PF('deleteSchedulerDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteSchedulerDialog').hide()"/>
+                        </p:dialog>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="BitServerModality">
+                    <p:outputPanel>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новая модальность" immediate="true" icon="pi pi-plus" actionListener="#{datebaseBean.initNewModality}"
+                                                 update="dialogNewModality" oncomplete="PF('manageModalityDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewModality"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-modality" widgetVar="dtModality" var="modality" value="#{datebaseBean.listModalitys}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{datebaseBean.selectedModalitys}" rowKey="#{BitServerModality.name}"
+                                     rows="10"
+                                     size="small"
+                                     rowSelectMode="add"
+                                     paginator="true"
+                                     paginatorPosition="bottom">
+
+                            <p:column headerText="name" sortBy="#{modality.name}" style="text-align: center">
+                                <h:outputText value="#{modality.name}" />
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 update=":form:accord:manage-modality-content"
+                                                 oncomplete="PF('deleteModalityDialog').show()">
+                                    <f:setPropertyActionListener value="#{modality}" target="#{datebaseBean.selectedModality}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:dialog id="dialogNewModality" header="Моадальность" showEffect="fade" modal="true"
+                                  widgetVar="manageModalityDialog" responsive="true">
+                            <p:panelGrid id="manage-modality-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="name" style="margin-right: .5rem">name</p:outputLabel>
+                                <p:inputText id="name" value="#{datebaseBean.selectedModality.name}" />
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{datebaseBean.addNewModality}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewModality"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageModalityDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewModality">
+                                    <p:resetInput target="dialogNewModality"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteModalityDialog" showEffect="fade" width="300"
+                                  message="Удалить модальность?" header="Удалить модальность?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteModality}"
+                                             oncomplete="PF('deleteModalityDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteModalityDialog').hide()"/>
+                        </p:dialog>
+                    </p:outputPanel>
+                </p:tab>
+
+            </p:accordionPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

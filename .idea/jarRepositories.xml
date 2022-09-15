@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteRepositoriesConfiguration">
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="weasis" />
+      <option name="name" value="weasis" />
+      <option name="url" value="http://dicom.vital-it.ch:8087/nexus/content/groups/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Maven Central repository" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="prime-repo" />
+      <option name="name" value="PrimeFaces Maven Repository" />
+      <option name="url" value="http://repository.primefaces.org" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="richfaces-repo" />
+      <option name="name" value="richfaces Repository" />
+      <option name="url" value="https://mvnrepository.com/artifact/org.richfaces/richfaces" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="dcm4che" />
+      <option name="name" value="dcm4che Repository" />
+      <option name="url" value="http://www.dcm4che.org/maven2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="java.net" />
+      <option name="name" value="java.net Repository" />
+      <option name="url" value="http://download.java.net/maven/2" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="cksource-mvn-repo" />
+      <option name="name" value="CKSource Maven Repository" />
+      <option name="url" value="https://maven.cksource.com/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="sonatype-oss-public" />
+      <option name="name" value="sonatype-oss-public" />
+      <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
+    </remote-repository>
+  </component>
+</project>

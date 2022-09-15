@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+    <style type="text/css">
+        div.centercard
+        {
+            display: flex;
+            justify-content: center;
+            vertical-align: middle;
+            horiz-align: center;
+            vert-align: middle;
+        }
+    </style>
+
+    <h:body>
+
+        <h:form id="errorform">
+
+            <div class="centercard">
+                <p:growl id="growl" showDetail="true" />
+                <div>
+
+                    <div class="p-field p-grid">
+                    <span class="ui-float-label" style="margin-top: 200px">
+                        <p:graphicImage name="logo.png" library="images"/>
+                    </span>
+                    </div>
+
+                    <div class="p-field p-grid">
+                    <span class="ui-float-label" style="width: 400px; margin-top: 20px">
+                        <p:outputLabel style="font-size: large; margin-bottom: 5px; margin-top: 5px" value="В работе сервиса возникла ошибка!"/>
+                    </span>
+                    </div>
+                    <br/>
+                    <div class="p-field p-grid">
+                    <span class="ui-float-label" style="width: 400px; margin-top: 20px">
+                        <p:link style="font-size: large; margin-left: 5px; margin-bottom: 5px; margin-top: 5px" outcome="logpage" value="Нажмите чтобы увидеть LOG-файл"/>
+                    </span>
+                    </div>
+                    <br/>
+
+                </div>
+            </div>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

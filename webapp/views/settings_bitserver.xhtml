@@ -1,0 +1,910 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+
+    <h:head>
+        <title>bitServer Settings</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growl2" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <p:accordionPanel widgetVar="serverSettings" id="accord" activeIndex="-1">
+                <p:tab title="Сеть и доступ">
+                    <p:outputPanel>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Адрес orthanc сервера</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+
+                                <p:inputMask value="#{settingBitServerBean.orthancAddress}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
+
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div>Адрес orthanc сервера</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Порт RESTAPI</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancWebPort}" required="true" label="text" style="margin-bottom: 50px">
+                                    <p:keyFilter mask="num" />
+                                </p:inputText>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >Порт для доступа к RESTAPI Orthanc. Этот же порт подставляется к адресу при перенаправлении пользователя в OSIMIS.</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Логин и пароль для доступа к Orthanc</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <label for="ulogin" class="p-col-fixed" style="width:100px">Логин: </label>
+                            <p:inplace editor="true" >
+                                <p:inputText id="ulogin" value="#{settingBitServerBean.orthancLogin}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
+                            </p:inplace>
+                            <label for="upass" class="p-col-fixed" style="width:100px">  Пароль: </label>
+                            <p:inplace editor="true" >
+                                <p:inputText id="upass" value="#{settingBitServerBean.orthancPassword}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Путь к файлу orthanc.json</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancPathToJson}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >Данный файл используется для настройки сервера Orthanc</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Путь к файлу c lua-скриптом</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.luaScriptPath}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >Данный файл используется для настройки маршрутизации dicom-файлов</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Каталог хранения файлов результатов анализа</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.orthancPathToResultFile}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Путь к файлу сетевых настроек</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.networksetpathfile}" required="true" label="text" style="margin-bottom: 50px"/>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >Данный файл используется для настройки сетевых параметров</div>
+
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Включить HTTPS</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.httpmode}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+                        <br/>
+                        <div >Включите, если вы используете HTTPS на этом сервере.</div>
+
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Пользователи">
+                    <p:outputPanel>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUser}"
+                                                 update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-users" widgetVar="dtUsers" var="users" value="#{settingBitServerBean.usersList}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     size="small"
+                                     selection="#{settingBitServerBean.selectedUsers}" rowKey="#{Users.uname}"
+                                     rows="10" rowSelectMode="add" >
+
+                            <p:column headerText="ФИО" sortBy="#{users.ruFamily}" style="text-align: center">
+                                <h:outputText value="#{users.ruFamily} #{users.ruName} #{users.ruMiddleName}" />
+                            </p:column>
+
+                            <p:column headerText="Логин" sortBy="#{users.uname}" style="text-align: center">
+                                <h:outputText value="#{users.uname}" />
+                            </p:column>
+
+                            <p:column headerText="Пароль" sortBy="#{users.password}" style="text-align: center">
+                                <h:outputText value="#{users.password}"/>
+                            </p:column>
+
+                            <p:column headerText="Роль" sortBy="#{users.role}" style="text-align: center">
+                                <h:outputText value="#{users.role}"/>
+                            </p:column>
+
+                            <p:column headerText="Группа пользователей" sortBy="#{users.ugroup}" style="text-align: center">
+                                <h:outputText value="#{users.ugroup}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-user-content"
+                                                 oncomplete="PF('manageUserDialog').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
+                                    <p:resetInput target=":form:accord:manage-user-content"/>
+                                </p:commandButton>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUserDialog').show()">
+                                    <f:setPropertyActionListener value="#{users}" target="#{settingBitServerBean.selectedUser}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:dialog id="dialogNewUser" header="Пользователь" showEffect="fade" modal="true"
+                                  widgetVar="manageUserDialog" responsive="true">
+                            <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="family" style="margin-right: .5rem">Фамилия</p:outputLabel>
+                                <p:inputText id="family" value="#{settingBitServerBean.selectedUser.ruFamily}" />
+
+                                <p:outputLabel for="name" style="margin-right: .5rem">Имя</p:outputLabel>
+                                <p:inputText id="name" value="#{settingBitServerBean.selectedUser.ruName}" />
+
+                                <p:outputLabel for="midlename" style="margin-right: .5rem">Отчество</p:outputLabel>
+                                <p:inputText id="midlename" value="#{settingBitServerBean.selectedUser.ruMiddleName}" />
+
+                                <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                                <p:inputText id="login" value="#{settingBitServerBean.selectedUser.uname}" />
+
+                                <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                                <p:inputText id="pass" value="#{settingBitServerBean.selectedUser.password}" />
+
+                                <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
+                                <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
+                                    <f:selectItem itemLabel="Администратор" itemValue="Администратор"/>
+                                    <f:selectItem itemLabel="Локальный пользователь" itemValue="Локальный пользователь"/>
+                                    <f:selectItem itemLabel="Локальный только просмотр" itemValue="Локальный только просмотр"/>
+                                    <f:selectItem itemLabel="Удаленный пользователь" itemValue="Удаленный пользователь"/>
+                                    <f:selectItem itemLabel="Клиент" itemValue="Клиент"/>
+                                    <f:selectItem itemLabel="demo" itemValue="demo"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
+                                <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
+                                    <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
+                                </p:selectOneMenu>
+
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUser}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewUser">
+                                    <p:resetInput target="dialogNewUser"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                                  message="Удалить пользователя?" header="Удалить пользователя?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUserSetting}"
+                                             oncomplete="PF('deleteUserDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteUserDialog').hide()"/>
+                        </p:dialog>
+
+                        <div class="p-d-flex"></div>
+                        <div >Список зарегистрированных пользователей.</div>
+                        <br/>
+                        <div > </div>
+                        <div ><strong>Администратор</strong> - имеет доступ к настройкам системы</div>
+                        <div ><strong>Локальный пользователь</strong> - видит все исследования, вместе с ПД</div>
+                        <div ><strong>Локальный только просмотр</strong> - видит все исследования, вместе с ПД, но не может отправлять и брать на анализ</div>
+                        <div ><strong>Удаленный пользователь</strong> - видит только исследования отправленные на диагностику в его группу, без ПД</div>
+                        <div ><strong>Клиент</strong> - может загружать исследования и видит результаты только загруженных им исследований</div>
+                        <div ><strong>demo</strong> - в качестве домашней страницы, видит "очередь" имеет самый мнимальный функционал</div>
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Группы пользователей">
+                    <p:outputPanel>
+
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Новая группа" immediate="true" icon="pi pi-plus" actionListener="#{settingBitServerBean.initNewUsergroup}"
+                                                 update="dialogNewUsergroup" oncomplete="PF('manageUsergroupDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-usergroup" widgetVar="dtUsergroup"
+                                     var="usergroup" value="#{settingBitServerBean.usergroupList}"
+                                     reflow="true" styleClass="usergroup-table"
+                                     size="small"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{Usergroup.ruName}"
+                                     rows="10" rowSelectMode="add" >
+
+                            <p:column headerText="Название группы" sortBy="#{usergroup.ruName}" style="text-align: center">
+                                <h:outputText value="#{usergroup.ruName}" />
+                            </p:column>
+
+                            <p:column headerText="Контрагент" sortBy="#{usergroup.ruContragent}" style="text-align: center">
+                                <h:outputText value="#{usergroup.ruContragent}" />
+                            </p:column>
+
+                            <p:column headerText="Разрешено скачивать исследования" sortBy="#{usergroup.downloadTrue}" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{usergroup.downloadTrue}" disabled="true"/>
+                            </p:column>
+
+                            <p:column headerText="Локальные пользователи" sortBy="#{usergroup.forlocal}" style="text-align: center">
+                                <p:selectBooleanCheckbox value="#{usergroup.forlocal}" disabled="true"/>
+                            </p:column>
+
+                            <p:column headerText="Статус" sortBy="#{usergroup.status}" style="text-align: center">
+                                <h:outputText value="#{usergroup.status}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-pencil" update=":form:accord:manage-usergroup-content"
+                                                 oncomplete="PF('manageUsergroupDialog').show()"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this" style="margin-right: 10px">
+                                    <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
+                                    <p:resetInput target=":form:accord:manage-usergroup-content"/>
+                                </p:commandButton>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUsergroupDialog').show()">
+                                    <f:setPropertyActionListener value="#{usergroup}" target="#{settingBitServerBean.selectedUsergroup}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:dialog id="dialogNewUsergroup" header="Группа" showEffect="fade" modal="true"
+                                  widgetVar="manageUsergroupDialog" responsive="true">
+                            <p:panelGrid id="manage-usergroup-content" class="ui-fluid" columns="2">
+                                <p:outputLabel for="groupname" style="margin-right: .5rem">Название</p:outputLabel>
+                                <p:inputText id="groupname" value="#{settingBitServerBean.selectedUsergroup.ruName}" />
+
+                                <p:outputLabel for="contragent" style="margin-right: .5rem">Контрагент</p:outputLabel>
+                                <p:inputText id="contragent" value="#{settingBitServerBean.selectedUsergroup.ruContragent}" />
+
+                                <p:outputLabel for="download" style="margin-right: .5rem">Разрешить скачивание DICOM-данных</p:outputLabel>
+                                <p:selectBooleanCheckbox id="download" value="#{settingBitServerBean.selectedUsergroup.downloadTrue}"/>
+
+                                <p:outputLabel for="local" style="margin-right: .5rem">Для локальных пользователей</p:outputLabel>
+                                <p:selectBooleanCheckbox id="local" value="#{settingBitServerBean.selectedUsergroup.forlocal}"/>
+
+                                <p:outputLabel for="status" style="margin-right: .5rem">Статус</p:outputLabel>
+                                <p:selectOneMenu id="status" value="#{settingBitServerBean.selectedUsergroup.status}">
+                                    <f:selectItem itemLabel="Активна" itemValue="active"/>
+                                    <f:selectItem itemLabel="Неактивна" itemValue="inactive"/>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{settingBitServerBean.addNewUsergroup}"
+                                                 update=":form:growl2">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUsergroupDialog').hide()"
+                                                 class="ui-button-secondary" update="dialogNewUsergroup">
+                                    <p:resetInput target="dialogNewUsergroup"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteUsergroupDialog" showEffect="fade" width="300"
+                                  message="Удалить группу?" header="Удалить группу?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteUsergroupSetting}"
+                                             oncomplete="PF('deleteUsergroupDialog').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteUsergroupDialog').hide()"/>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="errorDeleteUsergroupDialog" showEffect="fade" width="300"
+                                  header="Внимание!" message="Ошибка" severity="warn">
+                            <div class="p-text-bold">
+                                При удалении возникла ошибка! Скорее всего в группе есть активные пользователи!
+                                Удалить её невозможно!
+                            </div>
+                        </p:dialog>
+
+                        <div>Списко зарегистрированных групп пользователей, признак "Для локальных пользователей" - означает что группа не будет попадать в списки для отправки.</div>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Отладка">
+                    <p:outputPanel>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Период синхронизации базы</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:spinner id="dateSpin" value="#{settingBitServerBean.periodUpdate}" min="1" max="60">
+                                <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:spinner>
+                        </p>
+                        <br/>
+                        <div >Интервал времени через который будет проводиться синхронизация базы Orthanc и bitServer, выбирается в зависимости от производительности сервера. Изменение вступит в силу после перезапуска TOMCAT. (в минутах)</div>
+
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация за выбранный период</b>
+                        </p:divider>
+
+                        <p:outputLabel for="startdate">Дата начала синхронизации: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="startdate" value="#{settingBitServerBean.startDate}" showIcon="true" style="font-weight: bold; margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <p:outputLabel for="stopdate">  Дата окончания синхронизации: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="stopdate" value="#{settingBitServerBean.stopDate}" showIcon="true" style="margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <br/>
+                        <br/>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         action="#{settingBitServerBean.syncPeriod}"
+                                         onclick="PF('statusDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
+
+                        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                            <h1 class="p-text-center">
+                                <h:outputLabel for="txt_count" value="Выполненно:  "/>
+                                <h:outputText id="txt_count" value="#{settingBitServerBean.number}"/>
+                            </h1>
+
+                            <p:poll interval="1" listener="#{settingBitServerBean.increment}" update="txt_count"/>
+                        </p:dialog>
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация всех данных</b>
+                        </p:divider>
+
+                        <p:commandButton value="Старт"
+                                         async="true"
+                                         process="@this"
+                                         action="#{settingBitServerBean.syncAll}"
+                                         onclick="PF('pbAjax2').start();"
+                                         widgetVar="startButtonSA" styleClass="p-mr-2" ajax="false"/>
+                        <br/>
+
+                        <p:progressBar  widgetVar="pbAjax2" ajax="true" value="#{settingBitServerBean.progress1}"
+                                        interval="500" labelTemplate="{value}%"
+                                        styleClass="p-mt-3" global="false">
+                            <p:ajax event="complete" oncomplete="PF('startButtonSA').enable()"/>
+                        </p:progressBar>
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Показывать статистику пользователям</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.showStat}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, все пользователи видят статистику сервера на своей домашней странице</div>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Удаление всех DICOM-данных</b>
+                        </p:divider>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         oncomplete="PF('deleteDicomAllDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2"/>
+
+                        <p:dialog widgetVar="deleteDicomAllDialog" showEffect="fade" width="300"
+                                  header="Вы собираетесь удалить dicom-данные, эта процедура необратима, продолжить?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.dateBaseFactoryReset}"
+                                             onclick="PF('statusDialog').show()"
+                                             oncomplete="PF('deleteDicomAllDialog').hide()"
+                                             ajax="false"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteDicomAllDialog').hide()"/>
+                        </p:dialog>
+
+                        <br/>
+                        <br/>
+                        <div >Будьте внимательны при использовании, данная процедура - необратима!</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Удаление DICOM-данных за выбранный период</b>
+                        </p:divider>
+
+                        <p:outputLabel for="startdeldate">Дата начала удаления: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="startdeldate" value="#{settingBitServerBean.startDelDate}" showIcon="true" style="font-weight: bold; margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <p:outputLabel for="stopdate">  Дата окончания удаления: </p:outputLabel>
+                        <p:inplace editor="true" >
+                            <p:datePicker id="stopdeldate" value="#{settingBitServerBean.stopDelDate}" showIcon="true" style="margin-right: 10px">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </p:datePicker>
+                            <p:ajax event="save" />
+                        </p:inplace>
+
+                        <br/>
+                        <br/>
+
+                        <p:commandButton value="Старт"
+                                         process="@this"
+                                         oncomplete="PF('deleteDicomPeriodDialog').show()"
+                                         widgetVar="startButton" styleClass="p-mr-2" />
+                        <br/>
+
+                        <p:dialog widgetVar="deleteDicomPeriodDialog" showEffect="fade" width="300"
+                                  header="Вы собираетесь удалить dicom-данные, эта процедура необратима, продолжить?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{settingBitServerBean.deleteDicomPeriod}"
+                                             onclick="PF('statusDialog').show()"
+                                             oncomplete="PF('deleteDicomPeriodDialog').hide()"
+                                             ajax="false"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteDicomPeriodDialog').hide()"/>
+                        </p:dialog>
+
+
+                        <br/>
+                        <div >Не закрываейте эту вкладку, пока процедура не завершится</div>
+                        <br/>
+                        <p:divider align="left" type="dashed">
+                            <b>Синхронизация с удаленным DICOM-сервером</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:outputLabel for="remoteaddr">Адрес удаленного сервера: </p:outputLabel>
+
+                            <p:inplace editor="true" id="remoteaddr">
+                                <p:inputText  value="#{settingBitServerBean.remoteaddr}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                            <p:outputLabel for="remoteport">Порт удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remoteport" >
+                                <p:inputText value="#{settingBitServerBean.remoteport}" required="true" label="text" style="margin-bottom: 50px">
+                                    <p:keyFilter mask="num" />
+                                </p:inputText>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                            <p:outputLabel for="remotelogin">Логин удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remotelogin">
+                                <p:inputText value="#{settingBitServerBean.remotelogin}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p class="p-m-0">
+                            <p:outputLabel for="remotepass">Пароль удаленного сервера: </p:outputLabel>
+                            <p:inplace editor="true" id="remotepass">
+                                <p:inputText  value="#{settingBitServerBean.remotepass}" required="true" label="text" style="margin-bottom: 50px"/>
+                            </p:inplace>
+                        </p>
+                        <br/>
+
+                        <p:commandButton value="Старт"
+                                         async="true"
+                                         process="@this"
+                                         action="#{settingBitServerBean.startRemoteSync}"
+                                         onclick="PF('pbAjax').start();"
+                                         widgetVar="startButtonRS" styleClass="p-mr-2" ajax="true"
+                                         update="form:growl2"/>
+
+
+                        <p:progressBar id="pbar" widgetVar="pbAjax" ajax="true" value="#{settingBitServerBean.progress2}"
+                                       interval="500" labelTemplate="{value}%"
+                                       styleClass="p-mt-3" global="false">
+                            <p:ajax event="complete" oncomplete="PF('startButtonRS').enable()" />
+                        </p:progressBar>
+
+                        <br/>
+                        <h:outputText id="txt_result" value="#{settingBitServerBean.vremoteTransStatus}"/>
+                        <p:poll interval="1" listener="#{settingBitServerBean.incrementRT}" update="txt_result"/>
+                        <br/>
+                        <br/>
+
+                        <div >Введите данные для доступа к серверу и нажмите Старт. Синхронизацию можно остановить в любой момент просто закрыв страницу, а после продолжить, причем
+                            ранее переданные данные не будут переданы повторно</div>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="WorkList и HL7-служба">
+                    <p:outputPanel>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Порт службы HL7</b>
+                        </p:divider>
+                        <p class="p-m-0">
+                            <p:inplace editor="true" >
+                                <p:inputText value="#{settingBitServerBean.hl7port}" required="true" label="text" style="margin-bottom: 50px">
+                                    <p:keyFilter mask="num" />
+                                </p:inputText>
+                                <p:ajax event="save" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:inplace>
+                        </p>
+                        <br/>
+                        <div >Порт на котором сервер слушает HL7 сообщения</div>
+
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Время хранения файлов рабочих списков</b>
+                        </p:divider>
+                        <p class="p-m-0">
+
+                            <p:spinner id="minMax" value="#{settingBitServerBean.workListLifeTime}" min="1" max="24">
+                                <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:spinner>
+
+
+                        </p>
+                        <br/>
+                        <div >Файлы рабочих списков, будут удаляться по истечении этого времени (в часах)</div>
+
+                        <br/>
+
+                    </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Внешний вид формы поиска">
+                    <p:outputPanel>
+
+                        <p class="p-m-0" style="margin-top: 10px; margin-bottom: 10px; margin-right: 10px">
+
+                            <p:panelGrid id="manageTG"  styleClass="ui-panelgrid-blank ui-fluid" style="border:0 none; background-color:transparent;">
+
+                                <p:row>
+
+                                    <p:column>
+                                        <p:outputLabel for="statusTogle" style="margin-right: .5rem">Статус</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="previewTogle" style="margin-right: .5rem">Preview</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="datebthTogle" style="margin-right: .5rem">Дата рождения</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="dateTogle" style="margin-right: .5rem">Дата исследования</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="descriptionTogle" style="margin-right: .5rem">Описание</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="modalitiTogle" style="margin-right: .5rem">Модальность</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="whereSendTogle" style="margin-right: .5rem">Куда отправлено</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="optionsSendTogle" style="margin-right: .5rem">Функционал отправки</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="optionDownloadTogle" style="margin-right: .5rem">Функционал загрузки</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="optionShowSeachTime" style="margin-right: .5rem">Показывать скорость поиска</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="ShowHelpTip" style="margin-right: .5rem">Показывать подсказки</p:outputLabel>
+                                    </p:column>
+
+                                </p:row>
+
+                                <p:row>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="statusTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStatus}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="previewTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colPreview}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="datebthTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDateBirth}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="dateTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDate}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="descriptionTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDescription}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="modalitiTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colModality}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="whereSendTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colWhereSend}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="optionsSendTogle" style="margin-top: 10pm" value="#{settingBitServerBean.optSend}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="optionDownloadTogle" style="margin-top: 10pm" value="#{settingBitServerBean.optDownload}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="optionShowSeachTime" style="margin-top: 10pm" value="#{settingBitServerBean.showSeachTime}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="ShowHelpTip" style="margin-top: 10pm" value="#{settingBitServerBean.showHelp}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                </p:row>
+
+                            </p:panelGrid>
+
+                        </p>
+
+                        <p:toolbar id="toolbar">
+                            <p:toolbarGroup>
+                                <p:commandButton id="send-button"
+                                                 icon="pi pi-send"
+                                                 styleClass="ui-button-danger"
+                                                 rendered="#{settingBitServerBean.optSend == 'true'}"
+                                                 style="margin-right: 5px">
+                                </p:commandButton>
+
+                                <p:selectOneMenu id="ugroup2"  rendered="#{settingBitServerBean.optSend == 'true'}" dynamic="true">
+
+                                </p:selectOneMenu>
+
+                            </p:toolbarGroup>
+                            <p:toolbarGroup align="centr">
+                                <h:outputLabel style="font-weight: bold" id="for_txt_count2" for="txt_count2" value="Всего:  "/>
+                                <h:outputText  style="font-weight: bold" id="txt_count2" />
+                            </p:toolbarGroup>
+                            <p:toolbarGroup align="right">
+                                <p:commandButton rendered="#{settingBitServerBean.optDownload == 'true'}"
+                                                 style="margin-right: 10px"
+                                                 id="uploaddicom"
+                                                 icon="pi pi-upload" styleClass="ui-button-success" />
+                                <p:tooltip rendered="#{settingBitServerBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
+
+                                <p:commandButton rendered="#{settingBitServerBean.optDownload == 'true'}"
+                                                 process="@this"
+                                                 widgetVar="updateBut"
+                                                 id="updateBut"
+                                                 icon="pi pi-refresh" styleClass="ui-button-help" ajax="true"/>
+                                <p:tooltip rendered="#{settingBitServerBean.showHelp == 'true'}" for="updateBut" value="Обновить"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <p:dataTable id="dt-studys2" widgetVar="visibleStudy" var="bitServerStudy"
+                                     reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                                     emptyMessage="Нет записей для отображения" lazy="false"
+                                     paginatorPosition="bottom">
+
+                            <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
+
+                            <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colStatus == 'true'}" >
+                                <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
+                                              value="#{bitServerStudy.rustatus}"/>
+                            </p:column>
+
+                            <p:column headerText="Preview" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colPreview == 'true'}" >
+                                <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
+                            </p:column>
+
+                            <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
+                                <h:outputText value="#{bitServerStudy.shortid}"/>
+                            </p:column>
+
+                            <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}" filterBy="#{bitServerStudy.patientname}" style="text-align: center">
+                                <h:outputText value="#{bitServerStudy.patientname}"/>
+                            </p:column>
+
+                            <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDateBirth == 'true'}">
+                                <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDate == 'true'}">
+                                <h:outputText value="#{bitServerStudy.sdate}">
+                                    <f:convertDateTime pattern="dd.MM.yyyy" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colDescription == 'true'}">
+                                <h:outputText value="#{bitServerStudy.sdescription}"/>
+                            </p:column>
+
+                            <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colModality == 'true'}">
+                                <h:outputText value="#{bitServerStudy.modality}"/>
+                            </p:column>
+
+                            <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colWhereSend == 'true'}">
+                                <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <br/>
+                        <div > Включение/выключение соответствующих тумблеров, отвечает за видимость колонок в таблице очереди</div>
+
+                    </p:outputPanel>
+                </p:tab>
+
+            </p:accordionPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

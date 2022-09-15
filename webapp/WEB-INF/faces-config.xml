@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+    http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+
+        <navigation-case>
+            <from-outcome>neworder</from-outcome>
+            <to-view-id>/views/neworder.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>clientorders</from-outcome>
+            <to-view-id>/views/clientorders.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>clientresults</from-outcome>
+            <to-view-id>/views/clientresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>errorpage</from-outcome>
+            <to-view-id>/views/errorpage.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>logpage</from-outcome>
+            <to-view-id>/views/logpage.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>queue</from-outcome>
+            <to-view-id>/views/queue.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>luresults</from-outcome>
+            <to-view-id>/views/localuserresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>lucurtask</from-outcome>
+            <to-view-id>/views/localusercurrenttask.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>scheduler</from-outcome>
+            <to-view-id>/views/scheduler.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>queueremote</from-outcome>
+            <to-view-id>/views/queueremote.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>ruresults</from-outcome>
+            <to-view-id>/views/remoteuserresults.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>rucurtask</from-outcome>
+            <to-view-id>/views/remoteusercurrenttask.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>client</from-outcome>
+            <to-view-id>/views/client.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>login</from-outcome>
+            <to-view-id>/views/login.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>wordeditor</from-outcome>
+            <to-view-id>/views/wordeditor2.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>adminPage</from-outcome>
+            <to-view-id>/views/admin.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_orthanc</from-outcome>
+            <to-view-id>/views/settings_orthanc.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_bitserver</from-outcome>
+            <to-view-id>/views/settings_bitserver.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_network</from-outcome>
+            <to-view-id>/views/settings_network.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_dicomroute</from-outcome>
+            <to-view-id>/views/settings_dicomroute.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>settings_datebase</from-outcome>
+            <to-view-id>/views/settings_datebase.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>localuser</from-outcome>
+            <to-view-id>/views/localuser.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>remoteuser</from-outcome>
+            <to-view-id>/views/remoteuser.xhtml</to-view-id>
+        </navigation-case>
+        
+    </navigation-rule>
+</faces-config>

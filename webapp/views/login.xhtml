@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<f:view>
+
+    <h:head><title>bitServer</title>
+
+        <style type="text/css">
+            .my_text
+            {
+                font-family:    Arial, Helvetica, sans-serif;
+            }
+            div.centercard
+            {
+                display: flex;
+                justify-content: center;
+                vertical-align: middle;
+                horiz-align: center;
+                vert-align: middle;
+            }
+        </style>
+
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+
+    </h:head>
+
+    <h:body>
+        <h:form id="autorise">
+            <div class="p-d-flex p-flex-column" style="font: -apple-system-body">
+                <div class="my_text" style="color: darkgray; margin-bottom: 5px">Dicom Remote Analysis</div>
+                <div class="my_text" style="color: darkgray; margin-bottom: 5px">bitServer</div>
+                <div class="my_text" style="color: darkgray">Ver: #{mainBean.versionInfo}</div>
+            </div>
+
+            <div class="centercard">
+            <p:growl id="growl" showDetail="true" />
+            <div>
+
+                <div class="p-field p-grid">
+                    <span class="ui-float-label" style="margin-top: 200px">
+                        <p:inputText id="float-input" value="#{autoriseBean.inputUserName}" style="width: 200px"/>
+                        <p:outputLabel for="@previous" value="Username"/>
+                    </span>
+                </div>
+
+                <div class="p-field p-grid">
+                    <span class="ui-float-label">
+                        <p:password id="toggle" value="#{autoriseBean.inputPassword}" style="width: 200px"/>
+                        <p:outputLabel for="@previous" value="Password"/>
+                    </span>
+                </div>
+
+                <div class="p-field p-grid">
+                    <p:commandButton style="width: 200px" icon="pi pi-sign-in"  actionListener="#{autoriseBean.validateUsernamePassword}" update="growl"/>
+                </div>
+            </div>
+            </div>
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

@@ -1,0 +1,41 @@
+<html xmlns = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:f = "http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite = "http://java.sun.com/jsf/composite">
+
+<composite:interface>
+    <composite:attribute name = "usernameLabel" />
+    <composite:attribute name = "usernameValue" />
+</composite:interface>
+
+<composite:implementation>
+    <h:form>
+        <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
+            <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
+
+            <f:facet name="options">
+                <p:menu>
+                    <p:submenu label="Периоды">
+                        <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                        <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                    </p:submenu>
+
+
+                </p:menu>
+            </f:facet>
+
+        </p:panel>
+
+        <p:panel id="modality" header="Распределение по модальностям"
+                 style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+            <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieModality}" />
+        </p:panel>
+
+        <p:panel id="source" header="Распределение по источникам"
+                 style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+            <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieSource}" />
+        </p:panel>
+    </h:form>
+</composite:implementation>
+</html>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style type="text/css">
+            .ui-datatable2 .ui-datatable-data td{
+                border: none;
+            }
+        </style>
+
+        <h:form id="seachform" enctype="multipart/form-data">
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="remoteuser" icon="pi pi-backward"/>
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+                <div style="align-content: center">
+                    <p:toolbar>
+                        <p:toolbarGroup align="right">
+                            <p:commandButton value="Обновить" actionListener="#{queueremoteBean.dataoutput}"
+                                             process="@this" update="searchgrowl"
+                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="false"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+                    <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{queueremoteBean.visibleStudiesList}"
+                                 reflow="true" styleClass="borderless"
+                                 emptyMessage="Нет записей для отображения"
+                                 rowKey="#{bitServerStudy.sid}" paginator="true"
+                                 rows="25" paginatorPosition="bottom">
+                        <f:facet name="header">
+                            <div class="products-table-header">
+                                <span style="font-weight: bold">Исследования</span>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.shortid}"/>
+                        </p:column>
+
+                        <p:column headerText="Пол"  style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientsex}"/>
+
+                        </p:column>
+
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.sdescription}"/>
+                        </p:column>
+
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
+                        <p:column exportable="false" style="align-content: center; width:450px">
+                            <p:commandButton id="anamnes"
+                                             icon="pi pi-id-card" update=":seachform:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                                             styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px"
+                                             disabled="#{!not empty bitServerStudy.anamnes}">
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip for="anamnes" value="Анамнез"/>
+
+                            <p:commandButton id="viewinosimis"
+                                             styleClass="rounded-button ui-button-help" icon="pi pi-eye" process="@this " style="margin-right: 10px"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
+                                             actionListener="#{queueremoteBean.redirectToOsimis(bitServerStudy.anonimstudyid)}">
+                            </p:commandButton>
+                            <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
+
+                            <p:commandButton id="gettowork"
+                                             style="margin-right: 10px" icon="pi pi-pencil"
+                                             styleClass="rounded-button"
+                                             disabled="#{queueremoteBean.currentUser.hasBlockStudy}"
+                                             oncomplete="PF('confirmtogetstudy').show()">
+                                             <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueremoteBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip for="gettowork" value="Взять на описание"/>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                              widgetVar="manageAnamnes" responsive="true">
+                        <p:inputTextarea value="#{queueremoteBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                         autoResize="false" inputmode="auto"/>
+
+                        <f:facet name="footer">
+
+                            <span style="padding: 20px;"> </span>
+
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
+                              widgetVar="confirmtogetstudy" responsive="true">
+                        <p:card style="width: 25rem; margin-bottom: 2em">
+                            <f:facet name="title">
+                                Внимание, вы собираетесь взять исследование на описание!
+                            </f:facet>
+
+                            <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                Срок блокировки исследования #{mainBean.timeOnWork} часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
+
+                        </p:card>
+                        <div class="p-d-flex p-jc-between">
+                            <div class="p-mr-2">
+                                <p:commandButton value="Отказаться" onclick="PF('confirmtogetstudy').hide()"/>
+                            </div>
+
+                            <div class="p-mr-2">
+                                <p:commandButton value="Согласиться" action="#{queueremoteBean.getStudyToDiag}" oncomplete="rucurtask"/>
+                            </div>
+                        </div>
+
+                    </p:dialog>
+
+                </div>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>
