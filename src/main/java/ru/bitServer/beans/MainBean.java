@@ -20,9 +20,11 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +55,9 @@ public class MainBean implements UserDao, DataAction {
     public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
     public static final String user = "orthanc";
     public static final String password = "orthanc";
+
+    String url2 = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -145,8 +150,6 @@ public class MainBean implements UserDao, DataAction {
 
         HL7service();
 
-        //org.slf4j.Logger logger = LoggerFactory.getLogger(MainBean.class);
-        //logger.info("asd"); ;//.info("Hello World");
     }
 
     public static void HL7service() {
@@ -200,6 +203,27 @@ public class MainBean implements UserDao, DataAction {
             resultMapShort.clear();
             resultMapLong = getStatMap(allStudies,"MM.yyyy");
             resultMapShort = getStatMap(allStudies,"yyyy");
+
+
+//            Properties props = new Properties();
+//            props.setProperty("user", "orthanc");
+//            props.setProperty("password", "orthanc");
+//            try {
+//                Class.forName("org.postgresql.Driver");
+//                java.sql.Connection conn =  DriverManager.getConnection(url2, props);
+////                String sqlstr = "SELECT table_name FROM information_schema.tables\n" +
+////                        "WHERE table_schema NOT IN ('information_schema','pg_catalog')";
+//                DatabaseMetaData metaData = conn.getMetaData();
+//                String[] types = {"TABLE"};
+//                //Retrieving the columns in the database
+//                ResultSet tables = metaData.getTables(null, null, "%", types);
+//                while (tables.next()) {
+//                    System.out.println(tables.getString("TABLE_NAME"));
+//                }
+//                conn.close();
+//            } catch (SQLException | ClassNotFoundException throwables) {
+//                throwables.printStackTrace();
+//            }
         }
     }
 

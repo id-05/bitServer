@@ -161,6 +161,13 @@
             <version>1.2</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.0-801.jdbc4</version>
+        </dependency>
+
     </dependencies>
     <!--Primefaces repository. Need to download themes-->
     <!--Репозиторий primefaces. Нужно указать, чтобы можно было скачивать различные темы оформления компонентов-->

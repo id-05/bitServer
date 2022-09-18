@@ -373,7 +373,6 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-        System.out.println("queueBean new");
         LogTool.getLogger().info(this.getClass().getSimpleName()+" "+"queueBean new");
         for(BitServerModality bufModality:getAllBitServerModality()){
             modalityName.add(bufModality.getName());

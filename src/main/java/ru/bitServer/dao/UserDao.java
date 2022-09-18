@@ -410,6 +410,7 @@ public interface UserDao {
                         rs.getInt(9));
                 resultList.add(buf);
             }
+            con.close();
         } catch (Exception e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
@@ -422,6 +423,7 @@ public interface UserDao {
             Connection con = DriverManager.getConnection(url, user, password);
             Statement stmt = con.createStatement();
             stmt.executeQuery(query);
+            con.close();
         } catch (Exception e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
@@ -470,28 +472,53 @@ public interface UserDao {
 //    }
 
     default void addStudyJDBC(BitServerStudy study) {
+        String query = "";
         try {
             Connection con = DriverManager.getConnection(url, user, password);
-            String query = "INSERT INTO BitServerStudy (sid, shortid, sdescription, source, sdate, modality, dateaddinbase, patientname, " +
+            query = "INSERT INTO BitServerStudy (sid, shortid, sdescription, source, sdate, modality, dateaddinbase, patientname, " +
                     "patientbirthdate, patientsex, status, typeresult, userwhoblock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setString(1, study.getSid());
-            pstmt.setString(2, study.getShortid());
+            pstmt.setString(2, clearStr(study.getShortid()));
             pstmt.setString(3, study.getSdescription());
-            pstmt.setString(4, study.getSource());
-            pstmt.setDate(5, new java.sql.Date(study.getSdate().getTime()));
+            pstmt.setString(4, clearStr(study.getSource()));
+            pstmt.setDate(5, checkDate(study.getSdate()));
             pstmt.setString(6, study.getModality());
             pstmt.setDate(7, new java.sql.Date(new Date().getTime()));
-            pstmt.setString(8, study.getPatientname());
+            pstmt.setString(8, clearStr(study.getPatientname()));
             pstmt.setDate(9, new java.sql.Date(study.getPatientbirthdate().getTime()));
-            pstmt.setString(10, study.getPatientsex());
+            pstmt.setString(10, clearStr(study.getPatientsex()));
             pstmt.setString(11, "0");
             pstmt.setString(12, "0");
             pstmt.setString(13, "0");
             pstmt.execute();
+            con.close();
         }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ "Error sql add study: "+e.getMessage());
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ "Error sql add study: "+e.getMessage()+" sql = "+query);
         }
+    }
+
+    default java.sql.Date checkDate(Date bufDate){
+        java.sql.Date returnDate = null;
+        if(bufDate.equals(null)){
+            returnDate = new java.sql.Date(new Date().getTime());
+        }else{
+            returnDate = new java.sql.Date(bufDate.getTime());
+        }
+        return returnDate;
+    }
+
+    default String clearStr(String buf){
+        String result = "";
+        String taboo = "^'*/\\\"~";
+        if(!buf.equals("")) {
+            for (char c : taboo.toCharArray()) {
+                result = buf.replace(c, ' ');
+            }
+        }else{
+            result=" ";
+        }
+        return result;
     }
 
     default void updateStudy(BitServerStudy study) {

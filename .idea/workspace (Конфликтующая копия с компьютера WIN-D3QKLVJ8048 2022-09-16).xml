@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="bitServer:war exploded" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f6b664ad-860a-4d39-8ac2-90732e1e16f9" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_13_0_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_lmax_disruptor_3_3_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_media_clibwrapper_jiio_1_2_pre_dr_b04.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_media_jai_imageio_1_2_pre_dr_b04.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_beanutils_commons_beanutils_1_8_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_cli_commons_cli_1_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_jxpath_commons_jxpath_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_logging_commons_logging_1_1_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_8_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_core_asl_1_9_13.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_jackson_jackson_mapper_asl_1_9_13.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_audit_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_conf_api_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_conf_api_hl7_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_conf_core_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_conf_core_api_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_conf_dicom_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_core_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_dict_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_emf_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_filecache_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_hl7_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_image_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_imageio_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_imageio_rle_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_json_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_mime_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_net_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_net_audit_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_net_hl7_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_net_imageio_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_soundex_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_dcm4che_ws_rs_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_common_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcm2dcm_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcm2jpg_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcm2json_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcm2xml_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmdict_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmdir_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmdump_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmgen_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmqrscp_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_dcmvalidate_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_emf2sf_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_findscu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_getscu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_hl72xml_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_hl7pix_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_hl7rcv_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_hl7snd_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_ianscp_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_ianscu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_jpg2dcm_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_json2dcm_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_mkkos_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_movescu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_mppsscp_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_mppsscu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_prefs2xml_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_qc_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_qidors_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_stgcmtscu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_storescp_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_storescu_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_stowrs_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_swappxdata_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_syslog_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_syslogd_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_wadors_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_wadouri_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_xml2dcm_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_xml2hl7_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_dcm4che_tool_xml2prefs_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dcm4che_tool_ihe_dcm4che_tool_ihe_modality_3_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_javax_json_1_0_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_resteasy_jaxrs_api_3_0_4_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_log4j12_1_7_5.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/bitServer_war.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/bitServer_war.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/bitServer_war_exploded.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/bitServer_war_exploded.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_faces_jsf_api_2_2_20.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_faces_jsf_impl_2_2_20.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_javax_faces_2_2_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace (Конфликтующая копия с компьютера DESKTOP-7BMF22J 2021-07-21).xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace (Конфликтующая копия с компьютера DESKTOP-7BMF22J 2022-08-19).xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace (Конфликтующая копия с компьютера WIN-D3QKLVJ8048 2022-08-18).xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bitServer.iml" beforeDir="false" afterPath="$PROJECT_DIR$/bitServer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/bitServer_war/bitServer.war" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/bitServer_war/bitServer.war" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/AutoriseBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/AutoriseBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/ClientBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/ClientBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DataStorageBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DataStorageBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DateBaseBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DateBaseBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DicomrouteBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/DicomrouteBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LocalUserCurTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LocalUserCurTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LocalUserDashboardBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LocalUserDashboardBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LogBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/LogBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/MainBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/MainBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/NetworkSettingsBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/NetworkSettingsBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/QueueBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/QueueBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/QueueremoteBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/QueueremoteBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/RemoteUserCurTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/RemoteUserCurTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/RemoteUserDashboardBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/RemoteUserDashboardBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/SettingBitServerBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/SettingBitServerBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/SettingsOrthancBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/SettingsOrthancBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/StatisticsBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/beans/StatisticsBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/BitServerStudy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/BitServerStudy.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/DataAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/DataAction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/dao/UserDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/dicom/JsonSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/dicom/JsonSettings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/service/DicomruleParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/service/DicomruleParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/service/HL7toWorkList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/service/HL7toWorkList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/AuthorizationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/AuthorizationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/HibernateSessionFactoryUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/HibernateSessionFactoryUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/LogTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/LogTool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/OrthancRestApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ru/bitServer/util/OrthancRestApi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/log4j.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/log4j.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/AutoriseBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/AutoriseBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/ClientBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/ClientBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DataStorageBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DataStorageBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DateBaseBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DateBaseBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DicomrouteBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/DicomrouteBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LocalUserCurTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LocalUserCurTask.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LocalUserDashboardBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LocalUserDashboardBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LogBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/LogBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean$BaseUpdate.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean$BaseUpdate.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean$OurConnectionListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean$OurConnectionListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/MainBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/NetworkSettingsBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/NetworkSettingsBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/QueueBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/QueueBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/QueueremoteBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/QueueremoteBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/RemoteUserCurTask.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/RemoteUserCurTask.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/RemoteUserDashboardBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/RemoteUserDashboardBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/SettingBitServerBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/SettingBitServerBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/SettingsOrthancBean.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/beans/SettingsOrthancBean.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/BitServerStudy.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/BitServerStudy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/DataAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/DataAction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/UserDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/dao/UserDao.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/dicom/JsonSettings.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/dicom/JsonSettings.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/service/DicomruleParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/service/DicomruleParser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/service/HL7toWorkList.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/service/HL7toWorkList.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/util/AuthorizationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/util/AuthorizationFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/util/HibernateSessionFactoryUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/util/HibernateSessionFactoryUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/util/LogTool.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/util/LogTool.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ru/bitServer/util/OrthancRestApi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ru/bitServer/util/OrthancRestApi.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/views/queue.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/views/queue.xhtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/views/settings_bitserver.xhtml" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/views/settings_bitserver.xhtml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="ProjectId" id="2DYJztYKbxbTW90owG6KT7SKMVJ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../bitServer_console" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.109039545" />
+    <property name="project.structure.side.proportion" value="0.3205269" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Tomcat 9" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="bitServer:war exploded">
+          <settings>
+            <option name="CONTEXT_PATH" value="/bitServer" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="5504d314-293e-418d-aed4-f8002d44f89a" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="59583" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Profile">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9" ALTERNATIVE_JRE_ENABLED="false">
+      <option name="UPDATING_POLICY" value="restart-server" />
+      <deployment>
+        <artifact name="bitServer:war exploded">
+          <settings>
+            <option name="CONTEXT_PATH" value="/bitServer" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="b58ac36c-1759-40a3-aef7-d4dd1902759c" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="59583" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Profile">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="bitServer:war exploded" />
+          <artifact name="bitServer:war" />
+        </option>
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f6b664ad-860a-4d39-8ac2-90732e1e16f9" name="Default Changelist" comment="" />
+      <created>1660870358951</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1660870358951</updated>
+      <workItem from="1660870367829" duration="5858000" />
+      <workItem from="1660881243949" duration="3951000" />
+      <workItem from="1660889188641" duration="5853000" />
+      <workItem from="1661129503849" duration="2140000" />
+      <workItem from="1661132400256" duration="8518000" />
+      <workItem from="1661215996188" duration="9552000" />
+      <workItem from="1661302746119" duration="6814000" />
+      <workItem from="1661387845549" duration="1205000" />
+      <workItem from="1661392335829" duration="11057000" />
+      <workItem from="1661432294265" duration="2420000" />
+      <workItem from="1661471794226" duration="10398000" />
+      <workItem from="1661665390912" duration="32000" />
+      <workItem from="1661665443189" duration="2187000" />
+      <workItem from="1661748236101" duration="8937000" />
+      <workItem from="1661786342150" duration="3238000" />
+      <workItem from="1661817128651" duration="18773000" />
+      <workItem from="1661846893224" duration="2921000" />
+      <workItem from="1661867521440" duration="6296000" />
+      <workItem from="1661902748823" duration="6515000" />
+      <workItem from="1662559888570" duration="537000" />
+      <workItem from="1662560516409" duration="106000" />
+      <workItem from="1662561927771" duration="251000" />
+      <workItem from="1662562333566" duration="3000" />
+      <workItem from="1662942868104" duration="91000" />
+      <workItem from="1662943233621" duration="317000" />
+      <workItem from="1662943690026" duration="770000" />
+      <workItem from="1662944518384" duration="290000" />
+      <workItem from="1662945102049" duration="124000" />
+      <workItem from="1662945722587" duration="130000" />
+      <workItem from="1662946083952" duration="347000" />
+      <workItem from="1662946696211" duration="221000" />
+      <workItem from="1662947246078" duration="1153000" />
+      <workItem from="1662956899721" duration="13661000" />
+      <workItem from="1663026903327" duration="31303000" />
+      <workItem from="1663136079503" duration="5907000" />
+      <workItem from="1663337938068" duration="113000" />
+      <workItem from="1663338069160" duration="77000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>
