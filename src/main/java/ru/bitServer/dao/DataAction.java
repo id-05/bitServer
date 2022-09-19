@@ -44,26 +44,29 @@ public interface DataAction extends UserDao{
 
         startTime = new Date().getTime();
         int i = 0;
+        int size = idOrthancStudy.size();
         for(String bufId:idOrthancStudy){
             StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
             parserJson = new JsonParser();
             JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
             OrthancStudy bufStudy = connection.parseStudy(jsonObject);
-            if(!bufStudy.getPatientName().equals("ANONIM")){
+           // if(!bufStudy.getPatientName().equals("ANONIM")){
                 BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
                         bufStudy.getInstitutionName(), bufStudy.getDate(),
-                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), " ", " ", 0);
                 addStudyJDBC(buf);
                 i++;
-            }
+           // }
         }
         double finishAdd = ((new Date().getTime())-startTime)/1000;
-        if(getBitServerResource("debug").getRvalue().equals("true"))
+        if(getBitServerResource("debug").getRvalue().equals("true")){
         LogTool.getLogger().info(this.getClass().getSimpleName()+": "+ "Получение study orthanc: "+readyExistOrthancStudyList+
                 "c. Получение study bitServer: "+readyExistBitServerStudyList+
                 "c. Новых: "+i+
                 " Обработока: "+readyOnlyNewStudyList+
-                "c. Запись в базу в базу: "+finishAdd+"c.");
+                "c. Запись в базу: "+finishAdd+"c."+
+                "Всего новых и анонимных: "+size);
+        }
         return i;
     }
 

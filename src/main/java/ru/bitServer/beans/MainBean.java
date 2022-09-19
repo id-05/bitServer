@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 @ManagedBean(name = "mainBean", eager = true)
 @ApplicationScoped
@@ -52,11 +53,12 @@ public class MainBean implements UserDao, DataAction {
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
-    public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
+    public static final String url = "jdbc:mysql://192.168.1.58:3306/orthanc";
     public static final String user = "orthanc";
     public static final String password = "orthanc";
+    boolean showStat;
 
-    String url2 = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    public static final String url2 = "jdbc:postgresql://192.168.1.58:5432/orthanc";
 
 
     public int getTimeOnWork() {
@@ -122,6 +124,8 @@ public class MainBean implements UserDao, DataAction {
                         break;
                     case "PeriodUpdate": periodUpdate = buf.getRvalue();
                         break;
+                    case "showStat": showStat = buf.getRvalue().equals("true");
+                        break;
                 }
             }
         }catch (Exception e){
@@ -144,8 +148,10 @@ public class MainBean implements UserDao, DataAction {
         }
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, Long.valueOf(periodUpdate), TimeUnit.MINUTES);
-        ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
+        if(!periodUpdate.equals("0")) {
+            scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, Long.valueOf(periodUpdate), TimeUnit.MINUTES);
+        }
+            ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
         scheduler2.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
 
         HL7service();
@@ -191,19 +197,31 @@ public class MainBean implements UserDao, DataAction {
     public class BaseUpdate implements Runnable {
         @Override
         public void run() {
+            if(getBitServerResource("debug").getRvalue().equals("true")) {
+                LogTool.getLogger().info("start update");
+            }
+
             OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
             try {
                 syncDataBase(connection);
             } catch (Exception e) {
                 LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
             }
-            allStudies = getAllBitServerStudyJDBC();
-            allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-            resultMapLong.clear();
-            resultMapShort.clear();
-            resultMapLong = getStatMap(allStudies,"MM.yyyy");
-            resultMapShort = getStatMap(allStudies,"yyyy");
 
+            if(showStat){
+                double startTime = new Date().getTime();
+                System.out.println("calculate statistics");
+                allStudies = getAllBitServerStudyJDBC();
+                allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
+                resultMapLong.clear();
+                resultMapShort.clear();
+                resultMapLong = getStatMap(allStudies,"MM.yyyy");
+                resultMapShort = getStatMap(allStudies,"yyyy");
+                double calculateStateTime = ((new Date().getTime())-startTime)/1000;
+                if(getBitServerResource("debug").getRvalue().equals("true")) {
+                    LogTool.getLogger().info("calculateStateTime = "+calculateStateTime+"c.");
+                }
+            }
 
 //            Properties props = new Properties();
 //            props.setProperty("user", "orthanc");
@@ -211,14 +229,24 @@ public class MainBean implements UserDao, DataAction {
 //            try {
 //                Class.forName("org.postgresql.Driver");
 //                java.sql.Connection conn =  DriverManager.getConnection(url2, props);
-////                String sqlstr = "SELECT table_name FROM information_schema.tables\n" +
-////                        "WHERE table_schema NOT IN ('information_schema','pg_catalog')";
-//                DatabaseMetaData metaData = conn.getMetaData();
-//                String[] types = {"TABLE"};
-//                //Retrieving the columns in the database
-//                ResultSet tables = metaData.getTables(null, null, "%", types);
-//                while (tables.next()) {
-//                    System.out.println(tables.getString("TABLE_NAME"));
+//
+//                String selectTableSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
+//                        "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value FROM patientrecyclingorder" +
+//                        " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+//                        " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid"+
+//                        " INNER JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'"+
+//                        " INNER JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'"+
+//                        " INNER JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'"+
+//                        " INNER JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'"+
+//                        " INNER JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'"+
+//                        " INNER JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'"+
+//                        " INNER JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '4144'"+
+//                        " INNER JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'";
+//                Statement statement = conn.createStatement();
+//                ResultSet rs = statement.executeQuery(selectTableSQL);
+//                while (rs.next()) {
+//                   System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5)+" "+
+//                           rs.getString(6)+" "+rs.getString(7)+" "+rs.getString(8)+" "+rs.getString(9)+" "+rs.getString(10));
 //                }
 //                conn.close();
 //            } catch (SQLException | ClassNotFoundException throwables) {
@@ -259,7 +287,7 @@ public class MainBean implements UserDao, DataAction {
                 try {
                     bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
                 } catch (Exception e) {
-                    LogTool.getLogger().error(this.getClass().getSimpleName()+":Error getStatMap: "+e.getMessage());
+                    LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
                 }
                 Integer bufCount = resultMap.get(bufDatemillis);
                 if(bufCount==null){

@@ -454,10 +454,11 @@ public class QueueBean implements UserDao, DataAction {
         StringBuilder bufStr = getAllNameBitServerModality();
         resetViewTable();
         selectedVisibleStudies.clear();
-        //visibleStudiesList = getBitServerStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
-        //visibleStudiesList = getAllBitServerStudy(session);
         timeStart = (new Date()).getTime();
+
         visibleStudiesList = getStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+        getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+
         timeDrawing = ((new Date()).getTime() - timeStart)/1000.00 - timeRequest;
         if(showSeachTime.equals("true")) {
             showMessage("Всего: " + recordCount, "SQL-запрос: " + String.format("%.2f", timeRequest) + "c \r\n" +

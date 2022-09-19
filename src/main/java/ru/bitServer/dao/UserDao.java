@@ -22,6 +22,7 @@ import static ru.bitServer.beans.MainBean.*;
 public interface UserDao {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     default void deleteUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -389,6 +390,98 @@ public interface UserDao {
         return query.getResultList();
     }
 
+    default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
+        System.out.println("enter sql orthanc");
+        List<BitServerStudy> resultList = new ArrayList<>();
+        Properties props = new Properties();
+        props.setProperty("user", "orthanc");
+        props.setProperty("password", "orthanc");
+        switch (dateSeachType){
+            case "today":
+                firstdate = new Date();
+                Calendar c = Calendar.getInstance();
+                c.setTime(firstdate);
+                c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+            case "week":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, -7);
+                firstdate = c.getTime();
+                break;
+            case "mounth":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.MONTH, -1);
+                firstdate = c.getTime();
+                break;
+            case "year":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.YEAR, -1);
+                firstdate = c.getTime();
+                break;
+            case "yesterday":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, -1);
+                firstdate = c.getTime();
+                break;
+            case "targetdate":
+                c = Calendar.getInstance();
+                c.setTime(firstdate);
+                c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+            case "range":
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+        }
+        try {
+            Class.forName("org.postgresql.Driver");
+            java.sql.Connection conn = DriverManager.getConnection(url2, props);
+            String resultSQL ="";
+            String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
+                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value FROM patientrecyclingorder" +
+                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " INNER JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //ФИО
+                    " INNER JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
+                    " INNER JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
+                    " INNER JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
+                    " INNER JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +  //STUDY DATE
+                    " INNER JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //SOURCE
+                    " INNER JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'" + //DESCRIPTION
+                    " INNER JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'";    //MODALITY
+            Statement statement = conn.createStatement();
+
+            if(dateSeachType.equals("all")){
+                resultSQL = staticSQL;
+            }else{
+                resultSQL = staticSQL + " WHERE sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+            }
+            ResultSet rs = statement.executeQuery(resultSQL);
+            System.out.println(resultSQL);
+            while (rs.next()) {
+                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5) + " " +
+                        rs.getString(6) + " " + rs.getString(7) + " " + rs.getString(8) + " " + rs.getString(9) + " " + rs.getString(10));
+            }
+            conn.close();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
+
     default List<BitServerStudy> getAllBitServerStudyJDBC() {
         List<BitServerStudy> resultList = new ArrayList<>();
         String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
@@ -473,14 +566,14 @@ public interface UserDao {
 
     default void addStudyJDBC(BitServerStudy study) {
         String query = "";
-        try {
+        try{
             Connection con = DriverManager.getConnection(url, user, password);
             query = "INSERT INTO BitServerStudy (sid, shortid, sdescription, source, sdate, modality, dateaddinbase, patientname, " +
                     "patientbirthdate, patientsex, status, typeresult, userwhoblock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = con.prepareStatement(query);
-            pstmt.setString(1, study.getSid());
+            pstmt.setString(1, clearStr(study.getSid()));
             pstmt.setString(2, clearStr(study.getShortid()));
-            pstmt.setString(3, study.getSdescription());
+            pstmt.setString(3, clearStr(study.getSdescription()));
             pstmt.setString(4, clearStr(study.getSource()));
             pstmt.setDate(5, checkDate(study.getSdate()));
             pstmt.setString(6, study.getModality());
@@ -493,7 +586,7 @@ public interface UserDao {
             pstmt.setString(13, "0");
             pstmt.execute();
             con.close();
-        }catch (Exception e){
+        }catch (SQLException e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ "Error sql add study: "+e.getMessage()+" sql = "+query);
         }
     }
@@ -509,6 +602,9 @@ public interface UserDao {
     }
 
     default String clearStr(String buf){
+        if(buf.length()>59){
+            buf = buf.substring(0,59);
+        }
         String result = "";
         String taboo = "^'*/\\\"~";
         if(!buf.equals("")) {
