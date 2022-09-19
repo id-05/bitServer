@@ -53,7 +53,7 @@ public class MainBean implements UserDao, DataAction {
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
-    public static final String url = "jdbc:mysql://192.168.1.58:3306/orthanc";
+    public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
     public static final String user = "orthanc";
     public static final String password = "orthanc";
     boolean showStat;

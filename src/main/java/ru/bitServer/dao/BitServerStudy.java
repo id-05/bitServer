@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static ru.bitServer.beans.MainBean.mainServer;
@@ -43,6 +44,8 @@ public class BitServerStudy implements Serializable {
     private Date datablock;
     private int userwhoblock;
     private String statusstyle;
+    private String StringStudyDate;
+    private String StringPatientBirthdate;
 
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
@@ -214,6 +217,10 @@ public class BitServerStudy implements Serializable {
         return sdate;
     }
 
+    public String getStringStudyDate() {
+        return new SimpleDateFormat("dd.MM.yyyy").format(sdate);
+    }
+
     public void setSdate(Date sdate) {
         this.sdate = sdate;
     }
@@ -236,6 +243,10 @@ public class BitServerStudy implements Serializable {
 
     public Date getPatientbirthdate() {
         return patientbirthdate;
+    }
+
+    public String getStringPatientBirthdate() {
+        return new SimpleDateFormat("dd.MM.yyyy").format(patientbirthdate);
     }
 
     public void setPatientbirthdate(Date patientbirthdate) {

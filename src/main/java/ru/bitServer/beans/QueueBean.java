@@ -456,9 +456,9 @@ public class QueueBean implements UserDao, DataAction {
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
 
-        visibleStudiesList = getStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
-        getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
-
+        //visibleStudiesList = getStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+        recordCount = visibleStudiesList.size();
         timeDrawing = ((new Date()).getTime() - timeStart)/1000.00 - timeRequest;
         if(showSeachTime.equals("true")) {
             showMessage("Всего: " + recordCount, "SQL-запрос: " + String.format("%.2f", timeRequest) + "c \r\n" +
@@ -467,7 +467,6 @@ public class QueueBean implements UserDao, DataAction {
         }
 
         //visibleStudiesList.removeIf(bufStudy -> !selectedModalitiName.contains(bufStudy.getModality()));
-        //visibleStudiesList = convertIdGroupToRuName(visibleStudiesList);
         PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
 
         if( (getBitServerResource("debug").getRvalue().equals("false"))|(getBitServerResource("debug") == null) ){
@@ -476,110 +475,110 @@ public class QueueBean implements UserDao, DataAction {
 
     }
 
-    public  List<BitServerStudy> getStudy (int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
-        List<BitServerStudy> resultList = new ArrayList<>();
-        String query;
-
-        switch (dateSeachType){
-            case "today":
-                firstdate = new Date();
-                Calendar c = Calendar.getInstance();
-                c.setTime(firstdate);
-                c.add(Calendar.DATE, 1);
-                seconddate = c.getTime();
-                break;
-            case "week":
-                seconddate = new Date();
-                c = Calendar.getInstance();
-                c.setTime(seconddate);
-                c.add(Calendar.DATE, -7);
-                firstdate = c.getTime();
-                break;
-            case "mounth":
-                seconddate = new Date();
-                c = Calendar.getInstance();
-                c.setTime(seconddate);
-                c.add(Calendar.MONTH, -1);
-                firstdate = c.getTime();
-                break;
-            case "year":
-                seconddate = new Date();
-                c = Calendar.getInstance();
-                c.setTime(seconddate);
-                c.add(Calendar.YEAR, -1);
-                firstdate = c.getTime();
-                break;
-            case "yesterday":
-                seconddate = new Date();
-                c = Calendar.getInstance();
-                c.setTime(seconddate);
-                c.add(Calendar.DATE, -1);
-                firstdate = c.getTime();
-                break;
-            case "targetdate":
-                c = Calendar.getInstance();
-                c.setTime(firstdate);
-                c.add(Calendar.DATE, 1);
-                seconddate = c.getTime();
-                break;
-            case "range":
-                c = Calendar.getInstance();
-                c.setTime(seconddate);
-                c.add(Calendar.DATE, 1);
-                seconddate = c.getTime();
-                break;
-        }
-
-        String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
-        if(state==5){
-            if(dateSeachType.equals("all")){
-                query = "select "+reqizite+" from BitServerStudy";
-            }else{
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
-            }
-        }else{
-            if(dateSeachType.equals("all")){
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where status = "+state;
-            }else{
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where status = "+state +" and sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
-            }
-        }
-
-        try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
-            while (rs.next()) {
-                BitServerStudy buf = new BitServerStudy(
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getDate(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getDate(7),
-                        rs.getString(8),
-                        rs.getInt(9));
-
-                if(selectedModalitiName.contains(buf.getModality())){
-                    resultList.add(buf);
-                }
-            }
-        }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-        }
-        recordCount = resultList.size();
-        PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
-        PrimeFaces.current().ajax().update(":seachform:txt_count2");
-        PrimeFaces.current().ajax().update(":seachform:");
-        PrimeFaces.current().ajax().update(":seachform:ajs");
-        PrimeFaces.current().executeScript("PF('ajs').hide()");
-        return resultList;
-    }
+//    public  List<BitServerStudy> getStudy (int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
+//        List<BitServerStudy> resultList = new ArrayList<>();
+//        String query;
+//
+//        switch (dateSeachType){
+//            case "today":
+//                firstdate = new Date();
+//                Calendar c = Calendar.getInstance();
+//                c.setTime(firstdate);
+//                c.add(Calendar.DATE, 1);
+//                seconddate = c.getTime();
+//                break;
+//            case "week":
+//                seconddate = new Date();
+//                c = Calendar.getInstance();
+//                c.setTime(seconddate);
+//                c.add(Calendar.DATE, -7);
+//                firstdate = c.getTime();
+//                break;
+//            case "mounth":
+//                seconddate = new Date();
+//                c = Calendar.getInstance();
+//                c.setTime(seconddate);
+//                c.add(Calendar.MONTH, -1);
+//                firstdate = c.getTime();
+//                break;
+//            case "year":
+//                seconddate = new Date();
+//                c = Calendar.getInstance();
+//                c.setTime(seconddate);
+//                c.add(Calendar.YEAR, -1);
+//                firstdate = c.getTime();
+//                break;
+//            case "yesterday":
+//                seconddate = new Date();
+//                c = Calendar.getInstance();
+//                c.setTime(seconddate);
+//                c.add(Calendar.DATE, -1);
+//                firstdate = c.getTime();
+//                break;
+//            case "targetdate":
+//                c = Calendar.getInstance();
+//                c.setTime(firstdate);
+//                c.add(Calendar.DATE, 1);
+//                seconddate = c.getTime();
+//                break;
+//            case "range":
+//                c = Calendar.getInstance();
+//                c.setTime(seconddate);
+//                c.add(Calendar.DATE, 1);
+//                seconddate = c.getTime();
+//                break;
+//        }
+//
+//        String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
+//        if(state==5){
+//            if(dateSeachType.equals("all")){
+//                query = "select "+reqizite+" from BitServerStudy";
+//            }else{
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+//            }
+//        }else{
+//            if(dateSeachType.equals("all")){
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where status = "+state;
+//            }else{
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where status = "+state +" and sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+//            }
+//        }
+//
+//        try {
+//            Connection con = DriverManager.getConnection(url, user, password);
+//            Statement stmt = con.createStatement();
+//            ResultSet rs = stmt.executeQuery(query);
+//            timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
+//            while (rs.next()) {
+//                BitServerStudy buf = new BitServerStudy(
+//                        rs.getString(1),
+//                        rs.getString(2),
+//                        rs.getString(3),
+//                        rs.getDate(4),
+//                        rs.getString(5),
+//                        rs.getString(6),
+//                        rs.getDate(7),
+//                        rs.getString(8),
+//                        rs.getInt(9));
+//
+//                if(selectedModalitiName.contains(buf.getModality())){
+//                    resultList.add(buf);
+//                }
+//            }
+//        }catch (Exception e){
+//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+//        }
+//        recordCount = resultList.size();
+//        PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
+//        PrimeFaces.current().ajax().update(":seachform:txt_count2");
+//        PrimeFaces.current().ajax().update(":seachform:");
+//        PrimeFaces.current().ajax().update(":seachform:ajs");
+//        PrimeFaces.current().executeScript("PF('ajs').hide()");
+//        return resultList;
+//    }
 
     public void sortListener(){
         UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();

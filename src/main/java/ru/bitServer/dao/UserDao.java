@@ -10,6 +10,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -466,21 +468,36 @@ public interface UserDao {
             if(dateSeachType.equals("all")){
                 resultSQL = staticSQL;
             }else{
-                resultSQL = staticSQL + " WHERE sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+                resultSQL = staticSQL + " WHERE tag5.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
             }
-            ResultSet rs = statement.executeQuery(resultSQL);
             System.out.println(resultSQL);
+            ResultSet rs = statement.executeQuery(resultSQL);
+
             while (rs.next()) {
                 System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5) + " " +
                         rs.getString(6) + " " + rs.getString(7) + " " + rs.getString(8) + " " + rs.getString(9) + " " + rs.getString(10));
+
+                    BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
+                            rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0);
+                    resultList.add(bufStudy);
             }
             conn.close();
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         return resultList;
     }
+
+    default Date getDateFromText(String strDate) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        Date returnDate = new Date();
+        if(!strDate.equals("")){
+            returnDate = formatter.parse(strDate);
+        }
+        return returnDate;
+    }
+
 
     default List<BitServerStudy> getAllBitServerStudyJDBC() {
         List<BitServerStudy> resultList = new ArrayList<>();

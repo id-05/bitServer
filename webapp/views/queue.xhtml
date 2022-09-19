@@ -259,16 +259,12 @@
 
                         <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center"
                                   rendered="#{queueBean.colDateBirth == 'true'}">
-                            <h:outputText value="#{bitServerStudy.patientbirthdate}">
-
-                            </h:outputText>
+                            <h:outputText value="#{bitServerStudy.stringPatientBirthdate}"/>
                         </p:column>
 
                         <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
                                   rendered="#{queueBean.colDate == 'true'}">
-                            <h:outputText value="#{bitServerStudy.sdate}">
-
-                            </h:outputText>
+                            <h:outputText value="#{bitServerStudy.stringStudyDate}"/>
                         </p:column>
 
                         <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
