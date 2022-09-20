@@ -53,13 +53,12 @@ public class MainBean implements UserDao, DataAction {
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
-    public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
+    public static final String url = "jdbc:mysql://192.168.1.58:3306/orthanc";
     public static final String user = "orthanc";
     public static final String password = "orthanc";
     boolean showStat;
 
     public static final String url2 = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-
 
     public int getTimeOnWork() {
         return timeOnWork;
@@ -91,7 +90,7 @@ public class MainBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
-        versionInfo = "1.4";
+        versionInfo = "1.5";
         timeOnWork = 24;
         mainServer = new OrthancServer();
         try {
@@ -146,16 +145,16 @@ public class MainBean implements UserDao, DataAction {
             saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
             LogTool.setFileName(getBitServerResource("logpath").getRvalue());
         }
-
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        if(!periodUpdate.equals("0")) {
-            scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, Long.valueOf(periodUpdate), TimeUnit.MINUTES);
-        }
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
+ //       ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+//        if(!periodUpdate.equals("0")) {
+//            scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, Long.valueOf(periodUpdate), TimeUnit.MINUTES);
+//        }
             ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
         scheduler2.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
 
         HL7service();
-
     }
 
     public static void HL7service() {
@@ -201,12 +200,12 @@ public class MainBean implements UserDao, DataAction {
                 LogTool.getLogger().info("start update");
             }
 
-            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            try {
-                syncDataBase(connection);
-            } catch (Exception e) {
-                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-            }
+//            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+//            try {
+//                syncDataBase(connection);
+//            } catch (Exception e) {
+//                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+//            }
 
             if(showStat){
                 double startTime = new Date().getTime();
@@ -222,36 +221,6 @@ public class MainBean implements UserDao, DataAction {
                     LogTool.getLogger().info("calculateStateTime = "+calculateStateTime+"c.");
                 }
             }
-
-//            Properties props = new Properties();
-//            props.setProperty("user", "orthanc");
-//            props.setProperty("password", "orthanc");
-//            try {
-//                Class.forName("org.postgresql.Driver");
-//                java.sql.Connection conn =  DriverManager.getConnection(url2, props);
-//
-//                String selectTableSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
-//                        "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value FROM patientrecyclingorder" +
-//                        " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
-//                        " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid"+
-//                        " INNER JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'"+
-//                        " INNER JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'"+
-//                        " INNER JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'"+
-//                        " INNER JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'"+
-//                        " INNER JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'"+
-//                        " INNER JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'"+
-//                        " INNER JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '4144'"+
-//                        " INNER JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'";
-//                Statement statement = conn.createStatement();
-//                ResultSet rs = statement.executeQuery(selectTableSQL);
-//                while (rs.next()) {
-//                   System.out.println(rs.getString(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5)+" "+
-//                           rs.getString(6)+" "+rs.getString(7)+" "+rs.getString(8)+" "+rs.getString(9)+" "+rs.getString(10));
-//                }
-//                conn.close();
-//            } catch (SQLException | ClassNotFoundException throwables) {
-//                throwables.printStackTrace();
-//            }
         }
     }
 

@@ -5,7 +5,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import ru.bitServer.util.HibernateSessionFactoryUtil;
 import ru.bitServer.util.LogTool;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -24,7 +23,15 @@ import static ru.bitServer.beans.MainBean.*;
 public interface UserDao {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+
+    default Connection getConnection() throws SQLException {
+        Properties props = new Properties();
+        props.setProperty("user", "orthanc");
+        props.setProperty("password", "orthanc");
+        java.sql.Connection connection = DriverManager.getConnection(url2, props);
+        return connection;
+    }
 
     default void deleteUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
@@ -143,17 +150,35 @@ public interface UserDao {
         return query.getResultList();
     }
 
-    default BitServerResources getBitServerResource(String uname) {
+    default List<Users> getLegacyBitServerUserList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
-        Query query = session.createQuery(hql);
-        List<BitServerResources> results = query.list();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Users> criteriaQuery = builder.createQuery(Users.class);
+        Root<Users> root = criteriaQuery.from(Users.class);
+        criteriaQuery.select(root);
+        Query<Users> query = session.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
 
-        if (results.size() > 0) {
-            Iterator<BitServerResources> it = results.iterator();
-            return  it.next();
+    default BitServerResources getBitServerResource(String uname) {
+        BitServerResources resultResources = new BitServerResources();
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = getConnection();
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue FROM bitserver AS tag" +
+                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '2' AND tag.rvalue = '" + uname +"'" ;
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                resultResources = new BitServerResources(rs.getString(1), rs.getString(2));
+                //System.out.println(rs.getString(1)+"  "+ rs.getString(2));
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
-        return null;
+
+        return resultResources;
     }
 
     static BitServerResources getStaticBitServerResource(String uname) {
@@ -169,7 +194,7 @@ public interface UserDao {
         return null;
     }
 
-    default List<BitServerResources> getAllBitServerResource() {
+    default List<BitServerResources> getLegacyAllBitServerResource() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BitServerResources> criteriaQuery = builder.createQuery(BitServerResources.class);
@@ -177,6 +202,26 @@ public interface UserDao {
         criteriaQuery.select(root);
         Query<BitServerResources> BitServerDBresources = session.createQuery(criteriaQuery);
         return BitServerDBresources.list();
+    }
+
+    default List<BitServerResources> getAllBitServerResource() {
+        List<BitServerResources> resultList = new ArrayList<>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection conn = getConnection();
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue FROM bitserver AS tag" +
+                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '2'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                BitServerResources bufResource = new BitServerResources(rs.getString(1), rs.getString(2));
+                resultList.add(bufResource);
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
     }
 
     default void updateBitServiceResource(BitServerResources bitServerResources) {
@@ -392,12 +437,69 @@ public interface UserDao {
         return query.getResultList();
     }
 
+    default void createBitServerDateTable(){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Properties props = new Properties();
+            props.setProperty("user", "orthanc");
+            props.setProperty("password", "orthanc");
+            java.sql.Connection conn = DriverManager.getConnection(url2, props);
+            String resultSQL;
+            Statement statement = conn.createStatement();
+            resultSQL = "CREATE TABLE bitserver( internalId SERIAL PRIMARY KEY, " +
+                    "rtype INTEGER null , " +
+                    "rvalue TEXT, " +
+                    "parentId INTEGER REFERENCES bitserver(internalId) ON DELETE CASCADE)";
+            statement.executeUpdate(resultSQL);
+
+            for(BitServerResources bufResourses:getLegacyAllBitServerResource()){
+                String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bufResourses.getRname()+"')";
+                statement.executeUpdate(sqlInsert);
+
+                resultSQL = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bufResourses.getRname()+"'";
+                statement = conn.createStatement();
+                ResultSet rs = statement.executeQuery(resultSQL);
+                rs.next();
+                String bufStudy = rs.getString(1);
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bufResourses.getRvalue()+"','"+bufStudy+"')";
+                statement.executeUpdate(sqlInsert);
+            }
+
+            for(Users bufUser:getLegacyBitServerUserList()){
+                String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '3','"+ bufUser.getUname()+"')";
+                statement.executeUpdate(sqlInsert);
+
+                resultSQL = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bufUser.getUname()+"'";
+                statement = conn.createStatement();
+                ResultSet rs = statement.executeQuery(resultSQL);
+                rs.next();
+                String buf = rs.getString(1);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '4','"+ bufUser.getPassword()+"','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '5','"+ bufUser.getRuName()+"','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '6','"+ bufUser.getRuMiddleName()+"','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '7','"+ bufUser.getRuFamily()+"','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '8','"+ bufUser.getRole()+"','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+            }
+
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            System.out.println(e.getMessage());
+        }
+    }
+
     default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
-        System.out.println("enter sql orthanc");
         List<BitServerStudy> resultList = new ArrayList<>();
-        Properties props = new Properties();
-        props.setProperty("user", "orthanc");
-        props.setProperty("password", "orthanc");
         switch (dateSeachType){
             case "today":
                 firstdate = new Date();
@@ -449,6 +551,9 @@ public interface UserDao {
         }
         try {
             Class.forName("org.postgresql.Driver");
+            Properties props = new Properties();
+            props.setProperty("user", "orthanc");
+            props.setProperty("password", "orthanc");
             java.sql.Connection conn = DriverManager.getConnection(url2, props);
             String resultSQL ="";
             String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
@@ -470,13 +575,9 @@ public interface UserDao {
             }else{
                 resultSQL = staticSQL + " WHERE tag5.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
             }
-            System.out.println(resultSQL);
             ResultSet rs = statement.executeQuery(resultSQL);
 
             while (rs.next()) {
-                System.out.println(rs.getString(1) + " " + rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5) + " " +
-                        rs.getString(6) + " " + rs.getString(7) + " " + rs.getString(8) + " " + rs.getString(9) + " " + rs.getString(10));
-
                     BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
                             rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0);
                     resultList.add(bufStudy);
@@ -497,7 +598,6 @@ public interface UserDao {
         }
         return returnDate;
     }
-
 
     default List<BitServerStudy> getAllBitServerStudyJDBC() {
         List<BitServerStudy> resultList = new ArrayList<>();

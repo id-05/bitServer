@@ -176,14 +176,6 @@
                                              icon="pi pi-upload" styleClass="ui-button-success" />
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
 
-                            <p:commandButton actionListener="#{queueBean.readStudyFromDB}"
-                                             process="@this" update="searchgrowl"
-                                             widgetVar="updateBut"
-                                             id="updateBut"
-                                             rendered="#{queueBean.optDownload == 'true'}"
-                                             icon="pi pi-refresh" styleClass="ui-button-help" ajax="true"/>
-                            <p:tooltip for="updateBut" rendered="#{queueBean.showHelp == 'true'}" value="Обновить базу"/>
-
                             <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
                                 <h1 class="p-text-center">
                                     <h:outputLabel for="txt_count" value="Выполненно:  "/>

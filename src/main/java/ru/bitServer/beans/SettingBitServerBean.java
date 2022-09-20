@@ -623,47 +623,48 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void syncAll() {
-        PrimeFaces.current().executeScript("PF('startButtonSA').disable()");
-        JsonParser parserJson = new JsonParser();
-        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
-        Iterator<JsonElement> studiesIterator = studies.iterator();
-
-        ArrayList<String> idOrthancStudy = new ArrayList<>();
-        while (studiesIterator.hasNext()) {
-            String studyData =  studiesIterator.next().getAsString();
-            idOrthancStudy.add(studyData);
-        }
-
-        ArrayList<String> idBitServerStudy = new ArrayList<>();
-        for(BitServerStudy bufStudy:getAllBitServerStudy()){
-            idBitServerStudy.add(bufStudy.getSid());
-        }
-
-        idOrthancStudy.removeAll(idBitServerStudy);
-        double dProgress;
-        if(idOrthancStudy.size()!=0) {
-            dProgress = (double) 100 / idOrthancStudy.size();
-        }else{
-            dProgress = 0;
-        }
-        progress1 = 0;
-        int i = 0;
-        for(String bufId:idOrthancStudy){
-            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
-            parserJson = new JsonParser();
-            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
-            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
-            if(!bufStudy.getPatientName().equals("ANONIM")){
-                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                        bufStudy.getInstitutionName(), bufStudy.getDate(),
-                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-                addStudyJDBC(buf);
-                i++;
-            }
-            progress1 = (int) (dProgress * i );
-        }
+        createBitServerDateTable();
+//        PrimeFaces.current().executeScript("PF('startButtonSA').disable()");
+//        JsonParser parserJson = new JsonParser();
+//        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
+//        Iterator<JsonElement> studiesIterator = studies.iterator();
+//
+//        ArrayList<String> idOrthancStudy = new ArrayList<>();
+//        while (studiesIterator.hasNext()) {
+//            String studyData =  studiesIterator.next().getAsString();
+//            idOrthancStudy.add(studyData);
+//        }
+//
+//        ArrayList<String> idBitServerStudy = new ArrayList<>();
+//        for(BitServerStudy bufStudy:getAllBitServerStudy()){
+//            idBitServerStudy.add(bufStudy.getSid());
+//        }
+//
+//        idOrthancStudy.removeAll(idBitServerStudy);
+//        double dProgress;
+//        if(idOrthancStudy.size()!=0) {
+//            dProgress = (double) 100 / idOrthancStudy.size();
+//        }else{
+//            dProgress = 0;
+//        }
+//        progress1 = 0;
+//        int i = 0;
+//        for(String bufId:idOrthancStudy){
+//            StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+bufId);
+//            parserJson = new JsonParser();
+//            JsonObject jsonObject = (JsonObject) parserJson.parse(sb.toString());
+//            OrthancStudy bufStudy = connection.parseStudy(jsonObject);
+//            if(!bufStudy.getPatientName().equals("ANONIM")){
+//                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+//                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+//                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+//                addStudyJDBC(buf);
+//                i++;
+//            }
+//            progress1 = (int) (dProgress * i );
+//        }
         PrimeFaces.current().executeScript("PF('startButtonSA').enable()");
-        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
+        showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: ", info );//+ //i, info);
         LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start syncAll()");
     }
 
