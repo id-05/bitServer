@@ -822,13 +822,6 @@
                                                  id="uploaddicom"
                                                  icon="pi pi-upload" styleClass="ui-button-success" />
                                 <p:tooltip rendered="#{settingBitServerBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
-
-                                <p:commandButton rendered="#{settingBitServerBean.optDownload == 'true'}"
-                                                 process="@this"
-                                                 widgetVar="updateBut"
-                                                 id="updateBut"
-                                                 icon="pi pi-refresh" styleClass="ui-button-help" ajax="true"/>
-                                <p:tooltip rendered="#{settingBitServerBean.showHelp == 'true'}" for="updateBut" value="Обновить"/>
                             </p:toolbarGroup>
                         </p:toolbar>
                         <p:dataTable id="dt-studys2" widgetVar="visibleStudy" var="bitServerStudy"

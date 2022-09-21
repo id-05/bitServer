@@ -158,6 +158,16 @@ public class Users {
         this.hasBlockStudy = bool;
     }
 
+    public Users(String login, String Password, String Name, String Middlename, String Family, String Role, Long uid){
+        this.uid = uid;
+        this.uname = login;
+        this.password = Password;
+        this.ruName = Name;
+        this.ruMiddleName = Middlename;
+        this.ruFamily = Family;
+        this.role = Role;
+    }
+
     public String getSignature(){
         return this.uname+"/"+ruName+"/"+ruMiddleName+"/"+ruFamily;
     }

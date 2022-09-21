@@ -46,4 +46,10 @@ public class BitServerResources {
         this.rname = rname;
         this.rvalue = rvalue;
     }
+
+    public BitServerResources(String rname, String rvalue, Long id){
+        this.rname = rname;
+        this.rvalue = rvalue;
+        this.id = id;
+    }
 }

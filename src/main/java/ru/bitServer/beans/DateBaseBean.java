@@ -29,7 +29,7 @@ public class DateBaseBean implements UserDao {
 
     List<BitServerResources> listResources = new ArrayList<>();
     BitServerResources selectedResource;
-    BitServerResources selectedResources;
+    //BitServerResources selectedResources;
     List<BitServerStudy> listStudys = new ArrayList<>();
     BitServerStudy selectedStudy;
     BitServerStudy selectedStudys;
@@ -68,13 +68,13 @@ public class DateBaseBean implements UserDao {
         this.selectedStudys = selectedStudys;
     }
 
-    public BitServerResources getSelectedResources() {
-        return selectedResources;
-    }
-
-    public void setSelectedResources(BitServerResources selectedResources) {
-        this.selectedResources = selectedResources;
-    }
+//    public BitServerResources getSelectedResources() {
+//        return selectedResources;
+//    }
+//
+//    public void setSelectedResources(BitServerResources selectedResources) {
+//        this.selectedResources = selectedResources;
+//    }
 
     public List<BitServerModality> getListModalitys() {
         return listModalitys;
@@ -151,7 +151,7 @@ public class DateBaseBean implements UserDao {
         listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
         listModalitys = getAllBitServerModality();
 
-        selectedResource = new BitServerResources();
+        //selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
         selectedModality = new BitServerModality();
         selectedScheduler = new BitServerScheduler();
@@ -240,7 +240,7 @@ public class DateBaseBean implements UserDao {
 
     public void initDefaultResources(){
         for(BitServerResources bufResources:listResources){
-            deleteBitServerResource(bufResources);
+            deleteFromBitServerTable(bufResources.getId());
         }
         listResources.clear();
         selectedResource = new BitServerResources();
@@ -453,13 +453,11 @@ public class DateBaseBean implements UserDao {
         return generatedString;
     }
 
-
-
     public void deleteResource(){
-        deleteBitServerResource(selectedResource);
+        deleteFromBitServerTable(selectedResource.getId());
         listResources.remove(selectedResource);
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Resource: "+selectedResource.getRname());
         selectedResource = new BitServerResources();
-        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Resource "+selectedResource.getRname());
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ресурс удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }

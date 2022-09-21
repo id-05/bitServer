@@ -59,7 +59,7 @@
                         <p:dataTable id="dt-resources" widgetVar="dtResources" var="resources" value="#{datebaseBean.listResources}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{datebaseBean.selectedResources}" rowKey="#{BitServerResources.rname}"
+                                     selection="#{datebaseBean.selectedResource}" rowKey="#{BitServerResources.rname}"
                                      rows="10"
                                      size="small"
                                      rowSelectMode="add"
@@ -83,8 +83,9 @@
                                     <p:resetInput target=":form:accord:manage-resource-content"/>
                                 </p:commandButton>
 
-                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                                 oncomplete="PF('deleteResourceDialog').show()">
+                                <p:commandButton icon="pi pi-trash" update=":form:accord:manage-resource-content"
+                                                 oncomplete="PF('deleteResourceDialog').show()"
+                                                 styleClass="ui-button-warning rounded-button"  process="@this">
                                     <f:setPropertyActionListener value="#{resources}" target="#{datebaseBean.selectedResource}"/>
                                 </p:commandButton>
 
@@ -130,7 +131,7 @@
                         </p:dialog>
 
                         <p:dialog widgetVar="deleteResourceDialog" showEffect="fade" width="300"
-                                  message="Удалить ресурс?" header="Удалить ресурс?" severity="warn">
+                                  message="Удалить ресурс #{datebaseBean.selectedResource.rname} ? " header="Удалить ресурс?" severity="warn">
                             <p:commandButton value="Да" icon="pi pi-check" actionListener="#{datebaseBean.deleteResource}"
                                              oncomplete="PF('deleteResourceDialog').hide()"/>
                             <span style="padding: 20px;">&nbsp;</span>

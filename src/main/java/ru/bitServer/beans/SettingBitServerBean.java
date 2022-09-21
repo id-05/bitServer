@@ -847,42 +847,42 @@ public class SettingBitServerBean implements UserDao {
 
     public List<Users> prepareUserList(){
         usersList = getBitServerUserList();
-        for (Users users : usersList) {
-            int buf = Integer.parseInt(users.getUgroup());
-            users.setUgroup(getVisibleNameOfGroup(buf));
-            switch (users.getRole()){
-                case "admin": {
-                    users.setRole("Администратор");
-                    break;
-                }
-
-                case "localuser": {
-                    users.setRole("Локальный пользователь");
-                    break;
-                }
-
-                case "remoteuser": {
-                    users.setRole("Удаленный пользователь");
-                    break;
-                }
-
-                case "client": {
-                    users.setRole("Клиент");
-                    break;
-                }
-
-                case "onlyview": {
-                    users.setRole("Локальный только просмотр");
-                    break;
-                }
-
-                case "demo": {
-                    users.setRole("demo");
-                    break;
-                }
-
-            }
-        }
+//        for (Users users : usersList) {
+//            int buf = Integer.parseInt(users.getUgroup());
+//            users.setUgroup(getVisibleNameOfGroup(buf));
+//            switch (users.getRole()){
+//                case "admin": {
+//                    users.setRole("Администратор");
+//                    break;
+//                }
+//
+//                case "localuser": {
+//                    users.setRole("Локальный пользователь");
+//                    break;
+//                }
+//
+//                case "remoteuser": {
+//                    users.setRole("Удаленный пользователь");
+//                    break;
+//                }
+//
+//                case "client": {
+//                    users.setRole("Клиент");
+//                    break;
+//                }
+//
+//                case "onlyview": {
+//                    users.setRole("Локальный только просмотр");
+//                    break;
+//                }
+//
+//                case "demo": {
+//                    users.setRole("demo");
+//                    break;
+//                }
+//
+//            }
+//        }
         return usersList;
     }
 
@@ -963,6 +963,7 @@ public class SettingBitServerBean implements UserDao {
         PrimeFaces.current().ajax().update(":form:accord:dt-studys");
         PrimeFaces.current().ajax().update(":form:accord:state");
         PrimeFaces.current().ajax().update(":form:accord:toolbar");
+        PrimeFaces.current().ajax().update(":form");
     }
 
     public void initNewUser() {
@@ -1035,7 +1036,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void deleteUserSetting() {
-        deleteUser(selectedUser);
+        deleteFromBitServerTable(selectedUser.getUid());
         usersList.remove(selectedUser);
         selectedUser = new Users();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));

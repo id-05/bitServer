@@ -25,7 +25,8 @@ public interface UserDao {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
-    default Connection getConnection() throws SQLException {
+    default Connection getConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
         Properties props = new Properties();
         props.setProperty("user", "orthanc");
         props.setProperty("password", "orthanc");
@@ -33,7 +34,7 @@ public interface UserDao {
         return connection;
     }
 
-    default void deleteUser(Users user) {
+    default void LegacydeleteUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(user);
@@ -41,12 +42,35 @@ public interface UserDao {
         session.close();
     }
 
-    default void updateUser(Users user) {
+    default void LegacyupdateUser(Users user) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(user);
         transaction.commit();
         session.close();
+    }
+
+    default void updateUser(Users user) {
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "UPDATE bitserver SET rvalue ='"+user.getUname()+"' WHERE bitserver.internalid = '" + user.getUid() + "'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+user.getPassword()+"' WHERE bitserver.parentid = '" + user.getUid() + "' AND bitserver.rtype='4'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+user.getRuName()+"' WHERE bitserver.parentid = '" + user.getUid() + "' AND bitserver.rtype='5'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+user.getRuMiddleName()+"' WHERE bitserver.parentid = '" + user.getUid() + "' AND bitserver.rtype='6'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+user.getRuFamily()+"' WHERE bitserver.parentid = '" + user.getUid() + "' AND bitserver.rtype='7'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+user.getRole()+"' WHERE bitserver.parentid = '" + user.getUid() + "' AND bitserver.rtype='8'";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            System.out.println(e.getMessage());
+        }
     }
 
     default void saveNewUsergroup(Usergroup usergroup) {
@@ -140,16 +164,6 @@ public interface UserDao {
         }
     }
 
-    default List<Users> getBitServerUserList() {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Users> criteriaQuery = builder.createQuery(Users.class);
-        Root<Users> root = criteriaQuery.from(Users.class);
-        criteriaQuery.select(root);
-        Query<Users> query = session.createQuery(criteriaQuery);
-        return query.getResultList();
-    }
-
     default List<Users> getLegacyBitServerUserList() {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -160,18 +174,40 @@ public interface UserDao {
         return query.getResultList();
     }
 
+    default List<Users> getBitServerUserList() {
+        List<Users> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM bitserver AS tag" +
+                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '4'"+//login
+                    " INNER JOIN bitserver AS tag2 ON tag.internalid = tag2.parentid AND tag2.rtype = '5'"+//password
+                    " INNER JOIN bitserver AS tag3 ON tag.internalid = tag3.parentid AND tag3.rtype = '6'"+//name
+                    " INNER JOIN bitserver AS tag4 ON tag.internalid = tag4.parentid AND tag4.rtype = '7'"+//midlename
+                    " INNER JOIN bitserver AS tag5 ON tag.internalid = tag5.parentid AND tag5.rtype = '8'";//family
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                Users bufUser = new Users(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
+                resultList.add(bufUser);
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
+
     default BitServerResources getBitServerResource(String uname) {
         BitServerResources resultResources = new BitServerResources();
         try {
-            Class.forName("org.postgresql.Driver");
             Connection conn = getConnection();
-            String resultSQL = "SELECT tag.rvalue, tag1.rvalue FROM bitserver AS tag" +
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag.internalid FROM bitserver AS tag" +
                     " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '2' AND tag.rvalue = '" + uname +"'" ;
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                resultResources = new BitServerResources(rs.getString(1), rs.getString(2));
-                //System.out.println(rs.getString(1)+"  "+ rs.getString(2));
+                resultResources = new BitServerResources(rs.getString(1), rs.getString(2),Long.parseLong(rs.getString(3)));
             }
             conn.close();
         } catch (Exception  e) {
@@ -179,6 +215,19 @@ public interface UserDao {
         }
 
         return resultResources;
+    }
+
+    default BitServerResources getLegacyBitServerResource(String uname) {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
+        Query query = session.createQuery(hql);
+        List<BitServerResources> results = query.list();
+
+        if (results.size() > 0) {
+            Iterator<BitServerResources> it = results.iterator();
+            return  it.next();
+        }
+        return null;
     }
 
     static BitServerResources getStaticBitServerResource(String uname) {
@@ -207,14 +256,13 @@ public interface UserDao {
     default List<BitServerResources> getAllBitServerResource() {
         List<BitServerResources> resultList = new ArrayList<>();
         try {
-            Class.forName("org.postgresql.Driver");
             Connection conn = getConnection();
-            String resultSQL = "SELECT tag.rvalue, tag1.rvalue FROM bitserver AS tag" +
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag.internalid FROM bitserver AS tag" +
                     " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '2'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                BitServerResources bufResource = new BitServerResources(rs.getString(1), rs.getString(2));
+                BitServerResources bufResource = new BitServerResources(rs.getString(1), rs.getString(2), Long.parseLong(rs.getString(3)));
                 resultList.add(bufResource);
             }
             conn.close();
@@ -225,27 +273,49 @@ public interface UserDao {
     }
 
     default void updateBitServiceResource(BitServerResources bitServerResources) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.saveOrUpdate(bitServerResources);
-        transaction.commit();
-        session.close();
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "UPDATE bitserver SET rvalue ='"+bitServerResources.getRname()+"' WHERE bitserver.internalid = '" + bitServerResources.getId() + "'";
+            statement.executeUpdate(strSql);
+            strSql = "UPDATE bitserver SET rvalue ='"+bitServerResources.getRvalue()+"' WHERE bitserver.parentid = '" + bitServerResources.getId() + "'";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            System.out.println(e.getMessage());
+        }
     }
 
     default void saveBitServiceResource(BitServerResources bitServerResources) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(bitServerResources);
-        transaction.commit();
-        session.close();
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bitServerResources.getRname()+"')";
+            statement.executeUpdate(strSql);
+            strSql = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bitServerResources.getRname()+"' and bitserver.rtype = '1'";
+            statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(strSql);
+            rs.next();
+            String bufStudy = rs.getString(1);
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
     }
 
-    default void deleteBitServerResource(BitServerResources bitServerResources) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.delete(bitServerResources);
-        transaction.commit();
-        session.close();
+    default void deleteFromBitServerTable(Long id) {
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "DELETE FROM bitserver WHERE bitserver.internalId = '"+id.toString()+"' ";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
     }
 
     default List<BitServerModality> getAllBitServerModality() {
@@ -439,20 +509,17 @@ public interface UserDao {
 
     default void createBitServerDateTable(){
         try {
-            Class.forName("org.postgresql.Driver");
-            Properties props = new Properties();
-            props.setProperty("user", "orthanc");
-            props.setProperty("password", "orthanc");
-            java.sql.Connection conn = DriverManager.getConnection(url2, props);
+            java.sql.Connection conn = getConnection();
             String resultSQL;
             Statement statement = conn.createStatement();
+
             resultSQL = "CREATE TABLE bitserver( internalId SERIAL PRIMARY KEY, " +
                     "rtype INTEGER null , " +
                     "rvalue TEXT, " +
                     "parentId INTEGER REFERENCES bitserver(internalId) ON DELETE CASCADE)";
             statement.executeUpdate(resultSQL);
 
-            for(BitServerResources bufResourses:getLegacyAllBitServerResource()){
+            for(BitServerResources bufResourses:getAllBitServerResource()){
                 String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bufResourses.getRname()+"')";
                 statement.executeUpdate(sqlInsert);
 
@@ -490,6 +557,21 @@ public interface UserDao {
                 sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '8','"+ bufUser.getRole()+"','"+buf+"')";
                 statement.executeUpdate(sqlInsert);
             }
+            resultSQL = "CREATE OR REPLACE FUNCTION public.bitserverdeletedfunc() " +
+                    "RETURNS trigger LANGUAGE plpgsql AS $function$ " +
+                    "BEGIN " +
+                    "IF EXISTS (SELECT 1 FROM bitserver WHERE parentId = old.parentId) THEN " +
+                    "SELECT rtype, rvalue FROM bitserver WHERE internalId = old.parentId; " +
+                    "ELSE DELETE FROM bitserver WHERE internalId = old.parentId; " +
+                    "END IF; " +
+                    "RETURN NULL; " +
+                    "END; $function$";
+            statement.executeUpdate(resultSQL);
+
+            resultSQL = "CREATE TRIGGER bitserverdeleted AFTER DELETE ON public.bitserver " +
+                    "FOR EACH ROW " +
+                    "EXECUTE PROCEDURE bitserverdeletedfunc()";
+            statement.executeUpdate(resultSQL);
 
             conn.close();
         }catch (Exception e){
@@ -550,11 +632,7 @@ public interface UserDao {
                 break;
         }
         try {
-            Class.forName("org.postgresql.Driver");
-            Properties props = new Properties();
-            props.setProperty("user", "orthanc");
-            props.setProperty("password", "orthanc");
-            java.sql.Connection conn = DriverManager.getConnection(url2, props);
+            Connection conn = getConnection();
             String resultSQL ="";
             String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
                     "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value FROM patientrecyclingorder" +
