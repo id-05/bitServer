@@ -979,12 +979,24 @@ public class SettingBitServerBean implements UserDao {
                 &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
                 &(!selectedUser.getRuName().equals("")))
         {
+            boolean verifiUnical = true;
+            for(Users bufUser:usersList) {
+                if (bufUser.getUname().equals(selectedUser.getUname())) {
+                    verifiUnical = false;
+                    break;
+                }
+            }
             Users bufUser = getRealUserForBase(selectedUser);
-            updateUser(bufUser);
+            if(verifiUnical){
+                addUser(bufUser);
+            }else{
+                updateUser(bufUser);
+            }
             usersList = prepareUserList();
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-users");
             LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new user "+bufUser.getUname());
+
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
         }

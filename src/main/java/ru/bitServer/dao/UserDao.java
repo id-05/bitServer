@@ -73,6 +73,40 @@ public interface UserDao {
         }
     }
 
+    default void addUser(Users user) {
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '3','" + user.getUname() + "')";
+            statement.executeUpdate(strSql);
+
+            strSql = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ user.getUname() +"' and bitserver.rtype = '3'";
+            statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(strSql);
+            rs.next();
+            String bufStudy = rs.getString(1);
+
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '4','"+ user.getPassword() + "','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '5','"+ user.getRuName() + "','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '6','"+ user.getRuMiddleName() + "','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '7','"+ user.getRuFamily() + "','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+
+            strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '8','"+ user.getRole() + "','"+bufStudy+"')";
+            statement.executeUpdate(strSql);
+
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+    }
+
     default void saveNewUsergroup(Usergroup usergroup) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
