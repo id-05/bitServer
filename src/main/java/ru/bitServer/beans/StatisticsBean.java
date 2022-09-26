@@ -86,8 +86,10 @@ public class StatisticsBean implements UserDao {
     @PostConstruct
     public void init()  {
 //        try {
+
             BitServerResources bufResource = getBitServerResource("showStat");
             showStat = bufResource.getRvalue().equals("true");
+
 //        }catch (Exception e){
 //            LogTool.getLogger().error("Error init() QueueBean "+e.getMessage());
 //        }
@@ -143,18 +145,18 @@ public class StatisticsBean implements UserDao {
     private void createModalityPieModel() {
         pieModality = new PieChartModel();
         ChartData data = new ChartData();
-        List<BitServerModality> modalityList = getAllBitServerModality();
+        //List<BitServerModality> modalityList = getAllBitServerModality();
         PieChartDataSet dataSet = new PieChartDataSet();
         List<Number> values = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> bgColors = new ArrayList<>();
-        for(BitServerModality bufModality:modalityList){
-            values.add(MainBean.allStudies.stream().filter(BitServerStudy->BitServerStudy.getModality().equals(bufModality.getName())).count());
-            labels.add(bufModality.getName());
-            bgColors.add( "rgb("+ThreadLocalRandom.current().nextInt(1, 254)+
-                        ", "+ThreadLocalRandom.current().nextInt(1, 254)+
-                    ", "+ThreadLocalRandom.current().nextInt(1, 254)+")");
-        }
+//        for(BitServerModality bufModality:modalityList){
+//            values.add(MainBean.allStudies.stream().filter(BitServerStudy->BitServerStudy.getModality().equals(bufModality.getName())).count());
+//            labels.add(bufModality.getName());
+//            bgColors.add( "rgb("+ThreadLocalRandom.current().nextInt(1, 254)+
+//                        ", "+ThreadLocalRandom.current().nextInt(1, 254)+
+//                    ", "+ThreadLocalRandom.current().nextInt(1, 254)+")");
+//        }
         dataSet.setData(values);
         dataSet.setBackgroundColor(bgColors);
         data.addChartDataSet(dataSet);

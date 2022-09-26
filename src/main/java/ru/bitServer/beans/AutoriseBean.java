@@ -81,7 +81,6 @@ public class AutoriseBean implements UserDao {
     public void validateUsernamePassword() {
         try {
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
-            //System.out.println(getMyIP());
             if (currentUser.getUname()!=null) {
                 HttpSession session = SessionUtils.getSession();
                 session.setAttribute("userid", currentUser.getUid());
@@ -111,9 +110,11 @@ public class AutoriseBean implements UserDao {
 
             } else {
                 showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль", error );
+                System.out.println("Неверное имя пользователя или пароль");
             }
         }catch (Exception e){
-            LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+", "+inputPassword);
+            System.out.println("login trouble");
+            LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+", "+inputPassword+"/"+e.getMessage());
         }
     }
 

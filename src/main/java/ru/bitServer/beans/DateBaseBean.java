@@ -146,10 +146,10 @@ public class DateBaseBean implements UserDao {
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
 
-        listSchedulers = getAllBitServerSheduler();
-        listResources = getAllBitServerResource();
-        listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
-        listModalitys = getAllBitServerModality();
+//        listSchedulers = getAllBitServerSheduler();
+//        listResources = getAllBitServerResource();
+//        listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
+//        listModalitys = getAllBitServerModality();
 
         //selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
@@ -157,82 +157,82 @@ public class DateBaseBean implements UserDao {
         selectedScheduler = new BitServerScheduler();
     }
 
-    public  List<BitServerStudy> getStudy (int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
-        List<BitServerStudy> resultList = new ArrayList<>();
-        String query;
-
-        switch (dateSeachType){
-            case "today":
-                firstdate = new Date();
-                seconddate = new Date();
-                break;
-            case "yesterday":
-                Instant now = Instant.now();
-                Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-                firstdate = Date.from(yesterday);
-                seconddate = Date.from(yesterday);
-                break;
-            case "targetdate":
-                Calendar cal = Calendar.getInstance();
-                cal.set(Integer.parseInt(new SimpleDateFormat("yyyy").format(firstdate)), Integer.parseInt(new SimpleDateFormat("MM").format(firstdate))-1
-                        ,Integer.parseInt(new SimpleDateFormat("dd").format(firstdate)),23,59);
-                seconddate = cal.getTime();
-                break;
-        }
-
-        firstdate.setHours(00);
-        firstdate.setMinutes(00);
-        firstdate.setSeconds(00);
-        seconddate.setHours(23);
-        seconddate.setMinutes(59);
-        seconddate.setSeconds(59);
-        String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
-        //String reqizite = "sid, shortid, sdate, patientname";
-        if(state==5){
-            if(dateSeachType.equals("all")){
-                query = "select "+reqizite+" from BitServerStudy";
-            }else{
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
-            }
-        }else{
-            if(dateSeachType.equals("all")){
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where status = "+state;
-            }else{
-                query = "select "+reqizite+" from BitServerStudy " +
-                        "where status = "+state +" and sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
-            }
-        }
-
-        try {
-            // JDBC variables for opening and managing connection
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            //timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
-            while (rs.next()) {
-                resultList.add(new BitServerStudy(
-                        rs.getString(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getDate(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getDate(7),
-                        rs.getString(8),
-                        rs.getInt(9)));
-            }
-        }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-        }
-        PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
-        PrimeFaces.current().ajax().update(":seachform:txt_count2");
-        PrimeFaces.current().ajax().update(":seachform:");
-        PrimeFaces.current().ajax().update(":seachform:ajs");
-        PrimeFaces.current().executeScript("PF('ajs').hide()");
-        return resultList;
-    }
+//    public  List<BitServerStudy> getStudy (int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
+//        List<BitServerStudy> resultList = new ArrayList<>();
+//        String query;
+//
+//        switch (dateSeachType){
+//            case "today":
+//                firstdate = new Date();
+//                seconddate = new Date();
+//                break;
+//            case "yesterday":
+//                Instant now = Instant.now();
+//                Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+//                firstdate = Date.from(yesterday);
+//                seconddate = Date.from(yesterday);
+//                break;
+//            case "targetdate":
+//                Calendar cal = Calendar.getInstance();
+//                cal.set(Integer.parseInt(new SimpleDateFormat("yyyy").format(firstdate)), Integer.parseInt(new SimpleDateFormat("MM").format(firstdate))-1
+//                        ,Integer.parseInt(new SimpleDateFormat("dd").format(firstdate)),23,59);
+//                seconddate = cal.getTime();
+//                break;
+//        }
+//
+//        firstdate.setHours(00);
+//        firstdate.setMinutes(00);
+//        firstdate.setSeconds(00);
+//        seconddate.setHours(23);
+//        seconddate.setMinutes(59);
+//        seconddate.setSeconds(59);
+//        String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
+//        //String reqizite = "sid, shortid, sdate, patientname";
+//        if(state==5){
+//            if(dateSeachType.equals("all")){
+//                query = "select "+reqizite+" from BitServerStudy";
+//            }else{
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+//            }
+//        }else{
+//            if(dateSeachType.equals("all")){
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where status = "+state;
+//            }else{
+//                query = "select "+reqizite+" from BitServerStudy " +
+//                        "where status = "+state +" and sdate BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+//            }
+//        }
+//
+//        try {
+//            // JDBC variables for opening and managing connection
+//            Connection con = DriverManager.getConnection(url, user, password);
+//            Statement stmt = con.createStatement();
+//            ResultSet rs = stmt.executeQuery(query);
+//            //timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
+//            while (rs.next()) {
+//                resultList.add(new BitServerStudy(
+//                        rs.getString(1),
+//                        rs.getString(2),
+//                        rs.getString(3),
+//                        rs.getDate(4),
+//                        rs.getString(5),
+//                        rs.getString(6),
+//                        rs.getDate(7),
+//                        rs.getString(8),
+//                        rs.getInt(9)));
+//            }
+//        }catch (Exception e){
+//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+//        }
+//        PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
+//        PrimeFaces.current().ajax().update(":seachform:txt_count2");
+//        PrimeFaces.current().ajax().update(":seachform:");
+//        PrimeFaces.current().ajax().update(":seachform:ajs");
+//        PrimeFaces.current().executeScript("PF('ajs').hide()");
+//        return resultList;
+//    }
 
     public void initNewResources(){
         selectedResource = new BitServerResources();
@@ -326,8 +326,8 @@ public class DateBaseBean implements UserDao {
     public void addNewModality(){
         if(!selectedModality.getName().equals(""))
         {
-            updateBitServerModality(selectedModality);
-            listModalitys = getAllBitServerModality();
+            ///updateBitServerModality(selectedModality);
+            //listModalitys = getAllBitServerModality();
             PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-modality");
             LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new modality "+selectedModality.getName());
@@ -347,13 +347,13 @@ public class DateBaseBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-                saveNewRule(selectedScheduler);
-                listSchedulers = getAllBitServerSheduler();
+                //saveNewRule(selectedScheduler);
+                //listSchedulers = getAllBitServerSheduler();
                 PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
             }else{
-                updateRule(selectedScheduler);
-                listSchedulers = getAllBitServerSheduler();
+                //pdateRule(selectedScheduler);
+                //listSchedulers = getAllBitServerSheduler();
                 PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
             }
@@ -363,7 +363,7 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteScheduler(){
-        deleteRule(selectedScheduler);
+        //deleteRule(selectedScheduler);
         listSchedulers.remove(selectedScheduler);
         selectedScheduler = new BitServerScheduler();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Правило удалено!"));
@@ -399,16 +399,16 @@ public class DateBaseBean implements UserDao {
             String anamnes = generateString(59);
             String result = generateString(59);
 
-            List<BitServerModality> listModality = getAllBitServerModality();
+            //List<BitServerModality> listModality = getAllBitServerModality();
 
             int min = 0;
-            int max = listModality.size()-1;
+            int max = 0;//listModality.size()-1;
             int diff = max - min;
             Random randomModality = new Random();
             int j = randomModality.nextInt(diff + 1);
             j += min;
 
-            String modality = listModality.get(j).getName();
+            //String modality = listModality.get(j).getName();
 
             min = 0;
             max = 3;
@@ -429,11 +429,11 @@ public class DateBaseBean implements UserDao {
             maleList.add("F");
             maleList.add("M");
 
-            BitServerStudy bufStudy = new BitServerStudy(sid, shortid, sdescription, source, sdate,
-                    modality, dateaddinbase, patientname, patientbirthdate,
-                    maleList.get(j), anamnes, result, status);
+//            BitServerStudy bufStudy = new BitServerStudy(sid, shortid, sdescription, source, sdate,
+//                    modality, dateaddinbase, patientname, patientbirthdate,
+//                    maleList.get(j), anamnes, result, status);
 
-            addStudyJDBC(bufStudy);
+            //addStudyJDBC(bufStudy);
 
         }
         System.out.println("end");
@@ -464,7 +464,7 @@ public class DateBaseBean implements UserDao {
 
     public void deleteModality(){
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Modality "+selectedModality.getName());
-        deleteBitServerModality(selectedModality);
+        //deleteBitServerModality(selectedModality);
         listModalitys.remove(selectedModality);
         selectedModality = new BitServerModality();
         showMessage("Внимание!","Модальность удалена!",FacesMessage.SEVERITY_ERROR);
@@ -474,9 +474,9 @@ public class DateBaseBean implements UserDao {
     public void updateStudyInBase(){
         if((selectedStudy.getId() != null) & (!selectedStudy.getModality().equals("")))
         {
-            updateStudy(selectedStudy);
+            //updateStudy(selectedStudy);
             LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" update study in base "+selectedStudy.getSid());
-            listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
+            //listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
             PrimeFaces.current().executeScript("PF('manageStudyDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-study");
         }else{
@@ -485,7 +485,7 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteStudyFromBase(){
-        deleteStudy(selectedStudy);
+        //deleteStudy(selectedStudy);
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete study from base "+selectedStudy.getSid());
         listStudys.remove(selectedStudy);
         selectedStudy = new BitServerStudy();
@@ -494,7 +494,7 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteAllStudy() throws SQLException {
-        deleteAllStudyJDBC();
+        //deleteAllStudyJDBC();
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete all study from base");
         listStudys.clear();
         selectedStudy = new BitServerStudy();

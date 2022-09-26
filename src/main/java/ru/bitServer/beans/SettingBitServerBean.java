@@ -371,9 +371,9 @@ public class SettingBitServerBean implements UserDao {
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
-        for(Usergroup bufgroup:usergroupList){
-            usergroupListRuName.add(bufgroup.getRuName());
-        }
+//        for(Usergroup bufgroup:usergroupList){
+//            usergroupListRuName.add(bufgroup.getRuName());
+//        }
         return usergroupListRuName;
     }
 
@@ -470,7 +470,7 @@ public class SettingBitServerBean implements UserDao {
         stopDate = new Date();
         startDelDate = new Date();
         stopDelDate = new Date();
-        usergroupList = getBitServerUsergroupList();
+        //usergroupList = getBitServerUsergroupList();
         usersList = prepareUserList();
         initNewUser();
         initNewUsergroup();
@@ -580,9 +580,9 @@ public class SettingBitServerBean implements UserDao {
             }
         }
 
-        for(BitServerModality bufModality:getAllBitServerModality()){
-            modalityName.add(bufModality.getName());
-        }
+//        for(BitServerModality bufModality:getAllBitServerModality()){
+//            modalityName.add(bufModality.getName());
+//        }
         selectedModalitiName = modalityName;
     }
 
@@ -623,7 +623,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void syncAll() {
-        createBitServerDateTable();
+        //createBitServerDateTable();
 //        PrimeFaces.current().executeScript("PF('startButtonSA').disable()");
 //        JsonParser parserJson = new JsonParser();
 //        JsonArray studies = (JsonArray) parserJson.parse(connection.makeGetConnectionAndStringBuilder("/studies/").toString());
@@ -663,7 +663,7 @@ public class SettingBitServerBean implements UserDao {
 //            }
 //            progress1 = (int) (dProgress * i );
 //        }
-        PrimeFaces.current().executeScript("PF('startButtonSA').enable()");
+//        PrimeFaces.current().executeScript("PF('startButtonSA').enable()");
         showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: ", info );//+ //i, info);
         LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start syncAll()");
     }
@@ -718,10 +718,10 @@ public class SettingBitServerBean implements UserDao {
             i++;
             progress1 = (int) (dProgress * i);
         }
-        List<BitServerStudy> listStudys = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:listStudys){
-            deleteStudy(bufStudy);
-        }
+       // List<BitServerStudy> listStudys = getAllBitServerStudy();
+//        for(BitServerStudy bufStudy:listStudys){
+//            deleteStudy(bufStudy);
+//        }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
         showMessage("Сообщение", "Удаление завершено! Всего удалено: " + i, info);
         LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start dateBaseFactoryReset()");
@@ -733,22 +733,22 @@ public class SettingBitServerBean implements UserDao {
         Instant stopInstant = Instant.parse(FORMAT2.format(stopDelDate)+".00Z");
         int i=0;
         if(!startInstant.equals(stopInstant)) {
-            StringBuilder bufStr = getAllNameBitServerModality();
+            //StringBuilder bufStr = getAllNameBitServerModality();
 
-            List<BitServerStudy> bufStudyList = getBitServerStudy(5, "range", startDelDate, stopDelDate, bufStr.toString());
-            sum = bufStudyList.size();
-            double dProgress = (double) 100 / bufStudyList.size();
-            progress1 = 0;
-
-            for(BitServerStudy bufStudy:bufStudyList){
-                connection.deleteStudyFromOrthanc(bufStudy.getSid());
-                deleteStudy(bufStudy);
-                i++;
-                progress1 = (int) (dProgress * i);
-            }
+            //List<BitServerStudy> bufStudyList = getBitServerStudy(5, "range", startDelDate, stopDelDate, bufStr.toString());
+            //sum = bufStudyList.size();
+//            double dProgress = (double) 100 / bufStudyList.size();
+//            progress1 = 0;
+//
+//            for(BitServerStudy bufStudy:bufStudyList){
+//                connection.deleteStudyFromOrthanc(bufStudy.getSid());
+//                deleteStudy(bufStudy);
+//                i++;
+//                progress1 = (int) (dProgress * i);
+//            }
 
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-            showMessage("Сообщение", "Удаление завершено! Всего удалено: " + sum, info);
+            //showMessage("Сообщение", "Удаление завершено! Всего удалено: " + sum, info);
             LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start deleteDicomPeriod()");
         }else {
             PrimeFaces.current().executeScript("PF('statusDialog').hide()");
@@ -773,10 +773,10 @@ public class SettingBitServerBean implements UserDao {
                 remoteStudyList.add(studiesIterator.next().getAsString());
             }
             ArrayList<String> localStudyList = new ArrayList<>();
-            List<BitServerStudy> bufStudyList = getAllBitServerStudy();
-            for(BitServerStudy bufStudy:bufStudyList){
-                localStudyList.add(bufStudy.getSid());
-            }
+            //List<BitServerStudy> bufStudyList = getAllBitServerStudy();
+//            for(BitServerStudy bufStudy:bufStudyList){
+//                localStudyList.add(bufStudy.getSid());
+//            }
             remoteStudyList.removeAll(localStudyList);
             if(remoteStudyList.size()>0) {
                 double dProgress = (double) 100 / studies.size();
@@ -823,7 +823,7 @@ public class SettingBitServerBean implements UserDao {
         assert sb != null;
         boolean existInTable;
         studiesFromRestApi = connection.getStudiesFromJson(sb.toString());
-        studiesFromTableBitServer = getAllBitServerStudy();
+        //studiesFromTableBitServer = getAllBitServerStudy();
         for(OrthancStudy bufStudy:studiesFromRestApi){
             existInTable = false;
             if(studiesFromTableBitServer.size()>0) {
@@ -835,10 +835,10 @@ public class SettingBitServerBean implements UserDao {
                 }
             }
             if(!existInTable) {
-                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                        bufStudy.getInstitutionName(), bufStudy.getDate(),
-                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
-                addStudyJDBC(buf);
+//                BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+//                        bufStudy.getInstitutionName(), bufStudy.getDate(),
+//                        bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "","",0);
+//                addStudyJDBC(buf);
                 sum++;
             }
         }
@@ -1067,13 +1067,13 @@ public class SettingBitServerBean implements UserDao {
             }
             if(verifiUnical) {
                 usergroupList.add(new Usergroup(selectedUsergroup.getRuContragent(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus(),selectedUsergroup.isDownloadTrue(),selectedUsergroup.isForlocal()));
-                saveNewUsergroup(selectedUsergroup);
+                //saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
-                usergroupList = getBitServerUsergroupList();
+                //usergroupList = getBitServerUsergroupList();
             }else{
-                updateUsergroup(selectedUsergroup);
-                usergroupList = getBitServerUsergroupList();
+                //updateUsergroup(selectedUsergroup);
+                //usergroupList = getBitServerUsergroupList();
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
             }
@@ -1084,7 +1084,7 @@ public class SettingBitServerBean implements UserDao {
 
     public void deleteUsergroupSetting() {
         try {
-            deleteUsergroup(selectedUsergroup);
+            //deleteUsergroup(selectedUsergroup);
             usergroupList.remove(selectedUsergroup);
             selectedUsergroup = new Usergroup();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));

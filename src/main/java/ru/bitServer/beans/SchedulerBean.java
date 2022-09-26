@@ -112,22 +112,22 @@ public class SchedulerBean implements UserDao {
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         visibleRules.clear();
-        usergroupList = getRealBitServerUsergroupList();
-        visibleRules = getPrepareBitServiceScheduler();
+        //usergroupList = getRealBitServerUsergroupList();
+        //visibleRules = getPrepareBitServiceScheduler();
         modalitylist.clear();
         modalitylist.add("Все");
-        List<BitServerModality> modalityFromBase = getAllBitServerModality();
-        for(BitServerModality bufModality:modalityFromBase){
-            modalitylist.add(bufModality.getName());
-        }
+        //List<BitServerModality> modalityFromBase = getAllBitServerModality();
+//        for(BitServerModality bufModality:modalityFromBase){
+//            modalitylist.add(bufModality.getName());
+//        }
 
         sourcelist.clear();
         sourcelist.add("Все");
         List<String> buflist = new ArrayList<>();
-        List<BitServerStudy> bufStudyList = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:bufStudyList){
-            buflist.add(bufStudy.getSource());
-        }
+        //List<BitServerStudy> bufStudyList = getAllBitServerStudy();
+//        for(BitServerStudy bufStudy:bufStudyList){
+//            buflist.add(bufStudy.getSource());
+//        }
         Set<String> set = new LinkedHashSet<>(buflist);
         sourcelist.addAll(set);
         selectedtime = LocalTime.now();
@@ -145,8 +145,8 @@ public class SchedulerBean implements UserDao {
         {
             BitServerScheduler bufRule = getRealRuleForBase(selectedRule);
             visibleRules.add(bufRule);
-            saveNewRule(bufRule);
-            visibleRules = getPrepareBitServiceScheduler();
+            //saveNewRule(bufRule);
+            //visibleRules = getPrepareBitServiceScheduler();
             PrimeFaces.current().executeScript("PF('manageRuleDialog').hide()");
             PrimeFaces.current().ajax().update(":form:dt-rules");
         }else{
@@ -155,7 +155,7 @@ public class SchedulerBean implements UserDao {
     }
 
     public void deleteSelectedRule(){
-        deleteRule(selectedRule);
+        //deleteRule(selectedRule);
         visibleRules.remove(selectedRule);
         selectedRule = new BitServerScheduler();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Правило удалено!"));
@@ -175,20 +175,20 @@ public class SchedulerBean implements UserDao {
         selectedtime = LocalTime.of(Integer.parseInt(selectedRule.getClock()),Integer.parseInt(selectedRule.getMinute()));
     }
 
-    public List<BitServerScheduler> getPrepareBitServiceScheduler(){
-        List<BitServerScheduler> outputList = getAllBitServerSheduler();
-        for(BitServerScheduler bufRule:outputList){
-            int buf = Integer.parseInt(bufRule.getDestinationgroup());
-            bufRule.setDestinationgroup(getVisibleNameOfGroup(buf));
-            if(bufRule.getClock().length()<2){
-                bufRule.setClock("0"+bufRule.getClock());
-            }
-            if(bufRule.getMinute().length()<2){
-                bufRule.setMinute("0"+bufRule.getMinute());
-            }
-        }
-        return outputList;
-    }
+//    public List<BitServerScheduler> getPrepareBitServiceScheduler(){
+//        List<BitServerScheduler> outputList = getAllBitServerSheduler();
+//        for(BitServerScheduler bufRule:outputList){
+//            int buf = Integer.parseInt(bufRule.getDestinationgroup());
+//            bufRule.setDestinationgroup(getVisibleNameOfGroup(buf));
+//            if(bufRule.getClock().length()<2){
+//                bufRule.setClock("0"+bufRule.getClock());
+//            }
+//            if(bufRule.getMinute().length()<2){
+//                bufRule.setMinute("0"+bufRule.getMinute());
+//            }
+//        }
+//        return outputList;
+//    }
 
     public String getVisibleNameOfGroup(int i){
         String buf = null;

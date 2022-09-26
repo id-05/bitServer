@@ -474,11 +474,7 @@
                                          widgetVar="startButtonSA" styleClass="p-mr-2" ajax="false"/>
                         <br/>
 
-                        <p:progressBar  widgetVar="pbAjax2" ajax="true" value="#{settingBitServerBean.progress1}"
-                                        interval="500" labelTemplate="{value}%"
-                                        styleClass="p-mt-3" global="false">
-                            <p:ajax event="complete" oncomplete="PF('startButtonSA').enable()"/>
-                        </p:progressBar>
+
 
                         <br/>
                         <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>

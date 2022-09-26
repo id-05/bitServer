@@ -59,14 +59,14 @@ public class RemoteUserResults implements UserDao {
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         visibleStudiesList.clear();
-        List<BitServerStudy> bufList = getAllBitServerStudy();
-        for(BitServerStudy bufStudy:bufList){
-            if(bufStudy.getUserwhodiagnost()!=null) {
-                if (bufStudy.getUserwhodiagnost().equals(currentUser.getUid().toString())) {
-                    visibleStudiesList.add(bufStudy);
-                }
-            }
-        }
+        //List<BitServerStudy> bufList = getAllBitServerStudy();
+//        for(BitServerStudy bufStudy:bufList){
+//            if(bufStudy.getUserwhodiagnost()!=null) {
+//                if (bufStudy.getUserwhodiagnost().equals(currentUser.getUid().toString())) {
+//                    visibleStudiesList.add(bufStudy);
+//                }
+//            }
+//        }
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {

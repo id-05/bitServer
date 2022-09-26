@@ -374,9 +374,9 @@ public class QueueBean implements UserDao, DataAction {
     @PostConstruct
     private void init() {
         LogTool.getLogger().info(this.getClass().getSimpleName()+" "+"queueBean new");
-        for(BitServerModality bufModality:getAllBitServerModality()){
-            modalityName.add(bufModality.getName());
-        }
+//        for(BitServerModality bufModality:getAllBitServerModality()){
+//            modalityName.add(bufModality.getName());
+//        }
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
@@ -388,8 +388,8 @@ public class QueueBean implements UserDao, DataAction {
 
         firstdate = new Date();
         seconddate = new Date();
-        usergroupList = getRealBitServerUsergroupList();
-        selectedUserGroup = usergroupList.get(0).getRuName();
+        //usergroupList = getRealBitServerUsergroupList();
+//        selectedUserGroup = usergroupList.get(0).getRuName();
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -451,7 +451,7 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
         PrimeFaces.current().ajax().update(":seachform:ajs");
         PrimeFaces.current().executeScript("PF('ajs').show()");
-        StringBuilder bufStr = getAllNameBitServerModality();
+        StringBuilder bufStr = new StringBuilder();//)getAllNameBitServerModality();
         resetViewTable();
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
@@ -538,7 +538,7 @@ public class QueueBean implements UserDao, DataAction {
         StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
         JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
         OrthancStudy bufStudy = connection.parseStudy(bufJson);
-        studiesFromTableBitServer = getAllBitServerStudyOnlyId();
+        //studiesFromTableBitServer = getAllBitServerStudyOnlyId();
         boolean existInTable = false;
         for (BitServerStudy bBSS : studiesFromTableBitServer) {
             if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
@@ -547,10 +547,10 @@ public class QueueBean implements UserDao, DataAction {
             }
         }
         if (!existInTable) {
-            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-                    bufStudy.getInstitutionName(), bufStudy.getDate(),
-                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-            addStudyJDBC(buf);
+//            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
+//                    bufStudy.getInstitutionName(), bufStudy.getDate(),
+//                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
+//            addStudyJDBC(buf);
         }
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
@@ -589,7 +589,7 @@ public class QueueBean implements UserDao, DataAction {
                 bufStudy.setDatesent(new Date());
                 bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
                 bufStudy.setUserwhosent(currentUser.getUid().toString());
-                updateStudy(bufStudy);
+                //updateStudy(bufStudy);
                 i++;
             }else{
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
@@ -621,7 +621,7 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void addAnamnes(){
-        updateStudy(selectedVisibleStudy);
+        //updateStudy(selectedVisibleStudy);
     }
 
     public boolean hasSelectedStudy() {
@@ -668,7 +668,7 @@ public class QueueBean implements UserDao, DataAction {
             if(!bufStudy.getUsergroupwhosees().equals("")){
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
-                updateStudy(bufStudy);
+                //updateStudy(bufStudy);
                 connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
                 Users bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
@@ -685,7 +685,7 @@ public class QueueBean implements UserDao, DataAction {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             bufStudy.setUsergroupwhosees("");
             bufStudy.setStatus(2);
-            updateStudy(bufStudy);
+            //updateStudy(bufStudy);
         }
         selectedVisibleStudies.clear();
         dataoutput();
@@ -696,7 +696,7 @@ public class QueueBean implements UserDao, DataAction {
         selectedVisibleStudy.setStatus(3);
         selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        updateStudy(selectedVisibleStudy);
+        //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
@@ -704,7 +704,7 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void DelStudy() throws IOException {
-        deleteStudy(selectedVisibleStudy);
+        //deleteStudy(selectedVisibleStudy);
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getSid());
         visibleStudiesList.remove(selectedVisibleStudy);
         selectedVisibleStudy = new BitServerStudy();

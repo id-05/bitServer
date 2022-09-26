@@ -74,7 +74,7 @@ public class LocalUserCurTask implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-        currentStudy = getStudyById(currentUser.getBlockStudy());
+        //currentStudy = getStudyById(currentUser.getBlockStudy());
         visibleStudiesList.clear();
         visibleStudiesList.add(currentStudy);
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
@@ -114,7 +114,7 @@ public class LocalUserCurTask implements UserDao {
             selectedVisibleStudy.setTyperesult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getAnonimstudyid());
-        updateStudy(selectedVisibleStudy);
+        //updateStudy(selectedVisibleStudy);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
     }
 

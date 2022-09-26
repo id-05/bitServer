@@ -71,7 +71,7 @@ public class QueueremoteBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-        usergroupList = getRealBitServerUsergroupList();
+        //usergroupList = getRealBitServerUsergroupList();
         selectedUserGroup = usergroupList.get(0).getRuName();
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         dataoutput();
@@ -79,7 +79,7 @@ public class QueueremoteBean implements UserDao {
     }
 
     public void dataoutput() {
-        visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getUgroup());
+        //visibleStudiesList = getBitServerStudyOnAnalisis(currentUser.getUgroup());
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
     }
 
@@ -107,7 +107,7 @@ public class QueueremoteBean implements UserDao {
             selectedVisibleStudy.setTyperesult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getAnonimstudyid());
-        updateStudy(selectedVisibleStudy);
+        //updateStudy(selectedVisibleStudy);
         PrimeFaces.current().executeScript("PF('sidebar').hide()");
         showMessage("Информация","Заключение было прикреплено к исследованию! Статус исследования был изменен на 'Описано'",info);
         dataoutput();
@@ -132,7 +132,7 @@ public class QueueremoteBean implements UserDao {
         selectedVisibleStudy.setStatus(3);
         selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        updateStudy(selectedVisibleStudy);
+        //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
         currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);

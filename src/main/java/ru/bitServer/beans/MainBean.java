@@ -53,7 +53,7 @@ public class MainBean implements UserDao, DataAction {
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
-    public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
+    //public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
     public static final String user = "orthanc";
     public static final String password = "orthanc";
     boolean showStat;
@@ -90,7 +90,7 @@ public class MainBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
-        versionInfo = "2.0";
+        versionInfo = "2.1";
         timeOnWork = 24;
         mainServer = new OrthancServer();
         try {
@@ -133,6 +133,7 @@ public class MainBean implements UserDao, DataAction {
         themeList = themeListinit();
         selectTheme = themeList.get(1);
 
+
         try {
             periodUpdate = getBitServerResource("PeriodUpdate").getRvalue();
         }catch (Exception e){
@@ -145,6 +146,8 @@ public class MainBean implements UserDao, DataAction {
             saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
             LogTool.setFileName(getBitServerResource("logpath").getRvalue());
         }
+
+
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
  //       ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -154,26 +157,26 @@ public class MainBean implements UserDao, DataAction {
             ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
         scheduler2.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
 
-        HL7service();
+       HL7service();
     }
 
     public static void HL7service() {
-        boolean useSecureConnection = false;
-        BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
-        int port = 4243;
-        if(bufRes!=null){
-            port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
-        }
-        ourHl7Server = context.newServer(port, useSecureConnection);
-        AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
-        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
-        ourHl7Server.registerConnectionListener(new OurConnectionListener());
-        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
-        try {
-            ourHl7Server.startAndWait();
-        }catch (Exception e){
-            LogTool.getLogger().error("MainBean Error HL7service: "+e.getMessage());
-        }
+//        boolean useSecureConnection = false;
+//        BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
+//        int port = 4243;
+//        if(bufRes!=null){
+//            port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
+//        }
+//        ourHl7Server = context.newServer(port, useSecureConnection);
+//        AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
+//        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
+//        ourHl7Server.registerConnectionListener(new OurConnectionListener());
+//        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
+//        try {
+//            ourHl7Server.startAndWait();
+//        }catch (Exception e){
+//            LogTool.getLogger().error("MainBean Error HL7service: "+e.getMessage());
+//        }
     }
 
     static class OurConnectionListener implements ConnectionListener {
@@ -200,22 +203,22 @@ public class MainBean implements UserDao, DataAction {
                 LogTool.getLogger().info("start update");
             }
 
-//            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-//            try {
-//                syncDataBase(connection);
-//            } catch (Exception e) {
-//                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-//            }
+            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            try {
+                syncDataBase(connection);
+            } catch (Exception e) {
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            }
 
             if(showStat){
                 double startTime = new Date().getTime();
                 System.out.println("calculate statistics");
-                allStudies = getAllBitServerStudyJDBC();
-                allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-                resultMapLong.clear();
-                resultMapShort.clear();
-                resultMapLong = getStatMap(allStudies,"MM.yyyy");
-                resultMapShort = getStatMap(allStudies,"yyyy");
+                //allStudies = getAllBitServerStudyJDBC();
+                //allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
+                //resultMapLong.clear();
+                //resultMapShort.clear();
+                //resultMapLong = getStatMap(allStudies,"MM.yyyy");
+                //resultMapShort = getStatMap(allStudies,"yyyy");
                 double calculateStateTime = ((new Date().getTime())-startTime)/1000;
                 if(getBitServerResource("debug").getRvalue().equals("true")) {
                     LogTool.getLogger().info("calculateStateTime = "+calculateStateTime+"c.");
