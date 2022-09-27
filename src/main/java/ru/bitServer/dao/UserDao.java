@@ -1,8 +1,5 @@
 package ru.bitServer.dao;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-import ru.bitServer.util.HibernateSessionFactoryUtil;
 import ru.bitServer.util.LogTool;
 import java.sql.*;
 import java.text.DateFormat;
@@ -22,8 +19,7 @@ public interface UserDao {
         Properties props = new Properties();
         props.setProperty("user", "orthanc");
         props.setProperty("password", "orthanc");
-        java.sql.Connection connection = DriverManager.getConnection(url2, props);
-        return connection;
+        return DriverManager.getConnection(url, props);
     }
 
     default void updateUser(Users user) {
@@ -45,7 +41,6 @@ public interface UserDao {
             conn.close();
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-            System.out.println(e.getMessage());
         }
     }
 
@@ -95,14 +90,15 @@ public interface UserDao {
                     " INNER JOIN bitserver AS tag5 ON tag.internalid = tag5.parentid AND tag5.rtype = '8' WHERE tag.rvalue = '"+ulogin+"' AND tag1.rvalue = '"+upassword+"'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
+
             while (rs.next()) {
                 user = new Users(rs.getString(1), rs.getString(2), rs.getString(3),
                         rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
-
             }
             conn.close();
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            return user;
         }
         return user;
     }
@@ -170,21 +166,29 @@ public interface UserDao {
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
-
         return resultResources;
     }
 
     static BitServerResources getStaticBitServerResource(String uname) {
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-        String hql = "FROM BitServerResources U WHERE U.rname = '" + uname + "'";
-        Query query = session.createQuery(hql);
-        List<BitServerResources> results = query.list();
-
-        if (results.size() > 0) {
-            Iterator<BitServerResources> it = results.iterator();
-            return  it.next();
+        BitServerResources resultResources = new BitServerResources();
+        try {
+            Class.forName("org.postgresql.Driver");
+            Properties props = new Properties();
+            props.setProperty("user", "orthanc");
+            props.setProperty("password", "orthanc");
+            Connection conn = DriverManager.getConnection(url, props);
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag.internalid FROM bitserver AS tag" +
+                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '2' AND tag.rvalue = '" + uname +"'" ;
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                resultResources = new BitServerResources(rs.getString(1), rs.getString(2),Long.parseLong(rs.getString(3)));
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error("getStaticBitServerResource from UserDao: "+ e.getMessage());
         }
-        return null;
+        return resultResources;
     }
 
     default List<BitServerResources> getAllBitServerResource() {
@@ -251,79 +255,6 @@ public interface UserDao {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
     }
-
-//    default void createBitServerDateTable(){
-//        try {
-//            java.sql.Connection conn = getConnection();
-//            String resultSQL;
-//            Statement statement = conn.createStatement();
-//
-//            resultSQL = "CREATE TABLE bitserver( internalId SERIAL PRIMARY KEY, " +
-//                    "rtype INTEGER null , " +
-//                    "rvalue TEXT, " +
-//                    "parentId INTEGER REFERENCES bitserver(internalId) ON DELETE CASCADE)";
-//            statement.executeUpdate(resultSQL);
-//
-//            for(BitServerResources bufResourses:getLegacyAllBitServerResource()){
-//                String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bufResourses.getRname()+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                resultSQL = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bufResourses.getRname()+"'";
-//                statement = conn.createStatement();
-//                ResultSet rs = statement.executeQuery(resultSQL);
-//                rs.next();
-//                String bufStudy = rs.getString(1);
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bufResourses.getRvalue()+"','"+bufStudy+"')";
-//                statement.executeUpdate(sqlInsert);
-//            }
-//
-//            for(Users bufUser:getLegacyBitServerUserList()){
-//                String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '3','"+ bufUser.getUname()+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                resultSQL = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bufUser.getUname()+"'";
-//                statement = conn.createStatement();
-//                ResultSet rs = statement.executeQuery(resultSQL);
-//                rs.next();
-//                String buf = rs.getString(1);
-//
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '4','"+ bufUser.getPassword()+"','"+buf+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '5','"+ bufUser.getRuName()+"','"+buf+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '6','"+ bufUser.getRuMiddleName()+"','"+buf+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '7','"+ bufUser.getRuFamily()+"','"+buf+"')";
-//                statement.executeUpdate(sqlInsert);
-//
-//                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '8','"+ bufUser.getRole()+"','"+buf+"')";
-//                statement.executeUpdate(sqlInsert);
-//            }
-//            resultSQL = "CREATE OR REPLACE FUNCTION public.bitserverdeletedfunc() " +
-//                    "RETURNS trigger LANGUAGE plpgsql AS $function$ " +
-//                    "BEGIN " +
-//                    "IF EXISTS (SELECT 1 FROM bitserver WHERE parentId = old.parentId) THEN " +
-//                    "SELECT rtype, rvalue FROM bitserver WHERE internalId = old.parentId; " +
-//                    "ELSE DELETE FROM bitserver WHERE internalId = old.parentId; " +
-//                    "END IF; " +
-//                    "RETURN NULL; " +
-//                    "END; $function$";
-//            statement.executeUpdate(resultSQL);
-//
-//            resultSQL = "CREATE TRIGGER bitserverdeleted AFTER DELETE ON public.bitserver " +
-//                    "FOR EACH ROW " +
-//                    "EXECUTE PROCEDURE bitserverdeletedfunc()";
-//            statement.executeUpdate(resultSQL);
-//
-//            conn.close();
-//        }catch (Exception e){
-//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-//            System.out.println(e.getMessage());
-//        }
-//    }
 
     default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
         List<BitServerStudy> resultList = new ArrayList<>();
@@ -418,91 +349,6 @@ public interface UserDao {
         Date returnDate = new Date();
         if(!strDate.equals("")){
             returnDate = formatter.parse(strDate);
-        }
-        return returnDate;
-    }
-
-//    default List<BitServerStudy> getAllBitServerStudyJDBC() {
-//        List<BitServerStudy> resultList = new ArrayList<>();
-//        String reqizite = "sid, shortid, sdescription, sdate, modality, patientname, patientbirthdate, patientsex, status";
-//        String query = "select "+reqizite+" from BitServerStudy";
-//        try {
-//            Connection con = DriverManager.getConnection(url, user, password);
-//            Statement stmt = con.createStatement();
-//            ResultSet rs = stmt.executeQuery(query);
-//            while (rs.next()) {
-//                BitServerStudy buf = new BitServerStudy(
-//                        rs.getString(1),
-//                        rs.getString(2),
-//                        rs.getString(3),
-//                        rs.getDate(4),
-//                        rs.getString(5),
-//                        rs.getString(6),
-//                        rs.getDate(7),
-//                        rs.getString(8),
-//                        rs.getInt(9));
-//                resultList.add(buf);
-//            }
-//            con.close();
-//        } catch (Exception e) {
-//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-//        }
-//        return resultList;
-//    }
-
-//    default List<BitServerStudy> getAllBitServerStudyOnlyId() throws SQLException {
-//        String reqizite = "sid, sdate";
-//        String query = "select "+reqizite+" from BitServerStudy";
-//        List<BitServerStudy> resultList = new ArrayList<>();
-//        try {
-//            Connection con = DriverManager.getConnection(url, user, password);
-//            Statement stmt = con.createStatement();
-//            ResultSet rs = stmt.executeQuery(query);
-//            while (rs.next()) {
-//                BitServerStudy buf = new BitServerStudy(
-//                        rs.getString(1),
-//                        rs.getDate(2));
-//                resultList.add(buf);
-//            }
-//        }catch (Exception e){
-//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-//        }
-//        return resultList;
-//    }
-
-//    default void addStudyJDBC(BitServerStudy study) {
-//        String query = "";
-//        try{
-//            Connection con = DriverManager.getConnection(url, user, password);
-//            query = "INSERT INTO BitServerStudy (sid, shortid, sdescription, source, sdate, modality, dateaddinbase, patientname, " +
-//                    "patientbirthdate, patientsex, status, typeresult, userwhoblock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-//            PreparedStatement pstmt = con.prepareStatement(query);
-//            pstmt.setString(1, clearStr(study.getSid()));
-//            pstmt.setString(2, clearStr(study.getShortid()));
-//            pstmt.setString(3, clearStr(study.getSdescription()));
-//            pstmt.setString(4, clearStr(study.getSource()));
-//            pstmt.setDate(5, checkDate(study.getSdate()));
-//            pstmt.setString(6, study.getModality());
-//            pstmt.setDate(7, new java.sql.Date(new Date().getTime()));
-//            pstmt.setString(8, clearStr(study.getPatientname()));
-//            pstmt.setDate(9, new java.sql.Date(study.getPatientbirthdate().getTime()));
-//            pstmt.setString(10, clearStr(study.getPatientsex()));
-//            pstmt.setString(11, "0");
-//            pstmt.setString(12, "0");
-//            pstmt.setString(13, "0");
-//            pstmt.execute();
-//            con.close();
-//        }catch (SQLException e){
-//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ "Error sql add study: "+e.getMessage()+" sql = "+query);
-//        }
-//    }
-
-    default java.sql.Date checkDate(Date bufDate){
-        java.sql.Date returnDate = null;
-        if(bufDate.equals(null)){
-            returnDate = new java.sql.Date(new Date().getTime());
-        }else{
-            returnDate = new java.sql.Date(bufDate.getTime());
         }
         return returnDate;
     }

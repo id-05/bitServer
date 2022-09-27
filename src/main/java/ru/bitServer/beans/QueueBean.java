@@ -45,8 +45,7 @@ public class QueueBean implements UserDao, DataAction {
     Date firstdate;
     Date seconddate;
     int typeSeach = 5;
-    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy.MM.dd");
-    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy.MM.dd");
     List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
@@ -364,7 +363,6 @@ public class QueueBean implements UserDao, DataAction {
     public static final String CYRILLIC_TO_LATIN = "Cyrillic-Latin";
     public static final String LATIN_TO_CYRILLIC = "Latin-Cyrillic";
 
-    // JDBC URL, username and password of MySQL server
     ////Status
     /// Заблокирован на описание - 3
     /// Описан - 2
@@ -657,7 +655,7 @@ public class QueueBean implements UserDao, DataAction {
         HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
         InputStream inputStream = conn.getInputStream();
         return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT2.format(bufStudy.getSdate())+"."+"zip")
+                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"zip")
                 .contentType("application/zip")
                 .stream(() -> inputStream)
                 .build();

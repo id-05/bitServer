@@ -12,7 +12,6 @@ public class DeleteWorkListFile implements UserDao, Runnable {
 
         int lifeHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
         File f = new File(getBitServerResource("WorkListPath").getRvalue());
-        //System.out.println("start delete");
         pathnames = f.list();
         assert pathnames != null;
         for (String pathname : pathnames) {

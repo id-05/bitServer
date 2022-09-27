@@ -20,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -28,7 +27,6 @@ import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @ManagedBean(name = "mainBean", eager = true)
 @ApplicationScoped
@@ -38,7 +36,6 @@ public class MainBean implements UserDao, DataAction {
     public static String pathToSaveResult;
     public static String osimisAddress;
     public String periodUpdate = "2";
-    private static HL7Service ourHl7Server;
     public DashboardModel model;
     public String selectTheme;
     public ArrayList<String> themeList;
@@ -53,13 +50,12 @@ public class MainBean implements UserDao, DataAction {
     public static Map<Long, Integer> resultMapLong = new TreeMap<>();
     public static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
-    //public static final String url = "jdbc:mysql://127.0.0.1:3306/orthanc";
+
     public static final String user = "orthanc";
     public static final String password = "orthanc";
+    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+
     boolean showStat;
-
-    public static final String url2 = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-
     public int getTimeOnWork() {
         return timeOnWork;
     }
@@ -150,33 +146,29 @@ public class MainBean implements UserDao, DataAction {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
- //       ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-//        if(!periodUpdate.equals("0")) {
-//            scheduler.scheduleAtFixedRate(new BaseUpdate(), 0, Long.valueOf(periodUpdate), TimeUnit.MINUTES);
-//        }
-            ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
         scheduler2.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
 
        HL7service();
     }
 
     public static void HL7service() {
-//        boolean useSecureConnection = false;
-//        BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
-//        int port = 4243;
-//        if(bufRes!=null){
-//            port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
-//        }
-//        ourHl7Server = context.newServer(port, useSecureConnection);
-//        AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
-//        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
-//        ourHl7Server.registerConnectionListener(new OurConnectionListener());
-//        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
-//        try {
-//            ourHl7Server.startAndWait();
-//        }catch (Exception e){
-//            LogTool.getLogger().error("MainBean Error HL7service: "+e.getMessage());
-//        }
+        boolean useSecureConnection = false;
+        BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
+        int port = 4243;
+        if(bufRes!=null){
+            port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
+        }
+        HL7Service ourHl7Server = context.newServer(port, useSecureConnection);
+        AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
+        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
+        ourHl7Server.registerConnectionListener(new OurConnectionListener());
+        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
+        try {
+            ourHl7Server.startAndWait();
+        }catch (Exception e){
+            LogTool.getLogger().error("MainBean Error HL7service: "+e.getMessage());
+        }
     }
 
     static class OurConnectionListener implements ConnectionListener {
@@ -193,37 +185,6 @@ public class MainBean implements UserDao, DataAction {
             System.out.println("Connection opened event fired " + connectionBeingOpened.getRemoteAddress());
             System.out.println("From Remote Address: " + connectionBeingOpened.getRemoteAddress());
             System.out.println("From Remote Port: " + connectionBeingOpened.getRemotePort());
-        }
-    }
-
-    public class BaseUpdate implements Runnable {
-        @Override
-        public void run() {
-            if(getBitServerResource("debug").getRvalue().equals("true")) {
-                LogTool.getLogger().info("start update");
-            }
-
-            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            try {
-                syncDataBase(connection);
-            } catch (Exception e) {
-                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-            }
-
-            if(showStat){
-                double startTime = new Date().getTime();
-                System.out.println("calculate statistics");
-                //allStudies = getAllBitServerStudyJDBC();
-                //allStudies.sort(Comparator.comparing(BitServerStudy::getSdate));
-                //resultMapLong.clear();
-                //resultMapShort.clear();
-                //resultMapLong = getStatMap(allStudies,"MM.yyyy");
-                //resultMapShort = getStatMap(allStudies,"yyyy");
-                double calculateStateTime = ((new Date().getTime())-startTime)/1000;
-                if(getBitServerResource("debug").getRvalue().equals("true")) {
-                    LogTool.getLogger().info("calculateStateTime = "+calculateStateTime+"c.");
-                }
-            }
         }
     }
 

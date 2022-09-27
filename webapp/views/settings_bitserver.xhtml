@@ -242,7 +242,7 @@
 
                                 <p:outputLabel for="ugroup" style="margin-right: .5rem">Группа пользователей</p:outputLabel>
                                 <p:selectOneMenu id="ugroup" value="#{settingBitServerBean.selectedUser.ugroup}" dynamic="true">
-                                    <f:selectItems value="#{settingBitServerBean.usergroupListRuName}"/>
+
                                 </p:selectOneMenu>
 
                             </p:panelGrid>
@@ -406,80 +406,6 @@
                     <p:outputPanel>
 
                         <p:divider align="left" type="dashed">
-                            <b>Период синхронизации базы</b>
-                        </p:divider>
-                        <p class="p-m-0">
-                            <p:spinner id="dateSpin" value="#{settingBitServerBean.periodUpdate}" min="1" max="60">
-                                <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
-                            </p:spinner>
-                        </p>
-                        <br/>
-                        <div >Интервал времени через который будет проводиться синхронизация базы Orthanc и bitServer, выбирается в зависимости от производительности сервера. Изменение вступит в силу после перезапуска TOMCAT. (в минутах)</div>
-
-                        <br/>
-
-                        <p:divider align="left" type="dashed">
-                            <b>Синхронизация за выбранный период</b>
-                        </p:divider>
-
-                        <p:outputLabel for="startdate">Дата начала синхронизации: </p:outputLabel>
-                        <p:inplace editor="true" >
-                            <p:datePicker id="startdate" value="#{settingBitServerBean.startDate}" showIcon="true" style="font-weight: bold; margin-right: 10px">
-                                <f:convertDateTime pattern="dd.MM.yyyy" />
-                            </p:datePicker>
-                            <p:ajax event="save" />
-                        </p:inplace>
-
-                        <p:outputLabel for="stopdate">  Дата окончания синхронизации: </p:outputLabel>
-                        <p:inplace editor="true" >
-                            <p:datePicker id="stopdate" value="#{settingBitServerBean.stopDate}" showIcon="true" style="margin-right: 10px">
-                                <f:convertDateTime pattern="dd.MM.yyyy" />
-                            </p:datePicker>
-                            <p:ajax event="save" />
-                        </p:inplace>
-
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Старт"
-                                         process="@this"
-                                         action="#{settingBitServerBean.syncPeriod}"
-                                         onclick="PF('statusDialog').show()"
-                                         widgetVar="startButton" styleClass="p-mr-2" ajax="false"/>
-                        <br/>
-
-
-                        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
-                            <h1 class="p-text-center">
-                                <h:outputLabel for="txt_count" value="Выполненно:  "/>
-                                <h:outputText id="txt_count" value="#{settingBitServerBean.number}"/>
-                            </h1>
-
-                            <p:poll interval="1" listener="#{settingBitServerBean.increment}" update="txt_count"/>
-                        </p:dialog>
-
-                        <br/>
-                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
-                        <br/>
-
-                        <p:divider align="left" type="dashed">
-                            <b>Миграция на Postgress</b>
-                        </p:divider>
-
-                        <p:commandButton value="Старт"
-                                         async="true"
-                                         process="@this"
-                                         action="#{settingBitServerBean.syncAll}"
-                                         onclick="PF('pbAjax2').start();"
-                                         widgetVar="startButtonSA" styleClass="p-mr-2" ajax="false"/>
-                        <br/>
-
-
-
-                        <br/>
-                        <div >Не закрываейте эту вкладку, пока синхронизация не завершится</div>
-
-                        <p:divider align="left" type="dashed">
                             <b>Показывать статистику пользователям</b>
                         </p:divider>
 
@@ -529,7 +455,7 @@
                             <p:ajax event="save" />
                         </p:inplace>
 
-                        <p:outputLabel for="stopdate">  Дата окончания удаления: </p:outputLabel>
+                        <p:outputLabel >  Дата окончания удаления: </p:outputLabel>
                         <p:inplace editor="true" >
                             <p:datePicker id="stopdeldate" value="#{settingBitServerBean.stopDelDate}" showIcon="true" style="margin-right: 10px">
                                 <f:convertDateTime pattern="dd.MM.yyyy" />

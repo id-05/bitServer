@@ -11,7 +11,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
@@ -63,12 +62,12 @@ public class AutoriseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        try {
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-        }catch (Exception e){
-            saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
-            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-        }
+//        try {
+//            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+//        }catch (Exception e){
+//            saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
+//            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
+//        }
     }
 
     public void setTheme(String tName){
@@ -110,25 +109,11 @@ public class AutoriseBean implements UserDao {
 
             } else {
                 showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль", error );
-                System.out.println("Неверное имя пользователя или пароль");
             }
         }catch (Exception e){
-            System.out.println("login trouble");
-            LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+", "+inputPassword+"/"+e.getMessage());
+            showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль!", error );
+            LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+"/"+inputPassword);
         }
-    }
-
-    public String getMyIP() {
-        try {
-            FacesContext fc = FacesContext.getCurrentInstance();
-            HttpServletRequest request = (HttpServletRequest)fc.getExternalContext().getRequest();
-            return request.getRemoteAddr();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-
     }
 
     public void logout() throws IOException {
