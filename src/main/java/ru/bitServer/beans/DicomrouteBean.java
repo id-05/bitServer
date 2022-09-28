@@ -3,7 +3,7 @@ package ru.bitServer.beans;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.service.DicomrouteRule;
@@ -27,7 +27,7 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ViewScoped
 public class DicomrouteBean implements UserDao {
 
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     String pathToFile;
     ArrayList<DicomrouteRule> rules = new ArrayList<>();

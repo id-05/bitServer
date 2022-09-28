@@ -4,8 +4,8 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -29,7 +29,7 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ViewScoped
 public class LocalUserCurTask implements UserDao {
 
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     BitServerStudy currentStudy;
     List<BitServerStudy> visibleStudiesList = new ArrayList<>();
@@ -44,11 +44,11 @@ public class LocalUserCurTask implements UserDao {
         this.resulttext = resulttext;
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 

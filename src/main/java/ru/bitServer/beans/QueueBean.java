@@ -50,10 +50,10 @@ public class QueueBean implements UserDao, DataAction {
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
-    List<Usergroup> usergroupList;
+    List<BitServerGroup> bitServerGroupList;
     String selectedUserGroup;
     List<String> usergroupListRuName;
-    Users currentUser;
+    BitServerUser currentUser;
     OrthancRestApi connection;
     OrthancSettings orthancSettings;
     int uploadCount;
@@ -268,17 +268,17 @@ public class QueueBean implements UserDao, DataAction {
         this.freespace = freespace;
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
-        for(Usergroup bufgroup:usergroupList){
+        for(BitServerGroup bufgroup: bitServerGroupList){
             usergroupListRuName.add(bufgroup.getRuName());
         }
         return usergroupListRuName;
@@ -296,12 +296,12 @@ public class QueueBean implements UserDao, DataAction {
         this.selectedUserGroup = selectedUserGroup;
     }
 
-    public List<Usergroup> getUsergroupList() {
-        return usergroupList;
+    public List<BitServerGroup> getUsergroupList() {
+        return bitServerGroupList;
     }
 
-    public void setUsergroupList(List<Usergroup> usergroupList) {
-        this.usergroupList = usergroupList;
+    public void setUsergroupList(List<BitServerGroup> bitServerGroupList) {
+        this.bitServerGroupList = bitServerGroupList;
     }
 
     public List<BitServerStudy> getVisibleStudiesList() {
@@ -608,8 +608,8 @@ public class QueueBean implements UserDao, DataAction {
 
     public String getUserGroupId(String groupName){
         String buf = "";
-        List<Usergroup> bufUserGroupList = getUsergroupList();
-        for(Usergroup bufGroup:bufUserGroupList){
+        List<BitServerGroup> bufUserGroupList = getUsergroupList();
+        for(BitServerGroup bufGroup:bufUserGroupList){
             if(groupName.equals(bufGroup.getRuName())){
                 buf = bufGroup.getId().toString();
                 break;
@@ -668,7 +668,7 @@ public class QueueBean implements UserDao, DataAction {
                 bufStudy.setStatus(0);
                 //updateStudy(bufStudy);
                 connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
-                Users bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
+                BitServerUser bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
                 bufUser.setBlockStudy("0");
                 updateUser(bufUser);

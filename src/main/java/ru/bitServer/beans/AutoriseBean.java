@@ -1,9 +1,8 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dao.BitServerResources;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -24,15 +23,15 @@ public class AutoriseBean implements UserDao {
     String inputUserName;
     String inputPassword;
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 
-    public Users currentUser;
+    public BitServerUser currentUser;
 
     public String currentuserTheme = "saga";
 

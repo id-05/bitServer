@@ -4,8 +4,8 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -23,7 +23,7 @@ import java.util.List;
 @ViewScoped
 public class RemoteUserResults implements UserDao {
 
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     List<BitServerStudy> visibleStudiesList = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
@@ -36,11 +36,11 @@ public class RemoteUserResults implements UserDao {
         this.selectedVisibleStudy = selectedVisibleStudy;
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 

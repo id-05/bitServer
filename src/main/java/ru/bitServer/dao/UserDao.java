@@ -22,7 +22,7 @@ public interface UserDao {
         return DriverManager.getConnection(url, props);
     }
 
-    default void updateUser(Users user) {
+    default void updateUser(BitServerUser user) {
         try {
             Connection conn = getConnection();
             Statement statement = conn.createStatement();
@@ -44,7 +44,7 @@ public interface UserDao {
         }
     }
 
-    default void addUser(Users user) {
+    default void addUser(BitServerUser user) {
         try {
             Connection conn = getConnection();
             Statement statement = conn.createStatement();
@@ -78,8 +78,8 @@ public interface UserDao {
         }
     }
 
-    default Users validateUserAndGetIfExist(String ulogin, String upassword) {
-        Users user = null;
+    default BitServerUser validateUserAndGetIfExist(String ulogin, String upassword) {
+        BitServerUser user = null;
         try {
             Connection conn = getConnection();
             String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM bitserver AS tag" +
@@ -92,7 +92,7 @@ public interface UserDao {
             ResultSet rs = statement.executeQuery(resultSQL);
 
             while (rs.next()) {
-                user = new Users(rs.getString(1), rs.getString(2), rs.getString(3),
+                user = new BitServerUser(rs.getString(1), rs.getString(2), rs.getString(3),
                         rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
             }
             conn.close();
@@ -103,8 +103,8 @@ public interface UserDao {
         return user;
     }
 
-    default Users getUserById(String uid){
-        Users user = new Users();
+    default BitServerUser getUserById(String uid){
+        BitServerUser user = new BitServerUser();
         try {
             Connection conn = getConnection();
             String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM bitserver AS tag" +
@@ -116,7 +116,7 @@ public interface UserDao {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                user = new Users(rs.getString(1), rs.getString(2), rs.getString(3),
+                user = new BitServerUser(rs.getString(1), rs.getString(2), rs.getString(3),
                         rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
 
             }
@@ -127,8 +127,8 @@ public interface UserDao {
         return user;
     }
 
-    default List<Users> getBitServerUserList() {
-        List<Users> resultList = new ArrayList<>();
+    default List<BitServerUser> getAllBitServerUserList() {
+        List<BitServerUser> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
             String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM bitserver AS tag" +
@@ -140,7 +140,7 @@ public interface UserDao {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                Users bufUser = new Users(rs.getString(1), rs.getString(2), rs.getString(3),
+                BitServerUser bufUser = new BitServerUser(rs.getString(1), rs.getString(2), rs.getString(3),
                         rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
                 resultList.add(bufUser);
             }

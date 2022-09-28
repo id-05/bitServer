@@ -2,8 +2,8 @@ package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerResources;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.service.NetworkAdapter;
 import ru.bitServer.service.NetworkSettingsParcer;
 import ru.bitServer.util.LogTool;
@@ -22,7 +22,7 @@ import java.util.Comparator;
 @ViewScoped
 public class NetworkSettingsBean implements UserDao {
 
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     String pathToFile;
     ArrayList<NetworkAdapter> adapters = new ArrayList<>();

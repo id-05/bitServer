@@ -26,18 +26,18 @@ public class QueueremoteBean implements UserDao {
 
     List<BitServerStudy> visibleStudiesList;
     BitServerStudy selectedVisibleStudy;
-    List<Usergroup> usergroupList;
+    List<BitServerGroup> bitServerGroupList;
     String selectedUserGroup;
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     UploadedFile resultFile;
     OrthancRestApi connection;
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -72,7 +72,7 @@ public class QueueremoteBean implements UserDao {
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         //usergroupList = getRealBitServerUsergroupList();
-        selectedUserGroup = usergroupList.get(0).getRuName();
+        selectedUserGroup = bitServerGroupList.get(0).getRuName();
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         dataoutput();
         PrimeFaces.current().ajax().update(":seachform:dt-studys");

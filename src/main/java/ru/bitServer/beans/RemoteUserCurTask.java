@@ -6,10 +6,10 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
+import ru.bitServer.dao.BitServerGroup;
 import ru.bitServer.dao.BitServerStudy;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Usergroup;
-import ru.bitServer.dao.Users;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -33,18 +33,18 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ManagedBean(name = "rucurrenttaskBean")
 @ViewScoped
 public class RemoteUserCurTask implements UserDao {
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     BitServerStudy currentStudy;
     List<BitServerStudy> visibleStudiesList = new ArrayList<>();
     OrthancRestApi connection;
-    Usergroup bufGroup;
+    BitServerGroup bufGroup;
 
-    public Usergroup getBufGroup() {
+    public BitServerGroup getBufGroup() {
         return bufGroup;
     }
 
-    public void setBufGroup(Usergroup bufGroup) {
+    public void setBufGroup(BitServerGroup bufGroup) {
         this.bufGroup = bufGroup;
     }
 

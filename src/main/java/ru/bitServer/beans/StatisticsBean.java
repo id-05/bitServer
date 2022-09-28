@@ -11,7 +11,7 @@ import org.primefaces.model.charts.line.LineChartOptions;
 import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import ru.bitServer.dao.*;
-import ru.bitServer.util.LogTool;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class StatisticsBean implements UserDao {
 
     DashboardModel model;
-    Users currentUser;
+    BitServerUser currentUser;
     LineChartModel lineModel;
     PieChartModel pieModality;
     PieChartModel pieSource;
@@ -59,11 +59,11 @@ public class StatisticsBean implements UserDao {
         return pieSource;
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 

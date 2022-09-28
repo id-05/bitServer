@@ -16,7 +16,7 @@ import org.primefaces.model.file.UploadedFile;
 //import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -31,8 +31,6 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -46,7 +44,7 @@ public class ClientBean implements UserDao {
     boolean skipNext = true;
     int activeStep = 0;
     String currentStudyName;
-    Users currentUser;
+    BitServerUser currentUser;
     ArrayList<byte[]> listUploadFile = new ArrayList<>();
     int uploadCount = 0;
     String anamnes;

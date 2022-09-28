@@ -2,12 +2,10 @@ package ru.bitServer.beans;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancSettings;
-import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -18,8 +16,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.*;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
@@ -29,17 +25,16 @@ import static ru.bitServer.beans.MainBean.*;
 @ViewScoped
 public class SettingBitServerBean implements UserDao {
 
-    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
-    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+//    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     int progress1;
     int progress2;
-    List<Users> usersList;
-    List<Users> selectedUsers;
-    Users selectedUser;
-    List<Usergroup> usergroupList;
-    List<String> usergroupListRuName;
-    List<Usergroup> selectedUsergroups;
-    Usergroup selectedUsergroup;
+    List<BitServerUser> bitServerUserList;
+    List<BitServerUser> selectedUsers;
+    BitServerUser selectedUser;
+    List<BitServerGroup> bitServerGroupList;
+    List<BitServerGroup> selectedBitServerGroups;
+    BitServerGroup selectedBitServerGroup;
     String httpmode;
     String showStat;
     String osimisAddress;
@@ -70,8 +65,7 @@ public class SettingBitServerBean implements UserDao {
     String optDownload;
     String showSeachTime;
     OrthancRestApi connection;
-    List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
-    Users currentUser;
+    BitServerUser currentUser;
     int number;
     String remoteaddr;
     String remoteport;
@@ -82,6 +76,22 @@ public class SettingBitServerBean implements UserDao {
     List<String> modalityName = new ArrayList<>();
     List<String> selectedModalitiName = new ArrayList<>();
     String showHelp;
+
+    public List<BitServerUser> getBitServerUserList() {
+        return bitServerUserList;
+    }
+
+    public void setBitServerUserList(List<BitServerUser> bitServerUserList) {
+        this.bitServerUserList = bitServerUserList;
+    }
+
+    public List<BitServerGroup> getBitServerGroupList() {
+        return bitServerGroupList;
+    }
+
+    public void setBitServerGroupList(List<BitServerGroup> bitServerGroupList) {
+        this.bitServerGroupList = bitServerGroupList;
+    }
 
     public String getShowHelp() {
         return showHelp;
@@ -191,11 +201,11 @@ public class SettingBitServerBean implements UserDao {
         return number+"%";
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -359,55 +369,27 @@ public class SettingBitServerBean implements UserDao {
         this.orthancAddress = orthancAddress;
     }
 
-    public void setUsergroupListRuName(List<String> usergroupListRuName) {
-        this.usergroupListRuName = usergroupListRuName;
+    public List<BitServerGroup> getSelectedUsergroups() {
+        return selectedBitServerGroups;
     }
 
-    public List<Usergroup> getUsergroupList() {
-        return usergroupList;
+    public void setSelectedUsergroups(List<BitServerGroup> selectedBitServerGroups) {
+        this.selectedBitServerGroups = selectedBitServerGroups;
     }
 
-    public void setUsergroupList(List<Usergroup> usergroupList) {
-        this.usergroupList = usergroupList;
-    }
-
-    public List<Usergroup> getSelectedUsergroups() {
-        return selectedUsergroups;
-    }
-
-    public void setSelectedUsergroups(List<Usergroup> selectedUsergroups) {
-        this.selectedUsergroups = selectedUsergroups;
-    }
-
-    public Usergroup getSelectedUsergroup() {
-        return selectedUsergroup;
-    }
-
-    public void setSelectedUsergroup(Usergroup selectedUsergroup) {
-        this.selectedUsergroup = selectedUsergroup;
-    }
-
-    public List<Users> getUsersList() {
-        return usersList;
-    }
-
-    public void setUsersList(List<Users> usersList) {
-        this.usersList = usersList;
-    }
-
-    public Users getSelectedUser() {
+    public BitServerUser getSelectedUser() {
         return selectedUser;
     }
 
-    public void setSelectedUser(Users selectedUser) {
+    public void setSelectedUser(BitServerUser selectedUser) {
         this.selectedUser = selectedUser;
     }
 
-    public List<Users> getSelectedUsers() {
+    public List<BitServerUser> getSelectedUsers() {
         return selectedUsers;
     }
 
-    public void setSelectedUsers(List<Users> selectedUsers) {
+    public void setSelectedUsers(List<BitServerUser> selectedUsers) {
         this.selectedUsers = selectedUsers;
     }
 
@@ -452,7 +434,7 @@ public class SettingBitServerBean implements UserDao {
         stopDate = new Date();
         startDelDate = new Date();
         stopDelDate = new Date();
-        usersList = prepareUserList();
+        bitServerUserList = prepareUserList();
         initNewUser();
         initNewUsergroup();
         bitServerResourcesList = getAllBitServerResource();
@@ -665,9 +647,9 @@ public class SettingBitServerBean implements UserDao {
         }
     }
 
-    public List<Users> prepareUserList(){
-        usersList = getBitServerUserList();
-        return usersList;
+    public List<BitServerUser> prepareUserList(){
+        bitServerUserList = getAllBitServerUserList();
+        return bitServerUserList;
     }
 
     public void saveParam(){
@@ -737,11 +719,11 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void initNewUser() {
-        selectedUser = new Users();
+        selectedUser = new BitServerUser();
     }
 
     public void initNewUsergroup() {
-        selectedUsergroup = new Usergroup();
+        selectedBitServerGroup = new BitServerGroup();
     }
 
     public void addNewUser(){
@@ -750,19 +732,19 @@ public class SettingBitServerBean implements UserDao {
                 &(!selectedUser.getRuName().equals("")))
         {
             boolean verifiUnical = true;
-            for(Users bufUser:usersList) {
+            for(BitServerUser bufUser: bitServerUserList) {
                 if (bufUser.getUname().equals(selectedUser.getUname())) {
                     verifiUnical = false;
                     break;
                 }
             }
-            Users bufUser = getRealUserForBase(selectedUser);
+            BitServerUser bufUser = getRealUserForBase(selectedUser);
             if(verifiUnical){
                 addUser(bufUser);
             }else{
                 updateUser(bufUser);
             }
-            usersList = prepareUserList();
+            bitServerUserList = prepareUserList();
             PrimeFaces.current().executeScript("PF('manageUserDialog').hide()");
             PrimeFaces.current().ajax().update(":form:accord:dt-users");
             LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new user "+bufUser.getUname());
@@ -772,8 +754,8 @@ public class SettingBitServerBean implements UserDao {
         }
     }
 
-    public Users getRealUserForBase(Users sourseUser){
-        for(Usergroup bufgroup:usergroupList){
+    public BitServerUser getRealUserForBase(BitServerUser sourseUser){
+        for(BitServerGroup bufgroup: bitServerGroupList){
             if(bufgroup.getRuName().equals(sourseUser.getUgroup())){
                 sourseUser.setUgroup(String.valueOf(bufgroup.getId()));
             }
@@ -819,24 +801,24 @@ public class SettingBitServerBean implements UserDao {
 
     public void deleteUserSetting() {
         deleteFromBitServerTable(selectedUser.getUid());
-        usersList.remove(selectedUser);
-        selectedUser = new Users();
+        bitServerUserList.remove(selectedUser);
+        selectedUser = new BitServerUser();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-users");
     }
 
     public void addNewUsergroup(){
-        if((selectedUsergroup.getRuContragent()!=null)&(!selectedUsergroup.getRuName().equals(""))&(!selectedUsergroup.getStatus().equals("")))
+        if((selectedBitServerGroup.getRuContragent()!=null)&(!selectedBitServerGroup.getRuName().equals(""))&(!selectedBitServerGroup.getStatus().equals("")))
         {
             boolean verifiUnical = true;
-            for(Usergroup bufUsergroup:usergroupList){
-                if (bufUsergroup.getRuName().equals(selectedUsergroup.getRuName())) {
+            for(BitServerGroup bufBitServerGroup : bitServerGroupList){
+                if (bufBitServerGroup.getRuName().equals(selectedBitServerGroup.getRuName())) {
                     verifiUnical = false;
                     break;
                 }
             }
             if(verifiUnical) {
-                usergroupList.add(new Usergroup(selectedUsergroup.getRuContragent(), selectedUsergroup.getRuName(), selectedUsergroup.getStatus(),selectedUsergroup.isDownloadTrue(),selectedUsergroup.isForlocal()));
+                bitServerGroupList.add(new BitServerGroup(selectedBitServerGroup.getRuContragent(), selectedBitServerGroup.getRuName(), selectedBitServerGroup.getStatus(), selectedBitServerGroup.isDownloadTrue(), selectedBitServerGroup.isForlocal()));
                 //saveNewUsergroup(selectedUsergroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
@@ -855,8 +837,8 @@ public class SettingBitServerBean implements UserDao {
     public void deleteUsergroupSetting() {
         try {
             //deleteUsergroup(selectedUsergroup);
-            usergroupList.remove(selectedUsergroup);
-            selectedUsergroup = new Usergroup();
+            bitServerGroupList.remove(selectedBitServerGroup);
+            selectedBitServerGroup = new BitServerGroup();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
             PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
         }catch (Exception e){

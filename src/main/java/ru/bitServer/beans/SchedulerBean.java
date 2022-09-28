@@ -17,14 +17,14 @@ import static ru.bitServer.beans.AutoriseBean.showMessage;
 @ViewScoped
 public class SchedulerBean implements UserDao {
 
-    Users currentUser;
+    BitServerUser currentUser;
     String currentUserId;
     BitServerScheduler selectedRule;
     List<BitServerScheduler> visibleRules = new ArrayList<>();
     String selectsource;
     List<String> modalitylist = new ArrayList<>();
     List<String> sourcelist = new ArrayList<>();
-    List<Usergroup> usergroupList;
+    List<BitServerGroup> bitServerGroupList;
     List<String> usergroupListRuName = new ArrayList<>();
     LocalTime selectedtime;
     List<BitServerScheduler> selectedRules = new ArrayList<>();
@@ -71,7 +71,7 @@ public class SchedulerBean implements UserDao {
 
     public List<String> getUsergroupListRuName() {
         usergroupListRuName = new ArrayList<>();
-        for(Usergroup bufgroup:usergroupList){
+        for(BitServerGroup bufgroup: bitServerGroupList){
             usergroupListRuName.add(bufgroup.getRuName());
         }
         return usergroupListRuName;
@@ -97,11 +97,11 @@ public class SchedulerBean implements UserDao {
         this.selectedRule = selectedRule;
     }
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 
@@ -163,7 +163,7 @@ public class SchedulerBean implements UserDao {
     }
 
     public BitServerScheduler getRealRuleForBase(BitServerScheduler sourceRule){
-        for(Usergroup bufgroup:usergroupList) {
+        for(BitServerGroup bufgroup: bitServerGroupList) {
             if (bufgroup.getRuName().equals(selectedRule.getDestinationgroup())) {
                 selectedRule.setDestinationgroup(String.valueOf(bufgroup.getId()));
             }
@@ -192,7 +192,7 @@ public class SchedulerBean implements UserDao {
 
     public String getVisibleNameOfGroup(int i){
         String buf = null;
-        for(Usergroup bufgroup:usergroupList){
+        for(BitServerGroup bufgroup: bitServerGroupList){
             if(bufgroup.getId()==i){
                 buf = bufgroup.getRuName();
                 break;

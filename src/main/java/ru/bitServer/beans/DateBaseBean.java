@@ -10,8 +10,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
@@ -24,25 +22,17 @@ public class DateBaseBean implements UserDao {
     //BitServerResources selectedResources;
     List<BitServerStudy> listStudys = new ArrayList<>();
     BitServerStudy selectedStudy;
-    BitServerStudy selectedStudys;
+    //BitServerStudy selectedStudys;
     List<BitServerScheduler> listSchedulers = new ArrayList<>();
     BitServerScheduler selectedScheduler;
     BitServerScheduler selectedSchedulers;
-    List<BitServerModality> listModalitys = new ArrayList<>();
-    BitServerModality selectedModality;
-    BitServerModality selectedModalitys;
-    Users currentUser;
+    //List<BitServerModality> listModalitys = new ArrayList<>();
+    //BitServerModality selectedModality;
+    //BitServerModality selectedModalitys;
+    BitServerUser currentUser;
     String currentUserId;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
-    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy/MM/dd");
-
-    public BitServerModality getSelectedModalitys() {
-        return selectedModalitys;
-    }
-
-    public void setSelectedModalitys(BitServerModality selectedModalitys) {
-        this.selectedModalitys = selectedModalitys;
-    }
+    //final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy/MM/dd");
 
     public BitServerScheduler getSelectedSchedulers() {
         return selectedSchedulers;
@@ -52,13 +42,13 @@ public class DateBaseBean implements UserDao {
         this.selectedSchedulers = selectedSchedulers;
     }
 
-    public BitServerStudy getSelectedStudys() {
-        return selectedStudys;
-    }
+//    public BitServerStudy getSelectedStudys() {
+//        return selectedStudys;
+//    }
 
-    public void setSelectedStudys(BitServerStudy selectedStudys) {
-        this.selectedStudys = selectedStudys;
-    }
+//    public void setSelectedStudys(BitServerStudy selectedStudys) {
+//        this.selectedStudys = selectedStudys;
+//    }
 
 //    public BitServerResources getSelectedResources() {
 //        return selectedResources;
@@ -67,22 +57,13 @@ public class DateBaseBean implements UserDao {
 //    public void setSelectedResources(BitServerResources selectedResources) {
 //        this.selectedResources = selectedResources;
 //    }
-
-    public List<BitServerModality> getListModalitys() {
-        return listModalitys;
-    }
-
-    public void setListModalitys(List<BitServerModality> listModalitys) {
-        this.listModalitys = listModalitys;
-    }
-
-    public BitServerModality getSelectedModality() {
-        return selectedModality;
-    }
-
-    public void setSelectedModality(BitServerModality selectedModality) {
-        this.selectedModality = selectedModality;
-    }
+//    public BitServerModality getSelectedModality() {
+//        return selectedModality;
+//    }
+//
+//    public void setSelectedModality(BitServerModality selectedModality) {
+//        this.selectedModality = selectedModality;
+//    }
 
     public List<BitServerScheduler> getListSchedulers() {
         return listSchedulers;
@@ -100,21 +81,21 @@ public class DateBaseBean implements UserDao {
         this.selectedScheduler = selectedScheduler;
     }
 
-    public List<BitServerStudy> getListStudys() {
-        return listStudys;
-    }
+//    public List<BitServerStudy> getListStudys() {
+//        return listStudys;
+//    }
+//
+//    public void setListStudys(List<BitServerStudy> listStudys) {
+//        this.listStudys = listStudys;
+//    }
 
-    public void setListStudys(List<BitServerStudy> listStudys) {
-        this.listStudys = listStudys;
-    }
-
-    public BitServerStudy getSelectedStudy() {
-        return selectedStudy;
-    }
-
-    public void setSelectedStudy(BitServerStudy selectedStudy) {
-        this.selectedStudy = selectedStudy;
-    }
+//    public BitServerStudy getSelectedStudy() {
+//        return selectedStudy;
+//    }
+//
+//    public void setSelectedStudy(BitServerStudy selectedStudy) {
+//        this.selectedStudy = selectedStudy;
+//    }
 
     public BitServerResources getSelectedResource() {
         return selectedResource;
@@ -145,7 +126,7 @@ public class DateBaseBean implements UserDao {
 
         selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
-        selectedModality = new BitServerModality();
+        //selectedModality = new BitServerModality();
         selectedScheduler = new BitServerScheduler();
     }
 
@@ -203,10 +184,6 @@ public class DateBaseBean implements UserDao {
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" select default resources");
     }
 
-    public void initNewModality(){
-        selectedModality = new BitServerModality();
-    }
-
     public void addNewResource(){
         if((selectedResource.getRname()!=null)&(!selectedResource.getRvalue().equals("")))
         {
@@ -238,18 +215,18 @@ public class DateBaseBean implements UserDao {
         }
     }
 
-    public void addNewModality(){
-        if(!selectedModality.getName().equals(""))
-        {
-            ///updateBitServerModality(selectedModality);
-            //listModalitys = getAllBitServerModality();
-            PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
-            PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-            LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new modality "+selectedModality.getName());
-        }else{
-            showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
-        }
-    }
+//    public void addNewModality(){
+//        if(!selectedModality.getName().equals(""))
+//        {
+//            ///updateBitServerModality(selectedModality);
+//            //listModalitys = getAllBitServerModality();
+//            PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
+//            PrimeFaces.current().ajax().update(":form:accord:dt-modality");
+//            LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new modality "+selectedModality.getName());
+//        }else{
+//            showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
+//        }
+//    }
 
     public void addNewScheduler(){
         if((!selectedScheduler.getModality().equals(""))&(!selectedScheduler.getSource().equals("")))
@@ -294,22 +271,22 @@ public class DateBaseBean implements UserDao {
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
 
-    public void deleteModality(){
-        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Modality "+selectedModality.getName());
-        //deleteBitServerModality(selectedModality);
-        listModalitys.remove(selectedModality);
-        selectedModality = new BitServerModality();
-        showMessage("Внимание!","Модальность удалена!",FacesMessage.SEVERITY_ERROR);
-        PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-    }
+//    public void deleteModality(){
+//        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Modality "+selectedModality.getName());
+//        //deleteBitServerModality(selectedModality);
+//        listModalitys.remove(selectedModality);
+//        selectedModality = new BitServerModality();
+//        showMessage("Внимание!","Модальность удалена!",FacesMessage.SEVERITY_ERROR);
+//        PrimeFaces.current().ajax().update(":form:accord:dt-modality");
+//    }
 
-    public void deleteAllStudy() throws SQLException {
-        //deleteAllStudyJDBC();
-        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete all study from base");
-        listStudys.clear();
-        selectedStudy = new BitServerStudy();
-        showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);
-        PrimeFaces.current().ajax().update(":form:accord:dt-study");
-        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" delete all record from bitserverstudy");
-    }
+//    public void deleteAllStudy() throws SQLException {
+//        //deleteAllStudyJDBC();
+//        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete all study from base");
+//        listStudys.clear();
+//        selectedStudy = new BitServerStudy();
+//        showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);
+//        PrimeFaces.current().ajax().update(":form:accord:dt-study");
+//        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" delete all record from bitserverstudy");
+//    }
 }

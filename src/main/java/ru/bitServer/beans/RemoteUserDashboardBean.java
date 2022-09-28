@@ -1,7 +1,7 @@
 package ru.bitServer.beans;
 
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -14,13 +14,13 @@ import javax.servlet.http.HttpSession;
 public class RemoteUserDashboardBean implements UserDao {
 
 
-    Users currentUser;
+    BitServerUser currentUser;
 
-    public Users getCurrentUser() {
+    public BitServerUser getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(Users currentUser) {
+    public void setCurrentUser(BitServerUser currentUser) {
         this.currentUser = currentUser;
     }
 

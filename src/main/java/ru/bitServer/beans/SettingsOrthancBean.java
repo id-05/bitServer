@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerResources;
+import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dao.Users;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
@@ -101,7 +101,7 @@ public class SettingsOrthancBean implements UserDao {
     boolean metricsEnabled;
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
-    Users currentUser;
+    BitServerUser currentUser;
 
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
