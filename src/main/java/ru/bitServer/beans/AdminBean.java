@@ -3,10 +3,10 @@ package ru.bitServer.beans;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import ru.bitServer.dao.UserDao;
-import ru.bitServer.dicomviewer.Instance;
-import ru.bitServer.dicomviewer.Patient;
-import ru.bitServer.dicomviewer.Series;
-import ru.bitServer.dicomviewer.Study;
+//import ru.bitServer.dicomviewer.Instance;
+//import ru.bitServer.dicomviewer.Patient;
+//import ru.bitServer.dicomviewer.Series;
+//import ru.bitServer.dicomviewer.Study;
 import ru.bitServer.util.LogTool;
 
 import javax.annotation.PostConstruct;

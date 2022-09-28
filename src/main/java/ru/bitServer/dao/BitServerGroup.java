@@ -1,50 +1,12 @@
 package ru.bitServer.dao;
 
-import javax.persistence.*;
+import java.util.ArrayList;
 
-@Entity
 public class BitServerGroup {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String ruName;
-    private String ruContragent;
-    private boolean downloadTrue;
-    private String status;
-    private boolean forlocal;
-
-    public boolean isForlocal() {
-        return forlocal;
-    }
-
-    public void setForlocal(boolean forlocal) {
-        this.forlocal = forlocal;
-    }
-
-    public String getRuContragent() {
-        return ruContragent;
-    }
-
-    public void setRuContragent(String ruContragent) {
-        this.ruContragent = ruContragent;
-    }
-
-    public boolean isDownloadTrue() {
-        return downloadTrue;
-    }
-
-    public void setDownloadTrue(boolean downloadTrue) {
-        this.downloadTrue = downloadTrue;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    ArrayList<BitServerUser> userList;
 
     public Long getId() {
         return id;
@@ -54,7 +16,6 @@ public class BitServerGroup {
         this.id = id;
     }
 
-
     public String getRuName() {
         return ruName;
     }
@@ -63,16 +24,17 @@ public class BitServerGroup {
         this.ruName = ruName;
     }
 
-
-    public BitServerGroup() {
-
+    public ArrayList<BitServerUser> getUserList() {
+        return userList;
     }
 
-    public BitServerGroup(String ruContragent, String ruName, String status, boolean downloadTrue, boolean forlocal){
+    public void setUserList(ArrayList<BitServerUser> userList) {
+        this.userList = userList;
+    }
+
+    public BitServerGroup(Long id, String ruName, ArrayList<BitServerUser> userList){
+        this.id = id;
         this.ruName = ruName;
-        this.ruContragent = ruContragent;
-        this.downloadTrue = downloadTrue;
-        this.forlocal = forlocal;
-        this.status = status;
+        this.userList = userList;
     }
 }
