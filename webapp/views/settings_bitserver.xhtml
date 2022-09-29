@@ -10,7 +10,29 @@
 <f:view>
 
     <h:head>
-        <title>bitServer Settings</title>
+        <style type="text/css">
+            .my_text
+            {
+                font-family:    Arial, Helvetica, sans-serif;
+            }
+            div.centercard
+            {
+                display: flex;
+                justify-content: center;
+                vertical-align: middle;
+                horiz-align: center;
+                vert-align: middle;
+            }
+            .grid
+            {
+                display: flex;
+                flex-wrap: wrap;
+                margin-right: -0.5rem;
+                margin-left: -0.5rem;
+                margin-top: -0.5rem;
+            }
+        </style>
+
         <f:facet name="last">
             <link rel="stylesheet" type="text/css"
                   href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
@@ -295,12 +317,8 @@
                                      reflow="true" styleClass="usergroup-table"
                                      size="small"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{BitServerGroup.id}"
+                                     selection="#{settingBitServerBean.selectedUsergroups}" rowKey="#{BitServerGroup.ruName}"
                                      rows="10" rowSelectMode="add" >
-
-                            <p:column headerText="Контрагент" sortBy="#{bitServerGroup.id}" style="text-align: center">
-                                <h:outputText value="#{bitServerGroup.id}" />
-                            </p:column>
 
                             <p:column headerText="Название группы" sortBy="#{bitServerGroup.ruName}" style="text-align: center">
                                 <h:outputText value="#{bitServerGroup.ruName}" />
@@ -322,21 +340,21 @@
 
                         <p:dialog id="dialogNewUsergroup" header="Группа" showEffect="fade" modal="true"
                                   widgetVar="manageUsergroupDialog" responsive="true">
-                            <p:panelGrid id="manage-usergroup-content" class="ui-fluid" columns="2">
-
-                                <p:outputLabel for="contragent" style="margin-right: .5rem">id</p:outputLabel>
-                                <p:inputText id="contragent" value="#{settingBitServerBean.selectedBitServerGroup.id}" />
-
-                                <p:outputLabel for="groupname" style="margin-right: .5rem">Название</p:outputLabel>
-                                <p:inputText id="groupname" value="#{settingBitServerBean.selectedBitServerGroup.ruName}" />
-
-                            </p:panelGrid>
 
                             <div class="card">
-                                <p:pickList id="pickList" value="#{settingBitServerBean.cities}" var="cities" itemLabel="#{cities.ruName}"
-                                            itemValue="#{cities.ruName}"/>
-                            </div>
+                                <div class="flex flex-column card-container green-container">
 
+                                    <p:panelGrid id="manage-usergroup-content" class="ui-fluid" columns="2">
+
+                                        <p:outputLabel for="groupname" style="margin-right: .5rem">Название</p:outputLabel>
+                                        <p:inputText id="groupname" value="#{settingBitServerBean.selectedBitServerGroup.ruName}" />
+
+                                    </p:panelGrid>
+                                        <p:pickList id="pickList" value="#{settingBitServerBean.bufUsers}" var="bufUsers" itemLabel="#{bufUsers.uname}"
+                                                    itemValue="#{bufUsers.uname}"/>
+
+                                </div>
+                            </div>
 
                             <f:facet name="footer">
 
@@ -353,6 +371,7 @@
                                 </p:commandButton>
 
                             </f:facet>
+
                         </p:dialog>
 
                         <p:dialog widgetVar="deleteUsergroupDialog" showEffect="fade" width="300"
@@ -372,7 +391,7 @@
                             </div>
                         </p:dialog>
 
-                        <div>Списко групп пользователей.</div>
+                        <div>Список групп пользователей.</div>
 
                     </p:outputPanel>
                 </p:tab>

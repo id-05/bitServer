@@ -77,7 +77,8 @@ public class SettingBitServerBean implements UserDao {
     List<String> modalityName = new ArrayList<>();
     List<String> selectedModalitiName = new ArrayList<>();
     String showHelp;
-    DualListModel<BitServerUser> cities;
+    DualListModel<BitServerUser> bufUsers;
+    ArrayList<BitServerUser> usersTarget;
 
     public BitServerGroup getSelectedBitServerGroup() {
         return selectedBitServerGroup;
@@ -435,12 +436,21 @@ public class SettingBitServerBean implements UserDao {
         this.workListLifeTime = workListLifeTime;
     }
 
-    public DualListModel<BitServerUser> getCities() {
-        return cities;
+    public DualListModel<BitServerUser> getBufUsers() {
+        List<BitServerUser> usersSource;
+
+        if(selectedBitServerGroup.getUserList()!=null){
+            usersTarget = selectedBitServerGroup.getUserList();
+        }else{
+            usersTarget = new ArrayList<>();
+        }
+        usersSource = getAllBitServerUserList();
+        bufUsers = new DualListModel<>(usersSource, usersTarget);
+        return bufUsers;
     }
 
-    public void setCities(DualListModel<BitServerUser> cities) {
-        this.cities = cities;
+    public void setBufUsers(DualListModel<BitServerUser> bufUsers) {
+        this.bufUsers = bufUsers;
     }
 
     @PostConstruct
@@ -463,16 +473,6 @@ public class SettingBitServerBean implements UserDao {
         remoteport = "8042";
         remotelogin = "doctor";
         remotepass = "doctor";
-
-
-        List<BitServerUser> citiesSource = new ArrayList<>();
-        List<BitServerUser> citiesTarget = new ArrayList<>();
-
-        citiesSource = getAllBitServerUserList();
-
-        cities = new DualListModel<BitServerUser>(citiesSource, citiesTarget);
-
-
 
         boolean updateRes = false;
         boolean haspreview = false;
@@ -560,8 +560,11 @@ public class SettingBitServerBean implements UserDao {
                     break;
             }
         }
-        //selectedModalitiName = modalityName;
+
+        selectedBitServerGroup = new BitServerGroup();
     }
+
+
 
     public void applicationReboot() {
         showMessage("Внимание","Приложение будет перезагружено!",FacesMessage.SEVERITY_INFO);
@@ -834,7 +837,8 @@ public class SettingBitServerBean implements UserDao {
             }
             if(verifiUnical) {
                 bitServerGroupList.add(new BitServerGroup(selectedBitServerGroup.getId(), selectedBitServerGroup.getRuName(), selectedBitServerGroup.getUserList()));
-                //saveNewUsergroup(selectedUsergroup);
+                selectedBitServerGroup.setUserList(usersTarget);
+                saveNewBitServiceGroup(selectedBitServerGroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
                 //usergroupList = getBitServerUsergroupList();

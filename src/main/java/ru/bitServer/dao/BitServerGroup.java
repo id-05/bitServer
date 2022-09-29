@@ -37,4 +37,16 @@ public class BitServerGroup {
         this.ruName = ruName;
         this.userList = userList;
     }
+
+    public BitServerGroup(Long id, String ruName){
+        this.id = id;
+        this.ruName = ruName;
+    }
+
+    public BitServerGroup(){
+    }
+    public BitServerGroup(String ruName){
+        this.ruName = ruName;
+    }
+
 }

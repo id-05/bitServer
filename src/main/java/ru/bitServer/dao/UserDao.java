@@ -161,6 +161,7 @@ public interface UserDao {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
+                System.out.println(rs.getLong(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5)+" "+rs.getString(6));
                 ArrayList<BitServerUser> userList = null;
                 BitServerGroup bufGroup = new BitServerGroup(rs.getLong(1), rs.getString(2), userList);
                 resultList.add(bufGroup);
@@ -170,6 +171,27 @@ public interface UserDao {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         return resultList;
+    }
+
+    default void saveNewBitServiceGroup(BitServerGroup bitServerGroup) {
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '9','" + bitServerGroup.getRuName() + "')";
+            statement.executeUpdate(strSql);
+            strSql = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '" + bitServerGroup.getRuName() + "' and bitserver.rtype = '9'";
+            statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(strSql);
+            rs.next();
+            String buf = rs.getString(1);
+            for(BitServerUser bufUser:bitServerGroup.getUserList()){
+                strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '10','" + bufUser.getUid() + "','"+buf+"')";
+                statement.executeUpdate(strSql);
+            }
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
     }
 
     default BitServerResources getBitServerResource(String uname) {
