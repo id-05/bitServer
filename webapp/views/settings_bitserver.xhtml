@@ -351,7 +351,9 @@
 
                                     </p:panelGrid>
                                         <p:pickList id="pickList" value="#{settingBitServerBean.bufUsers}" var="bufUsers" itemLabel="#{bufUsers.uname}"
-                                                    itemValue="#{bufUsers.uname}"/>
+                                                    itemValue="#{bufUsers.uname}">
+                                            <p:ajax event="transfer" listener="#{settingBitServerBean.handleTransfer}" />
+                                        </p:pickList>
 
                                 </div>
                             </div>

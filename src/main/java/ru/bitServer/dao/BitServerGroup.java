@@ -2,6 +2,7 @@ package ru.bitServer.dao;
 
 import java.util.ArrayList;
 
+
 public class BitServerGroup {
 
     private Long id;

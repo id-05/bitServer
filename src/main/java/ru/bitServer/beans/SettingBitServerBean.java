@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancSettings;
@@ -79,6 +80,7 @@ public class SettingBitServerBean implements UserDao {
     String showHelp;
     DualListModel<BitServerUser> bufUsers;
     ArrayList<BitServerUser> usersTarget;
+    ArrayList<BitServerUser> usersSource;
 
     public BitServerGroup getSelectedBitServerGroup() {
         return selectedBitServerGroup;
@@ -437,15 +439,16 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public DualListModel<BitServerUser> getBufUsers() {
-        List<BitServerUser> usersSource;
 
-        if(selectedBitServerGroup.getUserList()!=null){
-            usersTarget = selectedBitServerGroup.getUserList();
-        }else{
-            usersTarget = new ArrayList<>();
-        }
-        usersSource = getAllBitServerUserList();
-        bufUsers = new DualListModel<>(usersSource, usersTarget);
+//        usersSource = getAllBitServerUserList();
+//        if(selectedBitServerGroup.getUserList()!=null){
+//            usersTarget = selectedBitServerGroup.getUserList();
+//            usersSource.remove(usersTarget);
+//        }else{
+//            usersTarget = new ArrayList<>();
+//        }
+//
+//        bufUsers = new DualListModel<>(usersSource, usersTarget);
         return bufUsers;
     }
 
@@ -562,6 +565,8 @@ public class SettingBitServerBean implements UserDao {
         }
 
         selectedBitServerGroup = new BitServerGroup();
+
+
     }
 
 
@@ -741,7 +746,15 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void initNewUsergroup() {
-        //selectedBitServerGroup = new BitServerGroup();
+        selectedBitServerGroup = new BitServerGroup();
+        usersSource = getAllBitServerUserList();
+        if(selectedBitServerGroup.getUserList()!=null){
+            usersTarget = selectedBitServerGroup.getUserList();
+            usersSource.remove(usersTarget);
+        }else{
+            usersTarget = new ArrayList<>();
+        }
+        bufUsers = new DualListModel<>(usersSource, usersTarget);
     }
 
     public void addNewUser(){
@@ -838,6 +851,8 @@ public class SettingBitServerBean implements UserDao {
             if(verifiUnical) {
                 bitServerGroupList.add(new BitServerGroup(selectedBitServerGroup.getId(), selectedBitServerGroup.getRuName(), selectedBitServerGroup.getUserList()));
                 selectedBitServerGroup.setUserList(usersTarget);
+                System.out.println("usersTarget.size() "+ usersTarget.size());
+                System.out.println("usersSource.size() "+ usersSource.size());
                 saveNewBitServiceGroup(selectedBitServerGroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
@@ -850,6 +865,30 @@ public class SettingBitServerBean implements UserDao {
             }
         }else{
             showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
+    public void handleTransfer(TransferEvent event){
+        for(Object item : event.getItems()) {
+            BitServerUser buf = getUserByLogin(item.toString());
+            if(event.isRemove()) {
+                int index = 0;
+                System.out.println("buf:"+buf.getUid());
+                for(int i=0;i<usersTarget.size();i++){
+                    if(usersTarget.get(i).getUid()==buf.getUid()){
+                        index = i;
+                    }
+                }
+                usersTarget.remove(index);
+                System.out.println("Removed:"+item.toString());
+                System.out.println("usersTarget size: "+usersTarget.size());
+            }
+            else if(event.isAdd()) {
+                System.out.println("buf:"+buf.getUid());
+                usersTarget.add(buf);
+                System.out.println("Added:"+item.toString());
+                System.out.println("usersTarget size: "+usersTarget.size());
+            }
         }
     }
 
