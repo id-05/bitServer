@@ -440,15 +440,17 @@ public class SettingBitServerBean implements UserDao {
 
     public DualListModel<BitServerUser> getBufUsers() {
 
-//        usersSource = getAllBitServerUserList();
-//        if(selectedBitServerGroup.getUserList()!=null){
-//            usersTarget = selectedBitServerGroup.getUserList();
-//            usersSource.remove(usersTarget);
-//        }else{
-//            usersTarget = new ArrayList<>();
-//        }
-//
-//        bufUsers = new DualListModel<>(usersSource, usersTarget);
+        usersSource = getAllBitServerUserList();
+        if(selectedBitServerGroup.getUserList()!=null){
+            usersTarget = selectedBitServerGroup.getUserList();
+            usersSource.removeAll(usersTarget);
+        }else{
+            usersTarget = new ArrayList<>();
+        }
+        System.out.println("usersTarget.size() "+usersTarget.size());
+
+        bufUsers = new DualListModel<>(usersSource, usersTarget);
+        //PrimeFaces.current().ajax().update(":form:accord:manage-usergroup-content");
         return bufUsers;
     }
 
@@ -565,8 +567,6 @@ public class SettingBitServerBean implements UserDao {
         }
 
         selectedBitServerGroup = new BitServerGroup();
-
-
     }
 
 
@@ -754,7 +754,7 @@ public class SettingBitServerBean implements UserDao {
         }else{
             usersTarget = new ArrayList<>();
         }
-        bufUsers = new DualListModel<>(usersSource, usersTarget);
+        //bufUsers = new DualListModel<>(usersSource, usersTarget);
     }
 
     public void addNewUser(){
@@ -875,7 +875,7 @@ public class SettingBitServerBean implements UserDao {
                 int index = 0;
                 System.out.println("buf:"+buf.getUid());
                 for(int i=0;i<usersTarget.size();i++){
-                    if(usersTarget.get(i).getUid()==buf.getUid()){
+                    if(usersTarget.get(i).getUid().equals(buf.getUid())){
                         index = i;
                     }
                 }

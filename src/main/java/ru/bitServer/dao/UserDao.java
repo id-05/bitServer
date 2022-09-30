@@ -179,14 +179,32 @@ public interface UserDao {
         List<BitServerGroup> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM bitserver AS tag" +
-                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '9'"+
-                    " INNER JOIN bitserver AS tag2 ON tag.internalid = tag2.parentid AND tag2.rtype = '10'";
+            String resultSQL = "SELECT DISTINCT tag.internalid, tag.rvalue  FROM bitserver AS tag" +
+                    " INNER JOIN bitserver AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '10'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                System.out.println(rs.getLong(1)+" "+rs.getString(2)+" "+rs.getString(3)+" "+rs.getString(4)+" "+rs.getString(5)+" "+rs.getString(6));
-                ArrayList<BitServerUser> userList = null;
+                System.out.println(rs.getLong(1)+" "+rs.getString(2));
+                ArrayList<BitServerUser> userList = new ArrayList<>();
+
+                {
+                    try{
+                        Connection connSub = getConnection();
+                        String resultSQLSub = "SELECT tag.internalid, tag.rvalue, tag.parentid  FROM bitserver AS tag" +
+                                " WHERE tag.parentid = '"+rs.getLong(1)+"' AND tag.rtype = '10'";
+                        Statement statementSub = connSub.createStatement();
+                        ResultSet rsSub = statementSub.executeQuery(resultSQLSub);
+                        while (rsSub.next()) {
+                            System.out.println(rsSub.getLong(1)+" "+rsSub.getString(2));
+                            userList.add(getUserById(rsSub.getString(2)));
+                            connSub.close();
+                        }
+                    }catch (Exception e){
+                        LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+                    }
+                }
+
+
                 BitServerGroup bufGroup = new BitServerGroup(rs.getLong(1), rs.getString(2), userList);
                 resultList.add(bufGroup);
             }
