@@ -19,6 +19,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
@@ -81,6 +82,7 @@ public class SettingBitServerBean implements UserDao {
     DualListModel<BitServerUser> bufUsers;
     ArrayList<BitServerUser> usersTarget;
     ArrayList<BitServerUser> usersSource;
+    ArrayList<BitServerUser> usersSourceBuf;
 
     public BitServerGroup getSelectedBitServerGroup() {
         return selectedBitServerGroup;
@@ -440,17 +442,26 @@ public class SettingBitServerBean implements UserDao {
 
     public DualListModel<BitServerUser> getBufUsers() {
 
-        usersSource = getAllBitServerUserList();
+        //usersSource = getAllBitServerUserList();
+        usersTarget = selectedBitServerGroup.getUserList();
         if(selectedBitServerGroup.getUserList()!=null){
-            usersTarget = selectedBitServerGroup.getUserList();
-            usersSource.removeAll(usersTarget);
+            //usersTarget = selectedBitServerGroup.getUserList();
+            usersSourceBuf = getAllBitServerUserList();
+
+            for(BitServerUser bufUser:usersSourceBuf){
+                for(BitServerUser bufUser2:usersTarget){
+                    if(bufUser2.equals(bufUser)){
+                        usersSource.add(bufUser2);
+                    }
+                }
+            }
+
+           //System.out.println("resultDel "+resultDel);
         }else{
             usersTarget = new ArrayList<>();
         }
-        System.out.println("usersTarget.size() "+usersTarget.size());
-
+        //System.out.println("usersTarget.size() "+usersTarget.size());
         bufUsers = new DualListModel<>(usersSource, usersTarget);
-        //PrimeFaces.current().ajax().update(":form:accord:manage-usergroup-content");
         return bufUsers;
     }
 
@@ -746,6 +757,7 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void initNewUsergroup() {
+      
         selectedBitServerGroup = new BitServerGroup();
         usersSource = getAllBitServerUserList();
         if(selectedBitServerGroup.getUserList()!=null){

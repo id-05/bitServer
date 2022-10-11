@@ -23,7 +23,7 @@ public class HL7toWorkList implements UserDao, ReceivingApplication {
     @Override
     public Message processMessage(Message receivedMessage, Map<String, Object> metaData)
             throws HL7Exception {
-
+        LogTool.getLogger().info("HL7toWorkList ");
         ORM_O01 axx = (ORM_O01) receivedMessage;
         ORM_O01_PATIENT patient = axx.getPATIENT();
         MSH msh =  axx.getMSH();
@@ -37,9 +37,8 @@ public class HL7toWorkList implements UserDao, ReceivingApplication {
                 msh.getDateTimeOfMessage().getTime().encode(),
                 order.getOBR().getObr4_UniversalServiceIdentifier().encode(),
                 order.getOBR().getObr24_DiagnosticServSectID().toString());
-        wkRec.print();
-
-/*      PatientId
+/*
+        PatientId
         PatientName
         DateBirth
         AcceccionNumber
@@ -49,6 +48,7 @@ public class HL7toWorkList implements UserDao, ReceivingApplication {
 */
 
         String shortfilename = getBitServerResource("WorkListPath").getRvalue() + new Date().getTime();
+        boolean deleteBufFileAfter = getBitServerResource("deleteBufFileAfter").getRvalue().equals("true");
         String filename = shortfilename+".txt";
         File file = new File(filename);
         FileOutputStream is;
@@ -85,11 +85,15 @@ public class HL7toWorkList implements UserDao, ReceivingApplication {
 
         try {
             Process proc = Runtime.getRuntime().exec("dump2dcm "+filename+" "+shortfilename+".wl");
+            LogTool.getLogger().info("new file: "+new Date()+": "+shortfilename);
             proc.waitFor();
 
-            if(!file.delete()){
-                LogTool.getLogger().error("Error delete wl-file, maybe tomcat not have rules");
+            if(deleteBufFileAfter){
+                if(!file.delete()){
+                    LogTool.getLogger().error("Error delete wl-file, maybe tomcat not have rules");
+                }
             }
+
         }catch (Exception e){
             LogTool.getLogger().error("Error create wl-file: "+e.getMessage());
         }

@@ -46,7 +46,7 @@ public class QueueBean implements UserDao, DataAction {
     Date seconddate;
     int typeSeach = 5;
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy.MM.dd");
-    List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
+    //List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
@@ -387,7 +387,7 @@ public class QueueBean implements UserDao, DataAction {
         firstdate = new Date();
         seconddate = new Date();
         //usergroupList = getRealBitServerUsergroupList();
-//        selectedUserGroup = usergroupList.get(0).getRuName();
+        //selectedUserGroup = usergroupList.get(0).getRuName();
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -538,12 +538,12 @@ public class QueueBean implements UserDao, DataAction {
         OrthancStudy bufStudy = connection.parseStudy(bufJson);
         //studiesFromTableBitServer = getAllBitServerStudyOnlyId();
         boolean existInTable = false;
-        for (BitServerStudy bBSS : studiesFromTableBitServer) {
-            if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-                existInTable = true;
-                break;
-            }
-        }
+//        for (BitServerStudy bBSS : studiesFromTableBitServer) {
+//            if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
+//                existInTable = true;
+//                break;
+//            }
+//        }
         if (!existInTable) {
 //            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
 //                    bufStudy.getInstitutionName(), bufStudy.getDate(),

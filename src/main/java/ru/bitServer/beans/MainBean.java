@@ -46,14 +46,15 @@ public class MainBean implements UserDao, DataAction {
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
-    public static List<BitServerStudy> allStudies = new ArrayList<>();
-    public static Map<Long, Integer> resultMapLong = new TreeMap<>();
-    public static Map<Long, Integer> resultMapShort = new TreeMap<>();
+    static List<BitServerStudy> allStudies = new ArrayList<>();
+    static Map<Long, Integer> resultMapLong = new TreeMap<>();
+    static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    //public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {
@@ -158,10 +159,12 @@ public class MainBean implements UserDao, DataAction {
         int port = 4243;
         if(bufRes!=null){
             port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
+            LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
+            LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
         }
         HL7Service ourHl7Server = context.newServer(port, useSecureConnection);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
-        ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
+        //ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
         ourHl7Server.registerConnectionListener(new OurConnectionListener());
         ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
         try {

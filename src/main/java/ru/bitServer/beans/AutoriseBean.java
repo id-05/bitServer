@@ -12,6 +12,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 
 @ManagedBean(name = "autoriseBean")
 @SessionScoped
@@ -78,6 +79,8 @@ public class AutoriseBean implements UserDao {
 
     public void validateUsernamePassword() {
         try {
+
+
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
             if (currentUser.getUname()!=null) {
                 HttpSession session = SessionUtils.getSession();
