@@ -10,7 +10,7 @@
 <f:view>
 
     <h:head>
-        <title>DICOM Route Settings</title>
+        <title>Work List Manager</title>
         <f:facet name="last">
             <link rel="stylesheet" type="text/css"
                   href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
@@ -18,12 +18,10 @@
     </h:head>
 
     <h:body>
-        <h:form id="dicomroute">
+        <h:form id="worklistmanager">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
                 <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
-                <p:menuitem style="margin-right: 5px" value="Orthanc restart" icon="pi pi-refresh" actionListener="#{dicomrouteBean.resetOrthanc}" process="@this" update="growl"/>
-
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">
@@ -36,53 +34,53 @@
             </p:menubar>
 
             <p:tabView id="tabview1">
-                <p:ajax event="tabChange" listener="#{dicomrouteBean.onTabChange}"/>
+                <p:ajax event="tabChange" listener="#{worklistBean.onTabChange}"/>
 
                 <p:tab title="Для обычных пользователей">
                     <p:outputPanel>
                         <p:toolbar>
                             <p:toolbarGroup>
-                                <p:commandButton value="Добавить правило" immediate="true" icon="pi pi-plus" actionListener="#{dicomrouteBean.initNewRule}"
-                                                 update="dialogNewRule" oncomplete="PF('manageRule').show()"
+                                <p:commandButton value="Добавить запись" immediate="true" icon="pi pi-plus" actionListener="#{worklistBean.initNewItem}"
+                                                 update="dialogNewItem" oncomplete="PF('manageItem').show()"
                                                  styleClass="ui-button-success" style="margin-right: .5rem">
-                                    <p:resetInput target="dialogNewRule"/>
+                                    <p:resetInput target="dialogNewItem"/>
                                 </p:commandButton>
 
-                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="dicomroute:growl"
-                                                 immediate="true" actionListener="#{dicomrouteBean.saveSettings}"/>
+                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 immediate="true" actionListener="#{worklistBean.saveSampleFile}"/>
                             </p:toolbarGroup>
                         </p:toolbar>
 
-                        <p:dataTable id="dt-rules" widgetVar="dtRules" var="dicomrouteRule" value="#{dicomrouteBean.rules}"
+                        <p:dataTable id="dt-items" widgetVar="dtItem" var="workListItem" value="#{worklistBean.items}"
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
-                                     selection="#{dicomrouteBean.rules}" rowKey="#{DicomrouteRule.name}"
+                                     selection="#{worklistBean.items}" rowKey="#{WorkListItem.DicomTag}"
                                      rows="10" rowSelectMode="add" >
 
                             <p:column headerText="Tag" style="text-align: center">
-                                <h:outputText value="#{dicomrouteRule.tag}" />
+                                <h:outputText value="#{workListItem.dicomTag}" />
                             </p:column>
 
-                            <p:column headerText="Tag Value" style="text-align: center">
-                                <h:outputText value="#{dicomrouteRule.tagValue}" />
+                            <p:column headerText="VR" style="text-align: center">
+                                <h:outputText value="#{workListItem.VR}" />
                             </p:column>
 
-                            <p:column headerText="Target Modality" style="text-align: center">
-                                <h:outputText value="#{dicomrouteRule.nameRemoteModality}" />
+                            <p:column headerText="VALUE" style="text-align: center">
+                                <h:outputText value="#{workListItem.value}" />
                             </p:column>
 
                             <p:column exportable="false">
 
-                                <p:commandButton icon="pi pi-pencil" update=":dicomroute:tabview1:manage-rule"
-                                                 oncomplete="PF('manageRule').show()" style="margin-right: 10px"
+                                <p:commandButton icon="pi pi-pencil" update=":worklistmanager:tabview1:manage-item"
+                                                 oncomplete="PF('manageItem').show()" style="margin-right: 10px"
                                                  styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                    <f:setPropertyActionListener value="#{dicomrouteRule}" target="#{dicomrouteBean.selectedRule}"/>
-                                    <p:resetInput target=":dicomroute:tabview1:manage-rule"/>
+                                    <f:setPropertyActionListener value="#{workListItem}" target="#{worklistBean.selectedItem}"/>
+                                    <p:resetInput target=":worklistmanager:tabview1:manage-item"/>
                                 </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
-                                                 oncomplete="PF('deleteRule').show()">
-                                    <f:setPropertyActionListener value="#{dicomrouteRule}" target="#{dicomrouteBean.selectedRule}"/>
+                                                 oncomplete="PF('deleteItem').show()">
+                                    <f:setPropertyActionListener value="#{workListItem}" target="#{worklistBean.selectedItem}"/>
                                 </p:commandButton>
 
                             </p:column>
@@ -90,11 +88,15 @@
                         </p:dataTable>
 
 
-                        <p:dialog id="dialogNewRule" header="Новое правило:" showEffect="fade" modal="true"
-                                  widgetVar="manageRule" responsive="true">
-                            <p:panelGrid id="manage-rule" class="ui-fluid" columns="2">
-                                <p:outputLabel for="role" style="margin-right: .5rem">Тэг</p:outputLabel>
-                                <p:selectOneMenu id="role" value="#{dicomrouteBean.selectedRule.tag}">
+                        <p:dialog id="dialogNewItem" header="Новая запись:" showEffect="fade" modal="true"
+                                  widgetVar="manageItem" responsive="true">
+                            <p:panelGrid id="manage-item" class="ui-fluid" columns="3">
+
+                                <p:outputLabel for="TAG" style="margin-right: .5rem">TAG</p:outputLabel>
+                                <p:outputLabel for="VR" style="margin-right: .5rem">VR</p:outputLabel>
+                                <p:outputLabel for="VALUE" style="margin-right: .5rem">VALUE</p:outputLabel>
+
+                                <p:selectOneMenu id="TAG" value="#{worklistBean.selectedItem.dicomTag}">
                                     <f:selectItem itemLabel="all" itemValue="all"/>
                                     <f:selectItem itemLabel="Modality" itemValue="Modality"/>
                                     <f:selectItem itemLabel="Manufacturer" itemValue="Manufacturer"/>
@@ -104,46 +106,46 @@
                                     <f:selectItem itemLabel="StationName" itemValue="StationName"/>
                                 </p:selectOneMenu>
 
-                                <p:outputLabel for="family" style="margin-right: .5rem">Значение</p:outputLabel>
-                                <p:inputText id="family" value="#{dicomrouteBean.selectedRule.tagValue}" />
-
-                                <p:outputLabel for="ugroup" style="margin-right: .5rem">Модальность для отправки</p:outputLabel>
-                                <p:selectOneMenu id="ugroup" value="#{dicomrouteBean.selectedRule.nameRemoteModality}" dynamic="true">
-                                    <f:selectItems value="#{dicomrouteBean.modalitiesName}"/>
+                                <p:selectOneMenu id="VR" value="#{worklistBean.selectedItem.VR}">
+                                    <f:selectItem itemLabel="AE Application Entity" itemValue="AE"/>
+                                    <f:selectItem itemLabel="AS Age String" itemValue="AS"/>
+                                    <f:selectItem itemLabel="AT Attribute Tag" itemValue="AT"/>
                                 </p:selectOneMenu>
+
+                                <p:inputText id="VALUE" value="#{worklistBean.selectedItem.value}" />
 
                             </p:panelGrid>
 
                             <f:facet name="footer">
 
-                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{dicomrouteBean.addNewRule}"
-                                                 update="dialogNewRule">
-                                    <p:resetInput target="dialogNewRule"/>
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{worklistBean.addNewItem}"
+                                                 update="dialogNewItem">
+                                    <p:resetInput target="dialogNewItem"/>
                                 </p:commandButton>
 
                                 <span style="padding: 20px;">&nbsp;</span>
 
-                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageRule').hide()"
-                                                 class="ui-button-secondary" update="dialogNewRule">
-                                    <p:resetInput target="dialogNewRule"/>
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageItem').hide()"
+                                                 class="ui-button-secondary" update="dialogNewItem">
+                                    <p:resetInput target="dialogNewItem"/>
                                 </p:commandButton>
 
                             </f:facet>
                         </p:dialog>
 
-                        <p:dialog widgetVar="deleteRule" showEffect="fade" width="300"
-                                  message="Удалить правило?" header="Удалить правило?" severity="warn">
-                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{dicomrouteBean.deleteRuleFromList}"
-                                             oncomplete="PF('deleteRule').hide()"/>
+                        <p:dialog widgetVar="deleteItem" showEffect="fade" width="300"
+                                  message="Удалить запись?" header="Удалить запись?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{worklistBean.deleteItemFromList}"
+                                             oncomplete="PF('deleteItem').hide()"/>
                             <span style="padding: 20px;">&nbsp;</span>
                             <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                             onclick="PF('deleteRule').hide()"/>
+                                             onclick="PF('deleteItem').hide()"/>
                         </p:dialog>
 
                     </p:outputPanel>
                     <div class="p-d-flex"></div>
                     <br></br>
-                    <div >Список правил автоматической маршрутизации.</div>
+                    <div >Шаблон формирования wl-файла</div>
                     <br></br>
                     <div > </div>
                 </p:tab>
@@ -153,13 +155,20 @@
                     <p:outputPanel>
                         <p:toolbar>
                             <p:toolbarGroup>
-                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="dicomroute:growl"
-                                                 immediate="true" actionListener="#{dicomrouteBean.saveSettingsCustomMode}"/>
+                                <p:commandButton value="Сохранить шаблон" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 actionListener="#{worklistBean.saveSettingsCustomMode}" style="margin-right: .5rem"/>
+
+                                <p:commandButton value="Создать wl-файл" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 actionListener="#{worklistBean.saveSettingsCustomMode}" style="margin-right: .5rem"/>
+
+                                <p:commandButton value="Очистить директорию wl-файлов" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 actionListener="#{worklistBean.deleteDirectory}" style="margin-right: .5rem"/>
+
                             </p:toolbarGroup>
                         </p:toolbar>
 
-                        <p:inputTextarea rows="16" cols="133" value="#{dicomrouteBean.luascripttextFile}">
-                            <p:ajax event="change" listener="#{dicomrouteBean.onInputTextChange}"/>
+                        <p:inputTextarea rows="16" cols="133" value="#{worklistBean.worklisttextFile}">
+                            <p:ajax event="change" listener="#{worklistBean.onInputTextChange}"/>
                         </p:inputTextarea>
 
                     </p:outputPanel>
