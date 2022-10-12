@@ -6,6 +6,7 @@ import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.service.DicomrouteRule;
 import ru.bitServer.service.WorkListItem;
+import ru.bitServer.service.WorkListItemParser;
 import ru.bitServer.util.DeleteWorkListFile;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
@@ -15,10 +16,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpSession;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 
@@ -34,6 +34,7 @@ public class WorkListBean implements UserDao {
     String worklisttextFile;
     ArrayList<WorkListItem> items = new ArrayList<>();
     WorkListItem selectedItem;
+    WorkListItemParser itemParcer;
 
     public WorkListItem getSelectedItem() {
         return selectedItem;
@@ -80,8 +81,8 @@ public class WorkListBean implements UserDao {
         }
 
         worklisttextFile = worklistFile.toString();
-        //DicomruleParser ruleParcer = new DicomruleParser(luascriptFile);
-        //rules = ruleParcer.getRulesList();
+        itemParcer = new WorkListItemParser(worklisttextFile);
+        items = itemParcer.getItemList();
     }
 
     public void onTabChange(){
@@ -94,20 +95,15 @@ public class WorkListBean implements UserDao {
     }
 
     public void saveSampleFile(){
+
+    }
+
+    public void createWorkListFileEasyMode(boolean mode){
         StringBuilder bufStringBuilder = new StringBuilder();
-//        bufStringBuilder.append("function OnStoredInstance(instanceId, tags, metadata)\n");
 
-//        for(DicomrouteRule bufRule:rules){
-//            if(bufRule.getTag().equals("all")){
-//                bufStringBuilder.append("   SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
-//            }else {
-//                bufStringBuilder.append("   if tags.").append(bufRule.getTag()).append(" == '").append(bufRule.getTagValue()).append("' then").append("\n");
-//                bufStringBuilder.append("       SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
-//                bufStringBuilder.append("   end\n");
-//            }
-//        }
-
-//        bufStringBuilder.append("end\n");
+        for(WorkListItem bufItem:items){
+            bufStringBuilder.append(bufItem.getDicomTag()).append(" ").append(bufItem.getVR()).append(" ").append(bufItem.getValue());
+        }
 
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
         {
@@ -156,4 +152,47 @@ public class WorkListBean implements UserDao {
         delWorkList.run();
         showMessage("Внимание","Директория wl-файлов очищена!",FacesMessage.SEVERITY_INFO);
     }
+
+    //public void cre
+
+    public void createWorkListFile(boolean mode){
+        String shortfilename = getBitServerResource("WorkListPath").getRvalue() + new Date().getTime();
+        boolean deleteBufFileAfter = getBitServerResource("deleteBufFileAfter").getRvalue().equals("true");
+        String filename = shortfilename+".txt";
+        File file = new File(filename);
+        FileOutputStream is;
+    try{    is = new FileOutputStream(file);
+        OutputStreamWriter osw = new OutputStreamWriter(is);
+        Writer w = new BufferedWriter(osw);
+            if(mode) {
+                w.write(worklisttextFile);
+            }else{
+                StringBuilder bufStringBuilder = new StringBuilder();
+                for(WorkListItem bufItem:items){
+                    bufStringBuilder.append(bufItem.getDicomTag()).append(" ").append(bufItem.getVR()).append(" ").append(bufItem.getValue()).append("\n");
+                }
+                w.write(bufStringBuilder.toString());
+            }
+        w.close();
+    } catch (Exception e) {
+        LogTool.getLogger().error("Error create wl-file: " + e.getMessage());
+    }
+
+
+        try {
+            Process proc = Runtime.getRuntime().exec("dump2dcm "+filename+" "+shortfilename+".wl");
+            LogTool.getLogger().info("new file: "+new Date()+": "+shortfilename);
+            proc.waitFor();
+
+            if(deleteBufFileAfter){
+                if(!file.delete()){
+                    LogTool.getLogger().error("Error delete wl-file, maybe tomcat not have rules");
+                }
+            }
+
+        }catch (Exception e){
+            LogTool.getLogger().error("Error create wl-file: "+e.getMessage());
+        }
+    }
+
 }

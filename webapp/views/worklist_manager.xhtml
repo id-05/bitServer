@@ -46,8 +46,15 @@
                                     <p:resetInput target="dialogNewItem"/>
                                 </p:commandButton>
 
-                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="worklistmanager:growl"
-                                                 immediate="true" actionListener="#{worklistBean.saveSampleFile}"/>
+                                <p:commandButton value="Сохранить шаблон" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 immediate="true" actionListener="#{worklistBean.saveSampleFile}" style="margin-right: .5rem"/>
+
+                                <p:commandButton value="Создать wl-файл" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 actionListener="#{worklistBean.createWorkListFile(false)}" style="margin-right: .5rem"/>
+
+                                <p:commandButton value="Очистить директорию wl-файлов" styleClass="ui-button-success" update="worklistmanager:growl"
+                                                 actionListener="#{worklistBean.deleteDirectory}" style="margin-right: .5rem"/>
+
                             </p:toolbarGroup>
                         </p:toolbar>
 
@@ -55,7 +62,7 @@
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{worklistBean.items}" rowKey="#{WorkListItem.DicomTag}"
-                                     rows="10" rowSelectMode="add" >
+                                     rows="100" rowSelectMode="add" >
 
                             <p:column headerText="Tag" style="text-align: center">
                                 <h:outputText value="#{workListItem.dicomTag}" />
@@ -96,21 +103,9 @@
                                 <p:outputLabel for="VR" style="margin-right: .5rem">VR</p:outputLabel>
                                 <p:outputLabel for="VALUE" style="margin-right: .5rem">VALUE</p:outputLabel>
 
-                                <p:selectOneMenu id="TAG" value="#{worklistBean.selectedItem.dicomTag}">
-                                    <f:selectItem itemLabel="all" itemValue="all"/>
-                                    <f:selectItem itemLabel="Modality" itemValue="Modality"/>
-                                    <f:selectItem itemLabel="Manufacturer" itemValue="Manufacturer"/>
-                                    <f:selectItem itemLabel="StudyDescription" itemValue="StudyDescription"/>
-                                    <f:selectItem itemLabel="InstitutionName" itemValue="InstitutionName"/>
-                                    <f:selectItem itemLabel="ProductId" itemValue="ProductId"/>
-                                    <f:selectItem itemLabel="StationName" itemValue="StationName"/>
-                                </p:selectOneMenu>
+                                <p:inputText id="TAG" value="#{worklistBean.selectedItem.dicomTag}" />
 
-                                <p:selectOneMenu id="VR" value="#{worklistBean.selectedItem.VR}">
-                                    <f:selectItem itemLabel="AE Application Entity" itemValue="AE"/>
-                                    <f:selectItem itemLabel="AS Age String" itemValue="AS"/>
-                                    <f:selectItem itemLabel="AT Attribute Tag" itemValue="AT"/>
-                                </p:selectOneMenu>
+                                <p:inputText id="VR" value="#{worklistBean.selectedItem.VR}" />
 
                                 <p:inputText id="VALUE" value="#{worklistBean.selectedItem.value}" />
 
@@ -159,7 +154,7 @@
                                                  actionListener="#{worklistBean.saveSettingsCustomMode}" style="margin-right: .5rem"/>
 
                                 <p:commandButton value="Создать wl-файл" styleClass="ui-button-success" update="worklistmanager:growl"
-                                                 actionListener="#{worklistBean.saveSettingsCustomMode}" style="margin-right: .5rem"/>
+                                                 actionListener="#{worklistBean.createWorkListFile(true)}" style="margin-right: .5rem"/>
 
                                 <p:commandButton value="Очистить директорию wl-файлов" styleClass="ui-button-success" update="worklistmanager:growl"
                                                  actionListener="#{worklistBean.deleteDirectory}" style="margin-right: .5rem"/>

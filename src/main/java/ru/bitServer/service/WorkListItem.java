@@ -39,4 +39,9 @@ public class WorkListItem {
         this.VR = VR;
         this.Value = value;
     }
+
+    @Override
+    public String toString() {
+        return "DicomTag= "+DicomTag+" VR= "+VR+" Value= " +Value;
+    }
 }
