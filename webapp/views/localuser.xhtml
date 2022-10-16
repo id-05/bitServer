@@ -24,7 +24,7 @@
                     <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
                     <p:menuitem style="margin-right: 5px" value="Текущее задание" outcome="lucurtask" icon="pi pi-file" disabled="#{!localDashboard.currentUser.hasBlockStudy}"/>
                     <p:menuitem style="margin-right: 5px" value="Мои описания" outcome="luresults" icon="pi pi-inbox" disabled="#{localDashboard.currentUser.role == 'onlyview'}"/>
-                    <p:menuitem style="margin-right: 5px" value="Правила по времени" outcome="scheduler" icon="pi pi-clock" disabled="#{localDashboard.currentUser.role == 'onlyview'}"/>
+                    <p:menuitem style="margin-right: 5px" value="Правила по времени" rendered="false" outcome="scheduler" icon="pi pi-clock" disabled="#{localDashboard.currentUser.role == 'onlyview'}"/>
                     <f:facet name="options">
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">

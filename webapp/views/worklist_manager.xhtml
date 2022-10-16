@@ -47,7 +47,7 @@
                                 </p:commandButton>
 
                                 <p:commandButton value="Сохранить шаблон" styleClass="ui-button-success" update="worklistmanager:growl"
-                                                 immediate="true" actionListener="#{worklistBean.saveSampleFile}" style="margin-right: .5rem"/>
+                                                 immediate="true" actionListener="#{worklistBean.saveSampleFile(false)}" style="margin-right: .5rem"/>
 
                                 <p:commandButton value="Создать wl-файл" styleClass="ui-button-success" update="worklistmanager:growl"
                                                  actionListener="#{worklistBean.createWorkListFile(false)}" style="margin-right: .5rem"/>
@@ -77,13 +77,6 @@
                             </p:column>
 
                             <p:column exportable="false">
-
-                                <p:commandButton icon="pi pi-pencil" update=":worklistmanager:tabview1:manage-item"
-                                                 oncomplete="PF('manageItem').show()" style="margin-right: 10px"
-                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
-                                    <f:setPropertyActionListener value="#{workListItem}" target="#{worklistBean.selectedItem}"/>
-                                    <p:resetInput target=":worklistmanager:tabview1:manage-item"/>
-                                </p:commandButton>
 
                                 <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
                                                  oncomplete="PF('deleteItem').show()">
@@ -151,7 +144,7 @@
                         <p:toolbar>
                             <p:toolbarGroup>
                                 <p:commandButton value="Сохранить шаблон" styleClass="ui-button-success" update="worklistmanager:growl"
-                                                 actionListener="#{worklistBean.saveSettingsCustomMode}" style="margin-right: .5rem"/>
+                                                 actionListener="#{worklistBean.saveSampleFile(true)}" style="margin-right: .5rem"/>
 
                                 <p:commandButton value="Создать wl-файл" styleClass="ui-button-success" update="worklistmanager:growl"
                                                  actionListener="#{worklistBean.createWorkListFile(true)}" style="margin-right: .5rem"/>

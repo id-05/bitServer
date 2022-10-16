@@ -415,6 +415,7 @@ public interface UserDao {
                 resultSQL = staticSQL + " WHERE tag5.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
             }
             ResultSet rs = statement.executeQuery(resultSQL);
+            //rs.
 
             while (rs.next()) {
                     BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
@@ -426,31 +427,40 @@ public interface UserDao {
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
+        if((getBitServerResource("debug").getRvalue().equals("true"))) {
+            LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количетсво найденных записей при поиске: " + resultList.size());
+        }
         return resultList;
     }
 
     default Date getDateFromText(String strDate) throws ParseException {
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         Date returnDate = new Date();
-        if(!strDate.equals("")){
-            returnDate = formatter.parse(strDate);
+        try {
+            if (!strDate.equals("")) {
+                returnDate = formatter.parse(strDate);
+            }
+        }catch (Exception e){
+            if((getBitServerResource("debug").getRvalue().equals("true"))) {
+                LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Ошибка парсинга даты: " + strDate);
+            }
         }
         return returnDate;
     }
 
-    default String clearStr(String buf){
-        if(buf.length()>59){
-            buf = buf.substring(0,59);
-        }
-        String result = "";
-        String taboo = "^'*/\\\"~";
-        if(!buf.equals("")) {
-            for (char c : taboo.toCharArray()) {
-                result = buf.replace(c, ' ');
-            }
-        }else{
-            result=" ";
-        }
-        return result;
-    }
+//    default String clearStr(String buf){
+//        if(buf.length()>59){
+//            buf = buf.substring(0,59);
+//        }
+//        String result = "";
+//        String taboo = "^'*/\\\"~";
+//        if(!buf.equals("")) {
+//            for (char c : taboo.toCharArray()) {
+//                result = buf.replace(c, ' ');
+//            }
+//        }else{
+//            result=" ";
+//        }
+//        return result;
+//    }
 }

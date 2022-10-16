@@ -1,24 +1,12 @@
 package ru.bitServer.dao;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import ru.bitServer.util.OrthancRestApi;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static ru.bitServer.beans.MainBean.mainServer;
 
-@Entity
 public class BitServerStudy implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String sid;
     private String shortid;
@@ -130,15 +118,15 @@ public class BitServerStudy implements Serializable {
     }
 
     public String getPreview() {
-        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
-        JsonParser parserJsonSerie = new JsonParser();
-        JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
-        JsonArray series= bufObj.get("Series").getAsJsonArray();
-        sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
-        bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
-        JsonArray instances= bufObj.get("Instances").getAsJsonArray();
-        return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
+//        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+//        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
+//        JsonParser parserJsonSerie = new JsonParser();
+//        JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+//        JsonArray series= bufObj.get("Series").getAsJsonArray();
+//        sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
+//        bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+//        JsonArray instances= bufObj.get("Instances").getAsJsonArray();
+        return "";//"http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }
 
     public int getUserwhoblock() {

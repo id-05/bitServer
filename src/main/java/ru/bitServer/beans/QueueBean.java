@@ -276,17 +276,17 @@ public class QueueBean implements UserDao, DataAction {
         this.currentUser = currentUser;
     }
 
-    public List<String> getUsergroupListRuName() {
-        usergroupListRuName = new ArrayList<>();
-        for(BitServerGroup bufgroup: bitServerGroupList){
-            usergroupListRuName.add(bufgroup.getRuName());
-        }
-        return usergroupListRuName;
-    }
+//    public List<String> getUsergroupListRuName() {
+//        usergroupListRuName = new ArrayList<>();
+//        for(BitServerGroup bufgroup: bitServerGroupList){
+//            usergroupListRuName.add(bufgroup.getRuName());
+//        }
+//        return usergroupListRuName;
+//    }
 
-    public void setUsergroupListRuName(List<String> usergroupListRuName) {
-        this.usergroupListRuName = usergroupListRuName;
-    }
+//    public void setUsergroupListRuName(List<String> usergroupListRuName) {
+//        this.usergroupListRuName = usergroupListRuName;
+//    }
 
     public String getSelectedUserGroup() {
         return selectedUserGroup;
@@ -371,7 +371,7 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-        LogTool.getLogger().info(this.getClass().getSimpleName()+" "+"queueBean new");
+//        LogTool.getLogger().info(this.getClass().getSimpleName()+" "+"queueBean new");
 //        for(BitServerModality bufModality:getAllBitServerModality()){
 //            modalityName.add(bufModality.getName());
 //        }
@@ -416,7 +416,7 @@ public class QueueBean implements UserDao, DataAction {
                     break;
             }
         }
-        System.out.println(showHelp);
+        //System.out.println(showHelp);
         dataoutput();
     }
 

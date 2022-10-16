@@ -53,8 +53,8 @@ public class MainBean implements UserDao, DataAction {
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-    //public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
+  //  public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {
@@ -130,11 +130,27 @@ public class MainBean implements UserDao, DataAction {
         themeList = themeListinit();
         selectTheme = themeList.get(1);
 
-
         try {
             periodUpdate = getBitServerResource("PeriodUpdate").getRvalue();
         }catch (Exception e){
             saveBitServiceResource(new BitServerResources("PeriodUpdate","2"));
+        }
+
+        try {
+            if(getBitServerResource("deleteBufFileAfter").getRvalue().equals("")){
+                saveBitServiceResource(new BitServerResources("deleteBufFileAfter","false"));
+            }
+        }catch (Exception e){
+            saveBitServiceResource(new BitServerResources("deleteBufFileAfter","false"));
+        }
+
+        try {
+            if(getBitServerResource("worklistsamplefile").getRvalue().equals("")){
+                saveBitServiceResource(new BitServerResources("worklistsamplefile","/bitserver/samplewl.txt"));
+            }
+
+        }catch (Exception e){
+            saveBitServiceResource(new BitServerResources("worklistsamplefile","/bitserver/samplewl.txt"));
         }
 
         try {

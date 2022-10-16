@@ -100,7 +100,7 @@
 
                     <p:toolbarGroup align="centr">
 
-                        <p:inplace label="#{queueBean.getModalitiNameToString}" style="font-weight: bold" effect="slide" id="modality">
+                        <p:inplace label="#{queueBean.getModalitiNameToString}" style="font-weight: bold" effect="slide" id="modality" rendered="false">
                             <p:selectManyButton value="#{queueBean.selectedModalitiName}"
                                                  dynamic="true">
                                 <f:selectItems value="#{queueBean.modalityName}"/>

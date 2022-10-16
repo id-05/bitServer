@@ -28,7 +28,7 @@ public class WorkListItemParser {
         String[] strings = worklisttextFile.split("\n");
         int i = 1;
         for(String buf:strings){
-            if(buf.contains("#")){
+            if(buf.contains("#")|(buf.equals(""))){
                 commentMap.put(i,buf);
             }else {
                 int firstSpace = buf.indexOf(" ");
@@ -36,10 +36,7 @@ public class WorkListItemParser {
                     String subBuf = buf.substring(firstSpace+1);
                     int secondSpace = subBuf.indexOf(" ");
                     if (secondSpace != -1) {
-                        System.out.println(buf+" firstspace = "+firstSpace+" secondspace = "+secondSpace);
-                        System.out.println(subBuf);
                         WorkListItem bufItem = new WorkListItem(buf.substring(0, firstSpace), subBuf.substring(0, secondSpace), subBuf.substring(secondSpace));
-                        System.out.println(bufItem.toString());
                         resultList.add(bufItem);
                     }
                 }
