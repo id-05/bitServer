@@ -2,18 +2,16 @@ package ru.bitServer.beans;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
-//import org.dcm4che3.data.Attributes;
-//import org.dcm4che3.data.Tag;
-//import org.dcm4che3.data.VR;
-//import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
-//import org.dcm4che3.io.DicomInputStream;
-//import org.dcm4che3.io.DicomOutputStream;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.VR;
+import org.dcm4che3.io.DicomInputStream;
+import org.dcm4che3.io.DicomOutputStream;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
-//import org.primefaces.shaded.commons.io.output.ByteArrayOutputStream;
 import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerUser;
@@ -31,6 +29,7 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -66,6 +65,7 @@ public class ClientBean implements UserDao {
     }
 
     public int getActiveStep() {
+        System.out.println(activeStep);
         return activeStep;
     }
 
@@ -246,39 +246,45 @@ public class ClientBean implements UserDao {
         PrimeFaces.current().ajax().update(":stepbystep:count");
     }
 
-    public void aprove() throws IOException {
+    public void aprove() throws IOException, IllegalAccessException {
         PrimeFaces.current().executeScript("PF('statusDialog').show()");
-        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        //OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
 
         for(byte[] bufInstance:listUploadFile){
 
-//            DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(bufInstance));
-//            Attributes attributes = din.readDataset(-1, -1);
-//            Attributes fmi = din.readFileMetaInformation();
-//
-//            String PatientName = attributes.getString(Tag.PatientName, "");
-//            System.out.println(" PatientName = "+PatientName);
-//            String PatientID = attributes.getString(Tag.PatientID, "");
-//            System.out.println(" PatientName = "+PatientID);
-//
-//            VR vr = din.vr();
-//            attributes.setString(Tag.PatientName,VR.PN,"test");
-//            attributes.setString(Tag.PatientID,VR.PN,"0123456789");
-//
-//            byte[] bufInstance2 = new byte[bufInstance.length];
-//            DicomOutputStream dos = new DicomOutputStream(new File("D://dicom/buf.dcm"));
-//            dos.writeDataset(fmi, attributes);
-//
-//            File f = new File("D://dicom/buf.dcm");
-//            DicomInputStream din2 = new DicomInputStream(f);
-//
-//            Attributes attributes2 = din2.readDataset(-1, -1);
-//            String PatientName2 = attributes2.getString(Tag.PatientName, "");
-//            System.out.println(" PatientName = "+PatientName2);
-//            String PatientID2 = attributes2.getString(Tag.PatientID, "");
-//            System.out.println(" PatientName = "+PatientID2);
-//
-//            byte[] bytes = getBytesFromInputStream(din2);
+            DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(bufInstance));
+            Attributes attributes = din.readDataset(-1, -1);
+            Attributes fmi = din.readFileMetaInformation();
+
+            Tag tag = new Tag();
+            Field[] fields = tag.getClass().getDeclaredFields();
+            for (Field field : fields){
+                System.out.println(field.getName()+" = "+attributes.getString(field.getInt(field.getName()),"none"));
+            }
+
+            String PatientName = attributes.getString(Tag.PatientName , "");
+            System.out.println(" PatientName = "+PatientName);
+            String PatientID = attributes.getString(Tag.PatientID, "");
+            System.out.println(" PatientName = "+PatientID);
+
+            VR vr = din.vr();
+            attributes.setString(Tag.PatientName,VR.PN,"test");
+            attributes.setString(Tag.PatientID,VR.PN,"0123456789");
+
+            byte[] bufInstance2 = new byte[bufInstance.length];
+            DicomOutputStream dos = new DicomOutputStream(new File("D://dicom/buf.dcm"));
+            dos.writeDataset(fmi, attributes);
+
+            File f = new File("D://dicom/buf.dcm");
+            DicomInputStream din2 = new DicomInputStream(f);
+
+            Attributes attributes2 = din2.readDataset(-1, -1);
+            String PatientName2 = attributes2.getString(Tag.PatientName, "");
+            System.out.println(" PatientName = "+PatientName2);
+            String PatientID2 = attributes2.getString(Tag.PatientID, "");
+            System.out.println(" PatientName = "+PatientID2);
+
+            byte[] bytes = getBytesFromInputStream(din2);
 
            //// HttpURLConnection conn = connection.sendDicom("/instances", bytes);
             //String buf = conn.getResponseMessage();
