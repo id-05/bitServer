@@ -143,10 +143,10 @@ public class TagEditor {
         Tag tag = new Tag();
         Field[] fields = tag.getClass().getDeclaredFields();
         for(DicomTag bufTag:TagList){
-            if(bufTag.getTagName().equals("PatientName")){
+           // if(bufTag.getTagName().equals("PatientName")){
                 Field bufField = getField(bufTag.getTagName(),fields);
-                attributes.setString(bufField.getInt(bufField.getName()), VR.valueOf(567), bufTag.getTagValue());
-            }
+                attributes.setString(bufField.getInt(bufField.getName()), attributes.getVR(bufField.getInt(bufField.getName())), bufTag.getTagValue());
+           // }
         }
 
         File f = new File("newFile.dcm");
