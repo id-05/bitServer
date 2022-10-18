@@ -267,7 +267,7 @@ public class ClientBean implements UserDao {
             String PatientID = attributes.getString(Tag.PatientID, "");
             System.out.println(" PatientName = "+PatientID);
 
-            VR vr = din.vr();
+            //VR vr = din.vr();
             attributes.setString(Tag.PatientName,VR.PN,"test");
             attributes.setString(Tag.PatientID,VR.PN,"0123456789");
 

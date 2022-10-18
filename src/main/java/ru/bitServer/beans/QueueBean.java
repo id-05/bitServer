@@ -650,9 +650,9 @@ public class QueueBean implements UserDao, DataAction {
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
         String url="/tools/create-archive";
-        JsonArray idArray = new JsonArray();
-        idArray.add(bufStudy.getSid());
-        HttpURLConnection conn = connection.makePostConnection(url, idArray.toString());
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"zip")

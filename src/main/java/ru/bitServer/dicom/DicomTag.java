@@ -4,6 +4,15 @@ public class DicomTag {
 
     String TagName;
     String TagValue;
+    boolean hasChange;
+
+    public boolean isHasChange() {
+        return hasChange;
+    }
+
+    public void setHasChange(boolean hasChange) {
+        this.hasChange = hasChange;
+    }
 
     public String getTagName() {
         return TagName;
@@ -22,6 +31,7 @@ public class DicomTag {
     }
 
     public DicomTag(String tagName, String tagValue) {
+        hasChange = false;
         TagName = tagName;
         TagValue = tagValue;
     }

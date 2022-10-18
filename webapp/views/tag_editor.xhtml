@@ -9,6 +9,12 @@
 
 <f:view>
 
+    <style type="text/css">
+        .customPanelGrid .ui-panelgrid-content {
+            align-items: center;
+        }
+    </style>
+
     <h:head>
         <title>DICOM TAG Editor</title>
         <f:facet name="last">
@@ -33,65 +39,131 @@
                 </f:facet>
             </p:menubar>
 
+            <p:tabView id="tabview1">
+                <p:ajax event="tabChange" listener="#{tagEditorBean.onTabChange}"/>
+
+                <p:tab title="Загрузить внешний файл">
                     <p:outputPanel>
                         <p:toolbar>
                             <p:toolbarGroup>
 
-                                <p:commandButton id="uploaddicom" oncomplete="PF('addDICOM').show()"
-                                                 update=":tageditor:addDialog"
+                                <p:commandButton id="uploaddicom1" oncomplete="PF('addDICOM').show()"
+                                                 update=":tageditor:tabview1:addDialog"
                                                  style="margin-right: 10px"
                                                  value="Загрузить файл" styleClass="ui-button-success" />
 
-                                <p:commandButton value="Выбрать на сервере" styleClass="ui-button-success" update="tageditor:growl"
-                                                  style="margin-right: .5rem"/>
+                                <p:commandButton value="Сохранить активный" styleClass="ui-button-success" update="tageditor:growl"
+                                                 id="saveselected"
+                                                 ajax="false"
+                                                 disabled="#{!tagEditorBean.selectedExit}"
+                                                 style="margin-right: .5rem">
+                                    <p:fileDownload value="#{tagEditorBean.saveChangeCurrent()}" />
+                                </p:commandButton>
 
-                                <p:commandButton value="Сохранить изменения" styleClass="ui-button-success" update="tageditor:growl"
-                                                  style="margin-right: .5rem"/>
+                                <p:commandButton value="Сохранить все" styleClass="ui-button-success" update="tageditor:growl"
+                                                 style="margin-right: .5rem"/>
+
+                                <p:dialog id="addDialog" header="Выбрать DICOM-данные" showEffect="fade" modal="true"
+                                          widgetVar="addDICOM" responsive="true">
+
+                                    <p:fileUpload  mode="advanced"
+                                                   widgetVar="fUpload"
+                                                   listener="#{tagEditorBean.handleFileUpload}"
+                                                   sequential="true"
+                                                   styleClass="fileupload-content"
+                                                   dragDropSupport="true"
+                                                   skinSimple="true"
+                                                   sizeLimit="20000000"
+                                                   label="Выбрать"
+                                                   uploadLabel="Зазрузить"
+                                                   cancelLabel="Отмена"
+                                                   multiple="true"
+                                                   invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
+                                                   allowTypes="/(\.|\/)(dcm|DCM)$/"
+                                                   style="margin-right: .5rem"/>
+                                </p:dialog>
+
+                                <div class="card">
+                                    <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
+                                                 columnClasses="ui-grid-col-4,ui-grid-col-4">
+
+                                        <p:outputPanel>
+                                            <p:dataTable id="dt-files" widgetVar="dtFile" var="uploadDicomFile"
+                                                         size="small"
+                                                         selectionMode="single"
+                                                         selection="#{tagEditorBean.selectedFile}"
+                                                         rowKey="#{uploadDicomFile.fileName}"
+                                                         scrollWidth="600"
+                                                         value="#{tagEditorBean.fileList}"
+                                                         styleClass="users-table"
+                                                         emptyMessage="Нет записей для отображения">
+
+                                                <p:ajax event="rowSelect" listener="#{tagEditorBean.onFileSelect}"/>
+                                                <p:column headerText="Files" style="text-align: center">
+                                                    <h:outputText value="#{uploadDicomFile.fileName}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:outputPanel>
+
+                                        <p:outputPanel>
+                                            <p:dataTable id="dt-tags" widgetVar="dtTag" var="dicomTag"
+                                                         scrollable="true" scrollHeight="450"
+                                                         size="small"
+
+                                                         editable="true"
+                                                         editMode="cell"
+                                                         editInitEvent="dblclick"
+                                                         value="#{tagEditorBean.tagList}"
+                                                         styleClass="users-table"
+                                                         emptyMessage="Нет записей для отображения">
+
+                                                <p:ajax event="cellEdit" listener="#{tagEditorBean.onCellEdit}"/>
+
+                                                <p:column headerText="TagName" style="text-align: center">
+                                                    <h:outputText value="#{dicomTag.tagName}" />
+                                                </p:column>
+
+                                                <p:column headerText="TagValue" style="text-align: center">
+
+                                                    <p:cellEditor>
+                                                        <f:facet name="output">
+                                                            <h:outputText value="#{dicomTag.tagValue}"/>
+                                                        </f:facet>
+                                                        <f:facet name="input">
+                                                            <p:inputText value="#{dicomTag.tagValue}" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:outputPanel>
+
+                                    </p:panelGrid>
+                                </div>
 
                             </p:toolbarGroup>
                         </p:toolbar>
-
-                        <p:dialog id="addDialog" header="Выбрать DICOM-данные" showEffect="fade" modal="true"
-                                  widgetVar="addDICOM" responsive="true">
-
-                            <p:fileUpload  mode="advanced"
-                                           widgetVar="fUpload"
-                                           listener="#{tagEditorBean.handleFileUpload}"
-                                           sequential="true"
-                                           styleClass="fileupload-content"
-                                           dragDropSupport="true"
-                                           skinSimple="true"
-                                           sizeLimit="20000000"
-                                           label="Выбрать"
-                                           uploadLabel="Зазрузить"
-                                           cancelLabel="Отмена"
-                                           multiple="true"
-                                           invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
-                                           allowTypes="/(\.|\/)(dcm|DCM)$/"
-                                           style="margin-right: .5rem"/>
-                        </p:dialog>
-
-                        <p:dataTable id="dt-tags" widgetVar="dtTag" var="dicomTag"
-                                     editable="true"
-                                     editMode="cell"
-                                     editInitEvent="dblclick"
-                                     value="#{tagEditorBean.tagList}"
-                                     reflow="true" styleClass="users-table"
-                                     emptyMessage="Нет записей для отображения"
-                                     selection="#{tagEditorBean.tagList}" rowKey="#{tagEditorBean.selectTag}"
-                                     rows="100" rowSelectMode="add" >
-
-                            <p:column headerText="TagName" style="text-align: center">
-                                <h:outputText value="#{dicomTag.tagName}" />
-                            </p:column>
-
-                            <p:column headerText="TagValue" style="text-align: center">
-                                <h:outputText value="#{dicomTag.tagValue}" />
-                            </p:column>
-
-                        </p:dataTable>
-
                     </p:outputPanel>
+                </p:tab>
+
+                <p:tab title="Выбрать на сервере">
+                    <p:outputPanel>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Выбрать на сервере" styleClass="ui-button-success" update="tageditor:growl"
+                                                 style="margin-right: .5rem"/>
+
+                                <p:commandButton value="Сохранить изменения" styleClass="ui-button-success" update="tageditor:growl"
+                                                 style="margin-right: .5rem"/>
+
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                    </p:outputPanel>
+                </p:tab>
+
+            </p:tabView>
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>
