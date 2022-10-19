@@ -55,7 +55,7 @@
                                 <p:commandButton value="Сохранить активный" styleClass="ui-button-success" update="tageditor:growl"
                                                  id="saveselected"
                                                  ajax="false"
-                                                 disabled="#{!tagEditorBean.selectedExit}"
+                                                 disabled="#{!tagEditorBean.selectedExist}"
                                                  style="margin-right: .5rem">
                                     <p:fileDownload value="#{tagEditorBean.saveChangeCurrent()}" />
                                 </p:commandButton>
@@ -110,14 +110,15 @@
                                             <p:dataTable id="dt-tags" widgetVar="dtTag" var="dicomTag"
                                                          scrollable="true" scrollHeight="450"
                                                          size="small"
-
                                                          editable="true"
+                                                         stripedRows="true"
                                                          editMode="cell"
-                                                         editInitEvent="dblclick"
+                                                         editInitEvent="click"
                                                          value="#{tagEditorBean.tagList}"
                                                          styleClass="users-table"
                                                          emptyMessage="Нет записей для отображения">
 
+                                                <p:ajax event="rowSelect" listener="#{tagEditorBean.onTagSelect}"/>
                                                 <p:ajax event="cellEdit" listener="#{tagEditorBean.onCellEdit}"/>
 
                                                 <p:column headerText="TagName" style="text-align: center">

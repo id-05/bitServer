@@ -253,7 +253,7 @@ public class ClientBean implements UserDao {
         for(byte[] bufInstance:listUploadFile){
 
             DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(bufInstance));
-            Attributes attributes = din.readDataset(-1, -1);
+            Attributes attributes = din.readDataset();
             Attributes fmi = din.readFileMetaInformation();
 
             Tag tag = new Tag();

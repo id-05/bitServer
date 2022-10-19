@@ -329,6 +329,41 @@ public interface UserDao {
         }
     }
 
+    default void alternativeSaveResource(BitServerResources bitServerResources){
+        try {
+            Connection conn = getConnection();
+            //Statement statement = conn.createStatement();
+
+            String sql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1',?)";
+            PreparedStatement statement2 = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            statement2.setString(1,bitServerResources.getRname());
+            statement2.executeUpdate();
+            ResultSet resultSet = statement2.getGeneratedKeys();
+            if(resultSet.next()) {
+                int key = resultSet.getInt(1);
+                System.out.println(" key = "+key);
+                String strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+key+"')";
+                Statement statement = conn.createStatement();
+                statement.executeUpdate(strSql);
+                conn.close();
+            }
+
+            //String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bitServerResources.getRname()+"')";
+            //statement.executeUpdate(strSql);
+            //strSql = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bitServerResources.getRname()+"' and bitserver.rtype = '1'";
+            //statement = conn.createStatement();
+            //ResultSet rs = statement.executeQuery(strSql);
+            //rs.next();
+            //String bufStudy = rs.getString(1);
+//            String strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+key+"')";
+//            statement.executeUpdate(strSql);
+//            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+    }
+
     default void deleteFromBitServerTable(Long id) {
         try {
             Connection conn = getConnection();
