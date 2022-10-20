@@ -95,5 +95,8 @@
     <orderEntry type="library" name="Maven: postgresql:postgresql:9.1-901-1.jdbc4" level="project" />
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-core:5.27.0" level="project" />
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-dict:5.27.0" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-imageio:2.0.29" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-core:2.0.29" level="project" />
+    <orderEntry type="library" name="Maven: dcm4che:dcm4che-image:2.0.29" level="project" />
   </component>
 </module>
