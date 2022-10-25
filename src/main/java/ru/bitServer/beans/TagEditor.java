@@ -1,8 +1,9 @@
 package ru.bitServer.beans;
 
-import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
+//import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
+import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
 import org.primefaces.PrimeFaces;
@@ -16,13 +17,15 @@ import ru.bitServer.dicom.UploadDicomFile;
 import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -31,10 +34,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static ru.bitServer.beans.AdminBean.get16bitBuffImage;
+//import ru.bitServer.beans.AdminBean.get16bitBuffImage;
 
 @ManagedBean(name = "tagEditorBean")
-@ViewScoped
+@SessionScoped
 public class TagEditor {
 
     ArrayList<DicomTag> TagList = new ArrayList<>();
@@ -43,6 +46,10 @@ public class TagEditor {
     UploadDicomFile selectedFile;
     boolean selectedExist = false;
     byte[] curDicom;
+
+    public byte[] getCurDicom() {
+        return curDicom;
+    }
 
     public boolean isSelectedExist() {
         return selectedExist;
@@ -86,20 +93,22 @@ public class TagEditor {
 
     @PostConstruct
     public void init() {
-
+        ImageIO.scanForPlugins();
+        System.out.println("123");
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
         UploadedFile file = event.getFile();
         UploadDicomFile dfile = new UploadDicomFile(file.getContent(),file.getFileName());
         FileList.add(dfile);
-        prepareTagTable(dfile.getData());
+        //prepareTagTable(dfile.getData());
         PrimeFaces.current().executeScript("PF('addDICOM').hide()");
         PrimeFaces.current().ajax().update(":tageditor:tabview1:dt-files");
     }
 
     public void prepareTagTable(byte[] file) throws IOException {
         TagList.clear();
+        curDicom = file;
         DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(file));
         Attributes attributes = din.readDataset();
         Tag tag = new Tag();
@@ -113,10 +122,11 @@ public class TagEditor {
                 }
 
             }catch (Exception e){
-                LogTool.getLogger().info(this.getClass().getSimpleName()+": "+ "Error during parce DICOM Tag: "+e.getMessage());
+                //LogTool.getLogger().info(this.getClass().getSimpleName()+": "+ "Error during parce DICOM Tag: "+e.getMessage());
             }
         }
         PrimeFaces.current().ajax().update(":tageditor:tabview1:dt-tags");
+        PrimeFaces.current().ajax().update(":tageditor:tabview1:img1");
     }
 
     public void onTagSelect(){
@@ -192,54 +202,104 @@ public class TagEditor {
         return buf;
     }
 
-//    static BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) {
-//        Raster raster = null ;
-//        //System.out.println("Input: " + dicomFile.getName());
-//
-//        //Open the DICOM file and get its pixel data
-//        try {
-//            //byte[] dicomf = new byte[0];
-//            Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
-//            ImageReader reader = (ImageReader) iter.next();
-//            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
-//            ImageInputStream iis = ImageIO.createImageInputStream(dicomf);//dicomFile);
-//            reader.setInput(iis, false);
-//            //Returns a new Raster (rectangular array of pixels) containing the raw pixel data from the image stream
-//            raster = reader.readRaster(0, param);
-//            if (raster == null)
-//                System.out.println("Error: couldn't read Dicom image!");
-//            iis.close();
-//        }
-//        catch(Exception e) {
-//            System.out.println("Error: couldn't read dicom image! "+ e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return get16bitBuffImage(raster);
-//    }
-//
-//    public StreamedContent getGraphicText() {
-//        try {
-//            return DefaultStreamedContent.builder()
-//                    .contentType("image/png")
-//                    .stream(() -> {
-//                        try {
-//                            BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(curDicom);//new BufferedImage(100, 25, BufferedImage.TYPE_INT_RGB);
-//                            Graphics2D g2 = bufferedImg.createGraphics();
-//                            g2.drawString("This is a text", 0, 10);
-//                            ByteArrayOutputStream os = new ByteArrayOutputStream();
-//                            ImageIO.write(bufferedImg, "png", os);
-//                            return new ByteArrayInputStream(os.toByteArray());
-//                        }
-//                        catch (Exception e) {
-//                            e.printStackTrace();
-//                            return null;
-//                        }
-//                    })
-//                    .build();
+    public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) {
+        Raster raster = null ;
+        System.out.println("Input: " + dicomf.length);
+        //Open the DICOM file and get its pixel data
+        try {
+            ImageIO.scanForPlugins();
+            File f = new File("");
+            ByteArrayInputStream bais = new ByteArrayInputStream(dicomf);
+            Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
+            ImageReader reader = (ImageReader) iter.next();
+            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+            ImageInputStream iis = ImageIO.createImageInputStream(bais);
+            reader.setInput(iis, false);
+            //Returns a new Raster (rectangular array of pixels) containing the raw pixel data from the image stream
+            raster = reader.readRaster(0, param);
+            if (raster == null)
+                System.out.println("Error: couldn't read Dicom image!");
+            iis.close();
+        }
+        catch(Exception e) {
+            System.out.println("Error: couldn't read dicom image! "+ e.getMessage());
+        }
+        return get16bitBuffImage(raster);
+    }
+
+    public StreamedContent getGraphicText() {
+        //try {
+        if(curDicom!=null){
+            System.out.println("curDicom1 = "+curDicom.length);
+        }
+
+        return DefaultStreamedContent.builder()
+                .contentType("image/png")
+                .name("test")
+                .stream(() -> {
+                    try {
+                        System.out.println("yesQ");
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(curDicom);//new BufferedImage(100, 25, BufferedImage.TYPE_INT_RGB);
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        ImageIO.write(bufferedImg, "png", os);
+                        int w = bufferedImg.getWidth(null);
+                        System.out.println("w = "+w);
+                        int h = bufferedImg.getHeight(null);
+                        System.out.println("h = "+w);
+                        // image is scaled two times at run time]
+                        int scale = 2;
+                        if(w==512){
+                            scale = 1;
+                        }
+
+                        BufferedImage bi = new BufferedImage(w * scale, h * scale,
+                                BufferedImage.TYPE_INT_ARGB);
+                        Graphics g = bi.getGraphics();
+                        g.drawImage(bufferedImg, 1, 1, w * scale, h * scale, null);
+                        ImageIO.write(bi, "png", bos);
+                        return new ByteArrayInputStream(bos.toByteArray());//, "image/png");
+                    }
+                    catch (Exception e) {
+                        System.out.println("error = "+e.getMessage());
+                        LogTool.getLogger().info("here "+e.getMessage());
+                        return null;
+                    }
+                })
+                .build();
 //        }
 //        catch (Exception e) {
 //            e.printStackTrace();
 //            return null;
 //        }
-//    }
+    }
+
+    public BufferedImage get16bitBuffImage(Raster raster) {
+        short[] pixels = ((DataBufferUShort) raster.getDataBuffer()).getData();
+        ColorModel colorModel = new ComponentColorModel(
+                ColorSpace.getInstance(ColorSpace.CS_GRAY),
+                new int[]{16},
+                false,
+                false,
+                Transparency.OPAQUE,
+                DataBuffer.TYPE_USHORT);
+
+        for(int i=0;i<pixels.length;i++){
+            pixels[i] = Short.valueOf((short) (pixels[i] * 100));
+        }
+        DataBufferUShort db = new DataBufferUShort(pixels, pixels.length);
+        WritableRaster outRaster = Raster.createInterleavedRaster(
+                db,
+                raster.getWidth(),
+                raster.getHeight(),
+                raster.getWidth(),
+                1,
+                new int[1],
+                null);
+        return new BufferedImage(colorModel, outRaster, false, null);
+    }
+
 }
+
+
+//<p:graphicImage value="#{tagEditorBean.graphicText}" />

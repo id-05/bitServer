@@ -84,11 +84,12 @@
                                 </p:dialog>
 
                                 <div class="card">
-                                    <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
-                                                 columnClasses="ui-grid-col-4,ui-grid-col-4">
+                                    <p:panelGrid id="manage-user-content" columns="3" layout="grid" styleClass="customPanelGrid"
+                                                 columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4">
 
                                         <p:outputPanel>
                                             <p:dataTable id="dt-files" widgetVar="dtFile" var="uploadDicomFile"
+                                                         scrollable="true" scrollHeight="450" stripedRows="true"
                                                          size="small"
                                                          selectionMode="single"
                                                          selection="#{tagEditorBean.selectedFile}"
@@ -139,6 +140,10 @@
                                                 </p:column>
 
                                             </p:dataTable>
+                                        </p:outputPanel>
+
+                                        <p:outputPanel>
+                                            <p:graphicImage value="#{tagEditorBean.graphicText}" id="img1"  cache="false" />
                                         </p:outputPanel>
 
                                     </p:panelGrid>

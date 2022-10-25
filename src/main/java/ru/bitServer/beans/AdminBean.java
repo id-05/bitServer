@@ -78,7 +78,7 @@ public class AdminBean implements UserDao {
         }
     }
 
-    static BufferedImage createBufferedImgdFromDICOMfile(File dicomFile) {
+    public BufferedImage createBufferedImgdFromDICOMfile(File dicomFile) {
         Raster raster = null ;
         System.out.println("Input: " + dicomFile.getName());
 
@@ -102,8 +102,10 @@ public class AdminBean implements UserDao {
         return get16bitBuffImage(raster);
     }
 
-    public static BufferedImage get16bitBuffImage(Raster raster) {
+    public BufferedImage get16bitBuffImage(Raster raster) {
+        //System.out.println("8");
         short[] pixels = ((DataBufferUShort) raster.getDataBuffer()).getData();
+        //System.out.println("9");
         ColorModel colorModel = new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY),
                 new int[]{16},
