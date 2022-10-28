@@ -132,17 +132,20 @@ public interface UserDao {
         ArrayList<OrthancSerie> seriesList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM resources AS tag" +
-                    " INNER JOIN resources AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '4'"+
-                    " INNER JOIN bitserver AS tag2 ON tag.internalid = tag2.parentid AND tag2.rtype = '5'"+
-                    " INNER JOIN bitserver AS tag3 ON tag.internalid = tag3.parentid AND tag3.rtype = '6'"+
-                    " INNER JOIN bitserver AS tag4 ON tag.internalid = tag4.parentid AND tag4.rtype = '7'"+
-                    " INNER JOIN bitserver AS tag5 ON tag.internalid = tag5.parentid AND tag5.rtype = '8' WHERE tag.internalid = '"+uid+"'";
+            String resultSQL = "SELECT tag1.resourcetype, tag1.publicid, tag1.internalid, tag2.value FROM resources AS tag" +
+                    " INNER JOIN resources AS tag1 ON tag.internalid = tag1.parentid AND tag1.resourcetype = '2'" +
+                    " INNER JOIN maindicomtags AS tag2 ON tag1.internalid = tag2.id AND tag2.tagelement = '4158' WHERE tag.publicid = '"+uid+"'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-//                user = new BitServerUser(rs.getString(1), rs.getString(2), rs.getString(3),
-//                        rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
+                String resultSubSQL = "SELECT publicid FROM resources  WHERE parentid = '"+rs.getString(3)+"'";
+                Statement subStatement = conn.createStatement();
+                ResultSet subRs = subStatement.executeQuery(resultSubSQL);
+                ArrayList<String> bufInstances = new ArrayList<>();
+                while(subRs.next()){
+                    bufInstances.add(subRs.getString(1));
+                }
+                seriesList.add(new OrthancSerie(rs.getString(2), rs.getString(4),bufInstances));
             }
             conn.close();
         } catch (Exception  e) {

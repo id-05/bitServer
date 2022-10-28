@@ -43,28 +43,37 @@
                         <p:toolbar>
                             <p:toolbarGroup>
 
+                                <p:commandButton actionListener="#{bitviewerBean.lastInstance}"
+                                                 style="margin-right: 10px"
+                                                 value="Last" styleClass="ui-button-success" />
+
+                                <p:commandButton actionListener="#{bitviewerBean.nextInstance}"
+                                                 style="margin-right: 10px"
+                                                 value="Next" styleClass="ui-button-success" />
+
                                 <div class="card">
-                                    <p:panelGrid id="manage-user-content" columns="3" layout="grid" styleClass="customPanelGrid"
-                                                 columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4">
+                                    <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
+                                                 columnClasses="ui-grid-col-2,ui-grid-col-4">
 
                                         <p:outputPanel>
                                             <p:dataTable id="dt-series" widgetVar="visibleSerie" var="orthancSerie"
+                                                         rowKey="#{orthancSerie.serieDescription}"
                                                          size="small"
                                                          selectionMode="single"
-                                                         scrollWidth="600"
+                                                         selection="#{bitviewerBean.selectedSerie}"
                                                          value="#{bitviewerBean.seriesList}"
                                                          styleClass="users-table"
                                                          emptyMessage="Нет записей для отображения">
+                                                <p:ajax event="rowSelect" listener="#{bitviewerBean.onSerieSelected}"/>
+                                                <p:column headerText="Serie title" style="text-align: center">
+                                                    <h:outputText value="#{orthancSerie.serieDescription}" />
+                                                </p:column>
 
                                             </p:dataTable>
                                         </p:outputPanel>
 
                                         <p:outputPanel>
-
-                                        </p:outputPanel>
-
-                                        <p:outputPanel>
-
+                                            <p:graphicImage ajax="false" value="#{bitviewerBean.imgDcm}" id="img1"  cache="false" />
                                         </p:outputPanel>
 
                                     </p:panelGrid>
