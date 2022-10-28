@@ -1,7 +1,17 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonArray;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.PrimeFaces;
+import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.SessionUtils;
+
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+
 import static ru.bitServer.beans.MainBean.mainServer;
 
 public interface DataAction extends UserDao{
@@ -26,6 +36,19 @@ public interface DataAction extends UserDao{
         }else{
             PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
         }
+    }
+
+    public default void redirectToBitViewer(String instance) throws IOException {
+        HttpSession session = SessionUtils.getSession();
+        session.setAttribute("study", instance);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/bitviewer.xhtml?study="+instance);
+    }
+
+    public default byte[] getDicomAsByte(OrthancRestApi connection, String fileName) throws Exception {
+        String url="/instances/"+fileName+"/file";
+        HttpURLConnection conn = connection.makeGetConnection (url);
+        InputStream inputStream = conn.getInputStream();
+        return IOUtils.toByteArray(inputStream);
     }
 
 }

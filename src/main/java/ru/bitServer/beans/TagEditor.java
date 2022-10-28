@@ -3,6 +3,7 @@ package ru.bitServer.beans;
 //import org.dcm4che2.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
+import org.dcm4che3.image.ColorModelFactory;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
@@ -94,7 +95,6 @@ public class TagEditor {
     @PostConstruct
     public void init() {
         ImageIO.scanForPlugins();
-        System.out.println("123");
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
@@ -202,7 +202,7 @@ public class TagEditor {
         return buf;
     }
 
-    public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) {
+    public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException, IllegalAccessException {
         Raster raster = null ;
         System.out.println("Input: " + dicomf.length);
         //Open the DICOM file and get its pixel data
@@ -238,7 +238,6 @@ public class TagEditor {
                 .name("test")
                 .stream(() -> {
                     try {
-                        System.out.println("yesQ");
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
                         BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(curDicom);//new BufferedImage(100, 25, BufferedImage.TYPE_INT_RGB);
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -254,7 +253,7 @@ public class TagEditor {
                         }
 
                         BufferedImage bi = new BufferedImage(w * scale, h * scale,
-                                BufferedImage.TYPE_INT_ARGB);
+                                BufferedImage.TYPE_USHORT_GRAY);
                         Graphics g = bi.getGraphics();
                         g.drawImage(bufferedImg, 1, 1, w * scale, h * scale, null);
                         ImageIO.write(bi, "png", bos);
@@ -274,7 +273,7 @@ public class TagEditor {
 //        }
     }
 
-    public BufferedImage get16bitBuffImage(Raster raster) {
+    public BufferedImage get16bitBuffImage(Raster raster) throws IOException{
         short[] pixels = ((DataBufferUShort) raster.getDataBuffer()).getData();
         ColorModel colorModel = new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY),
@@ -284,8 +283,41 @@ public class TagEditor {
                 Transparency.OPAQUE,
                 DataBuffer.TYPE_USHORT);
 
+        DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(curDicom));
+        Attributes attributes = din.readDataset();
+        Attributes fmi = din.readFileMetaInformation();
+
+        int windowWidth = Integer.parseInt(attributes.getString(Tag.WindowWidth , "1"));
+        int windowCenter = Integer.parseInt(attributes.getString(Tag.WindowCenter , "1"));
+
+        int minY = 0;
+        int maxY = 0;
+
+        for(short buf:pixels){
+            if(buf > maxY){
+                maxY = buf;
+            }
+        }
+        System.out.println("maxY = "+maxY);
+        minY = maxY;
+        for(short buf:pixels){
+            if(buf < minY){
+                minY = buf;
+            }
+        }
+
+        int koef = 65536 / maxY;
+
         for(int i=0;i<pixels.length;i++){
-            pixels[i] = Short.valueOf((short) (pixels[i] * 100));
+//            short buf = pixels[i];
+//            if (pixels[i] <= (windowCenter - 0.5 - (windowWidth-1) /2)) {
+//                pixels[i] = (short) minY;
+//            } else if (pixels[i] > (windowCenter - 0.5 + (windowWidth-1) /2)){
+//                pixels[i] = (short) maxY;
+//            } else {
+//                pixels[i] = (short) (((pixels[i] - (windowCenter - 0.5)) / (windowWidth-1) + 0.5) * (maxY- minY) + minY);
+//            }
+           pixels[i] = Short.valueOf((short) (pixels[i] * koef));
         }
         DataBufferUShort db = new DataBufferUShort(pixels, pixels.length);
         WritableRaster outRaster = Raster.createInterleavedRaster(
@@ -300,6 +332,3 @@ public class TagEditor {
     }
 
 }
-
-
-//<p:graphicImage value="#{tagEditorBean.graphicText}" />

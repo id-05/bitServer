@@ -1,5 +1,6 @@
 package ru.bitServer.dao;
 
+import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.util.LogTool;
 import java.sql.*;
 import java.text.DateFormat;
@@ -125,6 +126,29 @@ public interface UserDao {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         return user;
+    }
+
+    default ArrayList<OrthancSerie> getSeriesFromStudy(String uid){
+        ArrayList<OrthancSerie> seriesList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag2.rvalue, tag3.rvalue, tag4.rvalue, tag5.rvalue, tag.internalid FROM resources AS tag" +
+                    " INNER JOIN resources AS tag1 ON tag.internalid = tag1.parentid AND tag1.rtype = '4'"+
+                    " INNER JOIN bitserver AS tag2 ON tag.internalid = tag2.parentid AND tag2.rtype = '5'"+
+                    " INNER JOIN bitserver AS tag3 ON tag.internalid = tag3.parentid AND tag3.rtype = '6'"+
+                    " INNER JOIN bitserver AS tag4 ON tag.internalid = tag4.parentid AND tag4.rtype = '7'"+
+                    " INNER JOIN bitserver AS tag5 ON tag.internalid = tag5.parentid AND tag5.rtype = '8' WHERE tag.internalid = '"+uid+"'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+//                user = new BitServerUser(rs.getString(1), rs.getString(2), rs.getString(3),
+//                        rs.getString(4),rs.getString(5),rs.getString(6),Long.parseLong(rs.getString(7)));
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return seriesList;
     }
 
     default BitServerUser getUserByLogin(String login){

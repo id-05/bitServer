@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
@@ -15,7 +16,6 @@ import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancStudy;
-import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -431,7 +431,6 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void dataoutput() {
-        System.out.println("dataoutput");
         if(filtrDate.equals("targetdate")){
             datepickerVisible1 = true;
             datepickerVisible2 = false;
@@ -654,9 +653,10 @@ public class QueueBean implements UserDao, DataAction {
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
+        byte[] buf = IOUtils.toByteArray(inputStream);
         return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"zip")
-                .contentType("application/zip")
+                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"dcm")
+                .contentType("application/dcm")
                 .stream(() -> inputStream)
                 .build();
     }
