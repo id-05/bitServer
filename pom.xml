@@ -167,6 +167,12 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>primeflex</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+
     </dependencies>
     <!--Primefaces repository. Need to download themes-->
     <!--Репозиторий primefaces. Нужно указать, чтобы можно было скачивать различные темы оформления компонентов-->
