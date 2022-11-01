@@ -1,9 +1,6 @@
 package ru.bitServer.beans;
 
-import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Tag;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
-import org.dcm4che3.io.DicomInputStream;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -13,11 +10,9 @@ import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -42,6 +37,33 @@ public class BitviewerBean implements UserDao, DataAction {
     OrthancSerie selectedSerie = new OrthancSerie();
     int curInstance = 0;
     OrthancRestApi conn;
+    int number1 = 0;
+    int x;
+    int y;
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getNumber1() {
+        return number1;
+    }
+
+    public void setNumber1(int number1) {
+        this.number1 = number1;
+    }
 
     public ArrayList<OrthancSerie> getSeriesList() {
         return seriesList;
@@ -59,7 +81,6 @@ public class BitviewerBean implements UserDao, DataAction {
         this.selectedSerie = selectedSerie;
     }
 
-
     @PostConstruct
     public void init() {
         HttpSession session = SessionUtils.getSession() ;
@@ -70,52 +91,58 @@ public class BitviewerBean implements UserDao, DataAction {
     }
 
     public void onSerieSelected(){
+        curInstance = 0;
+        PrimeFaces.current().ajax().update(":bitviewer:img1");
+    }
+
+    public void onSerieSelected2(){
+        System.out.println("split event");
+        curInstance = number1;
+        PrimeFaces.current().ajax().update(":bitviewer:img1");
+    }
+
+    public void imageclick(){
+        System.out.println("imageclick");
+        System.out.println(x + ", " + y);
+    }
+
+    public void nextInstance(){
+        if((curInstance+1)<selectedSerie.getInstancesOfByte().size()){
+            curInstance = curInstance + 1;
+        }
         PrimeFaces.current().ajax().update(":bitviewer:img1");
     }
 
     public void lastInstance(){
-        if((curInstance+1)<selectedSerie.getInstances().size()){
-            curInstance++;
-        }
-        onSerieSelected();
-    }
-
-    public void nextInstance(){
         if(curInstance>0){
-            curInstance--;
+            curInstance = curInstance - 1;
         }
-        onSerieSelected();
+        PrimeFaces.current().ajax().update(":bitviewer:img1");
     }
 
-    public StreamedContent getImgDcm() throws Exception {
-        byte[] bufFile = getDicomAsByte(conn, selectedSerie.getInstances().get(curInstance));
-        System.out.println(bufFile.length);
-
+    public StreamedContent getImgDcm() {
+        System.out.println("getImgDcm "+curInstance);
+        byte[] bufFile = selectedSerie.getInstancesOfByte().get(curInstance);
         return DefaultStreamedContent.builder()
                 .contentType("image/png")
-                .name("test")
                 .stream(() -> {
                     try {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(bufFile);//new BufferedImage(100, 25, BufferedImage.TYPE_INT_RGB);
+                        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(bufFile);
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
                         ImageIO.write(bufferedImg, "png", os);
                         int w = bufferedImg.getWidth(null);
-                        System.out.println("w = "+w);
                         int h = bufferedImg.getHeight(null);
-                        System.out.println("h = "+w);
-                        // image is scaled two times at run time]
                         int scale = 2;
                         if(w==512){
                             scale = 1;
                         }
-
                         BufferedImage bi = new BufferedImage(w * scale, h * scale,
                                 BufferedImage.TYPE_USHORT_GRAY);
                         Graphics g = bi.getGraphics();
                         g.drawImage(bufferedImg, 1, 1, w * scale, h * scale, null);
                         ImageIO.write(bi, "png", bos);
-                        return new ByteArrayInputStream(bos.toByteArray());//, "image/png");
+                        return new ByteArrayInputStream(bos.toByteArray());
                     }
                     catch (Exception e) {
                         System.out.println("error = "+e.getMessage());
@@ -131,10 +158,8 @@ public class BitviewerBean implements UserDao, DataAction {
 //        }
     }
 
-    public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException, IllegalAccessException {
+    public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException {
         Raster raster = null ;
-        System.out.println("Input: " + dicomf.length);
-        //Open the DICOM file and get its pixel data
         try {
             ImageIO.scanForPlugins();
             File f = new File("");
@@ -144,7 +169,6 @@ public class BitviewerBean implements UserDao, DataAction {
             DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
             ImageInputStream iis = ImageIO.createImageInputStream(bais);
             reader.setInput(iis, false);
-            //Returns a new Raster (rectangular array of pixels) containing the raw pixel data from the image stream
             raster = reader.readRaster(0, param);
             if (raster == null)
                 System.out.println("Error: couldn't read Dicom image!");
@@ -165,14 +189,6 @@ public class BitviewerBean implements UserDao, DataAction {
                 false,
                 Transparency.OPAQUE,
                 DataBuffer.TYPE_USHORT);
-
-//        DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(curDicom));
-//        Attributes attributes = din.readDataset();
-//        Attributes fmi = din.readFileMetaInformation();
-//
-//        int windowWidth = Integer.parseInt(attributes.getString(Tag.WindowWidth , "1"));
-//        int windowCenter = Integer.parseInt(attributes.getString(Tag.WindowCenter , "1"));
-
         int minY = 0;
         int maxY = 0;
 
@@ -181,7 +197,6 @@ public class BitviewerBean implements UserDao, DataAction {
                 maxY = buf;
             }
         }
-        System.out.println("maxY = "+maxY);
         minY = maxY;
         for(short buf:pixels){
             if(buf < minY){

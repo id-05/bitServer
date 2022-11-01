@@ -10,6 +10,7 @@ public class OrthancSerie {
     int nbInstances;
     String id;
     String seriesNumber;
+    ArrayList<byte[]> instancesOfByte;
     //private JsonArray instances;
     int instancesCount;
     ArrayList<String> instances = new ArrayList<>();
@@ -25,6 +26,15 @@ public class OrthancSerie {
 //    //public JsonArray getInstances() {
 //        return instances;
 //    }
+
+
+    public ArrayList<byte[]> getInstancesOfByte() {
+        return instancesOfByte;
+    }
+
+    public void setInstancesOfByte(ArrayList<byte[]> instancesOfByte) {
+        this.instancesOfByte = instancesOfByte;
+    }
 
     public String getSerieDescription(){
         return serieDescription;
@@ -49,6 +59,13 @@ public class OrthancSerie {
 
     public void setInstances(ArrayList<String> instances) {
         this.instances = instances;
+    }
+
+    public OrthancSerie(String id, String serieDescription, ArrayList<byte[]> instancesOfByte, int instancesCount) {
+        this.serieDescription = serieDescription;
+        this.id = id;
+        this.instancesOfByte = instancesOfByte;
+        this.instancesCount = instancesOfByte.size();
     }
 
     public OrthancSerie(String id, String serieDescription, ArrayList<String> instances) {

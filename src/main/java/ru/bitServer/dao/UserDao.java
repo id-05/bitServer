@@ -1,7 +1,13 @@
 package ru.bitServer.dao;
 
+import org.apache.commons.io.IOUtils;
+import ru.bitServer.beans.MainBean;
 import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.util.LogTool;
+import ru.bitServer.util.OrthancRestApi;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -130,6 +136,7 @@ public interface UserDao {
 
     default ArrayList<OrthancSerie> getSeriesFromStudy(String uid){
         ArrayList<OrthancSerie> seriesList = new ArrayList<>();
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         try {
             Connection conn = getConnection();
             String resultSQL = "SELECT tag1.resourcetype, tag1.publicid, tag1.internalid, tag2.value FROM resources AS tag" +
@@ -141,17 +148,25 @@ public interface UserDao {
                 String resultSubSQL = "SELECT publicid FROM resources  WHERE parentid = '"+rs.getString(3)+"'";
                 Statement subStatement = conn.createStatement();
                 ResultSet subRs = subStatement.executeQuery(resultSubSQL);
-                ArrayList<String> bufInstances = new ArrayList<>();
+                //ArrayList<String> bufInstances = new ArrayList<>();
+                ArrayList<byte[]> bufInstances = new ArrayList<>();
                 while(subRs.next()){
-                    bufInstances.add(subRs.getString(1));
+                    bufInstances.add(getDicomAsByte(connection,subRs.getString(1)));
                 }
-                seriesList.add(new OrthancSerie(rs.getString(2), rs.getString(4),bufInstances));
+                seriesList.add(new OrthancSerie(rs.getString(2), rs.getString(4),bufInstances,0));
             }
             conn.close();
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         return seriesList;
+    }
+
+    public default byte[] getDicomAsByte(OrthancRestApi connection, String fileName) throws Exception {
+        String url="/instances/"+fileName+"/file";
+        HttpURLConnection conn = connection.makeGetConnection (url);
+        InputStream inputStream = conn.getInputStream();
+        return IOUtils.toByteArray(inputStream);
     }
 
     default BitServerUser getUserByLogin(String login){

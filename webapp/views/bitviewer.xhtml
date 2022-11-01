@@ -13,6 +13,9 @@
         .customPanelGrid .ui-panelgrid-content {
             align-items: center;
         }
+        body {
+            background-color:gray;
+        }
     </style>
 
     <h:head>
@@ -38,12 +41,12 @@
                 </f:facet>
             </p:menubar>
 
-                    <p:outputPanel>
+                    <p:outputPanel style="background-color: white">
                                 <div class="card">
                                     <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
                                                  columnClasses="ui-grid-col-2, ui-grid-col-8">
 
-                                        <p:outputPanel>
+                                        <p:outputPanel style="background-color: white">
                                             <p:dataTable id="dt-series" widgetVar="visibleSerie" var="orthancSerie"
                                                          rowKey="#{orthancSerie.serieDescription}"
                                                          size="small"
@@ -53,6 +56,7 @@
                                                          styleClass="users-table"
                                                          emptyMessage="Нет записей для отображения">
                                                 <p:ajax event="rowSelect" listener="#{bitviewerBean.onSerieSelected}"/>
+
                                                 <p:column headerText="Serie title" style="text-align: center">
                                                     <h:outputText value="#{orthancSerie.serieDescription}" />
                                                 </p:column>
@@ -60,21 +64,36 @@
                                             </p:dataTable>
                                         </p:outputPanel>
 
-                                        <p:outputPanel>
-                                            <p:toolbar>
+                                        <p:outputPanel style="background-color: white">
+                                            <p:toolbar style="height: max-content">
                                                 <p:toolbarGroup>
 
                                                     <p:commandButton actionListener="#{bitviewerBean.lastInstance}"
+
                                                                      style="margin-right: 10px"
                                                                      value="Last" styleClass="ui-button-success" />
 
                                                     <p:commandButton actionListener="#{bitviewerBean.nextInstance}"
                                                                      style="margin-right: 10px"
                                                                      value="Next" styleClass="ui-button-success" />
+
                                                 </p:toolbarGroup>
                                             </p:toolbar>
-                                            <div class="pt-5 flex justify-content-center flex-wrap card-container">
-                                                <p:graphicImage ajax="false" style="" value="#{bitviewerBean.imgDcm}" id="img1"  cache="false" />
+                                            <div class="pt-5 pb-5 flex justify-content-center flex-wrap card-container">
+                                                <p:graphicImage ajax="true" value="#{bitviewerBean.imgDcm}" id="img1"  cache="false" stream="false">
+                                                    <f:ajax event="click" execute="x y" listener="#{bitviewerBean.imageclick}" />
+                                                </p:graphicImage>
+                                                <h:inputHidden id="x" value="#{bitviewerBean.x}" />
+                                                <h:inputHidden id="y" value="#{bitviewerBean.y}" />
+
+                                                <h:outputScript>
+                                                    jQuery("img[id$=':img1']").on("mousedown", function(event) {
+                                                        var $form = jQuery(this).closest("form");
+                                                        $form.find("input[id$=':x']").val(event.pageX);
+                                                        $form.find("input[id$=':y']").val(event.pageY);
+                                                    });
+                                                </h:outputScript>
+
                                             </div>
                                         </p:outputPanel>
 
