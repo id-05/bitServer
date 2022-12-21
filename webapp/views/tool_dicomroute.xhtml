@@ -23,6 +23,8 @@
             <p:menubar>
                 <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
                 <p:menuitem style="margin-right: 5px" value="Orthanc restart" icon="pi pi-refresh" actionListener="#{dicomrouteBean.resetOrthanc}" process="@this" update="growl"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="DICOM-route" disabled="true"/>
 
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">

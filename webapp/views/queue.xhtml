@@ -60,17 +60,15 @@
             <p:menubar>
                 <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.currentUser.role != 'admin'}"/>
                 <p:menuitem value="Назад" outcome="adminPage" icon="pi pi-backward" rendered="#{queueBean.currentUser.role == 'admin'}"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Очередь" disabled="true"/>
 
                 <f:facet name="options">
-
-                    <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">
                             <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                         </div>
-                    </div>
-
                 </f:facet>
             </p:menubar>
 
@@ -176,7 +174,7 @@
                                              icon="pi pi-upload" styleClass="ui-button-success" />
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
 
-                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                            <p:dialog modal="true" widgetVar="statusDialog2" draggable="false" closable="false">
                                 <h1 class="p-text-center">
                                     <h:outputLabel for="txt_count" value="Выполненно:  "/>
                                     <h:outputText id="txt_count" value="#{queueBean.number}"/>
@@ -291,7 +289,7 @@
                                              style="margin-right: 10px" styleClass="rounded-button ui-button-help"
                                              icon="pi pi-eye" process="@this"
                                              update=":seachform:dt-studys"
-                                             actionListener="#{queueBean.redirectToBitViewer(bitServerStudy.sid)}">
+                                             actionListener="#{queueBean.redirectToViewer(bitServerStudy.sid)}">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
@@ -347,6 +345,7 @@
                         </p:menuitem>
 
                         <p:menuitem value="Отправить в ..."
+
                                     update="searchgrowl"
                                     oncomplete="PF('AEchoose').show()"
                                     styleClass="rounded-button ui-button-warning"

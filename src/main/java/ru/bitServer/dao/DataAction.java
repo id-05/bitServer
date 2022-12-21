@@ -44,6 +44,14 @@ public interface DataAction extends UserDao{
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/bitviewer.xhtml?study="+instance);
     }
 
+    public default void redirectToViewer(String sid) throws IOException {
+        if(Boolean.parseBoolean(getBitServerResource("debug").getRvalue())){
+            redirectToBitViewer(sid);
+        }else{
+            redirectToOsimis(sid);
+        }
+    }
+
     public default byte[] getDicomAsByte(OrthancRestApi connection, String fileName) throws Exception {
         String url="/instances/"+fileName+"/file";
         HttpURLConnection conn = connection.makeGetConnection (url);

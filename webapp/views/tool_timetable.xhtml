@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+
+<f:view>
+
+    <h:head>
+        <title>Расписание заданий</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="timetable">
+            <p:growl id="growl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Расписание" disabled="true"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+                    <p:outputPanel>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:commandButton value="Добавить задание" immediate="true" icon="pi pi-plus" actionListener="#{timetableBean.initNewTask}"
+                                                 update="dialogNewTask" oncomplete="PF('manageTask').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewTask"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+
+                        <p:dataTable id="dt-tasks" widgetVar="dtTasks" var="timetableTask" value="#{timetableBean.tasks}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{timetableBean.tasks}" rowKey="#{TimetableBean.id}"
+                                     rows="10" rowSelectMode="add" >
+
+                            <p:column headerText="id" style="text-align: center">
+                                <h:outputText value="#{timetableTask.id}" />
+                            </p:column>
+
+                            <p:column headerText="action" style="text-align: center">
+                                <h:outputText value="#{timetableTask.action}" />
+                            </p:column>
+
+                            <p:column headerText="description" style="text-align: center">
+                                <h:outputText value="#{timetableTask.description}" />
+                            </p:column>
+
+                            <p:column exportable="false">
+
+                                <p:commandButton icon="pi pi-pencil" update=":timetable:manage-task"
+                                                 oncomplete="PF('manageTask').show()" style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{timetableTask}" target="#{timetableBean.selectedTask}"/>
+                                    <p:resetInput target=":timetable:manage-task"/>
+                                </p:commandButton>
+
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteTask').show()">
+                                    <f:setPropertyActionListener value="#{timetableTask}" target="#{timetableBean.selectedTask}"/>
+                                </p:commandButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+
+                        <p:dialog id="dialogNewTask" header="Новая задача:" showEffect="fade" modal="true"
+                                  widgetVar="manageTask" responsive="true">
+
+                            <p:panelGrid id="manage-task" class="ui-fluid" columns="2">
+                                <p:outputLabel for="id" style="margin-right: .5rem">id</p:outputLabel>
+                                <p:inputText id="id" value="#{timetableBean.selectedTask.id}" />
+
+                                <p:outputLabel for="action" style="margin-right: .5rem">action</p:outputLabel>
+                                <p:inputText id="action" value="#{timetableBean.selectedTask.action}" />
+
+                                <p:outputLabel for="description" style="margin-right: .5rem">description</p:outputLabel>
+                                <p:inputText id="description" value="#{timetableBean.selectedTask.description}" />
+
+                            </p:panelGrid>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{timetableBean.addNewTask}"
+                                                 update="dialogNewTask">
+                                    <p:resetInput target="dialogNewTask"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;">&nbsp;</span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageTask').hide()"
+                                                 class="ui-button-secondary" update="dialogNewTask">
+                                    <p:resetInput target="dialogNewTask"/>
+                                </p:commandButton>
+
+                            </f:facet>
+                        </p:dialog>
+
+                        <p:dialog widgetVar="deleteTask" showEffect="fade" width="300"
+                                  message="Удалить задание?" header="Удалить задание?" severity="warn">
+                            <p:commandButton value="Да" icon="pi pi-check" actionListener="#{timetableBean.deleteTaskFromList}"
+                                             oncomplete="PF('deleteTask').hide()"/>
+                            <span style="padding: 20px;">&nbsp;</span>
+                            <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteTask').hide()"/>
+                        </p:dialog>
+
+                    </p:outputPanel>
+                    <div class="p-d-flex"></div>
+                    <br></br>
+                    <div > </div>
+                    <br></br>
+                    <div > </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

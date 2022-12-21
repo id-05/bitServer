@@ -25,6 +25,9 @@
                 <p:menuitem style="margin-right: 5px" value="Перезагрузить сетевую службу" icon="pi pi-refresh" actionListener="#{networkSettingsBean.resAdapter}" process="@this" update="growl2"/>
                 <p:menuitem style="margin-right: 5px" value="Перейти в сервисный режим" icon="pi pi-cog" actionListener="#{networkSettingsBean.serviceMode}" process="@this" update="growl2"/>
                 <p:menuitem style="margin-right: 5px" value="Перейти в обычный режим" icon="pi pi-home" actionListener="#{networkSettingsBean.normalMode}" process="@this" update="growl2"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Сетевые настройки" disabled="true"/>
+
                 <f:facet name="options">
                     <div class="p-mr-2 p-as-center">
                         <div class="p-d-flex">

@@ -723,7 +723,7 @@ public class QueueBean implements UserDao, DataAction {
         } catch (IOException e) {
             showMessage("Сообщение:","Возникла ошибка при отправке! "+e.getMessage(),error);
         }
-
+        System.out.println(sb.toString());
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
 
         if(sb!=null){
@@ -731,6 +731,5 @@ public class QueueBean implements UserDao, DataAction {
         }else{
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
         }
-
     }
 }
