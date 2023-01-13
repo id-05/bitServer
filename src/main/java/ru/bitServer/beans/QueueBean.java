@@ -16,6 +16,7 @@ import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.dicom.OrthancStudy;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -46,13 +47,11 @@ public class QueueBean implements UserDao, DataAction {
     Date seconddate;
     int typeSeach = 5;
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy.MM.dd");
-    //List<BitServerStudy> studiesFromTableBitServer = new ArrayList<>();
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
     List<BitServerGroup> bitServerGroupList;
     String selectedUserGroup;
-    List<String> usergroupListRuName;
     BitServerUser currentUser;
     OrthancRestApi connection;
     OrthancSettings orthancSettings;
@@ -126,14 +125,6 @@ public class QueueBean implements UserDao, DataAction {
 
     public void setOptDownload(String optDownload) {
         this.optDownload = optDownload;
-    }
-
-    public String getDataoutputState() {
-        return dataoutputState;
-    }
-
-    public void setDataoutputState(String dataoutputState) {
-        this.dataoutputState = dataoutputState;
     }
 
     public List<String> getModalityName() {
@@ -276,18 +267,6 @@ public class QueueBean implements UserDao, DataAction {
         this.currentUser = currentUser;
     }
 
-//    public List<String> getUsergroupListRuName() {
-//        usergroupListRuName = new ArrayList<>();
-//        for(BitServerGroup bufgroup: bitServerGroupList){
-//            usergroupListRuName.add(bufgroup.getRuName());
-//        }
-//        return usergroupListRuName;
-//    }
-
-//    public void setUsergroupListRuName(List<String> usergroupListRuName) {
-//        this.usergroupListRuName = usergroupListRuName;
-//    }
-
     public String getSelectedUserGroup() {
         return selectedUserGroup;
     }
@@ -386,8 +365,6 @@ public class QueueBean implements UserDao, DataAction {
 
         firstdate = new Date();
         seconddate = new Date();
-        //usergroupList = getRealBitServerUsergroupList();
-        //selectedUserGroup = usergroupList.get(0).getRuName();
 
         bitServerResourcesList = getAllBitServerResource();
         for(BitServerResources buf: bitServerResourcesList){
@@ -416,7 +393,6 @@ public class QueueBean implements UserDao, DataAction {
                     break;
             }
         }
-        //System.out.println(showHelp);
         dataoutput();
     }
 
@@ -448,12 +424,10 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
         PrimeFaces.current().ajax().update(":seachform:ajs");
         PrimeFaces.current().executeScript("PF('ajs').show()");
-        StringBuilder bufStr = new StringBuilder();//)getAllNameBitServerModality();
+        StringBuilder bufStr = new StringBuilder();
         resetViewTable();
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
-
-        //visibleStudiesList = getStudy(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
         visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
         recordCount = visibleStudiesList.size();
         timeDrawing = ((new Date()).getTime() - timeStart)/1000.00 - timeRequest;
@@ -463,13 +437,11 @@ public class QueueBean implements UserDao, DataAction {
             PrimeFaces.current().ajax().update(":seachform:searchgrowl");
         }
 
-        //visibleStudiesList.removeIf(bufStudy -> !selectedModalitiName.contains(bufStudy.getModality()));
         PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
 
         if( (getBitServerResource("debug").getRvalue().equals("false"))|(getBitServerResource("debug") == null) ){
             sortListener();
         }
-
     }
 
     public void sortListener(){
@@ -717,19 +689,25 @@ public class QueueBean implements UserDao, DataAction {
             ids.add(bufstudy.getSid());
         }
         StringBuilder sb = null;
-
-        try {
-            sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
-        } catch (IOException e) {
-            showMessage("Сообщение:","Возникла ошибка при отправке! "+e.getMessage(),error);
+        if(ids.size()!=0) {
+            try {
+                sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
+            } catch (IOException e) {
+                showMessage("Сообщение:", "Возникла ошибка при отправке, удаленный сервер не отвечает! " + e.getMessage(), error);
+                LogTool.getLogger().error(this.getClass().getSimpleName() + ": " + e.getMessage());
+            }
+        }else{
+            showMessage("Сообщение:", "Исследования для отправки не выбраны, пожалуйста вернитесь на форму 'Очередь' и выберите исследования для отправки кликом левой кнопки мыши! ", error);
         }
-        System.out.println(sb.toString());
+
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
 
         if(sb!=null){
             showMessage("Сообщение:","Данные успешно отправлены!",info);
+            LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + sb.toString());
         }else{
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+"Возникла ошибка при отправке, удаленный сервер не отвечает!");
         }
     }
 }

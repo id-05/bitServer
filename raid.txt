@@ -1,0 +1,35 @@
+/dev/md1:
+           Version : 1.2
+     Creation Time : Thu Feb 10 14:25:50 2022
+        Raid Level : raid10
+        Array Size : 41016744960 (39116.62 GiB 42001.15 GB)
+     Used Dev Size : 13672248320 (13038.87 GiB 14000.38 GB)
+      Raid Devices : 6
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+     Intent Bitmap : Internal
+
+       Update Time : Fri Jan 13 16:16:56 2023
+             State : clean, degraded
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : near=2
+        Chunk Size : 512K
+
+Consistency Policy : bitmap
+
+              Name : debian:1
+              UUID : 24578002:430caa18:61ba3bb9:546e66c8
+            Events : 13681087
+
+    Number   Major   Minor   RaidDevice State
+       0       8        1        0      active sync set-A   /dev/sda1
+       -       0        0        1      removed
+       2       8       33        2      active sync set-A   /dev/sdc1
+       3       8       49        3      active sync set-B   /dev/sdd1
+       -       0        0        4      removed
+       5       8       81        5      active sync set-B   /dev/sdf1

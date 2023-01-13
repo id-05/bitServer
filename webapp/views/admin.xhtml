@@ -45,7 +45,6 @@
                     </p:submenu>
                     <p:menuitem style="margin-right: 5px" value="LOG" outcome="logpage" icon="pi pi-info-circle"/>
 
-
                     <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}" rendered="false">
                         <p:menuitem value="saga" actionListener="#{autoriseBean.setTheme('saga')}" process="@this"/>
                         <p:menuitem value="arya" actionListener="#{autoriseBean.setTheme('arya')}" process="@this"/>
@@ -60,7 +59,6 @@
                     </p:submenu>
 
                     <f:facet name="options">
-
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
@@ -68,7 +66,6 @@
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
                         </div>
-
                     </f:facet>
                 </p:menubar>
             </div>
