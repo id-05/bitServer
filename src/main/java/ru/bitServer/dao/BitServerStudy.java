@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 public class BitServerStudy implements Serializable {
 
     private Long id;
@@ -14,10 +13,10 @@ public class BitServerStudy implements Serializable {
     private String sdescription;
     private String source;
     private Date sdate;
-    private Date dateaddinbase;
-    private String patientname;
-    private Date patientbirthdate;
-    private String patientsex;
+    private Date DateAddInbase;
+    private String PatientName;
+    private Date PatientBirthDate;
+    private String PatientSex;
     private String anamnes;
     private String result;
     private int status;
@@ -32,11 +31,13 @@ public class BitServerStudy implements Serializable {
     private Date datablock;
     private int userwhoblock;
     private String statusstyle;
-    private String StringStudyDate;
-    private String StringPatientBirthdate;
+    private String Manufacturer;
+    private String InstitutionName;
+    private String StationName;
 
 
-    public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date dateaddinbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
+
+    public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
 
         if(sid.length()>59){
             this.sid = sid.substring(0,59);
@@ -64,16 +65,17 @@ public class BitServerStudy implements Serializable {
 
         this.sdate = sdate;
         this.modality = modality;
-        this.dateaddinbase = dateaddinbase;
-        this.patientname = patientname;
-        this.patientbirthdate = patientbirthdate;
-        this.patientsex = patientsex;
+        this.DateAddInbase = DateAddInbase;
+        this.PatientName = patientname;
+        this.PatientBirthDate = patientbirthdate;
+        this.PatientSex = patientsex;
         this.anamnes = anamnes;
         this.result = result;
         this.status = status;
     }
 
-    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
+    public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
+                          String Manufacturer, String InstitutionName, String StationName){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         if(sid.length()>59){
             this.sid = sid.substring(0,59);
         }else{
@@ -87,10 +89,13 @@ public class BitServerStudy implements Serializable {
         this.sdescription = sdescription;
         this.sdate = sdate;
         this.modality = modality;
-        this.patientname = patientname;
-        this.patientbirthdate = patientbirthdate;
-        this.patientsex = patientsex;
+        this.PatientName = patientname;
+        this.PatientBirthDate = patientbirthdate;
+        this.PatientSex = patientsex;
         this.status = status;
+        this.Manufacturer = Manufacturer;
+        this.InstitutionName = InstitutionName;
+        this.StationName = StationName;
     }
 
     public BitServerStudy(String sid, Date sdate){
@@ -114,7 +119,7 @@ public class BitServerStudy implements Serializable {
             this.shortid = shortid;
         }
         this.sdate = sdate;
-        this.patientname = patientname;
+        this.PatientName = patientname;
     }
 
     public String getPreview() {
@@ -135,10 +140,6 @@ public class BitServerStudy implements Serializable {
 
     public void setUserwhoblock(int userwhoblock) {
         this.userwhoblock = userwhoblock;
-    }
-
-    public Date getDatablock() {
-        return datablock;
     }
 
     public void setDatablock(Date datablock) {
@@ -213,40 +214,40 @@ public class BitServerStudy implements Serializable {
         this.sdate = sdate;
     }
 
-    public Date getDateaddinbase() {
-        return dateaddinbase;
+    public Date getDateAddInbase() {
+        return DateAddInbase;
     }
 
-    public void setDateaddinbase(Date dateaddinbase) {
-        this.dateaddinbase = dateaddinbase;
+    public void setDateAddInbase(Date dateAddInbase) {
+        this.DateAddInbase = dateAddInbase;
     }
 
-    public String getPatientname() {
-        return patientname;
+    public String getPatientName() {
+        return PatientName;
     }
 
-    public void setPatientname(String patientname) {
-        this.patientname = patientname;
+    public void setPatientName(String patientName) {
+        this.PatientName = patientName;
     }
 
-    public Date getPatientbirthdate() {
-        return patientbirthdate;
+    public Date getPatientBirthDate() {
+        return PatientBirthDate;
     }
 
     public String getStringPatientBirthdate() {
-        return new SimpleDateFormat("dd.MM.yyyy").format(patientbirthdate);
+        return new SimpleDateFormat("dd.MM.yyyy").format(PatientBirthDate);
     }
 
-    public void setPatientbirthdate(Date patientbirthdate) {
-        this.patientbirthdate = patientbirthdate;
+    public void setPatientBirthDate(Date patientBirthDate) {
+        this.PatientBirthDate = patientBirthDate;
     }
 
-    public String getPatientsex() {
-        return patientsex;
+    public String getPatientSex() {
+        return PatientSex;
     }
 
-    public void setPatientsex(String patientsex) {
-        this.patientsex = patientsex;
+    public void setPatientSex(String patientSex) {
+        this.PatientSex = patientSex;
     }
 
     public String getAnamnes() {
@@ -296,11 +297,11 @@ public class BitServerStudy implements Serializable {
         switch (status){
             case 0: this.statusstyle = "noresult";
                 break;
-            case 1: this.statusstyle = "inprocess";
+            case 1:
+            case 3:
+                this.statusstyle = "inprocess";
                 break;
             case 2: this.statusstyle = "yesresult";
-                break;
-            case 3: this.statusstyle = "inprocess";
                 break;
             default: break;
         }
@@ -320,16 +321,8 @@ public class BitServerStudy implements Serializable {
         this.anonimstudyid = anonimstudyid;
     }
 
-    public String getUserwhosent() {
-        return userwhosent;
-    }
-
     public void setUserwhosent(String userwhosent) {
         this.userwhosent = userwhosent;
-    }
-
-    public String getUserwhodiagnost() {
-        return userwhodiagnost;
     }
 
     public void setUserwhodiagnost(String userwhodiagnost) {
@@ -358,6 +351,30 @@ public class BitServerStudy implements Serializable {
 
     public void setUsergroupwhosees(String usergroupwhosees) {
         this.usergroupwhosees = usergroupwhosees;
+    }
+
+    public String getManufacturer() {
+        return Manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        Manufacturer = manufacturer;
+    }
+
+    public String getInstitutionName() {
+        return InstitutionName;
+    }
+
+    public void setInstitutionName(String institutionName) {
+        InstitutionName = institutionName;
+    }
+
+    public String getStationName() {
+        return StationName;
+    }
+
+    public void setStationName(String stationName) {
+        StationName = stationName;
     }
 
     public BitServerStudy(){

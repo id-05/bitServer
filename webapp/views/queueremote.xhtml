@@ -79,12 +79,12 @@
                         </p:column>
 
                         <p:column headerText="Пол"  style="text-align: center">
-                            <h:outputText value="#{bitServerStudy.patientsex}"/>
+                            <h:outputText value="#{bitServerStudy.patientSex}"/>
 
                         </p:column>
 
-                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center">
-                            <h:outputText value="#{bitServerStudy.patientbirthdate}">
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientBirthDate}" style="text-align: center">
+                            <h:outputText value="#{bitServerStudy.patientBirthDate}">
                                 <f:convertDateTime pattern="dd.MM.yyyy" />
                             </h:outputText>
                         </p:column>

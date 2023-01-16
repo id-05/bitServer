@@ -525,6 +525,14 @@
                                     </p:column>
 
                                     <p:column>
+                                        <p:outputLabel for="institutionTogle" style="margin-right: .5rem">Учреждение</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel for="stationTogle" style="margin-right: .5rem">Аппарат</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
                                         <p:outputLabel for="whereSendTogle" style="margin-right: .5rem">Куда отправлено</p:outputLabel>
                                     </p:column>
 
@@ -580,6 +588,18 @@
 
                                     <p:column>
                                         <p:toggleSwitch id="modalitiTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colModality}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="institutionTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colInstitution}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="stationTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStation}">
                                             <p:ajax listener="#{settingBitServerBean.saveParam}" />
                                         </p:toggleSwitch>
                                     </p:column>
@@ -694,6 +714,16 @@
                             <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
                                       rendered="#{settingBitServerBean.colModality == 'true'}">
                                 <h:outputText value="#{bitServerStudy.modality}"/>
+                            </p:column>
+
+                            <p:column headerText="Учреждение" sortBy="#{bitServerStudy.institutionName}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colInstitution == 'true'}">
+                                <h:outputText value="#{bitServerStudy.institutionName}"/>
+                            </p:column>
+
+                            <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colStation == 'true'}">
+                                <h:outputText value="#{bitServerStudy.stationName}"/>
                             </p:column>
 
                             <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"

@@ -226,7 +226,6 @@ public interface UserDao {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                System.out.println(rs.getLong(1)+" "+rs.getString(2));
                 ArrayList<BitServerUser> userList = new ArrayList<>();
 
                 {
@@ -237,7 +236,6 @@ public interface UserDao {
                         Statement statementSub = connSub.createStatement();
                         ResultSet rsSub = statementSub.executeQuery(resultSQLSub);
                         while (rsSub.next()) {
-                            System.out.println(rsSub.getLong(1)+" "+rsSub.getString(2));
                             userList.add(getUserById(rsSub.getString(2)));
                             connSub.close();
                         }
@@ -279,7 +277,7 @@ public interface UserDao {
     }
 
     default BitServerResources getBitServerResource(String uname) {
-        BitServerResources resultResources = new BitServerResources();
+        BitServerResources resultResources = new BitServerResources("empty","empty");
         try {
             Connection conn = getConnection();
             String resultSQL = "SELECT tag.rvalue, tag1.rvalue, tag.internalid FROM bitserver AS tag" +
@@ -348,7 +346,6 @@ public interface UserDao {
             conn.close();
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-            System.out.println(e.getMessage());
         }
     }
 
@@ -384,7 +381,6 @@ public interface UserDao {
             ResultSet resultSet = statement2.getGeneratedKeys();
             if(resultSet.next()) {
                 int key = resultSet.getInt(1);
-                System.out.println(" key = "+key);
                 String strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+key+"')";
                 Statement statement = conn.createStatement();
                 statement.executeUpdate(strSql);
@@ -473,17 +469,20 @@ public interface UserDao {
             Connection conn = getConnection();
             String resultSQL;
             String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
-                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value FROM patientrecyclingorder" +
+                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value, tag9.value, tag10.value, tag11.value FROM patientrecyclingorder" +
                     " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
                     " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
                     " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //ФИО
                     " LEFT JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
                     " LEFT JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
                     " LEFT JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
-                    " LEFT JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +  //STUDY DATE
+                    " LEFT JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +   //STUDY DATE
                     " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //SOURCE
-                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'" + //DESCRIPTION
-                    " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'";    //MODALITY
+                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'" +  //DESCRIPTION
+                    " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
+                    " LEFT JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
+                    " LEFT JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
+                    " LEFT JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'";   //StationName
             Statement statement = conn.createStatement();
 
             if(dateSeachType.equals("all")){
@@ -495,9 +494,11 @@ public interface UserDao {
 
             while (rs.next()) {
                     BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
-                            rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0);
+                            rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0, rs.getString(11),
+                            rs.getString(12), rs.getString(13));
                     resultList.add(bufStudy);
             }
+
             conn.close();
 
         } catch (Exception  e) {

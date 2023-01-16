@@ -69,6 +69,8 @@ public class QueueBean implements UserDao, DataAction {
     String colDate;
     String colDescription;
     String colModality;
+    String colInstitution;
+    String colStation;
     String colWhereSend;
     String optSend;
     String optDownload;
@@ -193,6 +195,22 @@ public class QueueBean implements UserDao, DataAction {
 
     public void setColModality(String colModality) {
         this.colModality = colModality;
+    }
+
+    public String getColInstitution() {
+        return colInstitution;
+    }
+
+    public void setColInstitution(String colInstitution) {
+        this.colInstitution = colInstitution;
+    }
+
+    public String getColStation() {
+        return colStation;
+    }
+
+    public void setColStation(String colStation) {
+        this.colStation = colStation;
     }
 
     public String getColWhereSend() {
@@ -381,6 +399,10 @@ public class QueueBean implements UserDao, DataAction {
                     break;
                 case "colModality": colModality = buf.getRvalue();
                     break;
+                case "colInstitution": colInstitution = buf.getRvalue();
+                    break;
+                case "colStation": colStation = buf.getRvalue();
+                    break;
                 case "colWhereSend": colWhereSend = buf.getRvalue();
                     break;
                 case "OptionSend": optSend = buf.getRvalue();
@@ -561,7 +583,7 @@ public class QueueBean implements UserDao, DataAction {
                 //updateStudy(bufStudy);
                 i++;
             }else{
-                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientname()+" имеет недопустимый для этого действия статус!",info);
+                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientName()+" имеет недопустимый для этого действия статус!",info);
             }
         }
         showMessage("Внимание","Всего отправлено: " + i,info);
@@ -609,7 +631,7 @@ public class QueueBean implements UserDao, DataAction {
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
             return DefaultStreamedContent.builder()
-                    .name(study.getPatientname()+"-"+study.getSdescription()+"."+extension)
+                    .name(study.getPatientName()+"-"+study.getSdescription()+"."+extension)
                     .contentType("image/jpg")
                     .stream(() -> inputStream)
                     .build();
@@ -627,7 +649,7 @@ public class QueueBean implements UserDao, DataAction {
         InputStream inputStream = conn.getInputStream();
         byte[] buf = IOUtils.toByteArray(inputStream);
         return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientname()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"dcm")
+                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"dcm")
                 .contentType("application/dcm")
                 .stream(() -> inputStream)
                 .build();

@@ -105,7 +105,7 @@ public class StatisticsBean implements UserDao {
             DashboardColumn column3 = new DefaultDashboardColumn();
             column1.addWidget("serverstatistics");
             column2.addWidget("modality");
-            column3.addWidget("source");
+            column3.addWidget("raid");
             model.addColumn(column1);
             model.addColumn(column2);
             model.addColumn(column3);

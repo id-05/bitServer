@@ -19,8 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
 
@@ -63,6 +61,8 @@ public class SettingBitServerBean implements UserDao {
     String colDate;
     String colDescription;
     String colModality;
+    String colInstitution;
+    String colStation;
     String colWhereSend;
     String optSend;
     String optDownload;
@@ -270,6 +270,22 @@ public class SettingBitServerBean implements UserDao {
 
     public void setColModality(String colModality) {
         this.colModality = colModality;
+    }
+
+    public String getColInstitution() {
+        return colInstitution;
+    }
+
+    public void setColInstitution(String colInstitution) {
+        this.colInstitution = colInstitution;
+    }
+
+    public String getColStation() {
+        return colStation;
+    }
+
+    public void setColStation(String colStation) {
+        this.colStation = colStation;
     }
 
     public String getColWhereSend() {
@@ -500,28 +516,39 @@ public class SettingBitServerBean implements UserDao {
             }
         }
 
-        for(BitServerResources buf: bitServerResourcesList){
-            if (buf.getRname().equals("colstatus")) {
-                updateRes = true;
-                break;
+        String[] arrayResource = {"colstatus","colInstitution","colStation"};
+        for(String bufStr:arrayResource){
+
+            if(!getBitServerResource(bufStr).getRname().equals(bufStr)){
+                saveBitServiceResource(new BitServerResources(bufStr,"false"));
+                bitServerResourcesList.add(new BitServerResources(bufStr,"false"));
             }
         }
+
+//        for(BitServerResources bufRecource: bitServerResourcesList){
+//            if (bufRecource.getRname().equals("colstatus")) {
+//                updateRes = true;
+//                break;
+//            }
+//        }
 
         if(!haspreview){
             bitServerResourcesList.add(new BitServerResources("colpreview","true"));
         }
 
-        if(!updateRes){
-            bitServerResourcesList.add(new BitServerResources("colstatus","false"));
-            bitServerResourcesList.add(new BitServerResources("colpreview","false"));
-            bitServerResourcesList.add(new BitServerResources("colDateBirth","false"));
-            bitServerResourcesList.add(new BitServerResources("colDate","false"));
-            bitServerResourcesList.add(new BitServerResources("colDescription","false"));
-            bitServerResourcesList.add(new BitServerResources("colModality","false"));
-            bitServerResourcesList.add(new BitServerResources("colWhereSend","false"));
-            bitServerResourcesList.add(new BitServerResources("OptionSend","false"));
-            bitServerResourcesList.add(new BitServerResources("OptionDownload","false"));
-        }
+//        if(!updateRes){
+//            bitServerResourcesList.add(new BitServerResources("colstatus","false"));
+//            bitServerResourcesList.add(new BitServerResources("colpreview","false"));
+//            bitServerResourcesList.add(new BitServerResources("colDateBirth","false"));
+//            bitServerResourcesList.add(new BitServerResources("colDate","false"));
+//            bitServerResourcesList.add(new BitServerResources("colDescription","false"));
+//            bitServerResourcesList.add(new BitServerResources("colModality","false"));
+//            bitServerResourcesList.add(new BitServerResources("colInstituition","false"));
+//            bitServerResourcesList.add(new BitServerResources("colStation","false"));
+//            bitServerResourcesList.add(new BitServerResources("colWhereSend","false"));
+//            bitServerResourcesList.add(new BitServerResources("OptionSend","false"));
+//            bitServerResourcesList.add(new BitServerResources("OptionDownload","false"));
+//        }
 
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
@@ -563,6 +590,10 @@ public class SettingBitServerBean implements UserDao {
                 case "colDescription": colDescription = buf.getRvalue();
                     break;
                 case "colModality": colModality = buf.getRvalue();
+                    break;
+                case "colInstitution": colInstitution = buf.getRvalue();
+                    break;
+                case "colStation": colStation = buf.getRvalue();
                     break;
                 case "colWhereSend": colWhereSend = buf.getRvalue();
                     break;
@@ -721,6 +752,10 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "colModality": buf.setRvalue(colModality);
                     break;
+                case "colInstitution": buf.setRvalue(colInstitution);
+                    break;
+                case "colStation": buf.setRvalue(colStation);
+                    break;
                 case "colWhereSend": buf.setRvalue(colWhereSend);
                     break;
                 case "OptionSend": buf.setRvalue(optSend);
@@ -741,7 +776,6 @@ public class SettingBitServerBean implements UserDao {
             updateBitServiceResource(buf);
         }
         if(showSeachTime.equals("true")) {
-
             showMessage("Всего: 0", "SQL-запрос: 0"+ "\r\n" +
                     "Отображение: 0"+"\n\r", info);
         }
@@ -766,7 +800,6 @@ public class SettingBitServerBean implements UserDao {
         }else{
             usersTarget = new ArrayList<>();
         }
-        //bufUsers = new DualListModel<>(usersSource, usersTarget);
     }
 
     public void addNewUser(){
@@ -863,8 +896,6 @@ public class SettingBitServerBean implements UserDao {
             if(verifiUnical) {
                 bitServerGroupList.add(new BitServerGroup(selectedBitServerGroup.getId(), selectedBitServerGroup.getRuName(), selectedBitServerGroup.getUserList()));
                 selectedBitServerGroup.setUserList(usersTarget);
-                System.out.println("usersTarget.size() "+ usersTarget.size());
-                System.out.println("usersSource.size() "+ usersSource.size());
                 saveNewBitServiceGroup(selectedBitServerGroup);
                 PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
@@ -885,21 +916,15 @@ public class SettingBitServerBean implements UserDao {
             BitServerUser buf = getUserByLogin(item.toString());
             if(event.isRemove()) {
                 int index = 0;
-                System.out.println("buf:"+buf.getUid());
                 for(int i=0;i<usersTarget.size();i++){
                     if(usersTarget.get(i).getUid().equals(buf.getUid())){
                         index = i;
                     }
                 }
                 usersTarget.remove(index);
-                System.out.println("Removed:"+item.toString());
-                System.out.println("usersTarget size: "+usersTarget.size());
             }
             else if(event.isAdd()) {
-                System.out.println("buf:"+buf.getUid());
                 usersTarget.add(buf);
-                System.out.println("Added:"+item.toString());
-                System.out.println("usersTarget size: "+usersTarget.size());
             }
         }
     }

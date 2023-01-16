@@ -80,7 +80,7 @@ public class LocalUserResults implements UserDao {
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
             return DefaultStreamedContent.builder()
-                    .name(study.getPatientname()+"-"+study.getSdescription()+"."+extension)
+                    .name(study.getPatientName()+"-"+study.getSdescription()+"."+extension)
                     .contentType("image/jpg")
                     .stream(() -> inputStream)
                     .build();

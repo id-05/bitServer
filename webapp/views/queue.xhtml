@@ -238,16 +238,16 @@
                             <h:outputText value="#{bitServerStudy.shortid}"/>
                         </p:column>
 
-                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientname}"
-                                  filterBy="#{bitServerStudy.patientname}"
+                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientName}"
+                                  filterBy="#{bitServerStudy.patientName}"
                                   filterFunction="#{queueBean.filterByCustom}"
                                   style="text-align: center"
                                   filterMatchMode="contains">
 
-                            <h:outputText value="#{bitServerStudy.patientname}"/>
+                            <h:outputText value="#{bitServerStudy.patientName}"/>
                         </p:column>
 
-                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientbirthdate}" style="text-align: center"
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientBirthDate}" style="text-align: center"
                                   rendered="#{queueBean.colDateBirth == 'true'}">
                             <h:outputText value="#{bitServerStudy.stringPatientBirthdate}"/>
                         </p:column>
@@ -265,6 +265,16 @@
                         <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
                                   rendered="#{queueBean.colModality == 'true'}">
                             <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
+                        <p:column headerText="Учреждение" sortBy="#{bitServerStudy.institutionName}" style="text-align: center"
+                                  rendered="#{queueBean.colInstitution == 'true'}">
+                            <h:outputText value="#{bitServerStudy.institutionName}"/>
+                        </p:column>
+
+                        <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
+                                  rendered="#{queueBean.colStation == 'true'}">
+                            <h:outputText value="#{bitServerStudy.stationName}"/>
                         </p:column>
 
                         <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"

@@ -67,12 +67,12 @@ public class DataStorageBean implements UserDao {
         }catch (Exception e){
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             LogTool.getLogger().warn("Error in DataStorageBean: "+e.getMessage());
-            try{
-                ec.redirect(ec.getRequestContextPath()
-                        + "/views/errorpage.xhtml"+"?"+e.getMessage());
-            }catch (Exception e2){
-                LogTool.getLogger().warn("Error during redirect from DataStorageBean: "+e2.getMessage());
-            }
+//            try{
+//                ec.redirect(ec.getRequestContextPath()
+//                        + "/views/errorpage.xhtml"+"?"+e.getMessage());
+//            }catch (Exception e2){
+//                LogTool.getLogger().warn("Error during redirect from DataStorageBean: "+e2.getMessage());
+//            }
         }
     }
 }
