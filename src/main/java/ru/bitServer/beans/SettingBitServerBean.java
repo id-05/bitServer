@@ -525,30 +525,9 @@ public class SettingBitServerBean implements UserDao {
             }
         }
 
-//        for(BitServerResources bufRecource: bitServerResourcesList){
-//            if (bufRecource.getRname().equals("colstatus")) {
-//                updateRes = true;
-//                break;
-//            }
-//        }
-
         if(!haspreview){
             bitServerResourcesList.add(new BitServerResources("colpreview","true"));
         }
-
-//        if(!updateRes){
-//            bitServerResourcesList.add(new BitServerResources("colstatus","false"));
-//            bitServerResourcesList.add(new BitServerResources("colpreview","false"));
-//            bitServerResourcesList.add(new BitServerResources("colDateBirth","false"));
-//            bitServerResourcesList.add(new BitServerResources("colDate","false"));
-//            bitServerResourcesList.add(new BitServerResources("colDescription","false"));
-//            bitServerResourcesList.add(new BitServerResources("colModality","false"));
-//            bitServerResourcesList.add(new BitServerResources("colInstituition","false"));
-//            bitServerResourcesList.add(new BitServerResources("colStation","false"));
-//            bitServerResourcesList.add(new BitServerResources("colWhereSend","false"));
-//            bitServerResourcesList.add(new BitServerResources("OptionSend","false"));
-//            bitServerResourcesList.add(new BitServerResources("OptionDownload","false"));
-//        }
 
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){

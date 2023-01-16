@@ -372,7 +372,7 @@
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{queueBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
-                                     rows="10" rowSelectMode="add" >
+                                     rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
 
                             <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
                                 <h:outputText value="#{dicomModaliti.dicomname}"/>

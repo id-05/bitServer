@@ -60,14 +60,6 @@ public class OrthancServer {
         CountStudies = countStudies;
     }
 
-    public int getTotalDiskSizeMB() {
-        return TotalDiskSizeMB;
-    }
-
-    public void setTotalDiskSizeMB(int totalDiskSizeMB) {
-        TotalDiskSizeMB = totalDiskSizeMB;
-    }
-
     public String getIpaddress() {
         return ipaddress;
     }

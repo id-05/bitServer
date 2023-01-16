@@ -477,14 +477,14 @@
                         </p:divider>
                         <p class="p-m-0">
 
-                            <p:spinner id="minMax" value="#{settingBitServerBean.workListLifeTime}" min="1" max="24">
+                            <p:spinner id="minMax" value="#{settingBitServerBean.workListLifeTime}" min="0" max="24">
                                 <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
                             </p:spinner>
 
 
                         </p>
                         <br/>
-                        <div >Файлы рабочих списков, будут удаляться по истечении этого времени (в часах)</div>
+                        <div >Файлы рабочих списков, будут удаляться по истечении этого времени (в часах), при учловии что рабочие списки включены в меню Orthanc настройки.</div>
 
                         <br/>
 

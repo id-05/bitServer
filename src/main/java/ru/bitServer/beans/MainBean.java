@@ -16,6 +16,8 @@ import ru.bitServer.service.HL7toWorkList;
 import ru.bitServer.util.DeleteWorkListFile;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.TimersLauncher;
+
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
@@ -87,7 +89,7 @@ public class MainBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
-        versionInfo = "2.1";
+        versionInfo = "2.2";
         timeOnWork = 24;
         mainServer = new OrthancServer();
         try {
@@ -163,8 +165,17 @@ public class MainBean implements UserDao, DataAction {
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
-        ScheduledExecutorService scheduler2 = Executors.newSingleThreadScheduledExecutor();
-        scheduler2.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
+
+        //удаление файлов рабочих списков
+        int wlDelHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
+        if(wlDelHourCount!=0){
+            ScheduledExecutorService delWL = Executors.newSingleThreadScheduledExecutor();
+            delWL.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
+        }
+
+        //Обработка таймеров
+        ScheduledExecutorService timeExecServ = Executors.newSingleThreadScheduledExecutor();
+        timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 5, TimeUnit.MINUTES);
 
        HL7service();
     }
@@ -172,12 +183,9 @@ public class MainBean implements UserDao, DataAction {
     public static void HL7service() {
         boolean useSecureConnection = false;
         BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
-        int port = 4243;
-        if(bufRes!=null){
-            port = Integer.parseInt(UserDao.getStaticBitServerResource("hl7port").getRvalue());
-            LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
-            LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
-        }
+        int port = Integer.parseInt(bufRes.getRvalue());//4243;
+        LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
+        LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
         HL7Service ourHl7Server = context.newServer(port, useSecureConnection);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
         //ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());

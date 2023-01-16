@@ -1,9 +1,20 @@
 package ru.bitServer.service;
 
+import java.util.Date;
+
 public class TimetableTask {
     int id;
+    Date timeTask;
     String action;
     String description;
+
+    public Date getTimeTask() {
+        return timeTask;
+    }
+
+    public void setTimeTask(Date timeTask) {
+        this.timeTask = timeTask;
+    }
 
     public int getId() {
         return id;
@@ -31,5 +42,11 @@ public class TimetableTask {
 
     public TimetableTask(){
 
+    }
+
+    public TimetableTask(Date timeTask, String action, String description) {
+        this.timeTask = timeTask;
+        this.action = action;
+        this.description = description;
     }
 }

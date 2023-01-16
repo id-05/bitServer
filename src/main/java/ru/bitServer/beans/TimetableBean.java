@@ -12,6 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Date;
 
 @ManagedBean(name = "timetableBean")
 @ViewScoped
@@ -21,6 +22,15 @@ public class TimetableBean implements UserDao {
     ArrayList<TimetableTask> tasks = new ArrayList<>();
     BitServerUser currentUser;
     String currentUserId;
+    Date timeTask;
+
+    public Date getTimeTask() {
+        return timeTask;
+    }
+
+    public void setTimeTask(Date timeTask) {
+        this.timeTask = timeTask;
+    }
 
     public TimetableTask getSelectedTask() {
         return selectedTask;
@@ -47,14 +57,19 @@ public class TimetableBean implements UserDao {
 
     public void initNewTask(){
         selectedTask = new TimetableTask();
+        selectedTask.setAction("send");
     }
 
     public void addNewTask(){
-        //selectedTask.setDeleteAfteRoute(false);
         tasks.add(selectedTask);
         PrimeFaces.current().executeScript("PF('manageTask').hide()");
         PrimeFaces.current().ajax().update(":timetable:dt-tasks");
         LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new route "+selectedTask.getId());
+    }
+
+    public void changeDialogForm(){
+        System.out.println(selectedTask.getAction());
+        PrimeFaces.current().ajax().update(":timetable:manage-task");
     }
 
     public void deleteTaskFromList(){
