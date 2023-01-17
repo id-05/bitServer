@@ -86,18 +86,10 @@ public class TimetableTask {
     }
 
     public TimetableTask(){
-
+        this.id = 0;
     }
 
-    public TimetableTask(LocalTime timeTask, String action, String source, String destination, String description) {
-        this.timeTask = timeTask;
-        this.action = action;
-        this.source = source;
-        this.destination = destination;
-        this.description = description;
-    }
-
-    public TimetableTask(String buf) {
+    public TimetableTask(String id, String buf) {
         JsonParser parser = new JsonParser();
         JsonObject bufJson=new JsonObject();
         try {
@@ -105,19 +97,15 @@ public class TimetableTask {
         }catch (Exception e){
             LogTool.getLogger().warn("Error parse json Task: "+buf+" "+e.getMessage());
         }
+        this.id = Integer.parseInt(id);
         if (bufJson.has("time"))         this.timeTask = strSecToLocTime(bufJson.get("time").getAsString());
         if (bufJson.has("action"))       this.action  = bufJson.get("action").getAsString();
         if (bufJson.has("source"))       this.source = bufJson.get("source").getAsString();
         if (bufJson.has("destination"))  this.destination = bufJson.get("destination").getAsString();
-
-    }
-
-    public int timeToSeconds(LocalTime localTime){
-        return localTime.getHour()*60*60 + localTime.getMinute()*60 + localTime.getSecond();
     }
 
     public LocalTime strSecToLocTime(String buf){
-        LocalTime bufTime = null;
+        LocalTime bufTime;
         int hh = Integer.parseInt(buf) / 60;
         int mm = Integer.parseInt(buf) % 60;
         bufTime= LocalTime.of(hh,mm);
@@ -125,13 +113,6 @@ public class TimetableTask {
     }
 
     public String getStrTime(){
-        return String.valueOf(this.timeTask.getHour()*60*60 + this.timeTask.getMinute()*60);
+        return String.valueOf(this.timeTask.getHour()*60 + this.timeTask.getMinute());
     }
-
-//    public int timeToSeconds(String buf){
-//        String[] bufArray = userPrefs.get("startTime","00:00").split(":");
-//        int hh = Integer.parseInt(bufArray[0]);
-//        int mm = Integer.parseInt(bufArray[1]);
-//        return hh*60*60 + mm*60;
-//    }
 }

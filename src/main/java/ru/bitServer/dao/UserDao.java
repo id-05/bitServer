@@ -376,14 +376,25 @@ public interface UserDao {
         jsonOb.addProperty("action", newTask.getAction());
         jsonOb.addProperty("source", newTask.getAltSource());
         jsonOb.addProperty("destination", newTask.getDestination());
-        try {
-            Connection conn = getConnection();
-            Statement statement = conn.createStatement();
-            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '11','"+ jsonOb.toString()+"')";
-            statement.executeUpdate(strSql);
-            conn.close();
-        }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        if(newTask.getId()==0){
+            try {
+                Connection conn = getConnection();
+                Statement statement = conn.createStatement();
+                String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '11','"+ jsonOb.toString()+"')";
+                statement.executeUpdate(strSql);
+                conn.close();
+            }catch (Exception e){
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            }
+        }else{
+            try {
+                Connection conn = getConnection();
+                Statement statement = conn.createStatement();
+                String strSql = "UPDATE bitserver SET rvalue ='" + jsonOb.toString() + "' WHERE bitserver.internalid = '" + newTask.getId() + "'";
+                statement.executeUpdate(strSql);
+            }catch (Exception e){
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            }
         }
     }
 
@@ -391,11 +402,11 @@ public interface UserDao {
         ArrayList<TimetableTask> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String resultSQL = "SELECT tag.rvalue FROM bitserver AS tag ON tag1.rtype = '11'";
+            String resultSQL = "SELECT internalid, rvalue FROM bitserver WHERE rtype = '11'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                TimetableTask bufTask = new TimetableTask(rs.getString(1));
+                TimetableTask bufTask = new TimetableTask(rs.getString(1),rs.getString(2));
                 resultList.add(bufTask);
             }
             conn.close();

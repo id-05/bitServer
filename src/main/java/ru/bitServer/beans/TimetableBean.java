@@ -1,5 +1,6 @@
 package ru.bitServer.beans;
 
+import com.google.gson.JsonObject;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
@@ -9,17 +10,17 @@ import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import static ru.bitServer.beans.MainBean.mainServer;
+import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "timetableBean")
 @ViewScoped
@@ -69,8 +70,8 @@ public class TimetableBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-
-
+        tasks = getAllTasks();
+        PrimeFaces.current().ajax().update(":timetable:dt-tasks");
         OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         OrthancSettings orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
@@ -82,29 +83,63 @@ public class TimetableBean implements UserDao {
     }
 
     public void addNewTask(){
-//        if(){
-//
-//        }
-        tasks.add(selectedTask);
-        saveTask(selectedTask);
+        if(selectedTask.getTimeTask()!=null) {
+            JsonObject jsonSelectTask = new JsonObject();
+            jsonSelectTask.addProperty("time", selectedTask.getStrTime());
+            jsonSelectTask.addProperty("action", selectedTask.getAction());
+            jsonSelectTask.addProperty("source", selectedTask.getAltSource());
+            jsonSelectTask.addProperty("destination", selectedTask.getDestination());
 
-        System.out.println(selectedTask.getTimeTask()+" "+selectedTask.getAction()+" "+selectedTask.getSource()+" "+selectedTask.getDestination());
-        PrimeFaces.current().executeScript("PF('manageTask').hide()");
-        PrimeFaces.current().ajax().update(":timetable:dt-tasks");
-        LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new route "+selectedTask.getId());
+            boolean unical = true;
+            for (TimetableTask bufTask : tasks) {
+                JsonObject jsonBufTask = new JsonObject();
+                jsonBufTask.addProperty("time", bufTask.getStrTime());
+                jsonBufTask.addProperty("action", bufTask.getAction());
+                jsonBufTask.addProperty("source", bufTask.getAltSource());
+                jsonBufTask.addProperty("destination", bufTask.getDestination());
+
+                if (jsonSelectTask.toString().equals(jsonBufTask.toString())) {
+                    unical = false;
+                    break;
+                }
+            }
+
+            if (unical | selectedTask.getId() != 0) {
+                saveTask(selectedTask);
+                tasks = getAllTasks();
+                PrimeFaces.current().executeScript("PF('manageTask').hide()");
+                PrimeFaces.current().ajax().update(":timetable:dt-tasks");
+                LogTool.getLogger().debug("Admin: " + currentUser.getSignature() + " add new route " + selectedTask.getId());
+            } else {
+                PrimeFaces.current().executeScript("PF('manageTask').hide()");
+                showMessage("Внимание!", "Такое правило уже есть в списке!", warning);
+                PrimeFaces.current().ajax().update(":timetable:growl");
+            }
+
+        }else{
+            showMessage("Внимание!", "Вы заполнили не все обязательные поля! Правило не дабавлено", error);
+            PrimeFaces.current().ajax().update(":timetable:growl");
+        }
+    }
+
+    public void showMessage(String title, String note, FacesMessage.Severity type) {
+        FacesMessage message = new FacesMessage(title, note);
+        message.setSeverity(type);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void changeTime(){
-        System.out.println("changetime "+selectedTask.getTimeTask());
+        //System.out.println("changetime "+selectedTask.getTimeTask());
     }
 
     public void changeDialogForm(){
-        System.out.println(selectedTask.getAction());
         PrimeFaces.current().ajax().update(":timetable:manage-task");
     }
 
     public void deleteTaskFromList(){
-        tasks.remove(selectedTask);
+        //tasks.remove(selectedTask);
+        deleteFromBitServerTable( (long) selectedTask.getId() );
+        tasks = getAllTasks();
         PrimeFaces.current().ajax().update(":timetable:dt-tasks");
     }
 }
