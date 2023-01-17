@@ -1,8 +1,10 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import ru.bitServer.beans.MainBean;
 import ru.bitServer.dicom.OrthancSerie;
+import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 
@@ -366,6 +368,41 @@ public interface UserDao {
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
+    }
+
+    default void saveTask(TimetableTask newTask) {
+        JsonObject jsonOb = new JsonObject();
+        jsonOb.addProperty("time", newTask.getStrTime());
+        jsonOb.addProperty("action", newTask.getAction());
+        jsonOb.addProperty("source", newTask.getAltSource());
+        jsonOb.addProperty("destination", newTask.getDestination());
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '11','"+ jsonOb.toString()+"')";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+    }
+
+    default ArrayList<TimetableTask> getAllTasks() {
+        ArrayList<TimetableTask> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL = "SELECT tag.rvalue FROM bitserver AS tag ON tag1.rtype = '11'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                TimetableTask bufTask = new TimetableTask(rs.getString(1));
+                resultList.add(bufTask);
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
     }
 
     default void alternativeSaveResource(BitServerResources bitServerResources){

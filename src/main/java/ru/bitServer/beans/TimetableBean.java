@@ -3,16 +3,23 @@ package ru.bitServer.beans;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dicom.DicomModaliti;
+import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
+import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.servlet.http.HttpSession;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "timetableBean")
 @ViewScoped
@@ -22,13 +29,22 @@ public class TimetableBean implements UserDao {
     ArrayList<TimetableTask> tasks = new ArrayList<>();
     BitServerUser currentUser;
     String currentUserId;
-    Date timeTask;
+    LocalTime timeTask;
+    List<DicomModaliti> modalities;
 
-    public Date getTimeTask() {
+    public List<DicomModaliti> getModalities() {
+        return modalities;
+    }
+
+    public void setModalities(List<DicomModaliti> modalities) {
+        this.modalities = modalities;
+    }
+
+    public LocalTime getTimeTask() {
         return timeTask;
     }
 
-    public void setTimeTask(Date timeTask) {
+    public void setTimeTask(LocalTime timeTask) {
         this.timeTask = timeTask;
     }
 
@@ -53,6 +69,11 @@ public class TimetableBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
+
+
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+        OrthancSettings orthancSettings = new OrthancSettings(connection);
+        modalities = orthancSettings.getDicomModalitis();
     }
 
     public void initNewTask(){
@@ -61,10 +82,20 @@ public class TimetableBean implements UserDao {
     }
 
     public void addNewTask(){
+//        if(){
+//
+//        }
         tasks.add(selectedTask);
+        saveTask(selectedTask);
+
+        System.out.println(selectedTask.getTimeTask()+" "+selectedTask.getAction()+" "+selectedTask.getSource()+" "+selectedTask.getDestination());
         PrimeFaces.current().executeScript("PF('manageTask').hide()");
         PrimeFaces.current().ajax().update(":timetable:dt-tasks");
         LogTool.getLogger().debug("Admin: "+currentUser.getSignature()+" add new route "+selectedTask.getId());
+    }
+
+    public void changeTime(){
+        System.out.println("changetime "+selectedTask.getTimeTask());
     }
 
     public void changeDialogForm(){

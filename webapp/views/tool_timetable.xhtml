@@ -54,14 +54,14 @@
                                      rows="10" rowSelectMode="add" >
 
                             <p:column headerText="Время" style="text-align: center">
-                                <p:datePicker id="time" value="#{timetableBean.timeTask}" timeOnly="true" pattern="HH:mm"/>
+                                <h:outputText value="#{timetableTask}" />
                             </p:column>
 
-                            <p:column headerText="action" style="text-align: center">
+                            <p:column headerText="Действие" style="text-align: center">
                                 <h:outputText value="#{timetableTask.action}" />
                             </p:column>
 
-                            <p:column headerText="description" style="text-align: center">
+                            <p:column headerText="Описание" style="text-align: center">
                                 <h:outputText value="#{timetableTask.description}" />
                             </p:column>
 
@@ -84,14 +84,15 @@
                         </p:dataTable>
 
 
-                        <p:dialog id="dialogNewTask" header="Новая задача:"  modal="true"
-                                  widgetVar="manageTask" responsive="true">
-
+                        <p:dialog id="dialogNewTask" header="Новая задача:" showEffect="fade" modal="true"
+                                  widgetVar="manageTask" responsive="true" focus="savebtn">
                             <p:panelGrid id="manage-task" class="ui-fluid" columns="2" >
                                 <p:outputLabel for="timeChoose" style="margin-right: .5rem">Время</p:outputLabel>
-                                <p:datePicker id="timeChoose" value="#{timetableBean.selectedTask.timeTask}" timeOnly="true" pattern="HH:mm"/>
+                                <p:datePicker id="timeChoose" value="#{timetableBean.selectedTask.timeTask}" timeOnly="true" pattern="HH:mm">
+                                    <p:ajax event="change" listener="#{timetableBean.changeTime}"/>
+                                </p:datePicker>
 
-                                <p:outputLabel for="action" style="margin-right: .5rem">action</p:outputLabel>
+                                <p:outputLabel for="action" style="margin-right: .5rem">Действие</p:outputLabel>
                                 <p:selectOneMenu id="action" value="#{timetableBean.selectedTask.action}" ajax="false">
                                     <f:selectItem itemLabel="Отправить" itemValue="send"/>
                                     <f:selectItem itemLabel="Удалить" itemValue="delete"/>
@@ -100,11 +101,16 @@
                                     <p:ajax event="change" listener="#{timetableBean.changeDialogForm}"/>
                                 </p:selectOneMenu>
 
-                                <p:outputLabel for="whatsend" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'send'}">Что отправить</p:outputLabel>
-                                <p:inputText id="whatsend" value="#{timetableBean.selectedTask.description}" rendered="#{timetableBean.selectedTask.action == 'send'}"/>
+                                <p:outputLabel for="whatsend" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'send'}">Источник (сделанные сегодня)</p:outputLabel>
+                                <p:selectOneMenu id="whatsend" value="#{timetableBean.selectedTask.source}" rendered="#{timetableBean.selectedTask.action == 'send'}">
+                                    <f:selectItem itemLabel="Все" itemValue="all"/>
+                                    <f:selectItems value="#{timetableBean.modalities}"/>
+                                </p:selectOneMenu>
 
-                                <p:outputLabel for="weresend" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'send'}">Куда отправить</p:outputLabel>
-                                <p:inputText id="weresend" value="#{timetableBean.selectedTask.description}" rendered="#{timetableBean.selectedTask.action == 'send'}"/>
+                                <p:outputLabel for="weresend" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'send'}">Назначение</p:outputLabel>
+                                <p:selectOneMenu id="weresend" value="#{timetableBean.selectedTask.destination}" rendered="#{timetableBean.selectedTask.action == 'send'}">
+                                    <f:selectItems value="#{timetableBean.modalities}"/>
+                                </p:selectOneMenu>
 
                                 <p:outputLabel for="whatdelete" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'delete'}">Что удалить</p:outputLabel>
                                 <p:inputText id="whatdelete" value="#{timetableBean.selectedTask.description}" rendered="#{timetableBean.selectedTask.action == 'delete'}"/>
@@ -116,7 +122,7 @@
 
                             <f:facet name="footer">
 
-                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{timetableBean.addNewTask}"
+                                <p:commandButton id="savebtn" value="Сохранить" icon="pi pi-check" actionListener="#{timetableBean.addNewTask}"
                                                  update="dialogNewTask">
                                     <p:resetInput target="dialogNewTask"/>
                                 </p:commandButton>

@@ -4,6 +4,11 @@ import java.io.Serializable;
 
 public class DicomModaliti implements Serializable {
 
+    @Override
+    public String toString() {
+        return dicomtitle;
+    }
+
     private String dicomtitle;
     private String dicomname;
     private String ip;
