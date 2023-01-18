@@ -277,6 +277,11 @@
                             <h:outputText value="#{bitServerStudy.stationName}"/>
                         </p:column>
 
+                        <p:column headerText="Источник" sortBy="#{bitServerStudy.aetSource}" style="text-align: center"
+                                  rendered="#{queueBean.colSource == 'true'}">
+                            <h:outputText value="#{bitServerStudy.aetSource}"/>
+                        </p:column>
+
                         <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
                                   rendered="#{queueBean.colWhereSend == 'true'}">
                             <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
@@ -319,7 +324,7 @@
                                              icon="pi pi-pencil"
                                              style="margin-right: 10px"
                                              styleClass="rounded-button" process="@this"
-                                             rendered="#{queueBean.currentUser.role != 'demo'}"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
                                              disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
                                                             or bitServerStudy.status == 1 or bitServerStudy.status == 3
                                                                 or queueBean.currentUser.role == 'onlyview'}"

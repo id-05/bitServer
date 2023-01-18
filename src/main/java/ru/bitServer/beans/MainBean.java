@@ -175,7 +175,7 @@ public class MainBean implements UserDao, DataAction {
 
         //Обработка таймеров
         ScheduledExecutorService timeExecServ = Executors.newSingleThreadScheduledExecutor();
-        timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 5, TimeUnit.MINUTES);
+        timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 1, TimeUnit.MINUTES);
 
        HL7service();
     }

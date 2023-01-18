@@ -517,9 +517,10 @@ public interface UserDao {
             Connection conn = getConnection();
             String resultSQL;
             String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
-                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value, tag9.value, tag10.value, tag11.value FROM patientrecyclingorder" +
+                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value, tag9.value, tag10.value, tag11.value, tag12.value FROM patientrecyclingorder" +
                     " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
                     " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
                     " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //ФИО
                     " LEFT JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
                     " LEFT JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
@@ -530,7 +531,8 @@ public interface UserDao {
                     " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
                     " LEFT JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
                     " LEFT JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
-                    " LEFT JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'";   //StationName
+                    " LEFT JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'" +   //StationName
+                    " LEFT JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
             Statement statement = conn.createStatement();
 
             if(dateSeachType.equals("all")){
@@ -541,10 +543,10 @@ public interface UserDao {
             ResultSet rs = statement.executeQuery(resultSQL);
 
             while (rs.next()) {
-                    BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
-                            rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0, rs.getString(11),
-                            rs.getString(12), rs.getString(13));
-                    resultList.add(bufStudy);
+                BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
+                        rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0, rs.getString(11),
+                        rs.getString(12), rs.getString(13), rs.getString(14));
+                resultList.add(bufStudy);
             }
 
             conn.close();

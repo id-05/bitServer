@@ -80,44 +80,41 @@ public class TimetableBean implements UserDao {
     public void initNewTask(){
         selectedTask = new TimetableTask();
         selectedTask.setAction("send");
+        selectedTask.setTimeTask(LocalTime.now());
+        selectedTask.setSource("");
+        selectedTask.setDestination("");
     }
 
     public void addNewTask(){
-        if(selectedTask.getTimeTask()!=null) {
-            JsonObject jsonSelectTask = new JsonObject();
-            jsonSelectTask.addProperty("time", selectedTask.getStrTime());
-            jsonSelectTask.addProperty("action", selectedTask.getAction());
-            jsonSelectTask.addProperty("source", selectedTask.getAltSource());
-            jsonSelectTask.addProperty("destination", selectedTask.getDestination());
+        JsonObject jsonSelectTask = new JsonObject();
+        jsonSelectTask.addProperty("time", selectedTask.getStrTime());
+        jsonSelectTask.addProperty("action", selectedTask.getAction());
+        jsonSelectTask.addProperty("source", selectedTask.getAltSource());
+        jsonSelectTask.addProperty("destination", selectedTask.getDestination());
 
-            boolean unical = true;
-            for (TimetableTask bufTask : tasks) {
-                JsonObject jsonBufTask = new JsonObject();
-                jsonBufTask.addProperty("time", bufTask.getStrTime());
-                jsonBufTask.addProperty("action", bufTask.getAction());
-                jsonBufTask.addProperty("source", bufTask.getAltSource());
-                jsonBufTask.addProperty("destination", bufTask.getDestination());
+        boolean unical = true;
+        for (TimetableTask bufTask : tasks) {
+            JsonObject jsonBufTask = new JsonObject();
+            jsonBufTask.addProperty("time", bufTask.getStrTime());
+            jsonBufTask.addProperty("action", bufTask.getAction());
+            jsonBufTask.addProperty("source", bufTask.getAltSource());
+            jsonBufTask.addProperty("destination", bufTask.getDestination());
 
-                if (jsonSelectTask.toString().equals(jsonBufTask.toString())) {
-                    unical = false;
-                    break;
-                }
+            if (jsonSelectTask.toString().equals(jsonBufTask.toString())) {
+                unical = false;
+                break;
             }
+        }
 
-            if (unical | selectedTask.getId() != 0) {
-                saveTask(selectedTask);
-                tasks = getAllTasks();
-                PrimeFaces.current().executeScript("PF('manageTask').hide()");
-                PrimeFaces.current().ajax().update(":timetable:dt-tasks");
-                LogTool.getLogger().debug("Admin: " + currentUser.getSignature() + " add new route " + selectedTask.getId());
-            } else {
-                PrimeFaces.current().executeScript("PF('manageTask').hide()");
-                showMessage("Внимание!", "Такое правило уже есть в списке!", warning);
-                PrimeFaces.current().ajax().update(":timetable:growl");
-            }
-
-        }else{
-            showMessage("Внимание!", "Вы заполнили не все обязательные поля! Правило не дабавлено", error);
+        if (unical | selectedTask.getId() != 0) {
+            saveTask(selectedTask);
+            tasks = getAllTasks();
+            PrimeFaces.current().executeScript("PF('manageTask').hide()");
+            PrimeFaces.current().ajax().update(":timetable:dt-tasks");
+            LogTool.getLogger().debug("Admin: " + currentUser.getSignature() + " add new route " + selectedTask.getId());
+        } else {
+            PrimeFaces.current().executeScript("PF('manageTask').hide()");
+            showMessage("Внимание!", "Такое правило уже есть в списке!", warning);
             PrimeFaces.current().ajax().update(":timetable:growl");
         }
     }

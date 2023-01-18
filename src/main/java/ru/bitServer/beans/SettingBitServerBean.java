@@ -63,6 +63,7 @@ public class SettingBitServerBean implements UserDao {
     String colModality;
     String colInstitution;
     String colStation;
+    String colSource;
     String colWhereSend;
     String optSend;
     String optDownload;
@@ -286,6 +287,14 @@ public class SettingBitServerBean implements UserDao {
 
     public void setColStation(String colStation) {
         this.colStation = colStation;
+    }
+
+    public String getColSource() {
+        return colSource;
+    }
+
+    public void setColSource(String colSource) {
+        this.colSource = colSource;
     }
 
     public String getColWhereSend() {
@@ -516,7 +525,7 @@ public class SettingBitServerBean implements UserDao {
             }
         }
 
-        String[] arrayResource = {"colstatus","colInstitution","colStation"};
+        String[] arrayResource = {"colstatus","colInstitution","colStation", "colSource"};
         for(String bufStr:arrayResource){
 
             if(!getBitServerResource(bufStr).getRname().equals(bufStr)){
@@ -573,6 +582,8 @@ public class SettingBitServerBean implements UserDao {
                 case "colInstitution": colInstitution = buf.getRvalue();
                     break;
                 case "colStation": colStation = buf.getRvalue();
+                    break;
+                case "colSource": colSource = buf.getRvalue();
                     break;
                 case "colWhereSend": colWhereSend = buf.getRvalue();
                     break;
@@ -734,6 +745,8 @@ public class SettingBitServerBean implements UserDao {
                 case "colInstitution": buf.setRvalue(colInstitution);
                     break;
                 case "colStation": buf.setRvalue(colStation);
+                    break;
+                case "colSource": buf.setRvalue(colSource);
                     break;
                 case "colWhereSend": buf.setRvalue(colWhereSend);
                     break;

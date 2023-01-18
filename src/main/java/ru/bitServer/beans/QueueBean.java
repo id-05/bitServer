@@ -71,6 +71,7 @@ public class QueueBean implements UserDao, DataAction {
     String colModality;
     String colInstitution;
     String colStation;
+    String colSource;
     String colWhereSend;
     String optSend;
     String optDownload;
@@ -211,6 +212,14 @@ public class QueueBean implements UserDao, DataAction {
 
     public void setColStation(String colStation) {
         this.colStation = colStation;
+    }
+
+    public String getColSource() {
+        return colSource;
+    }
+
+    public void setColSource(String colSource) {
+        this.colSource = colSource;
     }
 
     public String getColWhereSend() {
@@ -402,6 +411,8 @@ public class QueueBean implements UserDao, DataAction {
                 case "colInstitution": colInstitution = buf.getRvalue();
                     break;
                 case "colStation": colStation = buf.getRvalue();
+                    break;
+                case "colSource": colSource = buf.getRvalue();
                     break;
                 case "colWhereSend": colWhereSend = buf.getRvalue();
                     break;

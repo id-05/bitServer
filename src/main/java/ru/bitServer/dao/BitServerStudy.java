@@ -34,8 +34,7 @@ public class BitServerStudy implements Serializable {
     private String Manufacturer;
     private String InstitutionName;
     private String StationName;
-
-
+    private String AetSource;
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
 
@@ -75,7 +74,7 @@ public class BitServerStudy implements Serializable {
     }
 
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
-                          String Manufacturer, String InstitutionName, String StationName){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
+                          String Manufacturer, String InstitutionName, String StationName, String AetSource){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         if(sid.length()>59){
             this.sid = sid.substring(0,59);
         }else{
@@ -96,6 +95,7 @@ public class BitServerStudy implements Serializable {
         this.Manufacturer = Manufacturer;
         this.InstitutionName = InstitutionName;
         this.StationName = StationName;
+        this.AetSource = AetSource;
     }
 
     public BitServerStudy(String sid, Date sdate){
@@ -375,6 +375,14 @@ public class BitServerStudy implements Serializable {
 
     public void setStationName(String stationName) {
         StationName = stationName;
+    }
+
+    public String getAetSource() {
+        return AetSource;
+    }
+
+    public void setAetSource(String aetSource) {
+        AetSource = aetSource;
     }
 
     public BitServerStudy(){

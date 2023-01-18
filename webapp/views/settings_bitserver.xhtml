@@ -533,6 +533,10 @@
                                     </p:column>
 
                                     <p:column>
+                                        <p:outputLabel for="sourceTogle" style="margin-right: .5rem">Источник</p:outputLabel>
+                                    </p:column>
+
+                                    <p:column>
                                         <p:outputLabel for="whereSendTogle" style="margin-right: .5rem">Куда отправлено</p:outputLabel>
                                     </p:column>
 
@@ -600,6 +604,12 @@
 
                                     <p:column>
                                         <p:toggleSwitch id="stationTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStation}">
+                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                                        </p:toggleSwitch>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:toggleSwitch id="sourceTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colSource}">
                                             <p:ajax listener="#{settingBitServerBean.saveParam}" />
                                         </p:toggleSwitch>
                                     </p:column>
@@ -724,6 +734,11 @@
                             <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
                                       rendered="#{settingBitServerBean.colStation == 'true'}">
                                 <h:outputText value="#{bitServerStudy.stationName}"/>
+                            </p:column>
+
+                            <p:column headerText="Источник" sortBy="#{bitServerStudy.aetSource}" style="text-align: center"
+                                      rendered="#{settingBitServerBean.colSource == 'true'}">
+                                <h:outputText value="#{bitServerStudy.aetSource}"/>
                             </p:column>
 
                             <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"

@@ -72,11 +72,17 @@ public class TimetableTask {
     }
 
     public String getDescription() {
-        String buf;
-        if ("send".equals(action)) {
-            buf = "Полученные от " + getSource() + " переслать в " + getDestination();
-        } else {
-            buf = "---";
+        String buf = "";
+        switch (action){
+            case "send":
+                buf = "Полученные от " + getSource() + " переслать в " + getDestination();
+                break;
+            case "reset":
+                buf = "Перезагрузка сервера ";
+                break;
+            case "deleteOld":
+                buf = "Удаление снимков сделанных более 5 лет назад";
+            default: break;
         }
         return buf;
     }

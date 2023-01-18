@@ -78,11 +78,8 @@
                                                  oncomplete="PF('deleteTask').show()">
                                     <f:setPropertyActionListener value="#{timetableTask}" target="#{timetableBean.selectedTask}"/>
                                 </p:commandButton>
-
                             </p:column>
-
                         </p:dataTable>
-
 
                         <p:dialog id="dialogNewTask" header="Новая задача:" showEffect="fade" modal="true"
                                   widgetVar="manageTask" responsive="true" focus="savebtn">
@@ -95,9 +92,8 @@
                                 <p:outputLabel for="action" style="margin-right: .5rem">Действие</p:outputLabel>
                                 <p:selectOneMenu id="action" value="#{timetableBean.selectedTask.action}" ajax="false">
                                     <f:selectItem itemLabel="Отправить" itemValue="send"/>
-                                    <f:selectItem itemLabel="Удалить" itemValue="delete"/>
-                                    <f:selectItem itemLabel="Restart server" itemValue="reset"/>
-                                    <f:selectItem itemLabel="Показать сообщение" itemValue="showmessage"/>
+                                    <f:selectItem itemLabel="Удалить все страше 5 лет" itemValue="deleteOld"/>
+                                    <f:selectItem itemLabel="Перезагрузить" itemValue="reset"/>
                                     <p:ajax event="change" listener="#{timetableBean.changeDialogForm}"/>
                                 </p:selectOneMenu>
 
@@ -111,12 +107,6 @@
                                 <p:selectOneMenu id="weresend" value="#{timetableBean.selectedTask.destination}" rendered="#{timetableBean.selectedTask.action == 'send'}">
                                     <f:selectItems value="#{timetableBean.modalities}"/>
                                 </p:selectOneMenu>
-
-                                <p:outputLabel for="whatdelete" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'delete'}">Что удалить</p:outputLabel>
-                                <p:inputText id="whatdelete" value="#{timetableBean.selectedTask.description}" rendered="#{timetableBean.selectedTask.action == 'delete'}"/>
-
-                                <p:outputLabel for="rangedelete" style="margin-right: .5rem" rendered="#{timetableBean.selectedTask.action == 'delete'}">Диапазон</p:outputLabel>
-                                <p:inputText id="rangedelete" value="#{timetableBean.selectedTask.description}" rendered="#{timetableBean.selectedTask.action == 'delete'}"/>
 
                             </p:panelGrid>
 
