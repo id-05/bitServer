@@ -133,6 +133,10 @@ public class TimetableBean implements UserDao {
         PrimeFaces.current().ajax().update(":timetable:manage-task");
     }
 
+    public void changeSourceListBox(){
+        //selectedTask.setSource();
+    }
+
     public void deleteTaskFromList(){
         //tasks.remove(selectedTask);
         deleteFromBitServerTable( (long) selectedTask.getId() );

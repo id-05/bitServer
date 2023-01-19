@@ -393,24 +393,24 @@
                                          selection="#{settingsBean.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
                                          rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
 
-                                <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
-                                    <h:outputText value="#{dicomModaliti.dicomname}"/>
+                                <p:column headerText="Name" sortBy="#{dicomModaliti.dicomName}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomName}"/>
                                 </p:column>
 
-                                <p:column headerText="AE Title" sortBy="#{dicomModaliti.dicomtitle}" style="text-align: center">
-                                    <h:outputText value="#{dicomModaliti.dicomtitle}" />
+                                <p:column headerText="AE Title" sortBy="#{dicomModaliti.dicomTitle}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomTitle}" />
                                 </p:column>
 
                                 <p:column headerText="IP" sortBy="#{dicomModaliti.ip}" style="text-align: center">
                                     <h:outputText value="#{dicomModaliti.ip}"/>
                                 </p:column>
 
-                                <p:column headerText="Port" sortBy="#{dicomModaliti.dicomport}" style="text-align: center">
-                                    <h:outputText value="#{dicomModaliti.dicomport}"/>
+                                <p:column headerText="Port" sortBy="#{dicomModaliti.dicomPort}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomPort}"/>
                                 </p:column>
 
-                                <p:column headerText="Property" sortBy="#{dicomModaliti.dicomproperty}" style="text-align: center">
-                                    <h:outputText value="#{dicomModaliti.dicomproperty}"/>
+                                <p:column headerText="Property" sortBy="#{dicomModaliti.dicomProperty}" style="text-align: center">
+                                    <h:outputText value="#{dicomModaliti.dicomProperty}"/>
                                 </p:column>
 
                                 <p:column exportable="false">
@@ -445,21 +445,21 @@
                                 <p:panelGrid id="manage-modaliti-content" class="ui-fluid" columns="2">
 
                                     <p:outputLabel for="dicomname" style="margin-right: .5rem">Name</p:outputLabel>
-                                    <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomname}" />
+                                    <p:inputText id="dicomname" value="#{settingsBean.selectedDicomModality.dicomName}" />
 
                                     <p:outputLabel for="dicomtitle" style="margin-right: .5rem">AE Title</p:outputLabel>
-                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomtitle}" />
+                                    <p:inputText id="dicomtitle" value="#{settingsBean.selectedDicomModality.dicomTitle}" />
 
                                     <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
                                     <p:inputMask id="ip" value="#{settingsBean.selectedDicomModality.ip}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
 
                                     <p:outputLabel for="dicomport" style="margin-right: .5rem">Port</p:outputLabel>
-                                    <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomport}">
+                                    <p:inputText id="dicomport" value="#{settingsBean.selectedDicomModality.dicomPort}">
                                         <p:keyFilter mask="num" />
                                     </p:inputText>
 
                                     <p:outputLabel for="dicomproperty" style="margin-right: .5rem">Property</p:outputLabel>
-                                    <p:selectOneMenu id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomproperty}">
+                                    <p:selectOneMenu id="dicomproperty" value="#{settingsBean.selectedDicomModality.dicomProperty}">
                                         <f:selectItem itemLabel="Generic" itemValue="Generic"/>
                                         <f:selectItem itemLabel="Vitrea" itemValue="Vitrea"/>
                                         <f:selectItem itemLabel="GenericNoWildcardInDates" itemValue="GenericNoWildcardInDates"/>

@@ -6,29 +6,30 @@ public class DicomModaliti implements Serializable {
 
     @Override
     public String toString() {
-        return dicomtitle;
+        return dicomName;
     }
 
-    private String dicomtitle;
-    private String dicomname;
+
+    private String dicomTitle;
+    private String dicomName;
     private String ip;
-    private String dicomport;
-    private String dicomproperty;
+    private String dicomPort;
+    private String dicomProperty;
 
-    public String getDicomtitle() {
-        return dicomtitle;
+    public String getDicomTitle() {
+        return dicomTitle;
     }
 
-    public void setDicomtitle(String dicomtitle) {
-        this.dicomtitle = dicomtitle;
+    public void setDicomTitle(String dicomTitle) {
+        this.dicomTitle = dicomTitle;
     }
 
-    public String getDicomname() {
-        return dicomname;
+    public String getDicomName() {
+        return dicomName;
     }
 
-    public void setDicomname(String dicomname) {
-        this.dicomname = dicomname;
+    public void setDicomName(String dicomName) {
+        this.dicomName = dicomName;
     }
 
     public String getIp() {
@@ -39,28 +40,28 @@ public class DicomModaliti implements Serializable {
         this.ip = ip;
     }
 
-    public String getDicomport() {
-        return dicomport;
+    public String getDicomPort() {
+        return dicomPort;
     }
 
-    public void setDicomport(String dicomport) {
-        this.dicomport = dicomport;
+    public void setDicomPort(String dicomPort) {
+        this.dicomPort = dicomPort;
     }
 
-    public String getDicomproperty() {
-        return dicomproperty;
+    public String getDicomProperty() {
+        return dicomProperty;
     }
 
-    public void setDicomproperty(String dicomproperty) {
-        this.dicomproperty = dicomproperty;
+    public void setDicomProperty(String dicomProperty) {
+        this.dicomProperty = dicomProperty;
     }
 
     public DicomModaliti (String title, String name, String ip, String port, String property) {
-        this.dicomtitle = title;
-        this.dicomname = name;
+        this.dicomTitle = title;
+        this.dicomName = name;
         this.ip = ip;
-        this.dicomport = port;
-        this.dicomproperty = property;
+        this.dicomPort = port;
+        this.dicomProperty = property;
     }
 
 }

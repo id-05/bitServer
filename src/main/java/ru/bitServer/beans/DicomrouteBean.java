@@ -40,7 +40,7 @@ public class DicomrouteBean implements UserDao {
     public List<String> getModalitiesName() {
         modalitiesName = new ArrayList<>();
         for(DicomModaliti bufmodality:modalities){
-            modalitiesName.add(bufmodality.getDicomname());
+            modalitiesName.add(bufmodality.getDicomName());
         }
         return modalitiesName;
     }

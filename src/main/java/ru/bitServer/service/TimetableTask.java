@@ -2,6 +2,7 @@ package ru.bitServer.service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.util.LogTool;
 
 import java.time.LocalTime;
@@ -9,6 +10,8 @@ import java.time.LocalTime;
 public class TimetableTask {
     int id;
     LocalTime timeTask;
+    DicomModaliti sourceAET;
+    DicomModaliti destinationAET;
     String action;
     String source;
     String destination;
@@ -17,6 +20,22 @@ public class TimetableTask {
     @Override
     public String toString() {
         return timeTask.toString();
+    }
+
+    public DicomModaliti getSourceAET() {
+        return sourceAET;
+    }
+
+    public void setSourceAET(DicomModaliti sourceAET) {
+        this.sourceAET = sourceAET;
+    }
+
+    public DicomModaliti getDestinationAET() {
+        return destinationAET;
+    }
+
+    public void setDestinationAET(DicomModaliti destinationAET) {
+        this.destinationAET = destinationAET;
     }
 
     public LocalTime getTimeTask() {

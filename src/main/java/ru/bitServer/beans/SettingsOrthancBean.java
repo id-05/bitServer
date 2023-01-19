@@ -211,11 +211,11 @@ public class SettingsOrthancBean implements UserDao {
 
     public void echoTestClick(){
         JsonObject query = new JsonObject();
-        query.addProperty("AET", selectedDicomModality.getDicomtitle());
+        query.addProperty("AET", selectedDicomModality.getDicomTitle());
         query.addProperty("CheckFind", false);
         query.addProperty("Host", selectedDicomModality.getIp());
-        query.addProperty("Manufacturer", selectedDicomModality.getDicomproperty());
-        query.addProperty("Port", selectedDicomModality.getDicomport());
+        query.addProperty("Manufacturer", selectedDicomModality.getDicomProperty());
+        query.addProperty("Port", selectedDicomModality.getDicomPort());
         query.addProperty("Timeout", 100);
         StringBuilder sb;
         sb = connection.makePostConnectionAndStringBuilder("/tools/dicom-echo", query.toString());
@@ -367,11 +367,11 @@ public class SettingsOrthancBean implements UserDao {
         for(int i=0; i<=dicomModalities.size()-1; i++){
             JsonArray arrayJSON = new JsonArray();
             DicomModaliti node = dicomModalities.get(i);
-            arrayJSON.add(node.getDicomtitle());
+            arrayJSON.add(node.getDicomTitle());
             arrayJSON.add(node.getIp());
-            arrayJSON.add(node.getDicomport());
-            arrayJSON.add(node.getDicomproperty());
-            jsonObj.add(node.getDicomname(), arrayJSON);
+            arrayJSON.add(node.getDicomPort());
+            arrayJSON.add(node.getDicomProperty());
+            jsonObj.add(node.getDicomName(), arrayJSON);
         }
         jsonOb.add("DicomModalities",jsonObj);
         jsonOb.addProperty("DicomModalitiesInDatabase", dicomModalitiesInDb);
@@ -460,11 +460,11 @@ public class SettingsOrthancBean implements UserDao {
             for (int i = 0; i <= jsonkeys.length - 1; i++) {
                 JsonArray bufArray = orthancJson.getAsJsonArray(jsonkeys[i].toString());
                 DicomModaliti node = new DicomModaliti("","","","","");
-                node.setDicomname(jsonkeys[i].toString());
-                node.setDicomtitle(bufArray.get(0).getAsString());
+                node.setDicomName(jsonkeys[i].toString());
+                node.setDicomTitle(bufArray.get(0).getAsString());
                 node.setIp(bufArray.get(1).getAsString());
-                node.setDicomport(bufArray.get(2).getAsString());
-                node.setDicomproperty(bufArray.get(3).getAsString());
+                node.setDicomPort(bufArray.get(2).getAsString());
+                node.setDicomProperty(bufArray.get(3).getAsString());
                 bufList.add(node);
             }
         return bufList;
@@ -521,21 +521,21 @@ public class SettingsOrthancBean implements UserDao {
     }
 
     public void AddNewModaliti(){
-        if((!selectedDicomModality.getDicomtitle().equals(""))&(!selectedDicomModality.getDicomname().equals(""))
-                &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomport().equals(""))
-                &(!selectedDicomModality.getDicomproperty().equals(""))&(!selectedDicomModality.getDicomname().contains("_"))&(!selectedDicomModality.getDicomname().contains(" ")))
+        if((!selectedDicomModality.getDicomTitle().equals(""))&(!selectedDicomModality.getDicomName().equals(""))
+                &(!selectedDicomModality.getIp().equals(""))&(!selectedDicomModality.getDicomPort().equals(""))
+                &(!selectedDicomModality.getDicomProperty().equals(""))&(!selectedDicomModality.getDicomName().contains("_"))&(!selectedDicomModality.getDicomName().contains(" ")))
         {
-            if(Integer.parseInt(selectedDicomModality.getDicomport())<65535) {
+            if(Integer.parseInt(selectedDicomModality.getDicomPort())<65535) {
                 boolean verifiUnical = true;
                 for (DicomModaliti bufDicomModaliti : dicomModalities) {
-                    if (bufDicomModaliti.getDicomname().equals(selectedDicomModality.getDicomname())) {
+                    if (bufDicomModaliti.getDicomName().equals(selectedDicomModality.getDicomName())) {
                         verifiUnical = false;
                         break;
                     }
                 }
                 if (verifiUnical) {
-                    dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomtitle(), selectedDicomModality.getDicomname(),
-                            selectedDicomModality.getIp(), selectedDicomModality.getDicomport(), selectedDicomModality.getDicomproperty()));
+                    dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomTitle(), selectedDicomModality.getDicomName(),
+                            selectedDicomModality.getIp(), selectedDicomModality.getDicomPort(), selectedDicomModality.getDicomProperty()));
                     PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
                     PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
                 } else {

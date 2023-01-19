@@ -462,7 +462,7 @@ public interface UserDao {
         }
     }
 
-    default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String strModality) {
+    default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String source) {
         List<BitServerStudy> resultList = new ArrayList<>();
         switch (dateSeachType){
             case "today":
@@ -526,7 +526,7 @@ public interface UserDao {
                     " LEFT JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
                     " LEFT JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
                     " LEFT JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +   //STUDY DATE
-                    " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //SOURCE
+                    " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //!!error delete this
                     " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'" +  //DESCRIPTION
                     " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
                     " LEFT JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
@@ -539,6 +539,10 @@ public interface UserDao {
                 resultSQL = staticSQL;
             }else{
                 resultSQL = staticSQL + " WHERE tag5.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+            }
+
+            if(!source.equals("all")){
+                resultSQL = resultSQL + " AND tag12.value = '"+source+"'";
             }
             ResultSet rs = statement.executeQuery(resultSQL);
 
@@ -556,6 +560,21 @@ public interface UserDao {
         }
         if((getBitServerResource("debug").getRvalue().equals("true"))) {
             LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количетсво найденных записей при поиске: " + resultList.size());
+        }
+        return resultList;
+    }
+
+    default ArrayList<String> getDateStatistics(){
+        ArrayList<String> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL;
+            String staticSQL = "SELECT DISTINCT id, value FROM maindicomtags " +
+                    " WHERE taggroup = '8' AND tagelement = '32'" ;   //STUDY DATE
+
+            Statement statement = conn.createStatement();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         return resultList;
     }

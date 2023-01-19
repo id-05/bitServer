@@ -457,11 +457,11 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
         PrimeFaces.current().ajax().update(":seachform:ajs");
         PrimeFaces.current().executeScript("PF('ajs').show()");
-        StringBuilder bufStr = new StringBuilder();
+        //StringBuilder bufStr = new StringBuilder();
         resetViewTable();
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
-        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, bufStr.toString());
+        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, "all");
         recordCount = visibleStudiesList.size();
         timeDrawing = ((new Date()).getTime() - timeStart)/1000.00 - timeRequest;
         if(showSeachTime.equals("true")) {
@@ -717,14 +717,15 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void chooseAETitle()  {
-        JsonArray ids=new JsonArray();
+        JsonArray ids = new JsonArray();
         for(BitServerStudy bufstudy:selectedVisibleStudies){
             ids.add(bufstudy.getSid());
         }
         StringBuilder sb = null;
         if(ids.size()!=0) {
             try {
-                sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomname() + "/store", ids.toString());
+                System.out.println("/modalities/" + selectedModaliti.getDicomName() + "/store");
+                sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomName() + "/store", ids.toString());
             } catch (IOException e) {
                 showMessage("Сообщение:", "Возникла ошибка при отправке, удаленный сервер не отвечает! " + e.getMessage(), error);
                 LogTool.getLogger().error(this.getClass().getSimpleName() + ": " + e.getMessage());

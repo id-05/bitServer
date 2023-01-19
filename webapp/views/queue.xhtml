@@ -313,11 +313,12 @@
                                              ajax="false" style="margin-right: 10px"
                                              styleClass="edit-button rounded-button ui-button-success"
                                              icon="pi pi-file"
-                                             rendered="#{queueBean.currentUser.role != 'demo'}"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
                                              disabled="#{!not empty bitServerStudy.result}">
                                 <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
+
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="result" value="Результат/Описание"/>
 
                             <p:commandButton id="gettowork"
@@ -341,7 +342,6 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
-
                         </p:column>
                     </p:dataTable>
 
@@ -379,12 +379,12 @@
                                      selection="#{queueBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
                                      rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
 
-                            <p:column headerText="Name" sortBy="#{dicomModaliti.dicomname}" style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomname}"/>
+                            <p:column headerText="Name" sortBy="#{dicomModaliti.dicomName}" style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.dicomName}"/>
                             </p:column>
 
                             <p:column headerText="AE Title"  style="text-align: center">
-                                <h:outputText value="#{dicomModaliti.dicomtitle}" />
+                                <h:outputText value="#{dicomModaliti.dicomTitle}" />
                             </p:column>
 
                             <p:column headerText="IP"  style="text-align: center">

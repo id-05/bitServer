@@ -56,7 +56,7 @@ public class MainBean implements UserDao, DataAction {
     public static final String user = "orthanc";
     public static final String password = "orthanc";
     public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-  //  public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
+    //public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {
@@ -175,7 +175,7 @@ public class MainBean implements UserDao, DataAction {
 
         //Обработка таймеров
         ScheduledExecutorService timeExecServ = Executors.newSingleThreadScheduledExecutor();
-        timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 1, TimeUnit.MINUTES);
+        timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 50, TimeUnit.SECONDS);
 
        HL7service();
     }
@@ -227,6 +227,17 @@ public class MainBean implements UserDao, DataAction {
         }
         return resultMap;
     }
+
+//    public class BaseUpdate implements Runnable {
+//        @Override
+//        public void run() {
+//
+//            resultMapLong.clear();
+//            resultMapShort.clear();
+//            resultMapLong = getStatMap(allStudies,"MM.yyyy");
+//            resultMapShort = getStatMap(allStudies,"yyyy");
+//        }
+//    }
 
     public Map<Long, Integer> getStatMap(List<BitServerStudy> allStudies,String dateformat){
         Map<Long, Integer> resultMap = new TreeMap<>();
