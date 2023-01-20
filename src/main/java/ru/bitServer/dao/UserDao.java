@@ -568,11 +568,19 @@ public interface UserDao {
         ArrayList<String> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String resultSQL;
             String staticSQL = "SELECT DISTINCT id, value FROM maindicomtags " +
                     " WHERE taggroup = '8' AND tagelement = '32'" ;   //STUDY DATE
 
             Statement statement = conn.createStatement();
+
+            ResultSet rs = statement.executeQuery(staticSQL);
+
+            while (rs.next()) {
+                resultList.add(rs.getString(2));
+            }
+
+            conn.close();
+
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }

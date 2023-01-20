@@ -16,15 +16,17 @@ import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 
 import java.lang.reflect.Array;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @ManagedBean(name = "statisticsBean")
-@RequestScoped
+@ViewScoped
 public class StatisticsBean implements UserDao {
 
     DashboardModel model;
@@ -89,20 +91,17 @@ public class StatisticsBean implements UserDao {
     }
 
     @PostConstruct
-    public void init()  {
-
-            BitServerResources bufResource = getBitServerResource("showStat");
-            showStat = bufResource.getRvalue().equals("true");
-
+    public void init() {
+        showStat = getBitServerResource("showStat").getRvalue().equals("true");
         resultMapLong.clear();
         resultMapShort.clear();
 
         bufDateList = getDateStatistics();
+        Collections.sort(bufDateList);
         resultMapLong = getStatMap(bufDateList,"MM.yyyy");
         resultMapShort = getStatMap(bufDateList,"yyyy");
 
         if(showStat){
-            System.out.println("showstat");
             typeChart = "mounth";
             chartOutput();
             createModalityPieModel();
@@ -238,24 +237,26 @@ public class StatisticsBean implements UserDao {
         return resultMap;
     }
 
-    public Map<Long, Integer> getStatMap(List<String> allStudies,String dateformat){
+    public Map<Long, Integer> getStatMap(List<String> studiesList, String dateformat) {
         Map<Long, Integer> resultMap = new TreeMap<>();
         DateFormat formatter = new SimpleDateFormat(dateformat);
         Date firstdate;
         Date seconddate;
+
         try {
-            firstdate = allStudies.get(0).getSdate();
-            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
+            firstdate = strToDate(studiesList.get(0));
+            seconddate = strToDate(studiesList.get(studiesList.size() - 1));
         }catch (Exception e){
             firstdate = new Date();
             seconddate = new Date();
         }
-        for(BitServerStudy bufStudy:allStudies){
-            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
-                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
+
+        for(String bufStr:studiesList){
+            if( (strToDate(bufStr).after(firstdate)&&(strToDate(bufStr).before(seconddate))) |
+                    ( (strToDate(bufStr).equals(firstdate))|(strToDate(bufStr).equals(seconddate)) ) ){
                 long bufDatemillis = 0;
                 try {
-                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
+                    bufDatemillis = (formatter.parse(formatter.format(strToDate(bufStr)))).getTime();
                 } catch (Exception e) {
                     LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
                 }
@@ -269,5 +270,16 @@ public class StatisticsBean implements UserDao {
             }
         }
         return resultMap;
+    }
+
+    public Date strToDate(String buf) {
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+        try{
+            date = formatter.parse(buf);
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName() + ": " + "Error on procedure: strToDate " + e.getMessage());
+        }
+        return date;
     }
 }

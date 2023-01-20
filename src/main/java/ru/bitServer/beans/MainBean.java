@@ -215,18 +215,18 @@ public class MainBean implements UserDao, DataAction {
         }
     }
 
-    public static Map<Long, Integer> getResultMap(String pattern){
-        Map<Long, Integer> resultMap = new TreeMap<>();
-        switch (pattern){
-            case("MM.yyyy"):
-                resultMap = resultMapLong;
-                break;
-            case("yyyy"):
-                resultMap = resultMapShort;
-                break;
-        }
-        return resultMap;
-    }
+//    public static Map<Long, Integer> getResultMap(String pattern){
+//        Map<Long, Integer> resultMap = new TreeMap<>();
+//        switch (pattern){
+//            case("MM.yyyy"):
+//                resultMap = resultMapLong;
+//                break;
+//            case("yyyy"):
+//                resultMap = resultMapShort;
+//                break;
+//        }
+//        return resultMap;
+//    }
 
 //    public class BaseUpdate implements Runnable {
 //        @Override
@@ -239,38 +239,38 @@ public class MainBean implements UserDao, DataAction {
 //        }
 //    }
 
-    public Map<Long, Integer> getStatMap(List<BitServerStudy> allStudies,String dateformat){
-        Map<Long, Integer> resultMap = new TreeMap<>();
-        DateFormat formatter = new SimpleDateFormat(dateformat);
-        Date firstdate;
-        Date seconddate;
-        try {
-            firstdate = allStudies.get(0).getSdate();
-            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
-        }catch (Exception e){
-            firstdate = new Date();
-            seconddate = new Date();
-        }
-        for(BitServerStudy bufStudy:allStudies){
-            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
-                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
-                long bufDatemillis = 0;
-                try {
-                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
-                } catch (Exception e) {
-                    LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
-                }
-                Integer bufCount = resultMap.get(bufDatemillis);
-                if(bufCount==null){
-                    resultMap.put(bufDatemillis,1);
-                }else{
-                    bufCount = bufCount + 1;
-                    resultMap.replace(bufDatemillis,bufCount);
-                }
-            }
-        }
-        return resultMap;
-    }
+//    public Map<Long, Integer> getStatMap(List<BitServerStudy> allStudies,String dateformat){
+//        Map<Long, Integer> resultMap = new TreeMap<>();
+//        DateFormat formatter = new SimpleDateFormat(dateformat);
+//        Date firstdate;
+//        Date seconddate;
+//        try {
+//            firstdate = allStudies.get(0).getSdate();
+//            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
+//        }catch (Exception e){
+//            firstdate = new Date();
+//            seconddate = new Date();
+//        }
+//        for(BitServerStudy bufStudy:allStudies){
+//            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
+//                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
+//                long bufDatemillis = 0;
+//                try {
+//                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
+//                } catch (Exception e) {
+//                    LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
+//                }
+//                Integer bufCount = resultMap.get(bufDatemillis);
+//                if(bufCount==null){
+//                    resultMap.put(bufDatemillis,1);
+//                }else{
+//                    bufCount = bufCount + 1;
+//                    resultMap.replace(bufDatemillis,bufCount);
+//                }
+//            }
+//        }
+//        return resultMap;
+//    }
 
     public ArrayList<String> themeListinit(){
         ArrayList<String> themeList = new ArrayList<>();

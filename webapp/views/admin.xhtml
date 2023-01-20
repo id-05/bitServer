@@ -61,7 +61,7 @@
                     <f:facet name="options">
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
-                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}"  styleClass="rounded-button ui-button-danger ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
@@ -94,9 +94,7 @@
                                 <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
                             </p:submenu>
                         </p:menu>
-
                     </f:facet>
-
                 </p:panel>
 
                 <p:panel id="modality" header="Распределение по модальностям"
