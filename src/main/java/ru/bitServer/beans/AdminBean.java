@@ -32,6 +32,8 @@ public class AdminBean implements UserDao {
     @PostConstruct
     public void init(){
         System.out.println("admin page");
+
+        MainBean.hasTrouble = true;
     }
 
     public void loadDicomFile(){

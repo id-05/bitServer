@@ -43,6 +43,7 @@ public class MainBean implements UserDao, DataAction {
     public ArrayList<String> themeList;
     public String versionInfo;
     public static int timeOnWork;
+    static boolean hasTrouble;
     public static FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     public static FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
@@ -87,9 +88,18 @@ public class MainBean implements UserDao, DataAction {
         return themeList;
     }
 
+    public boolean isHasTrouble() {
+        return hasTrouble;
+    }
+
+    public void setHasTrouble(boolean hasTrouble) {
+        this.hasTrouble = hasTrouble;
+    }
+
     @PostConstruct
     public void init() {
         versionInfo = "2.2";
+        hasTrouble = false;
         timeOnWork = 24;
         mainServer = new OrthancServer();
         try {
