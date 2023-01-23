@@ -795,9 +795,13 @@ public class SettingBitServerBean implements UserDao {
     }
 
     public void addNewUser(){
-        if((selectedUser.getUname()!=null)&(!selectedUser.getPassword().equals(""))&(!selectedUser.getUgroup().equals(""))
-                &(!selectedUser.getRole().equals(""))&(!selectedUser.getRuFamily().equals(""))&(!selectedUser.getRuMiddleName().equals(""))
-                &(!selectedUser.getRuName().equals("")))
+        if((selectedUser.getUname()!=null) &
+                (!selectedUser.getPassword().equals("")) &
+    //                (!selectedUser.getUgroup().equals("")) &
+                        (!selectedUser.getRole().equals("")) &
+                            (!selectedUser.getRuFamily().equals("")) &
+                                (!selectedUser.getRuMiddleName().equals("")) &
+                                    (!selectedUser.getRuName().equals("")))
         {
             boolean verifiUnical = true;
             for(BitServerUser bufUser: bitServerUserList) {

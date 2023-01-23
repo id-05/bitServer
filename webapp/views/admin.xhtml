@@ -61,7 +61,7 @@
                     <f:facet name="options">
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
-                                <p:commandButton rendered="#{mainBean.hasTrouble}" icon="pi pi-bell"  oncomplete="PF('diskspace').show()"  styleClass="rounded-button ui-button-danger ui-button-flat"/>
+                                <p:commandButton rendered="#{adminBean.hasTrouble}" icon="pi pi-bell"  oncomplete="PF('troubleInfo').show()"  styleClass="rounded-button ui-button-danger"/>
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}"  styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
@@ -77,6 +77,19 @@
 
             <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
                 <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+            <p:dialog id="troubleInfo" showEffect="fade" modal="true" widgetVar="troubleInfo" responsive="true">
+                <p:card style="width: 25rem; margin-bottom: 2em">
+                    <f:facet name="title">
+                        #{adminBean.errorTitle}
+                    </f:facet>
+
+                    <p>
+                        #{adminBean.errorText}
+                    </p>
+
+                </p:card>
             </p:dialog>
 
         </h:form>
@@ -99,12 +112,12 @@
                 </p:panel>
 
                 <p:panel id="modality" header="Распределение по модальностям"
-                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" rendered="false">
                     <p:pieChart model="#{statisticsBean.pieModality}" style="width: 100%; height: 500px;"/>
                 </p:panel>
 
                 <p:panel id="raid" header="Состояние RAID"
-                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
+                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" rendered="false">
 
                 </p:panel>
 

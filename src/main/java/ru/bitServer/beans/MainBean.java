@@ -56,8 +56,8 @@ public class MainBean implements UserDao, DataAction {
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-    //public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
+    //public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {
@@ -86,14 +86,6 @@ public class MainBean implements UserDao, DataAction {
 
     public ArrayList<String> getThemeList() {
         return themeList;
-    }
-
-    public boolean isHasTrouble() {
-        return hasTrouble;
-    }
-
-    public void setHasTrouble(boolean hasTrouble) {
-        this.hasTrouble = hasTrouble;
     }
 
     @PostConstruct
