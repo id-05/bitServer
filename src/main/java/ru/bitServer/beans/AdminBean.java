@@ -1,17 +1,17 @@
 package ru.bitServer.beans;
 
-import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
+import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.servlet.http.HttpSession;
 import java.io.FileReader;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 
 @ManagedBean(name = "adminBean", eager = true)
@@ -22,12 +22,7 @@ public class AdminBean implements UserDao {
     boolean hasTrouble;
     BitServerUser currentUser;
     String currentUserId;
-    String errorTitle;
     String errorText;
-
-    public String getErrorTitle() {
-        return errorTitle;
-    }
 
     public String getErrorText() {
         return errorText;
@@ -44,15 +39,31 @@ public class AdminBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
+        errorText = "";
         raidGetInfo();
+        orthancGetInfo();
     }
 
+    public void orthancGetInfo(){
+        try{
+            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            StringBuilder stringBuilder = connection.makeGetConnectionAndStringBuilder("/statistics");
+            if(!stringBuilder.toString().contains("error")){
+                errorText = errorText + "\n"+ "\n" + "\n"+"ORTHANC STATUS GOOD" + "\n" + "\n";
+            }else{
+                errorText = errorText + "\n"+ "\n" + "\n"+"ORTHANC STATUS FAILURE" + "\n" + "\n";
+                hasTrouble = true;
+            }
+        }catch (Exception e){
+            LogTool.getLogger().error("Error of orthancGetInfo: "+e.getMessage());
+            hasTrouble = true;
+        }
+    }
 
     public void raidGetInfo(){
         try {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
             proc.waitFor();
-            //LogTool.getLogger().info("Admin: "+currentUser.getUid().toString()+" select service mode ");
         }catch (Exception e){
             LogTool.getLogger().error("Error during raidGetInfo()");
         }
@@ -64,14 +75,18 @@ public class AdminBean implements UserDao {
             while ((c = reader.read()) != -1) {
                 bufFile.append((char) c);
             }
-        } catch (Exception e) {
-            LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
-        }
-        if(bufFile.toString().contains("degraded")){
-            hasTrouble = true;
-            errorTitle = "RAID STATUS";
-            errorText = bufFile.toString();
-        }
 
+            if(bufFile.toString().contains("degraded")){
+                hasTrouble = true;
+                errorText = "RAID STATUS FAILURE" + "\n" + "\n" + bufFile.toString();
+            }else{
+                errorText = "RAID STATUS GOOD" + "\n" + "\n";
+            }
+
+        } catch (Exception e) {
+            LogTool.getLogger().error("Error of read raidStatusFile: "+e.getMessage());
+            errorText = "RAID STATUS: Error of read raidStatusFile: "+e.getMessage() + "\n" + "\n";
+            hasTrouble = true;
+        }
     }
 }

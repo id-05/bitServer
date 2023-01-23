@@ -17,15 +17,11 @@ import ru.bitServer.util.DeleteWorkListFile;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.TimersLauncher;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,14 +46,12 @@ public class MainBean implements UserDao, DataAction {
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
     static List<BitServerStudy> allStudies = new ArrayList<>();
-    static Map<Long, Integer> resultMapLong = new TreeMap<>();
-    static Map<Long, Integer> resultMapShort = new TreeMap<>();
     static HapiContext context = new DefaultHapiContext();
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    //public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-    public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
+    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    //public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {

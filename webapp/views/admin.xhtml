@@ -80,16 +80,9 @@
             </p:dialog>
 
             <p:dialog id="troubleInfo" showEffect="fade" modal="true" widgetVar="troubleInfo" responsive="true">
-                <p:card style="width: 25rem; margin-bottom: 2em">
-                    <f:facet name="title">
-                        #{adminBean.errorTitle}
-                    </f:facet>
 
-                    <p>
-                        #{adminBean.errorText}
-                    </p>
+                    <h:inputTextarea style="width: 650px; height: 400px" value="#{adminBean.errorText}"/>
 
-                </p:card>
             </p:dialog>
 
         </h:form>
