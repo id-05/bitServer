@@ -40,9 +40,9 @@ public class TimersLauncher implements UserDao, Runnable {
                         for (BitServerStudy bufStudy : visibleStudiesList) {
                             try {
                                 connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
-                                StringBuilder sb = null;
+                                StringBuilder sb;
                                 sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + bufTask.getDestination() + "/store", bufStudy.getSid());
-                                LogTool.getLogger().error(this.getClass().getSimpleName() + ": Ответ на оптравку:" + sb.toString());
+                                LogTool.getLogger().info(this.getClass().getSimpleName() + ": Ответ на оптравку:" + sb.toString());
                                 System.out.println("Ответ на оптравку:" + sb.toString());
                             } catch (IOException e) {
                                 LogTool.getLogger().error(this.getClass().getSimpleName() + ": Ошибка во время выполенения задания по расписанию:" + e.getMessage());
@@ -53,6 +53,7 @@ public class TimersLauncher implements UserDao, Runnable {
                     case "reset":
                         LogTool.getLogger().info("Server restart, timer command!");
                         try {
+                            LogTool.getLogger().info(this.getClass().getSimpleName() + ": Reset command from TimersLauncher - start");
                             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/reboot");
                             proc.waitFor();
                         } catch (Exception e) {
@@ -61,6 +62,7 @@ public class TimersLauncher implements UserDao, Runnable {
                         break;
 
                     case "deleteOld":
+
                         break;
 
                     default:

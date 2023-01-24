@@ -12,15 +12,10 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import ru.bitServer.dao.*;
 import ru.bitServer.util.LogTool;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
-
-import java.lang.reflect.Array;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -96,7 +91,7 @@ public class StatisticsBean implements UserDao {
         resultMapLong.clear();
         resultMapShort.clear();
 
-        bufDateList = getDateStatistics();
+        bufDateList = getDateFromMaindicomTags("",32);
         Collections.sort(bufDateList);
         resultMapLong = getStatMap(bufDateList,"MM.yyyy");
         resultMapShort = getStatMap(bufDateList,"yyyy");
@@ -119,51 +114,51 @@ public class StatisticsBean implements UserDao {
         }
     }
 
-    public void createSourcePieModel(){
-        List<String> buflist = new ArrayList<>();
-        for(BitServerStudy bufStudy:MainBean.allStudies){
-            buflist.add(bufStudy.getSource());
-        }
-        Set<String> set = new LinkedHashSet<>(buflist);
-        sourcelist.addAll(set);
-
-        pieSource = new PieChartModel();
-        ChartData data = new ChartData();
-        PieChartDataSet dataSet = new PieChartDataSet();
-        List<Number> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-        List<String> bgColors = new ArrayList<>();
-        if(sourcelist.size()>0) {
-            for (String bufSource : sourcelist) {
-                values.add(MainBean.allStudies.stream().filter(BitServerStudy -> BitServerStudy.getSource().equals(bufSource)).count());
-                labels.add(bufSource);
-                bgColors.add("rgb(" + ThreadLocalRandom.current().nextInt(1, 254) +
-                        ", " + ThreadLocalRandom.current().nextInt(1, 254) +
-                        ", " + ThreadLocalRandom.current().nextInt(1, 254) + ")");
-            }
-        }
-        dataSet.setData(values);
-        dataSet.setBackgroundColor(bgColors);
-        data.addChartDataSet(dataSet);
-        data.setLabels(labels);
-        pieSource.setData(data);
-    }
+//    public void createSourcePieModel(){
+//        List<String> buflist = new ArrayList<>();
+//        for(BitServerStudy bufStudy:MainBean.allStudies){
+//            buflist.add(bufStudy.getSource());
+//        }
+//        Set<String> set = new LinkedHashSet<>(buflist);
+//        sourcelist.addAll(set);
+//
+//        pieSource = new PieChartModel();
+//        ChartData data = new ChartData();
+//        PieChartDataSet dataSet = new PieChartDataSet();
+//        List<Number> values = new ArrayList<>();
+//        List<String> labels = new ArrayList<>();
+//        List<String> bgColors = new ArrayList<>();
+//        if(sourcelist.size()>0) {
+//            for (String bufSource : sourcelist) {
+//                values.add(MainBean.allStudies.stream().filter(BitServerStudy -> BitServerStudy.getSource().equals(bufSource)).count());
+//                labels.add(bufSource);
+//                bgColors.add("rgb(" + ThreadLocalRandom.current().nextInt(1, 254) +
+//                        ", " + ThreadLocalRandom.current().nextInt(1, 254) +
+//                        ", " + ThreadLocalRandom.current().nextInt(1, 254) + ")");
+//            }
+//        }
+//        dataSet.setData(values);
+//        dataSet.setBackgroundColor(bgColors);
+//        data.addChartDataSet(dataSet);
+//        data.setLabels(labels);
+//        pieSource.setData(data);
+//    }
 
     private void createModalityPieModel() {
         pieModality = new PieChartModel();
         ChartData data = new ChartData();
-        //List<BitServerModality> modalityList = getAllBitServerModality();
+        List<String> modalityList = getDateFromMaindicomTags("DISTINCT",96);
         PieChartDataSet dataSet = new PieChartDataSet();
         List<Number> values = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> bgColors = new ArrayList<>();
-//        for(BitServerModality bufModality:modalityList){
-//            values.add(MainBean.allStudies.stream().filter(BitServerStudy->BitServerStudy.getModality().equals(bufModality.getName())).count());
-//            labels.add(bufModality.getName());
-//            bgColors.add( "rgb("+ThreadLocalRandom.current().nextInt(1, 254)+
-//                        ", "+ThreadLocalRandom.current().nextInt(1, 254)+
-//                    ", "+ThreadLocalRandom.current().nextInt(1, 254)+")");
-//        }
+        for(String bufModality:modalityList){
+            values.add(getDateFromMaindicomTags("",96).stream().filter(String->String.equals(bufModality)).count());
+            labels.add(bufModality);
+            bgColors.add( "rgb("+ThreadLocalRandom.current().nextInt(1, 254)+
+                        ", "+ThreadLocalRandom.current().nextInt(1, 254)+
+                    ", "+ThreadLocalRandom.current().nextInt(1, 254)+")");
+        }
         dataSet.setData(values);
         dataSet.setBackgroundColor(bgColors);
         data.addChartDataSet(dataSet);

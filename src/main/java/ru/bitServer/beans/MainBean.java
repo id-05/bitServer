@@ -8,7 +8,6 @@ import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.protocol.impl.AppRoutingDataImpl;
 import org.primefaces.model.DashboardModel;
 import ru.bitServer.dao.BitServerResources;
-import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.DataAction;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancServer;
@@ -45,7 +44,6 @@ public class MainBean implements UserDao, DataAction {
     public static FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     public List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     public OrthancRestApi connection;
-    static List<BitServerStudy> allStudies = new ArrayList<>();
     static HapiContext context = new DefaultHapiContext();
 
     public static final String user = "orthanc";
@@ -179,12 +177,11 @@ public class MainBean implements UserDao, DataAction {
     public static void HL7service() {
         boolean useSecureConnection = false;
         BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
-        int port = Integer.parseInt(bufRes.getRvalue());//4243;
+        int port = Integer.parseInt(bufRes.getRvalue());
         LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
         LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
         HL7Service ourHl7Server = context.newServer(port, useSecureConnection);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
-        //ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
         ourHl7Server.registerConnectionListener(new OurConnectionListener());
         ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());
         try {
@@ -210,63 +207,6 @@ public class MainBean implements UserDao, DataAction {
             System.out.println("From Remote Port: " + connectionBeingOpened.getRemotePort());
         }
     }
-
-//    public static Map<Long, Integer> getResultMap(String pattern){
-//        Map<Long, Integer> resultMap = new TreeMap<>();
-//        switch (pattern){
-//            case("MM.yyyy"):
-//                resultMap = resultMapLong;
-//                break;
-//            case("yyyy"):
-//                resultMap = resultMapShort;
-//                break;
-//        }
-//        return resultMap;
-//    }
-
-//    public class BaseUpdate implements Runnable {
-//        @Override
-//        public void run() {
-//
-//            resultMapLong.clear();
-//            resultMapShort.clear();
-//            resultMapLong = getStatMap(allStudies,"MM.yyyy");
-//            resultMapShort = getStatMap(allStudies,"yyyy");
-//        }
-//    }
-
-//    public Map<Long, Integer> getStatMap(List<BitServerStudy> allStudies,String dateformat){
-//        Map<Long, Integer> resultMap = new TreeMap<>();
-//        DateFormat formatter = new SimpleDateFormat(dateformat);
-//        Date firstdate;
-//        Date seconddate;
-//        try {
-//            firstdate = allStudies.get(0).getSdate();
-//            seconddate = allStudies.get(allStudies.size() - 1).getSdate();
-//        }catch (Exception e){
-//            firstdate = new Date();
-//            seconddate = new Date();
-//        }
-//        for(BitServerStudy bufStudy:allStudies){
-//            if( (bufStudy.getSdate().after(firstdate)&&(bufStudy.getSdate().before(seconddate))) |
-//                    ( (bufStudy.getSdate().equals(firstdate))|(bufStudy.getSdate().equals(seconddate)) ) ){
-//                long bufDatemillis = 0;
-//                try {
-//                    bufDatemillis = (formatter.parse(formatter.format(bufStudy.getSdate()))).getTime();
-//                } catch (Exception e) {
-//                    LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
-//                }
-//                Integer bufCount = resultMap.get(bufDatemillis);
-//                if(bufCount==null){
-//                    resultMap.put(bufDatemillis,1);
-//                }else{
-//                    bufCount = bufCount + 1;
-//                    resultMap.replace(bufDatemillis,bufCount);
-//                }
-//            }
-//        }
-//        return resultMap;
-//    }
 
     public ArrayList<String> themeListinit(){
         ArrayList<String> themeList = new ArrayList<>();

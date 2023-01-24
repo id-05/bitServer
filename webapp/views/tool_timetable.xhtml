@@ -85,9 +85,9 @@
                                   widgetVar="manageTask" responsive="true" focus="savebtn">
                             <p:panelGrid id="manage-task" class="ui-fluid" columns="2" >
                                 <p:outputLabel for="timeChoose" style="margin-right: .5rem">Время</p:outputLabel>
-                                <p:datePicker id="timeChoose" value="#{timetableBean.selectedTask.timeTask}" timeOnly="true" pattern="HH:mm" >
-                                    <p:ajax event="change" listener="#{timetableBean.changeTime}"/>
-                                </p:datePicker>
+                                <p:datePicker id="timeChoose" value="#{timetableBean.selectedTask.timeTask}" timeOnly="true" pattern="HH:mm" />
+
+
 
                                 <p:outputLabel for="action" style="margin-right: .5rem">Действие</p:outputLabel>
                                 <p:selectOneMenu id="action" value="#{timetableBean.selectedTask.action}" ajax="false">

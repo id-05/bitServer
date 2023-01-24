@@ -2,12 +2,10 @@ package ru.bitServer.dao;
 
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
-import ru.bitServer.beans.MainBean;
 import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
-
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.sql.*;
@@ -564,23 +562,37 @@ public interface UserDao {
         return resultList;
     }
 
-    default ArrayList<String> getDateStatistics(){
+    default ArrayList<String> getDateFromMaindicomTags(String distinctOrNo,int tagElement){
         ArrayList<String> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String staticSQL = "SELECT DISTINCT id, value FROM maindicomtags " +
-                    " WHERE taggroup = '8' AND tagelement = '32'" ;   //STUDY DATE
-
+            String staticSQL = "SELECT "+distinctOrNo+" value FROM maindicomtags " +
+                    " WHERE taggroup = '8' AND tagelement = '"+tagElement+"'" ;
             Statement statement = conn.createStatement();
-
             ResultSet rs = statement.executeQuery(staticSQL);
-
             while (rs.next()) {
-                resultList.add(rs.getString(2));
+                resultList.add(rs.getString(1));
             }
-
             conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
 
+    default ArrayList<BitServerStudy> getDateFromMaindicomTagsLong(){
+        ArrayList<BitServerStudy> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value FROM patientrecyclingorder" +
+                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '8' AND tag5.tagelement = '32'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+            while (rs.next()) {
+                resultList.add(new BitServerStudy(rs.getString(1),getDateFromText(rs.getString(2))));
+            }
+            conn.close();
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
@@ -602,19 +614,5 @@ public interface UserDao {
         return returnDate;
     }
 
-//    default String clearStr(String buf){
-//        if(buf.length()>59){
-//            buf = buf.substring(0,59);
-//        }
-//        String result = "";
-//        String taboo = "^'*/\\\"~";
-//        if(!buf.equals("")) {
-//            for (char c : taboo.toCharArray()) {
-//                result = buf.replace(c, ' ');
-//            }
-//        }else{
-//            result=" ";
-//        }
-//        return result;
-//    }
+
 }

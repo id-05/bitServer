@@ -30,7 +30,6 @@ public class TimetableBean implements UserDao {
     ArrayList<TimetableTask> tasks = new ArrayList<>();
     BitServerUser currentUser;
     String currentUserId;
-    LocalTime timeTask;
     List<DicomModaliti> modalities;
 
     public List<DicomModaliti> getModalities() {
@@ -39,14 +38,6 @@ public class TimetableBean implements UserDao {
 
     public void setModalities(List<DicomModaliti> modalities) {
         this.modalities = modalities;
-    }
-
-    public LocalTime getTimeTask() {
-        return timeTask;
-    }
-
-    public void setTimeTask(LocalTime timeTask) {
-        this.timeTask = timeTask;
     }
 
     public TimetableTask getSelectedTask() {
@@ -125,20 +116,11 @@ public class TimetableBean implements UserDao {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void changeTime(){
-        //System.out.println("changetime "+selectedTask.getTimeTask());
-    }
-
     public void changeDialogForm(){
         PrimeFaces.current().ajax().update(":timetable:manage-task");
     }
 
-    public void changeSourceListBox(){
-        //selectedTask.setSource();
-    }
-
     public void deleteTaskFromList(){
-        //tasks.remove(selectedTask);
         deleteFromBitServerTable( (long) selectedTask.getId() );
         tasks = getAllTasks();
         PrimeFaces.current().ajax().update(":timetable:dt-tasks");

@@ -73,6 +73,8 @@ public class BitServerStudy implements Serializable {
         this.status = status;
     }
 
+
+
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
                           String Manufacturer, String InstitutionName, String StationName, String AetSource){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
         if(sid.length()>59){
