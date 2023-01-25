@@ -6,7 +6,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
-
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
 <f:view>
     <h:head>
         <title>bitServer</title>
@@ -91,7 +91,7 @@
 
             <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}">
 
-                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
+                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 800px; height: 300px; margin-right: 10px" closable="true" >
                     <p:lineChart id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
 
                     <f:facet name="options">
@@ -105,8 +105,8 @@
 
                 </p:panel>
 
-                <p:panel id="pieName" header="#{statisticsBean.diagramTitle}" style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" rendered="true">
-                    <p:pieChart id="pie1" model="#{statisticsBean.pieModality}" style="width: 100%; height: 500px;"/>
+                <p:panel id="pieName" header="#{statisticsBean.diagramTitle}" style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true">
+                    <p:pieChart id="pie1" model="#{statisticsBean.pieModality}" style="width: 100px; height: 500px;"/>
 
                     <f:facet name="options">
                         <p:menu>

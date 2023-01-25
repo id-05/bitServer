@@ -19,7 +19,6 @@ import javax.faces.bean.ViewScoped;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @ManagedBean(name = "statisticsBean")
@@ -30,12 +29,13 @@ public class StatisticsBean implements UserDao {
     BitServerUser currentUser;
     LineChartModel lineModel;
     PieChartModel pieModel;
-    //PieChartModel pieSource;
     String typeChart = "mounth";
     Map<Long, Integer> resultMapLong = new TreeMap<>();
     Map<Long, Integer> resultMapShort = new TreeMap<>();
     ArrayList<String> bufDateList = new ArrayList<>();
     String diagramTitle;
+    ChartData data = new ChartData();
+    PieChartDataSet dataSet = new PieChartDataSet();
 
     public String getDiagramTitle() {
         return diagramTitle;
@@ -67,10 +67,6 @@ public class StatisticsBean implements UserDao {
     public PieChartModel getPieModality() {
         return pieModel;
     }
-
-    //public PieChartModel getPieSource() {
-//        return pieSource;
-//    }
 
     public BitServerUser getCurrentUser() {
         return currentUser;
@@ -104,16 +100,19 @@ public class StatisticsBean implements UserDao {
 
         bufDateList = getDateFromMaindicomTags("",32);
         Collections.sort(bufDateList);
+
         resultMapLong = getStatMap(bufDateList,"MM.yyyy");
         resultMapShort = getStatMap(bufDateList,"yyyy");
         diagramTitle = "Распределение по модальностям";
 
         if(showStat){
             typeChart = "mounth";
+
             chartOutput();
             createPieModel();
-            //createSourcePieModel();
+
             model = new DefaultDashboardModel();
+
             DashboardColumn column1 = new DefaultDashboardColumn();
             DashboardColumn column2 = new DefaultDashboardColumn();
             DashboardColumn column3 = new DefaultDashboardColumn();
@@ -127,50 +126,33 @@ public class StatisticsBean implements UserDao {
     }
 
     private void createPieModel() {
+        pieModel = new PieChartModel();
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<String> bgColors = new ArrayList<>();
+        ColorBar colorBar = new ColorBar();
         if(diagramTitle.equals("Распределение по модальностям")) {
-            pieModel = new PieChartModel();
-            ChartData data = new ChartData();
             List<String> modalityList = getDateFromMaindicomTags("DISTINCT", 96);
-            PieChartDataSet dataSet = new PieChartDataSet();
-            List<Number> values = new ArrayList<>();
-            List<String> labels = new ArrayList<>();
-            List<String> bgColors = new ArrayList<>();
-            ColorBar colorBar = new ColorBar();
             for (String bufModality : modalityList) {
                 values.add(getModalitiOfStudies().stream().filter(String -> String.equals(bufModality)).count());
                 labels.add(bufModality);
                 bgColors.add(colorBar.getColor());
             }
-            dataSet.setData(values);
-            dataSet.setBackgroundColor(bgColors);
-            data.addChartDataSet(dataSet);
-            data.setLabels(labels);
-            pieModel.setData(data);
         }
-
         if(diagramTitle.equals("Распределение по источникам")) {
-            pieModel = new PieChartModel();
-            ChartData data = new ChartData();
-
-            List<String> sourceList = getSourceDicom().stream()
-                    .distinct()
-                    .collect(Collectors.toList());
-            PieChartDataSet dataSet = new PieChartDataSet();
-            List<Number> values = new ArrayList<>();
-            List<String> labels = new ArrayList<>();
-            List<String> bgColors = new ArrayList<>();
-            ColorBar colorBar = new ColorBar();
+            List<String> sourceList = getSourceDicom().stream().distinct().collect(Collectors.toList());
             for (String bufSource : sourceList) {
                 values.add(getSourceDicom().stream().filter(String -> String.equals(bufSource)).count());
                 labels.add(bufSource);
                 bgColors.add(colorBar.getColor());
             }
-            dataSet.setData(values);
-            dataSet.setBackgroundColor(bgColors);
-            data.addChartDataSet(dataSet);
-            data.setLabels(labels);
-            pieModel.setData(data);
         }
+        dataSet.setData(values);
+        dataSet.setBackgroundColor(bgColors);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+        pieModel.setData(data);
     }
 
     public void setMounths(){
@@ -185,12 +167,12 @@ public class StatisticsBean implements UserDao {
 
     public void setModaliti(){
         diagramTitle = "Распределение по модальностям";
-        pieOutput();
+        createPieModel();
     }
 
     public void setSource(){
         diagramTitle = "Распределение по источникам";
-        pieOutput();
+        createPieModel();
     }
 
     public void chartOutput(){
@@ -201,17 +183,6 @@ public class StatisticsBean implements UserDao {
             case "year":
                 lineModel = initModel("yyyy");
             break;
-        }
-    }
-
-    public void pieOutput() {
-        switch (diagramTitle){
-            case "Распределение по модальностям":
-                createPieModel();
-                break;
-            case "Распределение по источникам":
-                createPieModel();
-                break;
         }
     }
 

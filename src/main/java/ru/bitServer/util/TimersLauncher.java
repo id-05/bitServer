@@ -23,8 +23,8 @@ public class TimersLauncher implements UserDao, Runnable {
     @Override
     public void run() {
         tasks = getAllTasks();
-
-
+        connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
+        StringBuilder sb;
         for (TimetableTask bufTask:tasks){
             LocalTime nTime = LocalTime.now();
             if( (bufTask.getTimeTask().getHour()*60+bufTask.getTimeTask().getMinute()) == (nTime.getHour()*60 + nTime.getMinute()) ) {
@@ -39,8 +39,6 @@ public class TimersLauncher implements UserDao, Runnable {
                         //отправка
                         for (BitServerStudy bufStudy : visibleStudiesList) {
                             try {
-                                connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
-                                StringBuilder sb;
                                 sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + bufTask.getDestination() + "/store", bufStudy.getSid());
                                 LogTool.getLogger().info(this.getClass().getSimpleName() + ": Ответ на оптравку:" + sb.toString());
                                 System.out.println("Ответ на оптравку:" + sb.toString());
