@@ -1,5 +1,6 @@
 package ru.bitServer.beans;
 
+import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
@@ -10,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.servlet.http.HttpSession;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
@@ -42,6 +44,11 @@ public class AdminBean implements UserDao {
         errorText = "";
         raidGetInfo();
         orthancGetInfo();
+        ArrayList<BitServerStudy> bitServerStudies =  getDateFromMaindicomTagsLong();
+        System.out.println(bitServerStudies.size());
+        for(BitServerStudy bufStudy:bitServerStudies){
+            System.out.println(bufStudy.getSid());
+        }
     }
 
     public void orthancGetInfo(){
@@ -62,7 +69,7 @@ public class AdminBean implements UserDao {
 
     public void raidGetInfo(){
         try {
-            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/servicemode");
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/raidinfo");
             proc.waitFor();
         }catch (Exception e){
             LogTool.getLogger().error("Error during raidGetInfo()");

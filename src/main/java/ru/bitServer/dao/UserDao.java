@@ -580,17 +580,63 @@ public interface UserDao {
         return resultList;
     }
 
+    default ArrayList<String> getSourceDicom(){
+        ArrayList<String> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT patientid, tag12.value FROM patientrecyclingorder" +
+                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " LEFT JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+            while (rs.next()) {
+                if(rs.getString(2).equals("")){
+                    resultList.add("Manual upload");
+                }else{
+                    resultList.add(rs.getString(2));
+                }
+            }
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
+
     default ArrayList<BitServerStudy> getDateFromMaindicomTagsLong(){
         ArrayList<BitServerStudy> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
             String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value FROM patientrecyclingorder" +
                     " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
-                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '8' AND tag5.tagelement = '32'";
+                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '8' AND tag1.tagelement = '32'";
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(staticSQL);
             while (rs.next()) {
                 resultList.add(new BitServerStudy(rs.getString(1),getDateFromText(rs.getString(2))));
+            }
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
+
+    default ArrayList<String> getModalitiOfStudies(){
+        ArrayList<String> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value FROM patientrecyclingorder" +
+                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part2.internalid AND tag1.taggroup = '8' AND tag1.tagelement = '96'";   //MODALITY
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+            while (rs.next()) {
+                resultList.add(rs.getString(3));
             }
             conn.close();
         }catch (Exception e){
