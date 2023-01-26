@@ -539,6 +539,7 @@ public class QueueBean implements UserDao, DataAction {
         String newID = connection.sendDicom("/instances", file.getContent());
         StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
         JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
+        System.out.println(bufJson.toString());
         OrthancStudy bufStudy = connection.parseStudy(bufJson);
         //studiesFromTableBitServer = getAllBitServerStudyOnlyId();
         boolean existInTable = false;

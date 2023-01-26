@@ -6,10 +6,12 @@ import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.service.TimetableTask;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 import static ru.bitServer.beans.MainBean.mainServer;
 
 public class TimersLauncher implements UserDao, Runnable {
@@ -60,9 +62,26 @@ public class TimersLauncher implements UserDao, Runnable {
                         break;
 
                     case "deleteOld":
-
+                        LogTool.getLogger().info("Delete old study start for timer");
+                        int i=0;
+                        ArrayList<BitServerStudy> bitServerStudies =  getDateFromMaindicomTagsLong();
+                        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+                        for(BitServerStudy bufStudy:bitServerStudies){
+                            Calendar calendar = new GregorianCalendar();
+                            calendar.add(Calendar.YEAR,-5);
+                            calendar.add(Calendar.MONTH,-1);
+                            Date fiveYeasAgo = calendar.getTime();
+                            if(bufStudy.getSdate().before(fiveYeasAgo)){
+                                try {
+                                    connection.deleteStudyFromOrthanc(bufStudy.getSid());
+                                    i++;
+                                }catch (Exception e){
+                                    LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error during delete old file. " + e.getMessage());
+                                }
+                            }
+                        }
+                        LogTool.getLogger().info("Delete old study finish. Count delete study: "+i);
                         break;
-
                     default:
                         break;
                 }
@@ -83,4 +102,22 @@ public class TimersLauncher implements UserDao, Runnable {
         }
         return bufAET;
     }
+
+//    ArrayList<TimetableTask> getAllTasks() {
+//        ArrayList<TimetableTask> resultList = new ArrayList<>();
+//        try {
+//            Connection conn = getConnection();
+//            String resultSQL = "SELECT internalid, rvalue FROM bitserver WHERE rtype = '11'";
+//            Statement statement = conn.createStatement();
+//            ResultSet rs = statement.executeQuery(resultSQL);
+//            while (rs.next()) {
+//                TimetableTask bufTask = new TimetableTask(rs.getString(1),rs.getString(2));
+//                resultList.add(bufTask);
+//            }
+//            conn.close();
+//        } catch (Exception  e) {
+//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+//        }
+//        return resultList;
+//    }
 }

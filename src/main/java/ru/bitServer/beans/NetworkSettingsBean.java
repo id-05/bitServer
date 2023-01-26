@@ -74,6 +74,7 @@ public class NetworkSettingsBean implements UserDao {
         } catch (Exception e) {
             LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
         }
+        //LogTool.getLogger().info("newtworkSettingsFile: " + newtworkSettingsFile.toString());
         configFileText = newtworkSettingsFile.toString();
         NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(newtworkSettingsFile);
         adapters = settingsParcer.getAdapterList();
@@ -171,6 +172,7 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void saveSettings(){
+        LogTool.getLogger().error("saveSettings() ");
         StringBuilder bufStringBuilder = new StringBuilder();
         bufStringBuilder.append("# This file describes the network interfaces available on your system\n");
         bufStringBuilder.append("# and how to activate them. For more information, see interfaces(5).\n");
@@ -180,7 +182,10 @@ public class NetworkSettingsBean implements UserDao {
         bufStringBuilder.append("auto lo\n");
         bufStringBuilder.append("iface lo inet loopback\n");
         bufStringBuilder.append("\n");
+        LogTool.getLogger().info("bufStringBuilder.toString() = "+bufStringBuilder.toString());
+        LogTool.getLogger().info("adapters.size() = "+adapters.size());
         for(NetworkAdapter bufAdapter:adapters){
+            LogTool.getLogger().info("adapters  = "+bufAdapter.toString());
             if(bufAdapter.getIpmode().equals("dhcp")){
                 bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
                 bufStringBuilder.append("auto ").append(bufAdapter.getName()).append("\n");
@@ -200,16 +205,18 @@ public class NetworkSettingsBean implements UserDao {
                 bufStringBuilder.append("\n");
             }
         }
-
+        LogTool.getLogger().info("bufStringBuilder.toString() = "+bufStringBuilder.toString());
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
         {
             byte[] buffer = bufStringBuilder.toString().getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
+            showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
         }
         catch(IOException e){
             LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
+            showMessage("Внимание","Возникла ошибка в процессе сохранения! Более подробно смотрите в лог файле!",FacesMessage.SEVERITY_ERROR);
         }
-        showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
+
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {

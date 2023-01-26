@@ -148,7 +148,6 @@ public interface UserDao {
                 String resultSubSQL = "SELECT publicid FROM resources  WHERE parentid = '"+rs.getString(3)+"'";
                 Statement subStatement = conn.createStatement();
                 ResultSet subRs = subStatement.executeQuery(resultSubSQL);
-                //ArrayList<String> bufInstances = new ArrayList<>();
                 ArrayList<byte[]> bufInstances = new ArrayList<>();
                 while(subRs.next()){
                     bufInstances.add(getDicomAsByte(connection,subRs.getString(1)));
@@ -162,7 +161,7 @@ public interface UserDao {
         return seriesList;
     }
 
-    public default byte[] getDicomAsByte(OrthancRestApi connection, String fileName) throws Exception {
+    default byte[] getDicomAsByte(OrthancRestApi connection, String fileName) throws Exception {
         String url="/instances/"+fileName+"/file";
         HttpURLConnection conn = connection.makeGetConnection (url);
         InputStream inputStream = conn.getInputStream();
@@ -243,7 +242,6 @@ public interface UserDao {
                         LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
                     }
                 }
-
 
                 BitServerGroup bufGroup = new BitServerGroup(rs.getLong(1), rs.getString(2), userList);
                 resultList.add(bufGroup);
@@ -397,6 +395,7 @@ public interface UserDao {
     }
 
     default ArrayList<TimetableTask> getAllTasks() {
+        LogTool.getLogger().info(this.getClass().getSimpleName()+": start getAllTasks");
         ArrayList<TimetableTask> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
@@ -407,9 +406,11 @@ public interface UserDao {
                 TimetableTask bufTask = new TimetableTask(rs.getString(1),rs.getString(2));
                 resultList.add(bufTask);
             }
+            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllTasks resultList.size = "+resultList.size());
             conn.close();
+            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllTasks conn.close()");
         } catch (Exception  e) {
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": (procedure getAllTasks) "+ e.getMessage());
         }
         return resultList;
     }

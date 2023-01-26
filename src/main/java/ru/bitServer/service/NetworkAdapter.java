@@ -59,4 +59,9 @@ public class NetworkAdapter {
         this.gateway = gateway;
         this.ipmode = ipmode;
     }
+
+    @Override
+    public String toString() {
+        return "name = "+name+"; ipaddress = "+ipaddress+"; mask = "+mask+"; gateway = "+gateway+"; ipmode = "+ipmode;
+    }
 }

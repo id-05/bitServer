@@ -12,9 +12,11 @@ import javax.faces.bean.RequestScoped;
 import javax.servlet.http.HttpSession;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static ru.bitServer.beans.MainBean.mainServer;
-
 
 @ManagedBean(name = "adminBean", eager = true)
 @RequestScoped
@@ -44,11 +46,21 @@ public class AdminBean implements UserDao {
         errorText = "";
         raidGetInfo();
         orthancGetInfo();
-        ArrayList<BitServerStudy> bitServerStudies =  getDateFromMaindicomTagsLong();
-        System.out.println(bitServerStudies.size());
-        for(BitServerStudy bufStudy:bitServerStudies){
-            System.out.println(bufStudy.getSid());
-        }
+//        ArrayList<BitServerStudy> bitServerStudies =  getDateFromMaindicomTagsLong();
+//        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+//        for(BitServerStudy bufStudy:bitServerStudies){
+//            Calendar calendar = new GregorianCalendar();
+//            calendar.add(Calendar.YEAR,-5);
+//            calendar.add(Calendar.MONTH,-1);
+//            Date fiveYeasAgo = calendar.getTime();
+//            if(bufStudy.getSdate().before(fiveYeasAgo)){
+//                try {
+//                    connection.deleteStudyFromOrthanc(bufStudy.getSid());
+//                }catch (Exception e){
+//                    LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error during delete old file. " + e.getMessage());
+//                }
+//            }
+//        }
     }
 
     public void orthancGetInfo(){

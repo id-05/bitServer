@@ -44,7 +44,7 @@ public class AuthorizationFilter implements Filter, UserDao {
                 resp.sendRedirect(reqt.getContextPath() + "/views/login.xhtml");
         } catch (Exception e) {
 
-            LogTool.getLogger().error("Here Error in AutorizationFilter: " + Arrays.toString(e.getStackTrace()));
+            LogTool.getLogger().error("Error in AutorizationFilter: " + e.getMessage());
             resp.sendRedirect(reqt.getContextPath() + "/views/errorpage.xhtml");
         }
     }
