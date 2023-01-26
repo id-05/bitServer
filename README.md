@@ -20,5 +20,5 @@
 
 ### [Скачать руководство пользователя](https://github.com/id-05/bitServer/raw/master/Руководство_пользователя.docx)
 
-### [Скачать war-файл для развертывания](https://github.com/id-05/bitServer/raw/master/out/artifacts/bitServer_war/bitServer.war)
+### [Скачать war-файл для развертывания](https://github.com/id-05/bitServer/raw/master/out/artifacts/bitServer/bitServer.war)
 

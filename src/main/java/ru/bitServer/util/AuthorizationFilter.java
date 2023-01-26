@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = { "*.xhtml" })
 public class AuthorizationFilter implements Filter, UserDao {
@@ -42,7 +43,8 @@ public class AuthorizationFilter implements Filter, UserDao {
             else
                 resp.sendRedirect(reqt.getContextPath() + "/views/login.xhtml");
         } catch (Exception e) {
-            LogTool.getLogger().warn("Here Error in AutorizationFilter: "+e.getMessage());
+
+            LogTool.getLogger().error("Here Error in AutorizationFilter: " + Arrays.toString(e.getStackTrace()));
             resp.sendRedirect(reqt.getContextPath() + "/views/errorpage.xhtml");
         }
     }

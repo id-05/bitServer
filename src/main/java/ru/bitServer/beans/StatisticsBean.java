@@ -27,15 +27,13 @@ public class StatisticsBean implements UserDao {
 
     DashboardModel model;
     BitServerUser currentUser;
-    LineChartModel lineModel;
-    PieChartModel pieModel;
+    LineChartModel lineModel = new LineChartModel();
+    PieChartModel pieModel = new PieChartModel();
     String typeChart = "mounth";
     Map<Long, Integer> resultMapLong = new TreeMap<>();
     Map<Long, Integer> resultMapShort = new TreeMap<>();
     ArrayList<String> bufDateList = new ArrayList<>();
     String diagramTitle;
-    ChartData data = new ChartData();
-    PieChartDataSet dataSet = new PieChartDataSet();
 
     public String getDiagramTitle() {
         return diagramTitle;
@@ -108,71 +106,76 @@ public class StatisticsBean implements UserDao {
         if(showStat){
             typeChart = "mounth";
 
+
             chartOutput();
-            createPieModel();
+            pieOutput();
 
             model = new DefaultDashboardModel();
 
             DashboardColumn column1 = new DefaultDashboardColumn();
             DashboardColumn column2 = new DefaultDashboardColumn();
-            DashboardColumn column3 = new DefaultDashboardColumn();
+
             column1.addWidget("serverstatistics");
             column2.addWidget("pieName");
-            column3.addWidget("raid");
+
             model.addColumn(column1);
             model.addColumn(column2);
-            model.addColumn(column3);
+
         }
     }
 
-    private void createPieModel() {
-        pieModel = new PieChartModel();
-
-        List<Number> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-        List<String> bgColors = new ArrayList<>();
+    private void pieOutput() {
+        ChartData dataPie = new ChartData();
+        PieChartDataSet dataSetPie = new PieChartDataSet();
+        List<Number> valuesPie = new ArrayList<>();
+        List<String> labelsPie = new ArrayList<>();
+        List<String> bgColorsPie = new ArrayList<>();
         ColorBar colorBar = new ColorBar();
         if(diagramTitle.equals("Распределение по модальностям")) {
             List<String> modalityList = getDateFromMaindicomTags("DISTINCT", 96);
             for (String bufModality : modalityList) {
-                values.add(getModalitiOfStudies().stream().filter(String -> String.equals(bufModality)).count());
-                labels.add(bufModality);
-                bgColors.add(colorBar.getColor());
+                valuesPie.add(getModalitiOfStudies().stream().filter(String -> String.equals(bufModality)).count());
+                labelsPie.add(bufModality);
+                bgColorsPie.add(colorBar.getColor());
             }
         }
         if(diagramTitle.equals("Распределение по источникам")) {
             List<String> sourceList = getSourceDicom().stream().distinct().collect(Collectors.toList());
             for (String bufSource : sourceList) {
-                values.add(getSourceDicom().stream().filter(String -> String.equals(bufSource)).count());
-                labels.add(bufSource);
-                bgColors.add(colorBar.getColor());
+                valuesPie.add(getSourceDicom().stream().filter(String -> String.equals(bufSource)).count());
+                labelsPie.add(bufSource);
+                bgColorsPie.add(colorBar.getColor());
             }
         }
-        dataSet.setData(values);
-        dataSet.setBackgroundColor(bgColors);
-        data.addChartDataSet(dataSet);
-        data.setLabels(labels);
-        pieModel.setData(data);
+        dataSetPie.setData(valuesPie);
+        dataSetPie.setBackgroundColor(bgColorsPie);
+        dataPie.addChartDataSet(dataSetPie);
+        dataPie.setLabels(labelsPie);
+        pieModel.setData(dataPie);
     }
 
     public void setMounths(){
         typeChart = "mounth";
         chartOutput();
+        System.out.println("mounth");
     }
 
     public void setYears(){
         typeChart = "year";
         chartOutput();
+        System.out.println("year");
     }
 
     public void setModaliti(){
         diagramTitle = "Распределение по модальностям";
-        createPieModel();
+        System.out.println("Распределение по модальностям");
+        pieOutput();
     }
 
     public void setSource(){
         diagramTitle = "Распределение по источникам";
-        createPieModel();
+        System.out.println("Распределение по источникам");
+        pieOutput();
     }
 
     public void chartOutput(){
@@ -187,35 +190,34 @@ public class StatisticsBean implements UserDao {
     }
 
     private LineChartModel initModel(String pattern) {
-        LineChartModel bufModel = new LineChartModel();
-        ChartData data = new ChartData();
-        LineChartDataSet dataSet = new LineChartDataSet();
-        List<Object> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        LineChartModel bufModelLine = new LineChartModel();
+        ChartData dataLine = new ChartData();
+        LineChartDataSet dataSetLine = new LineChartDataSet();
+        List<Object> valuesLine = new ArrayList<>();
+        List<String> labelsLine = new ArrayList<>();
         Map<Long, Integer> resultMap;
         DateFormat formatter = new SimpleDateFormat(pattern);
-
         resultMap = getResultMap(pattern);
         if(resultMap.size()>0) {
             for (Map.Entry<Long, Integer> item : resultMap.entrySet()) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(item.getKey());
                 Date bufDate = calendar.getTime();
-                values.add(item.getValue());
-                labels.add(formatter.format(bufDate));
+                valuesLine.add(item.getValue());
+                labelsLine.add(formatter.format(bufDate));
             }
         }
-        dataSet.setData(values);
-        dataSet.setFill(false);
-        dataSet.setLabel("Исследования");
-        dataSet.setBorderColor("rgb(75, 192, 192)");
-        dataSet.setTension(0.1);
-        data.addChartDataSet(dataSet);
-        data.setLabels(labels);
+        dataSetLine.setData(valuesLine);
+        dataSetLine.setFill(false);
+        dataSetLine.setLabel("Исследования");
+        dataSetLine.setBorderColor("rgb(75, 192, 192)");
+        dataSetLine.setTension(0.1);
+        dataLine.addChartDataSet(dataSetLine);
+        dataLine.setLabels(labelsLine);
         LineChartOptions options = new LineChartOptions();
-        bufModel.setOptions(options);
-        bufModel.setData(data);
-        return bufModel;
+        bufModelLine.setOptions(options);
+        bufModelLine.setData(dataLine);
+        return bufModelLine;
     }
 
     public Map<Long, Integer> getResultMap(String pattern){
