@@ -14,7 +14,7 @@ public class NetworkSettingsParcer {
         ArrayList<NetworkAdapter> adapterList = new ArrayList<>();
         String[] strings = textSettings.toString().split("\n");
         boolean firstteg = true;
-        NetworkAdapter bufAdapter = new NetworkAdapter();
+        NetworkAdapter bufAdapter = null;
         for (String str : strings) {
             if(str.contains("iface")){
                 if(!str.contains("lo")){
@@ -24,14 +24,12 @@ public class NetworkSettingsParcer {
                     if (firstteg) {
                         bufAdapter = new NetworkAdapter();
                         bufAdapter.setName(subStrings[1]);
-
                         if(subStrings[3].contains("static")){
                             bufAdapter.setIpmode("static");
                         }
                         if(subStrings[3].contains("dhcp")){
                             bufAdapter.setIpmode("dhcp");
                         }
-
                         firstteg = false;
                     } else {
                         adapterList.add(bufAdapter);
@@ -62,7 +60,9 @@ public class NetworkSettingsParcer {
                 bufAdapter.setGateway(subStrings[1]);
             }
         }
-        adapterList.add(bufAdapter);
+        if (bufAdapter!=null) {
+            adapterList.add(bufAdapter);
+        }
         return adapterList;
     }
 }

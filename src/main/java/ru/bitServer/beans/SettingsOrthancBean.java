@@ -305,7 +305,7 @@ public class SettingsOrthancBean implements UserDao {
             worklistEnabled = getWorkListEnabled(json.getWorkLists());
             worklistPath = getWorkListPath(json.getWorkLists());
         }catch (Exception e){
-            LogTool.getLogger().warn("Error during open orthanc.json! Try it! "+e.getMessage());
+            LogTool.getLogger().error("Error during open orthanc.json! Try it! "+e.getMessage());
         }
     }
 

@@ -317,6 +317,19 @@
                         <div >Если включено, все пользователи видят статистику сервера на своей домашней странице</div>
 
                         <p:divider align="left" type="dashed">
+                            <b>Включить службу заданий по времени</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.timerEnable}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, будут выполняться задания по времени из меню "Задания"</div>
+
+                        <p:divider align="left" type="dashed">
                             <b>Удаление всех DICOM-данных</b>
                         </p:divider>
 

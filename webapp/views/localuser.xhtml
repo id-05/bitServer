@@ -63,8 +63,8 @@
 
             <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}">
 
-                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 1000px; height: 300px; margin-right: 10px" closable="true" >
-                    <p:chart type="line" id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
+                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 800px; height: 300px; margin-right: 10px" closable="true" >
+                    <p:lineChart id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
 
                     <f:facet name="options">
                         <p:menu>
@@ -73,19 +73,21 @@
                                 <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
                             </p:submenu>
                         </p:menu>
-
                     </f:facet>
 
                 </p:panel>
 
-                <p:panel id="modality" header="Распределение по модальностям"
-                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
-                    <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieModality}" />
-                </p:panel>
+                <p:panel id="pieName" header="#{statisticsBean.diagramTitle}" style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true">
+                    <p:pieChart id="pie1" model="#{statisticsBean.pieModality}" style="width: 100px; height: 500px;"/>
 
-                <p:panel id="source" header="Распределение по источникам"
-                         style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true" >
-                    <p:chart type="pie" responsive="true"  model="#{statisticsBean.pieSource}" />
+                    <f:facet name="options">
+                        <p:menu>
+                            <p:submenu label="Диаграмма по">
+                                <p:menuitem value="Модальностям" icon="pi pi-calendar" actionListener="#{statisticsBean.setModaliti}" update=":db:pie1, :db:pieName"/>
+                                <p:menuitem value="Источникам" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setSource}" update=":db:pie1, :db:pieName"/>
+                            </p:submenu>
+                        </p:menu>
+                    </f:facet>
                 </p:panel>
 
             </p:dashboard>

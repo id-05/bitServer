@@ -74,7 +74,6 @@ public class NetworkSettingsBean implements UserDao {
         } catch (Exception e) {
             LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
         }
-        //LogTool.getLogger().info("newtworkSettingsFile: " + newtworkSettingsFile.toString());
         configFileText = newtworkSettingsFile.toString();
         NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(newtworkSettingsFile);
         adapters = settingsParcer.getAdapterList();
@@ -116,28 +115,44 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void addNewAdapter(){
-        boolean verifiUnical;
-        if(selectedAdapter.getName()!=null){
-            verifiUnical = true;
-            for (NetworkAdapter bufAdapter : adapters) {
-                if (bufAdapter.getName().equals(selectedAdapter.getName())) {
-                    verifiUnical = false;
-                    break;
+        try {
+            boolean verifiUnical;
+            if (selectedAdapter.getName() != null) {
+                verifiUnical = true;
+                for (NetworkAdapter bufAdapter : adapters) {
+                    if (bufAdapter.getName().equals(selectedAdapter.getName())) {
+                        verifiUnical = false;
+                        break;
+                    }
                 }
-            }
-
-            if (verifiUnical) {
-                adapters.add(selectedAdapter);
-                LogTool.getLogger().info("Admin: "+currentUser.getUid().toString()+" add new networkadapter "+selectedAdapter.getName());
+                if (verifiUnical) {
+                    adapters.add(selectedAdapter);
+                    LogTool.getLogger().info("Admin: " + currentUser.getUid().toString() + " add new networkadapter " + selectedAdapter.getName());
+                } else {
+                    adapters.remove(delAdapterFromList(selectedAdapter.getName()));
+                    adapters.add(selectedAdapter);
+                    adapters.sort(Comparator.comparing(NetworkAdapter::getName));
+                    LogTool.getLogger().info("Admin: " + currentUser.getUid().toString() + " change one of exist networkadapter " + selectedAdapter.getName());
+                }
+                PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
+                PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
             } else {
-                adapters.remove(selectedAdapter);
-                adapters.add(selectedAdapter);
-                adapters.sort(Comparator.comparing(NetworkAdapter::getName));
-                LogTool.getLogger().info("Admin: "+currentUser.getUid().toString()+" change one of exist networkadapter "+selectedAdapter.getName());
+                LogTool.getLogger().debug("selectedAdapter.getName()==null");
             }
-            PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
-            PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
+        }catch (Exception e){
+            LogTool.getLogger().error("Error during save new adapter");
+            showMessage("Внимание","Изменения сохранены! Ошибка сохранения нового адаптера!",FacesMessage.SEVERITY_ERROR);
         }
+    }
+
+    public NetworkAdapter delAdapterFromList(String buf){
+        NetworkAdapter delAdapter = new NetworkAdapter();
+        for(NetworkAdapter bufAdapter : adapters){
+            if(bufAdapter.getName().equals(buf)){
+                return bufAdapter;
+            }
+        }
+        return delAdapter;
     }
 
     public void deleteAdapter(){
@@ -172,7 +187,6 @@ public class NetworkSettingsBean implements UserDao {
     }
 
     public void saveSettings(){
-        LogTool.getLogger().error("saveSettings() ");
         StringBuilder bufStringBuilder = new StringBuilder();
         bufStringBuilder.append("# This file describes the network interfaces available on your system\n");
         bufStringBuilder.append("# and how to activate them. For more information, see interfaces(5).\n");
@@ -182,10 +196,7 @@ public class NetworkSettingsBean implements UserDao {
         bufStringBuilder.append("auto lo\n");
         bufStringBuilder.append("iface lo inet loopback\n");
         bufStringBuilder.append("\n");
-        LogTool.getLogger().info("bufStringBuilder.toString() = "+bufStringBuilder.toString());
-        LogTool.getLogger().info("adapters.size() = "+adapters.size());
         for(NetworkAdapter bufAdapter:adapters){
-            LogTool.getLogger().info("adapters  = "+bufAdapter.toString());
             if(bufAdapter.getIpmode().equals("dhcp")){
                 bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
                 bufStringBuilder.append("auto ").append(bufAdapter.getName()).append("\n");
@@ -205,7 +216,6 @@ public class NetworkSettingsBean implements UserDao {
                 bufStringBuilder.append("\n");
             }
         }
-        LogTool.getLogger().info("bufStringBuilder.toString() = "+bufStringBuilder.toString());
         try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
         {
             byte[] buffer = bufStringBuilder.toString().getBytes();

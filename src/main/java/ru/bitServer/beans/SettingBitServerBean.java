@@ -38,6 +38,7 @@ public class SettingBitServerBean implements UserDao {
     BitServerGroup selectedBitServerGroup;
     String httpmode;
     String showStat;
+    String timerEnable;
     String osimisAddress;
     String orthancAddress;
     String orthancWebPort;
@@ -84,6 +85,14 @@ public class SettingBitServerBean implements UserDao {
     ArrayList<BitServerUser> usersTarget;
     ArrayList<BitServerUser> usersSource;
     ArrayList<BitServerUser> usersSourceBuf;
+
+    public String getTimerEnable() {
+        return timerEnable;
+    }
+
+    public void setTimerEnable(String timerEnable) {
+        this.timerEnable = timerEnable;
+    }
 
     public BitServerGroup getSelectedBitServerGroup() {
         return selectedBitServerGroup;
@@ -547,6 +556,8 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "showStat": showStat = buf.getRvalue();
                     break;
+                case "timerEnable": timerEnable = buf.getRvalue();
+                    break;
                 case "luascriptpathfile": luaScriptPath = buf.getRvalue();
                     break;
                 case "port": orthancWebPort = buf.getRvalue();
@@ -763,6 +774,8 @@ public class SettingBitServerBean implements UserDao {
                 case "workListLifeTime": buf.setRvalue(workListLifeTime);
                     break;
                 case "ShowHelp": buf.setRvalue(showHelp);
+                    break;
+                case "timerEnable": buf.setRvalue(timerEnable);
                     break;
             }
             updateBitServiceResource(buf);

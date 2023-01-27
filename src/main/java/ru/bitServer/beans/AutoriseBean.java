@@ -96,7 +96,7 @@ public class AutoriseBean implements UserDao {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
                         break;
                     case "admin":
-                        LogTool.getLogger().debug("Admin "+ currentUser.getUname()+" autorise in system");
+                        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" autorise in system");
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
                         break;
                     case "client":
