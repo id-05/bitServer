@@ -400,7 +400,7 @@ public interface UserDao {
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("date", FORMAT.format(snapshot.getDate()));
         jsonOb.addProperty("description", snapshot.getDescription());
-        jsonOb.addProperty("settings", snapshot.getSettingJson().toString());
+        jsonOb.add("settings", snapshot.getSettingJson());
         try {
             Connection conn = getConnection();
             Statement statement = conn.createStatement();
@@ -410,7 +410,6 @@ public interface UserDao {
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
-
     }
 
     default ArrayList<TimetableTask> getAllTasks() {

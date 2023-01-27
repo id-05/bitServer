@@ -37,7 +37,48 @@
             <p:dialog id="backupDiaolg" header="Последние изменения" showEffect="fade" modal="true"
                       widgetVar="backupDiaolg" responsive="false">
 
+                <p:dataTable id="dt-snap" widgetVar="dtSnapshot" var="orthancSettingSnapshot" value="#{snapshotBean.snapShots}"
+                             reflow="true" styleClass="users-table"
+                             emptyMessage="Нет записей для отображения"
+                             selection="#{snapshotBean. selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
+                             rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
 
+                    <p:column headerText="Дата создания" sortBy="#{orthancSettingSnapshot.date}" style="text-align: center">
+                        <h:outputText value="#{orthancSettingSnapshot.date}">
+                            <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Изменения в"  style="text-align: center">
+                        <h:outputText value="#{orthancSettingSnapshot.description}" />
+                    </p:column>
+
+                    <p:column exportable="false">
+
+                        <p:commandButton icon="pi pi-download"
+                                         action="#{snapshotBean.downloadSnapshot}"
+                                         id="bDownload"
+                                         update="form:growl"
+                                         style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-info" process="@this">
+                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
+                            <p:fileDownload value="#{snapshotBean.downloadSnapshot()}"/>
+                        </p:commandButton>
+                        <p:tooltip for="bDownload" value="Скачать"/>
+
+                        <p:commandButton icon="pi pi-save"
+                                         action="#{snapshotBean.applySnapshot}"
+                                         id="bApply"
+                                         update="form:growl"
+                                         style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-danger" process="@this">
+                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
+                        </p:commandButton>
+                        <p:tooltip for="bApply" value="Применить"/>
+
+                    </p:column>
+
+                </p:dataTable>
 
             </p:dialog>
 
