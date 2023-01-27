@@ -5,6 +5,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.BitServerStudy;
+import ru.bitServer.dao.DataAction;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.util.SessionUtils;
@@ -21,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ru.bitServer.beans.MainBean.mainServer;
-import static ru.bitServer.beans.MainBean.osimisAddress;
 
 @ManagedBean(name = "luresultsBean")
 @ViewScoped
-public class LocalUserResults implements UserDao {
+public class LocalUserResults implements UserDao, DataAction {
 
     BitServerUser currentUser;
     String currentUserId;
@@ -89,10 +89,8 @@ public class LocalUserResults implements UserDao {
         }
     }
 
-    public void redirectToOsimis(String sid) {
-        PrimeFaces.current().executeScript("window.open('https://"+
-                mainServer.getLogin()+":"+mainServer.getPassword()+"@"+
-                osimisAddress+"osimis-viewer/app/index.html?study="+sid+"','_blank')");
+    public void redirectToOsimis(String sid) throws IOException {
+        redirectToBitViewer(sid);
     }
 }
 

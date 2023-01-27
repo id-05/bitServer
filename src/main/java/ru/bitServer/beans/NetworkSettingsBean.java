@@ -226,7 +226,6 @@ public class NetworkSettingsBean implements UserDao {
             LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
             showMessage("Внимание","Возникла ошибка в процессе сохранения! Более подробно смотрите в лог файле!",FacesMessage.SEVERITY_ERROR);
         }
-
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {

@@ -19,20 +19,22 @@ public class DateBaseBean implements UserDao {
 
     List<BitServerResources> listResources = new ArrayList<>();
     BitServerResources selectedResource;
-    //BitServerResources selectedResources;
-    List<BitServerStudy> listStudys = new ArrayList<>();
     BitServerStudy selectedStudy;
-    //BitServerStudy selectedStudys;
     List<BitServerScheduler> listSchedulers = new ArrayList<>();
     BitServerScheduler selectedScheduler;
     BitServerScheduler selectedSchedulers;
-    //List<BitServerModality> listModalitys = new ArrayList<>();
-    //BitServerModality selectedModality;
-    //BitServerModality selectedModalitys;
     BitServerUser currentUser;
     String currentUserId;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
-    //final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy/MM/dd");
+    boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
     public BitServerScheduler getSelectedSchedulers() {
         return selectedSchedulers;
@@ -41,29 +43,6 @@ public class DateBaseBean implements UserDao {
     public void setSelectedSchedulers(BitServerScheduler selectedSchedulers) {
         this.selectedSchedulers = selectedSchedulers;
     }
-
-//    public BitServerStudy getSelectedStudys() {
-//        return selectedStudys;
-//    }
-
-//    public void setSelectedStudys(BitServerStudy selectedStudys) {
-//        this.selectedStudys = selectedStudys;
-//    }
-
-//    public BitServerResources getSelectedResources() {
-//        return selectedResources;
-//    }
-//
-//    public void setSelectedResources(BitServerResources selectedResources) {
-//        this.selectedResources = selectedResources;
-//    }
-//    public BitServerModality getSelectedModality() {
-//        return selectedModality;
-//    }
-//
-//    public void setSelectedModality(BitServerModality selectedModality) {
-//        this.selectedModality = selectedModality;
-//    }
 
     public List<BitServerScheduler> getListSchedulers() {
         return listSchedulers;
@@ -80,22 +59,6 @@ public class DateBaseBean implements UserDao {
     public void setSelectedScheduler(BitServerScheduler selectedScheduler) {
         this.selectedScheduler = selectedScheduler;
     }
-
-//    public List<BitServerStudy> getListStudys() {
-//        return listStudys;
-//    }
-//
-//    public void setListStudys(List<BitServerStudy> listStudys) {
-//        this.listStudys = listStudys;
-//    }
-
-//    public BitServerStudy getSelectedStudy() {
-//        return selectedStudy;
-//    }
-//
-//    public void setSelectedStudy(BitServerStudy selectedStudy) {
-//        this.selectedStudy = selectedStudy;
-//    }
 
     public BitServerResources getSelectedResource() {
         return selectedResource;
@@ -118,16 +81,11 @@ public class DateBaseBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-
-//        listSchedulers = getAllBitServerSheduler();
         listResources = getAllBitServerResource();
-//        listStudys = getStudy (5, "all", new Date(), new Date(),"");//getAllBitServerStudy();
-//        listModalitys = getAllBitServerModality();
-
         selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
-        //selectedModality = new BitServerModality();
         selectedScheduler = new BitServerScheduler();
+        debug = getBitServerResource("debug").getRvalue().equals("true");
     }
 
     public void initNewResources(){
@@ -140,48 +98,62 @@ public class DateBaseBean implements UserDao {
         }
         listResources.clear();
         selectedResource = new BitServerResources();
-
-        bitServerResourcesList = getAllBitServerResource();
-        ArrayList<String> bufResourceName = new ArrayList<>();
-        for (BitServerResources buf : bitServerResourcesList) {
-            bufResourceName.add(buf.getRname());
-        }
-
-        if(!bufResourceName.contains("orthancaddress")){saveBitServiceResource(new BitServerResources("orthancaddress","127.0.0.1")); }
-        if(!bufResourceName.contains("port")){saveBitServiceResource(new BitServerResources("port","8042")); }
-        if(!bufResourceName.contains("login")){saveBitServiceResource(new BitServerResources("login","doctor")); }
-        if(!bufResourceName.contains("password")){saveBitServiceResource(new BitServerResources("password","doctor")); }
-        if(!bufResourceName.contains("pathtojson")){saveBitServiceResource(new BitServerResources("pathtojson","/etc/orthanc/")); }
-        if(!bufResourceName.contains("pathtoresultfile")){saveBitServiceResource(new BitServerResources("pathtoresultfile","/dataimage/results/")); }
-        if(!bufResourceName.contains("networksetpathfile")){saveBitServiceResource(new BitServerResources("networksetpathfile","/etc/network/interfaces")); }
-        if(!bufResourceName.contains("httpmode")){saveBitServiceResource(new BitServerResources("httpmode","false")); }
-        if(!bufResourceName.contains("luascriptpathfile")){saveBitServiceResource(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua")); }
-        if(!bufResourceName.contains("updateafteropen")){saveBitServiceResource(new BitServerResources("updateafteropen","false")); }
-        if(!bufResourceName.contains("showStat")){saveBitServiceResource(new BitServerResources("showStat","true")); }
-        if(!bufResourceName.contains("logpath")){saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/")); }
-        if(!bufResourceName.contains("colstatus")){saveBitServiceResource(new BitServerResources("colstatus","false")); }
-        if(!bufResourceName.contains("colpreview")){saveBitServiceResource(new BitServerResources("colpreview","false")); }
-        if(!bufResourceName.contains("colDateBirth")){saveBitServiceResource(new BitServerResources("colDateBirth","false")); }
-        if(!bufResourceName.contains("colDate")){saveBitServiceResource(new BitServerResources("colDate","true")); }
-        if(!bufResourceName.contains("colDescription")){saveBitServiceResource(new BitServerResources("colDescription","false")); }
-        if(!bufResourceName.contains("colModality")){saveBitServiceResource(new BitServerResources("colModality","false")); }
-        if(!bufResourceName.contains("colWhereSend")){saveBitServiceResource(new BitServerResources("colWhereSend","false")); }
-        if(!bufResourceName.contains("datastorage")){saveBitServiceResource(new BitServerResources("datastorage","/dataimage/")); }
-        if(!bufResourceName.contains("workListLifeTime")){saveBitServiceResource(new BitServerResources("workListLifeTime","1")); }
-        if(!bufResourceName.contains("hl7port")){saveBitServiceResource(new BitServerResources("hl7port","4043")); }
-        if(!bufResourceName.contains("WorkListPath")){saveBitServiceResource(new BitServerResources("WorkListPath","/dataimage/results/")); }
-        if(!bufResourceName.contains("debug")){saveBitServiceResource(new BitServerResources("debug","false")); }
-        if(!bufResourceName.contains("OptionSend")){saveBitServiceResource(new BitServerResources("OptionSend","false")); }
-        if(!bufResourceName.contains("OptionDownload")){saveBitServiceResource(new BitServerResources("OptionDownload","true")); }
-        if(!bufResourceName.contains("ShowSeachTime")){saveBitServiceResource(new BitServerResources("ShowSeachTime","true")); }
-        if(!bufResourceName.contains("ShowHelp")){saveBitServiceResource(new BitServerResources("ShowHelp","true")); }
-        if(!bufResourceName.contains("PeriodUpdate")){saveBitServiceResource(new BitServerResources("PeriodUpdate","5")); }
-
+        //bitServerResourcesList = getAllBitServerResource();
+        checkResources();
         listResources = getAllBitServerResource();
-
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" select default resources");
+    }
+
+    public void checkResources(){
+        ArrayList<String> bufResourceName = new ArrayList<>();
+        for (BitServerResources buf:getAllBitServerResource()) {
+            bufResourceName.add(buf.getRname());
+        }
+        StringBuilder sb = new StringBuilder();
+        if(!bufResourceName.contains("orthancaddress")){saveBitServiceResource(new BitServerResources("orthancaddress","127.0.0.1")); sb.append("orthancaddress;").append("\n");}
+        if(!bufResourceName.contains("port")){saveBitServiceResource(new BitServerResources("port","8042")); sb.append("port;").append("\n");}
+        if(!bufResourceName.contains("login")){saveBitServiceResource(new BitServerResources("login","doctor")); sb.append("login;").append("\n");}
+        if(!bufResourceName.contains("password")){saveBitServiceResource(new BitServerResources("password","doctor")); sb.append("password;").append("\n");}
+        if(!bufResourceName.contains("pathtojson")){saveBitServiceResource(new BitServerResources("pathtojson","/etc/orthanc/")); sb.append("pathtojson;").append("\n");}
+        if(!bufResourceName.contains("pathtoresultfile")){saveBitServiceResource(new BitServerResources("pathtoresultfile","/dataimage/results/")); sb.append("pathtoresultfile;").append("\n");}
+        if(!bufResourceName.contains("networksetpathfile")){saveBitServiceResource(new BitServerResources("networksetpathfile","/etc/network/interfaces")); sb.append("networksetpathfile;").append("\n");}
+        if(!bufResourceName.contains("httpmode")){saveBitServiceResource(new BitServerResources("httpmode","false")); sb.append("httpmode;").append("\n");}
+        if(!bufResourceName.contains("luascriptpathfile")){saveBitServiceResource(new BitServerResources("luascriptpathfile","/usr/share/orthanc/lua/route.lua")); sb.append("luascriptpathfile;").append("\n");}
+        if(!bufResourceName.contains("updateafteropen")){saveBitServiceResource(new BitServerResources("updateafteropen","false")); sb.append("updateafteropen;").append("\n");}
+        if(!bufResourceName.contains("showStat")){saveBitServiceResource(new BitServerResources("showStat","true")); sb.append("showStat;").append("\n");}
+        if(!bufResourceName.contains("logpath")){saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/")); sb.append("logpath;").append("\n");}
+        if(!bufResourceName.contains("colstatus")){saveBitServiceResource(new BitServerResources("colstatus","false")); sb.append("colstatus;").append("\n");}
+        if(!bufResourceName.contains("colpreview")){saveBitServiceResource(new BitServerResources("colpreview","false")); sb.append("colpreview;").append("\n");}
+        if(!bufResourceName.contains("colDateBirth")){saveBitServiceResource(new BitServerResources("colDateBirth","false")); sb.append("colDateBirth;").append("\n");}
+        if(!bufResourceName.contains("colDate")){saveBitServiceResource(new BitServerResources("colDate","true")); sb.append("colDate;").append("\n");}
+        if(!bufResourceName.contains("colDescription")){saveBitServiceResource(new BitServerResources("colDescription","false")); sb.append("colDescription;").append("\n");}
+        if(!bufResourceName.contains("colModality")){saveBitServiceResource(new BitServerResources("colModality","false")); sb.append("colModality;").append("\n");}
+        if(!bufResourceName.contains("colWhereSend")){saveBitServiceResource(new BitServerResources("colWhereSend","false")); sb.append("colWhereSend;").append("\n");}
+        if(!bufResourceName.contains("datastorage")){saveBitServiceResource(new BitServerResources("datastorage","/dataimage/")); sb.append("datastorage;").append("\n");}
+        if(!bufResourceName.contains("workListLifeTime")){saveBitServiceResource(new BitServerResources("workListLifeTime","1")); sb.append("workListLifeTime;").append("\n");}
+        if(!bufResourceName.contains("hl7port")){saveBitServiceResource(new BitServerResources("hl7port","4043")); sb.append("hl7port;").append("\n");}
+        if(!bufResourceName.contains("WorkListPath")){saveBitServiceResource(new BitServerResources("WorkListPath","/dataimage/results/")); sb.append("WorkListPath;").append("\n");}
+        if(!bufResourceName.contains("debug")){saveBitServiceResource(new BitServerResources("debug","false")); sb.append("debug;").append("\n");}
+        if(!bufResourceName.contains("OptionSend")){saveBitServiceResource(new BitServerResources("OptionSend","false")); sb.append("OptionSend;").append("\n");}
+        if(!bufResourceName.contains("OptionDownload")){saveBitServiceResource(new BitServerResources("OptionDownload","true")); sb.append("OptionDownload;").append("\n");}
+        if(!bufResourceName.contains("ShowSeachTime")){saveBitServiceResource(new BitServerResources("ShowSeachTime","true")); sb.append("ShowSeachTime;").append("\n");}
+        if(!bufResourceName.contains("ShowHelp")){saveBitServiceResource(new BitServerResources("ShowHelp","true")); sb.append("ShowHelp;").append("\n");}
+        if(!bufResourceName.contains("PeriodUpdate")){saveBitServiceResource(new BitServerResources("PeriodUpdate","5")); sb.append("PeriodUpdate;").append("\n");}
+        if(!bufResourceName.contains("colInstitution")){saveBitServiceResource(new BitServerResources("colInstitution","false")); sb.append("colInstitution;").append("\n");}
+        if(!bufResourceName.contains("colStation")){saveBitServiceResource(new BitServerResources("colStation","false")); sb.append("colStation;").append("\n");}
+        if(!bufResourceName.contains("colSource")){saveBitServiceResource(new BitServerResources("colSource","false")); sb.append("colSource;").append("\n");}
+        if(!bufResourceName.contains("timerEnable")){saveBitServiceResource(new BitServerResources("timerEnable","false")); sb.append("timerEnable;").append("\n");}
+        if(!bufResourceName.contains("luaRead")){saveBitServiceResource(new BitServerResources("luaRead","true")); sb.append("luaRead;").append("\n");}
+        if(sb.toString().length()>0){
+            showMessage("Внимание!","Были добавлены: "+ sb.toString(),FacesMessage.SEVERITY_INFO);
+            PrimeFaces.current().ajax().update(":form:accord:dt-resources");
+            PrimeFaces.current().ajax().update(":form:growl2");
+        }else{
+            showMessage("Внимание!","В таблице есть все актуальный параметры!",FacesMessage.SEVERITY_INFO);
+            PrimeFaces.current().ajax().update(":form:growl2");
+        }
     }
 
     public void addNewResource(){
@@ -215,19 +187,6 @@ public class DateBaseBean implements UserDao {
         }
     }
 
-//    public void addNewModality(){
-//        if(!selectedModality.getName().equals(""))
-//        {
-//            ///updateBitServerModality(selectedModality);
-//            //listModalitys = getAllBitServerModality();
-//            PrimeFaces.current().executeScript("PF('manageModalityDialog').hide()");
-//            PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-//            LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" add new modality "+selectedModality.getName());
-//        }else{
-//            showMessage("Внимание!","Поле должно быть заполнено!",FacesMessage.SEVERITY_ERROR);
-//        }
-//    }
-
     public void addNewScheduler(){
         if((!selectedScheduler.getModality().equals(""))&(!selectedScheduler.getSource().equals("")))
         {
@@ -239,13 +198,9 @@ public class DateBaseBean implements UserDao {
                 }
             }
             if(verifiUnical) {
-                //saveNewRule(selectedScheduler);
-                //listSchedulers = getAllBitServerSheduler();
                 PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
             }else{
-                //pdateRule(selectedScheduler);
-                //listSchedulers = getAllBitServerSheduler();
                 PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
                 PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
             }
@@ -255,7 +210,6 @@ public class DateBaseBean implements UserDao {
     }
 
     public void deleteScheduler(){
-        //deleteRule(selectedScheduler);
         listSchedulers.remove(selectedScheduler);
         selectedScheduler = new BitServerScheduler();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Правило удалено!"));
@@ -271,22 +225,4 @@ public class DateBaseBean implements UserDao {
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
 
-//    public void deleteModality(){
-//        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete Modality "+selectedModality.getName());
-//        //deleteBitServerModality(selectedModality);
-//        listModalitys.remove(selectedModality);
-//        selectedModality = new BitServerModality();
-//        showMessage("Внимание!","Модальность удалена!",FacesMessage.SEVERITY_ERROR);
-//        PrimeFaces.current().ajax().update(":form:accord:dt-modality");
-//    }
-
-//    public void deleteAllStudy() throws SQLException {
-//        //deleteAllStudyJDBC();
-//        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete all study from base");
-//        listStudys.clear();
-//        selectedStudy = new BitServerStudy();
-//        showMessage("Внимание!","Все данные удалены!",FacesMessage.SEVERITY_ERROR);
-//        PrimeFaces.current().ajax().update(":form:accord:dt-study");
-//        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" delete all record from bitserverstudy");
-//    }
 }

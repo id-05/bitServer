@@ -50,7 +50,13 @@
 
                                 <p:commandButton value="Очистить и Заполнить значениями по умолчанию" immediate="true" icon="pi pi-info-circle"
                                                  oncomplete="PF('defaultResource').show()"
+                                                 rendered="#{datebaseBean.debug}"
+                                                 styleClass="ui-button-warning" style="margin-right: .5rem">
+                                    <p:resetInput target="dialogNewResource"/>
+                                </p:commandButton>
 
+                                <p:commandButton value="Проверить на отсутствующие" immediate="true" icon="pi pi-info-circle"
+                                                 actionListener="#{datebaseBean.checkResources}"
                                                  styleClass="ui-button-warning" style="margin-right: .5rem">
                                     <p:resetInput target="dialogNewResource"/>
                                 </p:commandButton>

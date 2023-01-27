@@ -6,6 +6,8 @@ import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.OrthancSettingSnapshot;
+
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.sql.*;
@@ -19,7 +21,7 @@ import static ru.bitServer.beans.MainBean.*;
 public interface UserDao {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
+    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm");
 
     default Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
@@ -394,8 +396,24 @@ public interface UserDao {
         }
     }
 
+    default void saveSnapshot(OrthancSettingSnapshot snapshot) {
+        JsonObject jsonOb = new JsonObject();
+        jsonOb.addProperty("date", FORMAT.format(snapshot.getDate()));
+        jsonOb.addProperty("description", snapshot.getDescription());
+        jsonOb.addProperty("settings", snapshot.getSettingJson().toString());
+        try {
+            Connection conn = getConnection();
+            Statement statement = conn.createStatement();
+            String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '12','"+ jsonOb.toString()+"')";
+            statement.executeUpdate(strSql);
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+
+    }
+
     default ArrayList<TimetableTask> getAllTasks() {
-        LogTool.getLogger().info(this.getClass().getSimpleName()+": start getAllTasks");
         ArrayList<TimetableTask> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
@@ -408,9 +426,28 @@ public interface UserDao {
             }
             LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllTasks resultList.size = "+resultList.size());
             conn.close();
-            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllTasks conn.close()");
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": (procedure getAllTasks) "+ e.getMessage());
+        }
+        return resultList;
+    }
+
+    default ArrayList<OrthancSettingSnapshot> getAllOrthancSnapshots() {
+        ArrayList<OrthancSettingSnapshot> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL = "SELECT internalid, rvalue FROM bitserver WHERE rtype = '12'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                OrthancSettingSnapshot bufTask = new OrthancSettingSnapshot(rs.getString(2));
+                resultList.add(bufTask);
+            }
+            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllSnapshot resultList.size = "+resultList.size());
+            conn.close();
+            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllSnapshot conn.close()");
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": (procedure getAllSnapshot) "+ e.getMessage());
         }
         return resultList;
     }
@@ -648,6 +685,21 @@ public interface UserDao {
 
     default Date getDateFromText(String strDate) throws ParseException {
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        Date returnDate = new Date();
+        try {
+            if (!strDate.equals("")) {
+                returnDate = formatter.parse(strDate);
+            }
+        }catch (Exception e){
+            if((getBitServerResource("debug").getRvalue().equals("true"))) {
+                LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Ошибка парсинга даты: " + strDate);
+            }
+        }
+        return returnDate;
+    }
+
+    default Date getDateFromText2(String strDate) throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm");
         Date returnDate = new Date();
         try {
             if (!strDate.equals("")) {

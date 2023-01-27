@@ -31,7 +31,6 @@ public class MainBean implements UserDao, DataAction {
 
     public static OrthancServer mainServer;
     public static String pathToSaveResult;
-    public static String osimisAddress;
     public String periodUpdate = "2";
     public DashboardModel model;
     public String selectTheme;
@@ -48,8 +47,8 @@ public class MainBean implements UserDao, DataAction {
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    //public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
-    public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
+    public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
+    //public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
     public int getTimeOnWork() {
@@ -111,9 +110,6 @@ public class MainBean implements UserDao, DataAction {
                     case "pathtoresultfile":
                         pathToSaveResult = buf.getRvalue();
                         break;
-                    case "addressforosimis":
-                        osimisAddress = buf.getRvalue();
-                        break;
                     case "PeriodUpdate": periodUpdate = buf.getRvalue();
                         break;
                     case "showStat": showStat = buf.getRvalue().equals("true");
@@ -161,11 +157,16 @@ public class MainBean implements UserDao, DataAction {
         //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
 
         //удаление файлов рабочих списков
-        int wlDelHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
-        if(wlDelHourCount!=0){
-            ScheduledExecutorService delWL = Executors.newSingleThreadScheduledExecutor();
-            delWL.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
+        try {
+            int wlDelHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
+            if(wlDelHourCount!=0){
+                ScheduledExecutorService delWL = Executors.newSingleThreadScheduledExecutor();
+                delWL.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
+            }
+        }catch (Exception e){
+            LogTool.getLogger().error("Error during parce Integer.parseInt(getBitServerResource(\"workListLifeTime\").getRvalue()");
         }
+
 
         //Обработка таймеров
         if(getBitServerResource("timerEnable").getRvalue().equals("true")){
@@ -179,7 +180,13 @@ public class MainBean implements UserDao, DataAction {
     public static void HL7service() {
         boolean useSecureConnection = false;
         BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
-        int port = Integer.parseInt(bufRes.getRvalue());
+        int port = 104;
+        try {
+            port = Integer.parseInt(bufRes.getRvalue());
+        }catch (Exception e){
+            LogTool.getLogger().error("Error UserDao.getStaticBitServerResource(\"hl7port\")");
+        }
+
         LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
         LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
         HL7Service ourHl7Server = context.newServer(port, useSecureConnection);

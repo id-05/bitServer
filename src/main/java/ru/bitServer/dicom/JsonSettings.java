@@ -689,7 +689,7 @@ public class JsonSettings {
         if (orthancJson.has("DicomPort"))                      DicomPort=orthancJson.get("DicomPort").getAsInt();
         if (orthancJson.has("DefaultEncoding"))                DefaultEncoding=orthancJson.get("DefaultEncoding").getAsString();
         if (orthancJson.has("DeflatedTransferSyntaxAccepted")) DeflatedTransferSyntaxAccepted=orthancJson.get("DeflatedTransferSyntaxAccepted").getAsBoolean();
-        if (orthancJson.has("JpegTransferSyntaxAccepted"))    JpegTransferSyntaxAccepted=orthancJson.get("JpegTransferSyntaxAccepted").getAsBoolean();
+        if (orthancJson.has("JpegTransferSyntaxAccepted"))     JpegTransferSyntaxAccepted=orthancJson.get("JpegTransferSyntaxAccepted").getAsBoolean();
         if (orthancJson.has("Jpeg2000TransferSyntaxAccepted")) Jpeg2000TransferSyntaxAccepted=orthancJson.get("Jpeg2000TransferSyntaxAccepted").getAsBoolean();
         if (orthancJson.has("JpegLosslessTransferSyntaxAccepted")) JpegLosslessTransferSyntaxAccepted=orthancJson.get("JpegLosslessTransferSyntaxAccepted").getAsBoolean();
         if (orthancJson.has("JpipTransferSyntaxAccepted"))    JpipTransferSyntaxAccepted=orthancJson.get("JpipTransferSyntaxAccepted").getAsBoolean();

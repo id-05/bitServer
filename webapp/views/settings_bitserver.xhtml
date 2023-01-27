@@ -123,6 +123,19 @@
                         <br/>
                         <div >Данный файл используется для настройки сервера Orthanc</div>
 
+                        <p:divider align="left" type="dashed">
+                            <b>Читать файл настроек используя lua-скрипт</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.luaRead}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, программа будет читать файл "orthanc.json" используя lua-скрипт.</div>
+
                         <br/>
                         <p:divider align="left" type="dashed">
                             <b>Путь к файлу c lua-скриптом</b>

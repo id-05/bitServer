@@ -12,8 +12,8 @@ import ru.bitServer.dicom.JsonSettings;
 import ru.bitServer.dicom.OrthancWebUser;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+import ru.bitServer.util.OrthancSettingSnapshot;
 import ru.bitServer.util.SessionUtils;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -229,12 +230,33 @@ public class SettingsOrthancBean implements UserDao {
 
     public void loadConfig() {
         try{
-            String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
-                    "print(f:read(\"*a\"))"+
-                    "f:close()";
-            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
+
+            boolean luaRead = true;
+            StringBuilder stringBuilder = null;
+            try {
+                luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
+            }catch (Exception e){
+                LogTool.getLogger().error("Error Boolean.parseBoolean(getBitServerResource(\"readOrthancSettingfromLua\").getRvalue()");
+            }
+            if(luaRead) {
+                String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"r+\");" +
+                        "print(f:read(\"*a\"))" +
+                        "f:close()";
+                connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+                stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
+            }else{
+                try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
+                    int c;
+                    while ((c = reader.read()) != -1) {
+                        stringBuilder.append((char) c);
+                    }
+                } catch (Exception e) {
+                    LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
+                }
+            }
+
             json = new JsonSettings(stringBuilder.toString());
+
             users = json.getUsers();
             dicomNode = json.getDicomNode();
             ServerName = json.getOrthancName();
@@ -413,17 +435,42 @@ public class SettingsOrthancBean implements UserDao {
         jsonOb.addProperty("MediaArchiveSize", mediaArchiveSize);
         jsonOb.addProperty("ExecuteLuaEnabled",true);
 
-        String modifyStr = ModifyStr(jsonOb.toString());
-        String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"w+\");" +
-                "f:write(\""+modifyStr+"\"); "+
-                "f:close()";
-        StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        saveBitServiceResource(new BitServerResources("datastorage",storageDirectory));
+        saveFile(jsonOb);
+
+        //saveBitServiceResource(new BitServerResources("datastorage",storageDirectory));
         showMessage("Сообщение","Изменения сохранены!", info);
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" save orthanc settings");
     }
 
-    public void resetServer() throws IOException {
+    public void saveFile(JsonObject jsonOb){
+        boolean luaRead = true;
+        try{
+            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
+        }catch (Exception e){
+            LogTool.getLogger().error("Error during saveFile() SettingOrthancBean");
+        }
+        if(luaRead){
+            String modifyStr = ModifyStr(jsonOb.toString());
+            String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"w+\");" +
+                    "f:write(\""+modifyStr+"\"); "+
+                    "f:close()";
+            connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
+        }else{
+            try(FileOutputStream fileOutputStream = new FileOutputStream(mainServer.getPathToJson()+"orthanc.json"))
+            {
+                byte[] buffer = jsonOb.toString().getBytes();
+                fileOutputStream.write(buffer, 0, buffer.length);
+            }
+            catch(IOException e){
+                LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
+                showMessage("Внимание","Возникла ошибка в процессе сохранения! Более подробно смотрите в лог файле!",FacesMessage.SEVERITY_ERROR);
+            }
+        }
+
+        saveSnapshot(new OrthancSettingSnapshot(new Date(),currentUser.getUid().toString(),jsonOb));
+    }
+
+    public void resetServer() {
         StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
         showMessage("Сообщение","Сервис перезагружен!", info);
     }

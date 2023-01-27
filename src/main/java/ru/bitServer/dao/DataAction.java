@@ -14,7 +14,7 @@ import static ru.bitServer.beans.MainBean.mainServer;
 
 public interface DataAction extends UserDao{
 
-    default void redirectToOsimis(String sid) {
+    default void redirectToOsimis(String sid) throws IOException {
         String HttpOrHttps;
         if(mainServer.getHttpmode().equals("true")){
             HttpOrHttps = "https";
