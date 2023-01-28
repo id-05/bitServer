@@ -18,7 +18,7 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -28,7 +28,7 @@ import java.util.*;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingsBean")
-@ViewScoped
+@RequestScoped
 public class SettingsOrthancBean implements UserDao {
     String ServerName;
     JsonObject dicomNode = new JsonObject();

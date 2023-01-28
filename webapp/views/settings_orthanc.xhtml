@@ -59,6 +59,7 @@
                                          action="#{snapshotBean.downloadSnapshot}"
                                          id="bDownload"
                                          update="form:growl"
+                                         ajax="false"
                                          style="margin-right: 10px"
                                          styleClass="edit-button rounded-button ui-button-info" process="@this">
                             <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
@@ -70,6 +71,7 @@
                                          action="#{snapshotBean.applySnapshot}"
                                          id="bApply"
                                          update="form:growl"
+                                         ajax="false"
                                          style="margin-right: 10px"
                                          styleClass="edit-button rounded-button ui-button-danger" process="@this">
                             <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
