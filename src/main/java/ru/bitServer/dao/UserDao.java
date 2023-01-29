@@ -1,5 +1,6 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import ru.bitServer.dicom.OrthancSerie;
@@ -8,6 +9,9 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.OrthancSettingSnapshot;
 
+import javax.faces.application.FacesMessage;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.sql.*;
@@ -398,7 +402,7 @@ public interface UserDao {
 
     default void saveSnapshot(OrthancSettingSnapshot snapshot) {
         JsonObject jsonOb = new JsonObject();
-        jsonOb.addProperty("date", FORMAT.format(snapshot.getDate()));
+        jsonOb.addProperty("date", snapshot.getDate());
         jsonOb.addProperty("description", snapshot.getDescription());
         jsonOb.add("settings", snapshot.getSettingJson());
         try {
@@ -439,7 +443,7 @@ public interface UserDao {
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-                OrthancSettingSnapshot bufTask = new OrthancSettingSnapshot(rs.getString(2));
+                OrthancSettingSnapshot bufTask = new OrthancSettingSnapshot(rs.getString(1),rs.getString(2));
                 resultList.add(bufTask);
             }
             LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllSnapshot resultList.size = "+resultList.size());
@@ -712,5 +716,45 @@ public interface UserDao {
         return returnDate;
     }
 
+    default boolean saveJsonSettingtToFile(JsonObject newJson) throws IOException {
+        boolean result;
+        boolean luaRead = true;
+        try {
+            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
+        } catch (Exception e) {
+            LogTool.getLogger().error("Error during saveFile() SettingOrthancBean");
+        }
+        if (luaRead) {
+            String modifyStr = ModifyStr(newJson.toString());
+            String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"w+\");" +
+                    "f:write(\"" + modifyStr + "\"); " +
+                    "f:close()";
+            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            connection.makePostConnectionAndStringBuilder("/tools/execute-script", urlParameters);
+            result = true;
+        } else {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(mainServer.getPathToJson() + "orthanc.json")) {
+                byte[] buffer = newJson.toString().getBytes();
+                fileOutputStream.write(buffer, 0, buffer.length);
+                result = true;
+            } catch (IOException e) {
+                LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: " + e.getMessage());
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    default String ModifyStr(String str){
+        String result;
+        String buf0;
+        String buf;
+        String buf2;
+        buf0 = str.replace("\\","\\\\");
+        buf = buf0.replace("/","\\/");
+        buf2 = buf.replace("\"","\\\"");
+        result = buf2.replace(",",",\\n");
+        return result;
+    }
 
 }

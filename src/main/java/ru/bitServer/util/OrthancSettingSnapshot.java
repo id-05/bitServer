@@ -5,12 +5,11 @@ import com.google.gson.JsonParser;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class OrthancSettingSnapshot {
 
     String id;
-    Date date;
+    String date;
     String description;
     JsonObject settingJson;
     DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm");
@@ -27,11 +26,11 @@ public class OrthancSettingSnapshot {
         return settingJson;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -43,21 +42,22 @@ public class OrthancSettingSnapshot {
         this.description = description;
     }
 
-    public OrthancSettingSnapshot(Date date, String description, JsonObject settingJson) {
+    public OrthancSettingSnapshot(String date, String description, JsonObject settingJson) {
         this.date = date;
         this.description = description;
         this.settingJson = settingJson;
     }
 
-    public OrthancSettingSnapshot(String buf) throws ParseException {
+    public OrthancSettingSnapshot(String id, String buf) throws ParseException {
         JsonParser parser = new JsonParser();
         JsonObject bufJson = new JsonObject();
+        this.id = id;
         try {
             bufJson = parser.parse(buf).getAsJsonObject();
         }catch (Exception e){
             LogTool.getLogger().warn("Error parse json snapshot: "+buf+" "+e.getMessage());
         }
-        if (bufJson.has("date"))         this.date = formatter.parse(bufJson.get("date").getAsString());
+        if (bufJson.has("date"))         this.date = bufJson.get("date").getAsString();
         if (bufJson.has("description"))       this.description  = bufJson.get("description").getAsString();
         if (bufJson.has("settings"))       this.settingJson = bufJson.get("settings").getAsJsonObject();
     }

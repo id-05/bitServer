@@ -37,16 +37,15 @@
             <p:dialog id="backupDiaolg" header="Последние изменения" showEffect="fade" modal="true"
                       widgetVar="backupDiaolg" responsive="false">
 
-                <p:dataTable id="dt-snap" widgetVar="dtSnapshot" var="orthancSettingSnapshot" value="#{snapshotBean.snapShots}"
+                <p:dataTable id="dt-snap" widgetVar="dtSnapshot" var="orthancSettingSnapshot" value="#{settingsBean.snapShots}"
                              reflow="true" styleClass="users-table"
+                             style="width: 700px"
                              emptyMessage="Нет записей для отображения"
-                             selection="#{snapshotBean. selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
+                             selection="#{settingsBean. selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
                              rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
 
                     <p:column headerText="Дата создания" sortBy="#{orthancSettingSnapshot.date}" style="text-align: center">
-                        <h:outputText value="#{orthancSettingSnapshot.date}">
-                            <f:convertDateTime pattern="dd-MM-yyyy HH:mm"/>
-                        </h:outputText>
+                        <h:outputText value="#{orthancSettingSnapshot.date}"/>
                     </p:column>
 
                     <p:column headerText="Изменения в"  style="text-align: center">
@@ -56,25 +55,35 @@
                     <p:column exportable="false">
 
                         <p:commandButton icon="pi pi-download"
-                                         action="#{snapshotBean.downloadSnapshot}"
                                          id="bDownload"
                                          update="form:growl"
                                          ajax="false"
                                          style="margin-right: 10px"
-                                         styleClass="edit-button rounded-button ui-button-info" process="@this">
-                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
-                            <p:fileDownload value="#{snapshotBean.downloadSnapshot()}"/>
+                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
+                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{settingsBean.selectedSnapshot}"/>
+                            <p:fileDownload value="#{settingsBean.downloadSnapshot(orthancSettingSnapshot)}"/>
                         </p:commandButton>
                         <p:tooltip for="bDownload" value="Скачать"/>
 
-                        <p:commandButton icon="pi pi-save"
-                                         action="#{snapshotBean.applySnapshot}"
+                        <p:commandButton icon="pi pi-sign-in"
+                                         action="#{settingsBean.applySnapshot}"
                                          id="bApply"
+                                         update="form:growl, :form:accordion"
+                                         ajax="false"
+                                         style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-info" process="@this">
+                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{settingsBean.selectedSnapshot}"/>
+                        </p:commandButton>
+                        <p:tooltip for="bApply" value="Применить"/>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         action="#{settingsBean.delSnapshot}"
+                                         id="bDelete"
                                          update="form:growl"
                                          ajax="false"
                                          style="margin-right: 10px"
                                          styleClass="edit-button rounded-button ui-button-danger" process="@this">
-                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{snapshotBean.selectedSnapshot}"/>
+                            <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{settingsBean.selectedSnapshot}"/>
                         </p:commandButton>
                         <p:tooltip for="bApply" value="Применить"/>
 
@@ -373,7 +382,7 @@
                                     <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
                                     <p:resetInput target=":form:accordion:manage-user-content"/>
                                 </p:commandButton>
-                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash" process="@this"
                                                  style="margin-right: 10px"
                                                  oncomplete="PF('deleteUserDialog').show()">
                                     <f:setPropertyActionListener value="#{orthancWebUser}" target="#{settingsBean.selectedUser}"/>
@@ -472,7 +481,7 @@
                                         <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>
                                         <p:resetInput target=":form:accordion:manage-modaliti-content"/>
                                     </p:commandButton>
-                                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                    <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash" process="@this"
                                                      style="margin-right: 10px"
                                                      oncomplete="PF('deleteModalitiDialog').show()">
                                         <f:setPropertyActionListener value="#{dicomModaliti}" target="#{settingsBean.selectedDicomModality}"/>

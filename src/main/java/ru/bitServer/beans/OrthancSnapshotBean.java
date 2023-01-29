@@ -1,14 +1,21 @@
 package ru.bitServer.beans;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dicom.JsonSettings;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancSettingSnapshot;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -52,18 +59,24 @@ public class OrthancSnapshotBean implements UserDao {
         snapShots = getAllOrthancSnapshots();
     }
 
-    public StreamedContent downloadSnapshot() {
+    public StreamedContent downloadSnapshot(OrthancSettingSnapshot snapshot) {
         JsonObject bufJson = selectedSnapshot.getSettingJson();
-        System.out.println("bufJson.toString "+bufJson.toString());
-        InputStream inputStream = new ByteArrayInputStream(bufJson.toString().getBytes(StandardCharsets.UTF_8));
+        JsonSettings bufSettings = new JsonSettings(snapshot.getSettingJson().toString());
+        InputStream inputStream = new ByteArrayInputStream(bufJson.toString().replace(",",",\n").getBytes(StandardCharsets.UTF_8));
         return DefaultStreamedContent.builder()
-                .name(mainServer.getName()+"_"+FORMAT.format(selectedSnapshot.getDate()).replace(" ","_")+"_orthanc.json")
+                .name(bufSettings.getOrthancName()+"_"+selectedSnapshot.getDate()+"_orthanc.json")
                 .contentType("image/jpg")
                 .stream(() -> inputStream)
                 .build();
     }
 
-    public void applySnapshot(){
-
+    public void applySnapshot() throws IOException {
+        saveJsonSettingtToFile(selectedSnapshot.getSettingJson());
+        //loadConfig();
+        FacesMessage message = new FacesMessage("Внимание", "Настройки применены!");
+        message.setSeverity(FacesMessage.SEVERITY_INFO);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        PrimeFaces.current().ajax().update(":form:backupDiaolg");
+        PrimeFaces.current().ajax().update(":form:accordion");
     }
 }
