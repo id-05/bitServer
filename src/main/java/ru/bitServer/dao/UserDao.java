@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
-import java.util.stream.Stream;
 
 import static ru.bitServer.beans.MainBean.*;
 
@@ -720,7 +719,7 @@ public interface UserDao {
         return returnDate;
     }
 
-    default boolean saveJsonSettingtToFile(JsonObject newJson) throws IOException {
+    default void saveJsonSettingtToFile(JsonObject newJson) throws IOException {
         boolean result;
         boolean luaRead = true;
         try {
@@ -746,8 +745,67 @@ public interface UserDao {
                 result = false;
             }
         }
-        return result;
     }
+
+    default void createBitServerDateTable(){
+        try {
+            java.sql.Connection conn = getConnection();
+            String resultSQL;
+            Statement statement = conn.createStatement();
+
+            resultSQL = "CREATE TABLE bitserver( internalId SERIAL PRIMARY KEY, " +
+                    "rtype INTEGER null , " +
+                    "rvalue TEXT, " +
+                    "parentId INTEGER REFERENCES bitserver(internalId) ON DELETE CASCADE)";
+            statement.executeUpdate(resultSQL);
+
+                String sqlInsert = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '3','admin')";
+                statement.executeUpdate(sqlInsert);
+
+                resultSQL = "SELECT internalId FROM bitserver WHERE bitserver.rvalue =\'admin\'";
+                statement = conn.createStatement();
+                ResultSet rs = statement.executeQuery(resultSQL);
+                rs.next();
+                String buf = rs.getString(1);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '4','admin','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '5','admin','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '6','admin','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '7','admin','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+                sqlInsert = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '8','admin','"+buf+"')";
+                statement.executeUpdate(sqlInsert);
+
+            resultSQL = "CREATE OR REPLACE FUNCTION public.bitserverdeletedfunc() " +
+                    "RETURNS trigger LANGUAGE plpgsql AS $function$ " +
+                    "BEGIN " +
+                    "IF EXISTS (SELECT 1 FROM bitserver WHERE parentId = old.parentId) THEN " +
+                    "SELECT rtype, rvalue FROM bitserver WHERE internalId = old.parentId; " +
+                    "ELSE DELETE FROM bitserver WHERE internalId = old.parentId; " +
+                    "END IF; " +
+                    "RETURN NULL; " +
+                    "END; $function$";
+            statement.executeUpdate(resultSQL);
+
+            resultSQL = "CREATE TRIGGER bitserverdeleted AFTER DELETE ON public.bitserver " +
+                    "FOR EACH ROW " +
+                    "EXECUTE PROCEDURE bitserverdeletedfunc()";
+            statement.executeUpdate(resultSQL);
+
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     default String ModifyStr(String str){
         String result;

@@ -386,10 +386,13 @@ public class QueueBean implements UserDao, DataAction {
         selectedModaliti = new DicomModaliti("", "", "", "", "");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
-        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-        orthancSettings = new OrthancSettings(connection);
-        modalities = orthancSettings.getDicomModalitis();
-
+        try {
+            connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
+            orthancSettings = new OrthancSettings(connection);
+            modalities = orthancSettings.getDicomModalitis();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error connect orthanc! " + e.getMessage());
+        }
         firstdate = new Date();
         seconddate = new Date();
 
