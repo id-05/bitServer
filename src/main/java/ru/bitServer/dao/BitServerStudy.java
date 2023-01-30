@@ -16,25 +16,26 @@ public class BitServerStudy implements Serializable {
     private Date DateAddInbase;
     private String PatientName;
     private Date PatientBirthDate;
+    private String patientBirthDateStr;
     private String PatientSex;
     private String anamnes;
     private String result;
     private int status;
     private String rustatus;
     private String anonimstudyid;
-    private String userwhosent;
+    //private String userwhosent;
     private Date datesent;
-    private String userwhodiagnost;
+    //private String userwhodiagnost;
     private Date dateresult;
     private String usergroupwhosees;
-    private boolean typeresult;
-    private Date datablock;
+    private boolean typeResult;
+    //private Date datablock;
     private int userwhoblock;
-    private String statusstyle;
+    private String statusStyle;
     private String Manufacturer;
     private String InstitutionName;
     private String StationName;
-    private String AetSource;
+    private String AETSource;
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
 
@@ -92,12 +93,13 @@ public class BitServerStudy implements Serializable {
         this.modality = modality;
         this.PatientName = patientname;
         this.PatientBirthDate = patientbirthdate;
+        this.patientBirthDateStr = new SimpleDateFormat("dd.MM.yyyy").format(patientbirthdate);
         this.PatientSex = patientsex;
         this.status = status;
         this.Manufacturer = Manufacturer;
         this.InstitutionName = InstitutionName;
         this.StationName = StationName;
-        this.AetSource = AetSource;
+        this.AETSource = AetSource;
     }
 
     public BitServerStudy(String sid, Date sdate){
@@ -144,16 +146,16 @@ public class BitServerStudy implements Serializable {
         this.userwhoblock = userwhoblock;
     }
 
-    public void setDatablock(Date datablock) {
-        this.datablock = datablock;
+//    public void setDatablock(Date datablock) {
+//        this.datablock = datablock;
+//    }
+
+    public boolean isTypeResult() {
+        return typeResult;
     }
 
-    public boolean isTyperesult() {
-        return typeresult;
-    }
-
-    public void setTyperesult(boolean typeresult) {
-        this.typeresult = typeresult;
+    public void setTypeResult(boolean typeResult) {
+        this.typeResult = typeResult;
     }
 
     public void setId(Long id) {
@@ -291,23 +293,23 @@ public class BitServerStudy implements Serializable {
         return rustatus;
     }
 
-    public void setStatusstyle(String statusstyle) {
-        this.statusstyle = statusstyle;
+    public void setStatusStyle(String statusStyle) {
+        this.statusStyle = statusStyle;
     }
 
-    public String getStatusstyle() {
+    public String getStatusStyle() {
         switch (status){
-            case 0: this.statusstyle = "noresult";
+            case 0: this.statusStyle = "noresult";
                 break;
             case 1:
             case 3:
-                this.statusstyle = "inprocess";
+                this.statusStyle = "inprocess";
                 break;
-            case 2: this.statusstyle = "yesresult";
+            case 2: this.statusStyle = "yesresult";
                 break;
             default: break;
         }
-        return statusstyle;
+        return statusStyle;
     }
 
     public void setRustatus(String rustatus) {
@@ -323,13 +325,13 @@ public class BitServerStudy implements Serializable {
         this.anonimstudyid = anonimstudyid;
     }
 
-    public void setUserwhosent(String userwhosent) {
-        this.userwhosent = userwhosent;
-    }
-
-    public void setUserwhodiagnost(String userwhodiagnost) {
-        this.userwhodiagnost = userwhodiagnost;
-    }
+//    public void setUserwhosent(String userwhosent) {
+//        this.userwhosent = userwhosent;
+//    }
+//
+//    public void setUserwhodiagnost(String userwhodiagnost) {
+//        this.userwhodiagnost = userwhodiagnost;
+//    }
 
     public Date getDatesent() {
         return datesent;
@@ -379,12 +381,20 @@ public class BitServerStudy implements Serializable {
         StationName = stationName;
     }
 
-    public String getAetSource() {
-        return AetSource;
+    public String getAETSource() {
+        return AETSource;
     }
 
-    public void setAetSource(String aetSource) {
-        AetSource = aetSource;
+    public void setAETSource(String AETSource) {
+        this.AETSource = AETSource;
+    }
+
+    public String getPatientBirthDateStr() {
+        return patientBirthDateStr;
+    }
+
+    public void setPatientBirthDateStr(String patientBirthDateStr) {
+        this.patientBirthDateStr = patientBirthDateStr;
     }
 
     public BitServerStudy(){

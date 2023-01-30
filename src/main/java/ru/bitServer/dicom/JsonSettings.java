@@ -671,7 +671,7 @@ public class JsonSettings {
         try {
             orthancJson = parser.parse(data).getAsJsonObject();
         }catch (Exception e){
-            LogTool.getLogger().warn("Error parse json JsonSetings: "+e.getMessage());
+            LogTool.getLogger().error("Error parse json JsonSetings: "+e.getMessage());
         }
         if (orthancJson.has("Name"))                           orthancName=orthancJson.get("Name").getAsString();
         if (orthancJson.has("StorageDirectory"))               storageDirectory=orthancJson.get("StorageDirectory").getAsString();

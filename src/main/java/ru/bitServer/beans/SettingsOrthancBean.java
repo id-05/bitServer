@@ -5,8 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
@@ -26,8 +28,10 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.bitServer.beans.MainBean.*;
 
@@ -228,8 +232,6 @@ public class SettingsOrthancBean implements UserDao {
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
             loadConfig();
-            webUsers = getWebUserFromJson(users.toString());
-            dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         }catch (Exception e){
             ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             LogTool.getLogger().error("Error during init() SettingsOrthancBean "+e.getMessage());
@@ -237,7 +239,7 @@ public class SettingsOrthancBean implements UserDao {
                 ec.redirect(ec.getRequestContextPath()
                         + "/views/errorpage.xhtml"+"?"+e.getMessage());
             }catch (Exception e2){
-                LogTool.getLogger().error("Error during init() SettingsOrthancBean "+e.getMessage());
+                LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error during init() SettingsOrthancBean "+e2.getMessage());
             }
         }
     }
@@ -367,8 +369,10 @@ public class SettingsOrthancBean implements UserDao {
             pluginsFolder = json.getPluginsFolder();
             worklistEnabled = getWorkListEnabled(json.getWorkLists());
             worklistPath = getWorkListPath(json.getWorkLists());
+            webUsers = getWebUserFromJson(users.toString());
+            dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         }catch (Exception e){
-            LogTool.getLogger().error("Error during open orthanc.json! Try it! "+e.getMessage());
+            LogTool.getLogger().error("Error during open orthanc.json! Try again! "+e.getMessage());
         }
     }
 
@@ -481,23 +485,22 @@ public class SettingsOrthancBean implements UserDao {
         ArrayList<String> changeList = new ArrayList<>();
         JsonObject oldJson = getJsonFromFile();
         Set<Map.Entry<String, JsonElement>> entrySet = oldJson.entrySet();
-        for(Map.Entry<String,JsonElement> entry : entrySet){
-            if( !oldJson.get(entry.getKey()).toString().equals(newJson.get(entry.getKey()).toString())){
+        for (Map.Entry<String, JsonElement> entry : entrySet) {
+            if (!oldJson.get(entry.getKey()).toString().equals(newJson.get(entry.getKey()).toString())) {
                 changeList.add(entry.getKey());
             }
         }
-        if(changeList.size()>0) {
+        if (changeList.size() > 0) {
             saveJsonSettingtToFile(newJson);
-            saveSnapshot(new OrthancSettingSnapshot(FORMAT.format(new Date()),changeList.toString(),newJson));
-            showMessage("Сообщение","Изменения сохранены! Изменения в:  "+changeList.toString(), info);
-        }else{
+            saveSnapshot(new OrthancSettingSnapshot(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()), changeList.toString(), newJson));
+            showMessage("Сообщение", "Изменения сохранены! Изменения в:  " + changeList.toString(), info);
+        } else {
             showMessage("Внимание", "Вы не внесли изменений!", FacesMessage.SEVERITY_INFO);
         }
-
     }
 
     public void resetServer() {
-        StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
+        connection.makePostConnectionAndStringBuilder("/tools/reset","" );
         showMessage("Сообщение","Сервис перезагружен!", info);
     }
 
@@ -648,19 +651,46 @@ public class SettingsOrthancBean implements UserDao {
                 .build();
     }
 
+    public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
+        UploadedFile file = event.getFile();
+        InputStream inputStream = new ByteArrayInputStream(file.getContent());
+        String text = new BufferedReader(
+                new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining("\n"));
+        try {
+            JsonParser parser = new JsonParser();
+            JsonObject orthancJson;
+            orthancJson = parser.parse(text).getAsJsonObject();
+            if(orthancJson.has("DicomAet")&orthancJson.has("DicomModalities")){
+                saveSnapshot(new OrthancSettingSnapshot(new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date()), "Загружен вручную", orthancJson));
+                snapShots = getAllOrthancSnapshots();
+                PrimeFaces.current().ajax().update(":form:dt-snap");
+                LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" load snapshot settings");
+            }else{
+                showMessage("Внимание","Загруженный файл не соответствует формату!",FacesMessage.SEVERITY_ERROR);
+            }
+        }catch (Exception e){
+            LogTool.getLogger().error("Error parse json JsonSetings: "+e.getMessage());
+            showMessage("Внимание", "Проблема при загрузке файла настроек!",FacesMessage.SEVERITY_ERROR);
+        }
+
+    }
+
     public void applySnapshot() throws IOException {
         saveJsonSettingtToFile(selectedSnapshot.getSettingJson());
         loadConfig();
         showMessage("Внимание", "Настройки применены!",FacesMessage.SEVERITY_INFO);
-        PrimeFaces.current().ajax().update(":form:backupDiaolg");
-        PrimeFaces.current().ajax().update(":form:accordion");
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" apply snapshot settings! Snapshot date: "+selectedSnapshot.getDate());
+        PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+        PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
     }
 
     public void delSnapshot(){
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" dell snapshot settings! Snapshot date: "+selectedSnapshot.getDate());
         deleteFromBitServerTable(Long.parseLong(selectedSnapshot.getId()));
         snapShots = getAllOrthancSnapshots();
-        PrimeFaces.current().ajax().update(":form:backupDiaolg");
-        showMessage("Внимание", "Резервная копия удалена!",FacesMessage.SEVERITY_INFO);
+        PrimeFaces.current().ajax().update(":form:dt-snap:");
     }
 
     public void openNew() {

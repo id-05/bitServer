@@ -2,9 +2,6 @@ package ru.bitServer.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 public class OrthancSettingSnapshot {
 
@@ -12,7 +9,6 @@ public class OrthancSettingSnapshot {
     String date;
     String description;
     JsonObject settingJson;
-    DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm");
 
     public String getId() {
         return id;
@@ -48,7 +44,7 @@ public class OrthancSettingSnapshot {
         this.settingJson = settingJson;
     }
 
-    public OrthancSettingSnapshot(String id, String buf) throws ParseException {
+    public OrthancSettingSnapshot(String id, String buf) {
         JsonParser parser = new JsonParser();
         JsonObject bufJson = new JsonObject();
         this.id = id;

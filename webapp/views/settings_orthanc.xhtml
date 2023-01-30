@@ -34,15 +34,34 @@
                 </f:facet>
             </p:menubar>
 
-            <p:dialog id="backupDiaolg" header="Последние изменения" showEffect="fade" modal="true"
+            <p:dialog id="backupDiaolg" header="Резервные копии настроек" showEffect="fade" modal="true"
                       widgetVar="backupDiaolg" responsive="false">
 
                 <p:dataTable id="dt-snap" widgetVar="dtSnapshot" var="orthancSettingSnapshot" value="#{settingsBean.snapShots}"
                              reflow="true" styleClass="users-table"
                              style="width: 700px"
+                             size="small"
+                             scrollable="true" scrollHeight="350"
                              emptyMessage="Нет записей для отображения"
-                             selection="#{settingsBean. selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
-                             rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
+                             selection="#{settingsBean.selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
+                             rows="12" rowSelectMode="add" paginator="false">
+
+                    <f:facet name="header">
+                        <div class="flex justify-content-end">
+                            <p:fileUpload  mode="simple"
+                                           widgetVar="fUpload"
+                                           auto="true"
+                                           accept="true"
+                                           listener="#{settingsBean.handleFileUpload}"
+                                           sequential="true"
+                                           styleClass="fileupload-content"
+                                           skinSimple="true"
+                                           sizeLimit="1000000"
+                                           label="Загрузить .json файл настроек"
+                                           invalidFileMessage="Можно загрузить только файлы с расширением '.json'"
+                                           allowTypes="/(\.|\/)(json)$/"/>
+                        </div>
+                    </f:facet>
 
                     <p:column headerText="Дата создания" sortBy="#{orthancSettingSnapshot.date}" style="text-align: center">
                         <h:outputText value="#{orthancSettingSnapshot.date}"/>
@@ -65,7 +84,7 @@
                         </p:commandButton>
                         <p:tooltip for="bDownload" value="Скачать"/>
 
-                        <p:commandButton icon="pi pi-sign-in"
+                        <p:commandButton icon="pi pi-reply"
                                          action="#{settingsBean.applySnapshot}"
                                          id="bApply"
                                          update="form:growl, :form:accordion"
@@ -79,16 +98,12 @@
                         <p:commandButton icon="pi pi-trash"
                                          action="#{settingsBean.delSnapshot}"
                                          id="bDelete"
-                                         update="form:growl"
-                                         ajax="false"
                                          style="margin-right: 10px"
                                          styleClass="edit-button rounded-button ui-button-danger" process="@this">
                             <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{settingsBean.selectedSnapshot}"/>
                         </p:commandButton>
-                        <p:tooltip for="bApply" value="Применить"/>
-
+                        <p:tooltip for="bDelete" value="Удалить"/>
                     </p:column>
-
                 </p:dataTable>
 
             </p:dialog>

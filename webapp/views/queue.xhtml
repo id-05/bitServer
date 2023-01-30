@@ -212,9 +212,9 @@
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения" ajax="false"
-
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom">
+
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselect" update=":seachform:send-button"/>
                         <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
@@ -222,10 +222,17 @@
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
                         <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
 
+                        <f:facet name="header">
+                            <div class="flex justify-content-end">
+                                <p:inputText id="globalFilter" onkeyup="PF('visibleStudy').filter()" style="width:300px"
+                                             placeholder="Поиск по всем полям..." />
+                            </div>
+                        </f:facet>
+
                         <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
 
                         <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
-                            <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
+                            <h:outputText styleClass="product-badge status-#{bitServerStudy.statusStyle.toLowerCase()}"
                                           value="#{bitServerStudy.rustatus}"/>
                         </p:column>
 
@@ -247,9 +254,10 @@
                             <h:outputText value="#{bitServerStudy.patientName}"/>
                         </p:column>
 
-                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientBirthDate}" style="text-align: center"
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientBirthDateStr}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.patientBirthDateStr}"
                                   rendered="#{queueBean.colDateBirth == 'true'}">
-                            <h:outputText value="#{bitServerStudy.stringPatientBirthdate}"/>
+                            <h:outputText value="#{bitServerStudy.patientBirthDateStr}"/>
                         </p:column>
 
                         <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
@@ -277,9 +285,9 @@
                             <h:outputText value="#{bitServerStudy.stationName}"/>
                         </p:column>
 
-                        <p:column headerText="Источник" sortBy="#{bitServerStudy.aetSource}" style="text-align: center"
+                        <p:column headerText="Источник" sortBy="#{bitServerStudy.AETSource}" style="text-align: center"
                                   rendered="#{queueBean.colSource == 'true'}">
-                            <h:outputText value="#{bitServerStudy.aetSource}"/>
+                            <h:outputText value="#{bitServerStudy.AETSource}"/>
                         </p:column>
 
                         <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"

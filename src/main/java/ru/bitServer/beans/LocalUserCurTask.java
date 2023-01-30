@@ -92,7 +92,7 @@ public class LocalUserCurTask implements UserDao {
 
     public void addResult(BitServerStudy selectedVisibleStudy, UploadedFile resultFile) throws IOException {
         selectedVisibleStudy.setStatus(2);
-        selectedVisibleStudy.setUserwhodiagnost(currentUserId);
+        //selectedVisibleStudy.setUserwhodiagnost(currentUserId);
         selectedVisibleStudy.setDateresult(new Date());
         currentUser.setHasBlockStudy(false);
         currentUser.setBlockStudy("");
@@ -108,10 +108,10 @@ public class LocalUserCurTask implements UserDao {
             }catch (Exception e){
                 LogTool.getLogger().warn("Error save file addResult LocalUserCurTask "+e.getMessage());
             }
-            selectedVisibleStudy.setTyperesult(true);
+            selectedVisibleStudy.setTypeResult(true);
             selectedVisibleStudy.setResult(folder.toString()+"/" + selectedVisibleStudy.getSid() + "." + extension);
         }else{
-            selectedVisibleStudy.setTyperesult(false);
+            selectedVisibleStudy.setTypeResult(false);
         }
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getAnonimstudyid());
         //updateStudy(selectedVisibleStudy);

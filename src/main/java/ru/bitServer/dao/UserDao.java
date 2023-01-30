@@ -1,6 +1,5 @@
 package ru.bitServer.dao;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import ru.bitServer.dicom.OrthancSerie;
@@ -8,8 +7,6 @@ import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.OrthancSettingSnapshot;
-
-import javax.faces.application.FacesMessage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,12 +17,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.stream.Stream;
+
 import static ru.bitServer.beans.MainBean.*;
 
 public interface UserDao {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm");
+    SimpleDateFormat bufFORMAT = new SimpleDateFormat("yyyyMMdd HH:mm");
+    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     default Connection getConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
@@ -401,6 +401,11 @@ public interface UserDao {
     }
 
     default void saveSnapshot(OrthancSettingSnapshot snapshot) {
+        ArrayList<OrthancSettingSnapshot> snapshots = getAllOrthancSnapshots();
+        if(snapshots.size()>9){
+            deleteFromBitServerTable(Long.parseLong(snapshots.get(1).getId()));
+        }
+
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("date", snapshot.getDate());
         jsonOb.addProperty("description", snapshot.getDescription());
@@ -446,9 +451,7 @@ public interface UserDao {
                 OrthancSettingSnapshot bufTask = new OrthancSettingSnapshot(rs.getString(1),rs.getString(2));
                 resultList.add(bufTask);
             }
-            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllSnapshot resultList.size = "+resultList.size());
             conn.close();
-            LogTool.getLogger().info(this.getClass().getSimpleName()+":getAllSnapshot conn.close()");
         } catch (Exception  e) {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": (procedure getAllSnapshot) "+ e.getMessage());
         }
@@ -503,13 +506,14 @@ public interface UserDao {
 
     default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String source) {
         List<BitServerStudy> resultList = new ArrayList<>();
+        Calendar c = Calendar.getInstance();
         switch (dateSeachType){
             case "today":
                 firstdate = new Date();
-                Calendar c = Calendar.getInstance();
-                c.setTime(firstdate);
-                c.add(Calendar.DATE, 1);
-                seconddate = c.getTime();
+                seconddate = firstdate;
+//                c.setTime(firstdate);
+//                c.add(Calendar.DATE, 1);
+//                seconddate = c.getTime();
                 break;
             case "week":
                 seconddate = new Date();
@@ -538,6 +542,7 @@ public interface UserDao {
                 c.setTime(seconddate);
                 c.add(Calendar.DATE, -1);
                 firstdate = c.getTime();
+                seconddate = firstdate;
                 break;
             case "targetdate":
                 c = Calendar.getInstance();
@@ -579,7 +584,6 @@ public interface UserDao {
             }else{
                 resultSQL = staticSQL + " WHERE tag5.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
             }
-
             if(!source.equals("all")){
                 resultSQL = resultSQL + " AND tag12.value = '"+source+"'";
             }

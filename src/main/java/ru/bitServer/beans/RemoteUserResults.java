@@ -70,7 +70,7 @@ public class RemoteUserResults implements UserDao {
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
-        if(study.isTyperesult()){
+        if(study.isTypeResult()){
             Path path = Paths.get(study.getResult());
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());

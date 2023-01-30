@@ -1,6 +1,5 @@
 package ru.bitServer.beans;
 
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.shaded.commons.io.FilenameUtils;
@@ -20,8 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "luresultsBean")
 @ViewScoped
@@ -74,7 +71,7 @@ public class LocalUserResults implements UserDao, DataAction {
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
-        if(study.isTyperesult()){
+        if(study.isTypeResult()){
             Path path = Paths.get(study.getResult());
             System.out.println(path.toString());
             String extension = FilenameUtils.getExtension(study.getResult());

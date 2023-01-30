@@ -591,7 +591,7 @@ public class QueueBean implements UserDao, DataAction {
                 bufStudy.setStatus(1);
                 bufStudy.setDatesent(new Date());
                 bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
-                bufStudy.setUserwhosent(currentUser.getUid().toString());
+                //bufStudy.setUserwhosent(currentUser.getUid().toString());
                 //updateStudy(bufStudy);
                 i++;
             }else{
@@ -638,7 +638,7 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public StreamedContent getResult(BitServerStudy study) throws IOException {
-        if(study.isTyperesult()){
+        if(study.isTypeResult()){
             Path path = Paths.get(study.getResult());
             String extension = FilenameUtils.getExtension(study.getResult());
             InputStream inputStream = new FileInputStream(path.toString());
@@ -698,7 +698,7 @@ public class QueueBean implements UserDao, DataAction {
 
     public void getStudyToDiag() throws IOException {
         selectedVisibleStudy.setStatus(3);
-        selectedVisibleStudy.setDatablock(new Date());
+        //selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
         //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
