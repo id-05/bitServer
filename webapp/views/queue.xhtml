@@ -213,7 +213,7 @@
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения" ajax="false"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
-                                 rows="25" rowSelectMode="add" paginatorPosition="bottom">
+                                 rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}">
 
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselect" update=":seachform:send-button"/>
@@ -225,7 +225,10 @@
                         <f:facet name="header">
                             <div class="flex justify-content-end">
                                 <p:inputText id="globalFilter" onkeyup="PF('visibleStudy').filter()" style="width:300px"
-                                             placeholder="Поиск по всем полям..." />
+                                             placeholder="Поиск по всем полям..." filterFunction="#{queueBean.filterByCustom}"
+                                             filterMatchMode="contains"/>
+                                <p:commandButton icon="pi pi-filter" update="@form" styleClass="ml-2" style="margin-left: 10px"
+                                                 action="#{queueBean.toggleGlobalFilter()}"/>
                             </div>
                         </f:facet>
 

@@ -276,6 +276,7 @@ public class SettingsOrthancBean implements UserDao {
                     "f:close()";
             connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
             stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
+
         }else{
             try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
                 int c;
@@ -286,11 +287,13 @@ public class SettingsOrthancBean implements UserDao {
                 LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
             }
         }
+
         JsonParser parser = new JsonParser();
         JsonObject bufJson = new JsonObject();
         try {
             bufJson = parser.parse(stringBuilder.toString()).getAsJsonObject();
         }catch (Exception e){
+            e.getStackTrace();
             LogTool.getLogger().warn("Error parse json snapshot: "+stringBuilder.toString()+" "+e.getMessage());
         }
         return bufJson;
@@ -486,8 +489,10 @@ public class SettingsOrthancBean implements UserDao {
         JsonObject oldJson = getJsonFromFile();
         Set<Map.Entry<String, JsonElement>> entrySet = oldJson.entrySet();
         for (Map.Entry<String, JsonElement> entry : entrySet) {
-            if (!oldJson.get(entry.getKey()).toString().equals(newJson.get(entry.getKey()).toString())) {
-                changeList.add(entry.getKey());
+            if(oldJson.get(entry.getKey())!=null & newJson.get(entry.getKey())!=null){
+                if (!oldJson.get(entry.getKey()).toString().equals(newJson.get(entry.getKey()).toString())) {
+                    changeList.add(entry.getKey());
+                }
             }
         }
         if (changeList.size() > 0) {
@@ -603,10 +608,12 @@ public class SettingsOrthancBean implements UserDao {
         {
             if(Integer.parseInt(selectedDicomModality.getDicomPort())<65535) {
                 boolean verifiUnical = true;
-                for (DicomModaliti bufDicomModaliti : dicomModalities) {
-                    if (bufDicomModaliti.getDicomName().equals(selectedDicomModality.getDicomName())) {
-                        verifiUnical = false;
-                        break;
+                if(dicomModalities.size()>0) {
+                    for (DicomModaliti bufDicomModaliti : dicomModalities) {
+                        if (bufDicomModaliti.getDicomName().equals(selectedDicomModality.getDicomName())) {
+                            verifiUnical = false;
+                            break;
+                        }
                     }
                 }
                 if (verifiUnical) {

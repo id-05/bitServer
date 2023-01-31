@@ -85,6 +85,15 @@ public class QueueBean implements UserDao, DataAction {
     double timeDrawing;
     long timeStart;
     String showHelp;
+    private boolean globalFilterOnly;
+
+    public boolean isGlobalFilterOnly() {
+        return globalFilterOnly;
+    }
+
+    public void setGlobalFilterOnly(boolean globalFilterOnly) {
+        this.globalFilterOnly = globalFilterOnly;
+    }
 
     public String getShowHelp() {
         return showHelp;
@@ -381,6 +390,7 @@ public class QueueBean implements UserDao, DataAction {
 //        for(BitServerModality bufModality:getAllBitServerModality()){
 //            modalityName.add(bufModality.getName());
 //        }
+        globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
         selectedModaliti = new DicomModaliti("", "", "", "", "");
@@ -430,6 +440,10 @@ public class QueueBean implements UserDao, DataAction {
             }
         }
         dataoutput();
+    }
+
+    public void toggleGlobalFilter() {
+        setGlobalFilterOnly(!isGlobalFilterOnly());
     }
 
     public Boolean firstDateSelect() {
