@@ -2,13 +2,11 @@
   <artifact type="war" name="bitServer">
     <output-path>$PROJECT_DIR$/out/artifacts/bitServer</output-path>
     <root id="archive" name="bitServer.war">
+      <element id="artifact" artifact-name="bitServer:war exploded" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.0" />
           <element id="library" level="project" name="Java EE 6-Java EE 6 (2)" />
-          <element id="library" level="project" name="Maven: org.primefaces.extensions:primefaces-extensions:12.0.3" />
-        </element>
-        <element id="directory" name="classes">
-          <element id="jpa-descriptors" facet="bitServer/jpa/JPA" />
         </element>
       </element>
     </root>

@@ -221,14 +221,17 @@
                         <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
                         <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
+                        <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
 
                         <f:facet name="header">
                             <div class="flex justify-content-end">
                                 <p:inputText id="globalFilter" onkeyup="PF('visibleStudy').filter()" style="width:300px"
-                                             placeholder="Поиск по всем полям..." filterFunction="#{queueBean.filterByCustom}"
+                                             placeholder="Поиск по всем полям..."
                                              filterMatchMode="contains"/>
                                 <p:commandButton icon="pi pi-filter" update="@form" styleClass="ml-2" style="margin-left: 10px"
-                                                 action="#{queueBean.toggleGlobalFilter()}"/>
+                                                 action="#{queueBean.toggleGlobalFilter()}" rendered="#{queueBean.globalFilterOnly}"/>
+                                <p:commandButton icon="pi pi-filter-fill" update="@form" styleClass="ml-2" style="margin-left: 10px"
+                                                 action="#{queueBean.toggleGlobalFilter()}" rendered="#{!queueBean.globalFilterOnly}"/>
                             </div>
                         </f:facet>
 
@@ -251,6 +254,8 @@
                         <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientName}"
                                   filterBy="#{bitServerStudy.patientName}"
                                   filterFunction="#{queueBean.filterByCustom}"
+                                  globalFilterFunction="#{queueBean.filterByCustom}"
+
                                   style="text-align: center"
                                   filterMatchMode="contains">
 
@@ -269,31 +274,37 @@
                         </p:column>
 
                         <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.sdescription}"
                                   rendered="#{queueBean.colDescription == 'true'}">
                             <h:outputText value="#{bitServerStudy.sdescription}"/>
                         </p:column>
 
                         <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.modality}"
                                   rendered="#{queueBean.colModality == 'true'}">
                             <h:outputText value="#{bitServerStudy.modality}"/>
                         </p:column>
 
                         <p:column headerText="Учреждение" sortBy="#{bitServerStudy.institutionName}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.institutionName}"
                                   rendered="#{queueBean.colInstitution == 'true'}">
                             <h:outputText value="#{bitServerStudy.institutionName}"/>
                         </p:column>
 
                         <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.stationName}"
                                   rendered="#{queueBean.colStation == 'true'}">
                             <h:outputText value="#{bitServerStudy.stationName}"/>
                         </p:column>
 
                         <p:column headerText="Источник" sortBy="#{bitServerStudy.AETSource}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.AETSource}"
                                   rendered="#{queueBean.colSource == 'true'}">
                             <h:outputText value="#{bitServerStudy.AETSource}"/>
                         </p:column>
 
                         <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.usergroupwhosees}"
                                   rendered="#{queueBean.colWhereSend == 'true'}">
                             <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
                         </p:column>
@@ -484,7 +495,7 @@
                     </p:dialog>
 
                     <p:dialog widgetVar="confirmtodelstudy" showEffect="fade" width="300"
-                              message="Удилать исследвоание?" header="Удилать исследвоание?" severity="warn">
+                              message="Удилать исследвоание?" header="Удалить исследование?" severity="warn">
                         <p:commandButton value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
                                          oncomplete="PF('confirmtodelstudy').hide()"/>
                         <span style="padding: 20px;">&nbsp;</span>

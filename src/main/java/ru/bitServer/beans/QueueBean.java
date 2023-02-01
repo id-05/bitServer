@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -15,7 +16,6 @@ import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
-import ru.bitServer.dicom.OrthancStudy;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -386,10 +386,6 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-//        LogTool.getLogger().info(this.getClass().getSimpleName()+" "+"queueBean new");
-//        for(BitServerModality bufModality:getAllBitServerModality()){
-//            modalityName.add(bufModality.getName());
-//        }
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
@@ -503,38 +499,31 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
     }
 
+    public void onRowSelect(SelectEvent event) {
+        selectedVisibleStudy = (BitServerStudy) event.getObject();
+    }
+
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
         boolean result;
         if( isValid(value.toString().substring(0,1).toUpperCase()) == isValid(filter.toString().substring(0,1).toUpperCase())){
             result = value.toString().toUpperCase().contains(filter.toString().toUpperCase());
         }else{
+            Transliterator toLatinTrans;
             if(isValid(value.toString().substring(0,1).toUpperCase())){
-                Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
-                result = true;
-                for (int i = 0; i < filter.toString().length(); i++){
-                    if(filter.toString().length()<=value.toString().length()) {
-                        char c = filter.toString().toUpperCase().charAt(i);
-                        String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
-                        String bufValue = String.valueOf(value.toString().toUpperCase().charAt(i));
-                        if(bufFilter.equals("%")){
-                            continue;
-                        }
-                        result = result & bufFilter.equals(bufValue);
-                    }
-                }
+                toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
             }else{
-                Transliterator toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
-                result = true;
-                for (int i = 0; i < filter.toString().length(); i++){
-                    if(filter.toString().length()<=value.toString().length()) {
-                        char c = filter.toString().toUpperCase().charAt(i);
-                        String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
-                        String bufValue = String.valueOf(value.toString().toUpperCase().charAt(i));
-                        if(bufFilter.equals("%")){
-                            continue;
-                        }
-                        result = result & bufFilter.equals(bufValue);
+                toLatinTrans = Transliterator.getInstance(LATIN_TO_CYRILLIC);
+            }
+            result = true;
+            for (int i = 0; i < filter.toString().length(); i++){
+                if(filter.toString().length()<=value.toString().length()) {
+                    char c = filter.toString().toUpperCase().charAt(i);
+                    String bufFilter = toLatinTrans.transliterate(String.valueOf(c));
+                    String bufValue = String.valueOf(value.toString().toUpperCase().charAt(i));
+                    if(bufFilter.equals("%")){
+                        continue;
                     }
+                    result = result & bufFilter.equals(bufValue);
                 }
             }
         }
@@ -553,38 +542,12 @@ public class QueueBean implements UserDao, DataAction {
 
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
         UploadedFile file = event.getFile();
-        String newID = connection.sendDicom("/instances", file.getContent());
-        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
-        JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
-        System.out.println(bufJson.toString());
-        OrthancStudy bufStudy = connection.parseStudy(bufJson);
-        //studiesFromTableBitServer = getAllBitServerStudyOnlyId();
-        boolean existInTable = false;
-//        for (BitServerStudy bBSS : studiesFromTableBitServer) {
-//            if (bufStudy.getOrthancId().equals(bBSS.getSid())) {
-//                existInTable = true;
-//                break;
-//            }
-//        }
-        if (!existInTable) {
-//            BitServerStudy buf = new BitServerStudy(bufStudy.getOrthancId(), bufStudy.getShortId(), bufStudy.getStudyDescription(),
-//                    bufStudy.getInstitutionName(), bufStudy.getDate(),
-//                    bufStudy.getModality(), new Date(), bufStudy.getPatientName(), bufStudy.getPatientBirthDate(), bufStudy.getPatientSex(), "", "", 0);
-//            addStudyJDBC(buf);
-        }
+        connection.sendDicom("/instances", file.getContent());
+        //StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
+        //JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
-        //readStudyFromDB();
     }
-
-//    public void readStudyFromDB() throws SQLException {
-//        //PrimeFaces.current().ajax().update(":seachform:updateBut");
-//        int i = syncDataBase(connection);
-//        //showMessage("Сообщение", "Синхронизация завершена! Всего добавлено: " + i, info);
-//        PrimeFaces.current().ajax().update(":seachform:searchgrowl");
-//        //PrimeFaces.current().ajax().update(":seachform:dt-studys");
-//        dataoutput();
-//    }
 
     public void sendToAgent(){
         JsonObject query = new JsonObject();
@@ -676,7 +639,7 @@ public class QueueBean implements UserDao, DataAction {
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
-        byte[] buf = IOUtils.toByteArray(inputStream);
+        //byte[] buf = IOUtils.toByteArray(inputStream);
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"dcm")
                 .contentType("application/dcm")
