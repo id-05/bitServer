@@ -470,7 +470,6 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
         PrimeFaces.current().ajax().update(":seachform:ajs");
         PrimeFaces.current().executeScript("PF('ajs').show()");
-        //StringBuilder bufStr = new StringBuilder();
         resetViewTable();
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();

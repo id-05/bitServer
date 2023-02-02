@@ -27,7 +27,7 @@
         <h:form id="tageditor">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
-                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward" actionListener="#{tagEditorBean.onBack}"/>
                 <p:divider layout="vertical"/>
                 <p:menuitem value="TAG Редактор" disabled="true"/>
 
@@ -63,7 +63,14 @@
                                     <p:fileDownload value="#{tagEditorBean.saveChangeCurrent()}" />
                                 </p:commandButton>
 
-                                <p:commandButton value="Сохранить все" styleClass="ui-button-success" update="tageditor:growl"
+                                <p:commandButton value="Очистить форму" styleClass="ui-button-success" update="tageditor:growl"
+                                                 id="clear"
+                                                 ajax="false"
+
+                                                 style="margin-right: .5rem"
+                                                 actionListener="#{tagEditorBean.onBack()}"/>
+
+                                <p:commandButton rendered="false" value="Сохранить все" styleClass="ui-button-success" update="tageditor:growl"
                                                  style="margin-right: .5rem"/>
 
                                 <p:dialog id="addDialog" header="Выбрать DICOM-данные" showEffect="fade" modal="true"
@@ -78,8 +85,7 @@
                                                    skinSimple="true"
                                                    sizeLimit="20000000"
                                                    label="Выбрать"
-                                                   uploadLabel="Зазрузить"
-                                                   cancelLabel="Отмена"
+                                                   auto="true"
                                                    multiple="true"
                                                    invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
                                                    allowTypes="/(\.|\/)(dcm|DCM)$/"
@@ -101,8 +107,8 @@
                                                          value="#{tagEditorBean.fileList}"
                                                          styleClass="users-table"
                                                          emptyMessage="Нет записей для отображения">
-
                                                 <p:ajax event="rowSelect" listener="#{tagEditorBean.onFileSelect}"/>
+
                                                 <p:column headerText="Files" style="text-align: center">
                                                     <h:outputText value="#{uploadDicomFile.fileName}" />
                                                 </p:column>
@@ -146,7 +152,7 @@
                                         </p:outputPanel>
 
                                         <p:outputPanel>
-                                            <p:graphicImage value="#{tagEditorBean.graphicText}" id="img1"  cache="false" />
+                                            <p:graphicImage value="#{tagEditorBean.imageOut}" id="img1"  cache="false" />
                                         </p:outputPanel>
 
                                     </p:panelGrid>

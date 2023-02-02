@@ -44,7 +44,7 @@ public class OrthancRestApi {
             }
             conn.disconnect();
         } catch (Exception e) {
-            LogTool.getLogger().warn("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
+            LogTool.getLogger().error("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
             stringBuilder = new StringBuilder();
             stringBuilder.append("error");
         }
@@ -81,7 +81,7 @@ public class OrthancRestApi {
             conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            LogTool.getLogger().warn("Error makePostConnectionAndStringBuilder "+e.getMessage());
+            LogTool.getLogger().error("Error makePostConnectionAndStringBuilder "+e.getMessage());
             return null;
         }
         return sb;
@@ -100,7 +100,7 @@ public class OrthancRestApi {
             //conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
-            LogTool.getLogger().warn("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
+            LogTool.getLogger().error("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());
             return null;
         }
         return sb;
@@ -170,14 +170,14 @@ public class OrthancRestApi {
             try {
                 orthancJson = parser.parse(sb.toString()).getAsJsonObject();
             }catch (Exception e){
-                LogTool.getLogger().warn("Error parse json JsonSetings: "+e.getMessage());
+                LogTool.getLogger().error("Error parse json JsonSetings: "+e.getMessage());
             }
 
             if (orthancJson.has("ParentStudy")) resultID = orthancJson.get("ParentStudy").getAsString();
             os.flush();
 
         } catch (Exception e) {
-            LogTool.getLogger().warn("Error sendDicom RestApi "+e.getMessage());
+            LogTool.getLogger().error("Error sendDicom RestApi "+e.getMessage());
         }
         return resultID;
     }
@@ -235,7 +235,7 @@ public class OrthancRestApi {
         try {
             studyDateObject = FORMAT.parse(studyDate);
         } catch (Exception e) {
-            //LogTool.getLogger().warn("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
+            //LogTool.getLogger().error("Error transfer getStudiesFromJson() QueueBean "+e.getMessage());
         }
 
         String studyDescription = "N/A";

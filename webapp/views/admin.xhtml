@@ -32,7 +32,7 @@
 
                     <p:submenu label="Инструменты" icon="pi pi-wrench">
                         <p:menuitem style="margin-right: 5px" value="Редактор WorkList" outcome="worklist_manager" icon="pi pi-code"/>
-                        <p:menuitem style="margin-right: 5px" value="TAG Редактор" rendered="true" outcome="tag_editor" icon="pi pi-tags"/>
+                        <p:menuitem style="margin-right: 5px" value="TAG Редактор" rendered="true" outcome="tag_editor" ajax="false" icon="pi pi-tags" process="@this"/>
                         <p:menuitem style="margin-right: 5px" value="DICOM-route" outcome="settings_dicomroute" icon="pi pi-share-alt"/>
                         <p:menuitem style="margin-right: 5px" value="Расписание" outcome="timetable" icon="pi pi-calendar-times"/>
                     </p:submenu>

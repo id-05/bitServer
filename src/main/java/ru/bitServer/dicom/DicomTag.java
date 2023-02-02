@@ -31,9 +31,9 @@ public class DicomTag {
     }
 
     public DicomTag(String tagName, String tagValue) {
-        hasChange = false;
-        TagName = tagName;
-        TagValue = tagValue;
+        this.hasChange = false;
+        this.TagName = tagName;
+        this.TagValue = tagValue;
     }
 
     public DicomTag(){

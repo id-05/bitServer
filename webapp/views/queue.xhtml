@@ -397,6 +397,9 @@
 
                         <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{queueBean.modalities}"
                                      reflow="true" styleClass="users-table"
+                                     style="width: 700px"
+                                     size="small"
+                                     scrollable="true" scrollHeight="650"
                                      emptyMessage="Нет записей для отображения"
                                      selection="#{queueBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
                                      rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
@@ -494,9 +497,9 @@
 
                     </p:dialog>
 
-                    <p:dialog widgetVar="confirmtodelstudy" showEffect="fade" width="300"
-                              message="Удилать исследвоание?" header="Удалить исследование?" severity="warn">
-                        <p:commandButton value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
+                    <p:dialog widgetVar="confirmtodelstudy" showEffect="fade" width="350"
+                              message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
+                        <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
                                          oncomplete="PF('confirmtodelstudy').hide()"/>
                         <span style="padding: 20px;">&nbsp;</span>
                         <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"

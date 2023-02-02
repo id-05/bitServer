@@ -7,6 +7,8 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.0" />
           <element id="library" level="project" name="Java EE 6-Java EE 6 (2)" />
+          <element id="library" level="project" name="Maven: com.sun.media:jai_imageio:1.2-pre-dr-b04" />
+          <element id="library" level="project" name="Maven: com.sun.media:clibwrapper_jiio:1.2-pre-dr-b04" />
         </element>
       </element>
     </root>
