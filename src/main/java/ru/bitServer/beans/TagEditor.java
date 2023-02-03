@@ -2,7 +2,6 @@ package ru.bitServer.beans;
 
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
-//import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
@@ -19,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
@@ -141,7 +141,6 @@ public class TagEditor implements UserDao {
 
     public void onTagSelect(){
         selectTag.setHasChange(true);
-        //PrimeFaces.current().ajax().update(":tageditor:tabview1:img1");
     }
 
 //    public void onCellEdit(CellEditEvent event) {
@@ -200,31 +199,29 @@ public class TagEditor implements UserDao {
 
     public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException {
         Raster raster = null ;
-
         try {
-
             ImageIO.scanForPlugins();
             ByteArrayInputStream bais = new ByteArrayInputStream(dicomf);
-            Iterator iter = ImageIO.getImageReadersByFormatName("RLE");
+            System.out.println("0");
+            Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
+            System.out.println("1");
             String[] buf = ImageIO.getReaderFormatNames();
             for(String bufStr:buf){
                 System.out.println(bufStr);
             }
-           // Iterator iter;
-           // if(TagList.g)
-           // Iterator iter = ImageIO.getImageReadersByFormatName("JPEG-LS");
-
-//            if (tsuid.equals(TransferSyntax.JPEGLossless))
-//                readerWanted = "jpeg-lossless";
-//            reader = (ImageReader) (ImageIO.getImageReadersByFormatName(readerWanted).next());
-
             ImageReader reader = (ImageReader) iter.next();
+            System.out.println("2");
             DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+            //ImageReadParam param =  reader.getDefaultReadParam();
+            System.out.println("3");
             ImageInputStream iis = ImageIO.createImageInputStream(bais);
+            System.out.println("4");
             reader.setInput(iis, false);
+            System.out.println("5");
             raster = reader.readRaster(0, param);
+            System.out.println("6");
             if (raster == null)
-                System.out.println("Error: couldn't read Dicom image!");
+                System.out.println("Error:  raster == null");
             iis.close();
         }
         catch(Exception e) {

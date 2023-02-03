@@ -4,7 +4,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
-import org.apache.commons.io.IOUtils;
+//import com.sun.xml.internal.bind.v2.ClassFactory;
+import com.sun.xml.internal.bind.v2.ClassFactory;
+import de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl.ElToritoConfig;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ConfigException;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.CreateISO;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Config;
+import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISOImageFileHandler;
+import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietConfig;
+import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.RockRidgeConfig;
+import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
@@ -723,5 +734,62 @@ public class QueueBean implements UserDao, DataAction {
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+"Возникла ошибка при отправке, удаленный сервер не отвечает!");
         }
+    }
+
+    public void createIsoToDVD() throws Exception {
+        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+        String url="/tools/create-archive";
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        File outfile = new File("D:\\out.iso");
+        File buffile = new File("D:\\file.DCM");
+        copyInputStreamToFile(inputStream, buffile);
+
+        //File outfile = new File(String.valueOf(inputStream));
+        ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
+        ISO9660RootDirectory root = new ISO9660RootDirectory();
+
+        ISO9660File file1 = new ISO9660File("D:\\raid.txt");
+        root.addFile(file1);
+        ISO9660File file2 = new ISO9660File(buffile);
+        root.addFile(file2);
+
+        ISO9660Config iso9660Config = new ISO9660Config();
+        iso9660Config.allowASCII(false);
+        iso9660Config.setInterchangeLevel(1);
+        iso9660Config.restrictDirDepthTo8(true);
+        iso9660Config.setPublisher("Name Nickname");
+        iso9660Config.setVolumeID("ISO Test Jiic");
+        iso9660Config.setDataPreparer("Name Nickname");
+        iso9660Config.forceDotDelimiter(true);
+        RockRidgeConfig rrConfig = null;
+        ElToritoConfig elToritoConfig = null;
+        JolietConfig jolietConfig;
+
+        jolietConfig = new JolietConfig();
+        jolietConfig.setPublisher("Test 2");
+        jolietConfig.setVolumeID("Joliet Test");
+        jolietConfig.setDataPreparer("Jens Hatlak");
+        jolietConfig.forceDotDelimiter(true);
+        ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
+        CreateISO iso = new CreateISO(streamHandler, root);
+        iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
+        System.out.println("FINISH");
+    }
+
+    private static void copyInputStreamToFile(InputStream inputStream, File file)
+            throws IOException {
+        int DEFAULT_BUFFER_SIZE = 8192;
+        // append = false
+        try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
+            int read;
+            byte[] bytes = new byte[DEFAULT_BUFFER_SIZE];
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+        }
+
     }
 }

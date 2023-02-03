@@ -22,6 +22,8 @@
 
     <dependencies>
 
+
+
         <dependency>
             <groupId>us.fatehi</groupId>
             <artifactId>schemacrawler</artifactId>
@@ -162,23 +164,67 @@
             <version>3.3.7</version>
         </dependency>
 
+
+
+
+
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio-rle</artifactId>
             <version>5.23.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.media</groupId>
-            <artifactId>jai_imageio</artifactId>
-            <version>1.2-pre-dr-b04</version>
-        </dependency>
+
+
 
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>primeflex</artifactId>
             <version>3.3.0</version>
         </dependency>
+
+
+
+        <dependency>
+            <groupId>com.github.stephenc.java-iso-tools</groupId>
+            <artifactId>jiic</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>tlbimp</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>com4j</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>com4j-dist</artifactId>
+            <version>2.1</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>maven-com4j-plugin</artifactId>
+            <version>2.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>com4j-parent</artifactId>
+            <version>2.1</version>
+            <type>pom</type>
+        </dependency>
+
+-->
 
     </dependencies>
     <!--Primefaces repository. Need to download themes-->
@@ -211,12 +257,12 @@
             <name>java.net Repository</name>
             <url>http://download.java.net/maven/2</url>
         </repository>
+        <!--
+                <repository>
+                    <id>weasis</id>
+                    <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url>
+                </repository>
+        -->
+            </repositories>
 
-        <repository>
-            <id>weasis</id>
-            <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url>
-        </repository>
-
-    </repositories>
-
-</project>
+        </project>
