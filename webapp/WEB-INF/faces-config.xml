@@ -134,6 +134,11 @@
         </navigation-case>
 
         <navigation-case>
+            <from-outcome>dicom_creator</from-outcome>
+            <to-view-id>/views/tool_dicom_create.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
             <from-outcome>bitviewer</from-outcome>
             <to-view-id>/views/bitviewer.xhtml</to-view-id>
         </navigation-case>
