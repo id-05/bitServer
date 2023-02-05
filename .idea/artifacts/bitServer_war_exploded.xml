@@ -67,6 +67,7 @@
           <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.7.0" />
           <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:sabre:1.2.2" />
           <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:jiic:1.2.2" />
+          <element id="library" level="project" name="com4j-2.1" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="bitServer/web/webapp" />
