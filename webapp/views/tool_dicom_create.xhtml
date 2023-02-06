@@ -27,7 +27,7 @@
         <h:form id="dicomcreator">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
-                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward" actionListener="#{tagEditorBean.onBack}"/>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward" actionListener="#{dicomcreatorBean.onBack}"/>
                 <p:divider layout="vertical"/>
                 <p:menuitem value="DICOM-Creator" disabled="true"/>
 
@@ -42,29 +42,38 @@
                 </f:facet>
             </p:menubar>
 
-            <p:tabView id="tabview1">
+                            <p:fileUpload mode="advanced"
+                          multiple="true"
+                          auto="true"
+                          chooseIcon="pi-folder-open"
+                          sizeLimit="20000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                          invalidSizeMessage="Maximum file size allowed is 20 MB"
+                          invalidFileMessage="only gif | jpg | jpeg | png is allowed"
+                          listener="#{dicomcreatorBean.handleFileUpload}"/>
 
-                <p:tab title="Загрузить внешний файл">
                     <p:outputPanel>
                         <p:toolbar>
                             <p:toolbarGroup>
 
-                                <p:fileUpload listener="#{dicomcreatorBean.handleFileUpload}" mode="simple" skinSimple="true"
-                                              multiple="false"
-                                              auto="true"
-                                              label="Выбрать"
-                                              process="@this"
-                                              sizeLimit="102400" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
-                                              invalidSizeMessage="Maximum file size allowed is 100 KB"
-                                              invalidFileMessage="only gif | jpg | jpeg | png is allowed"
-                                              update="img1"/>
+                                <p:fileUpload  mode="simple"
+                                               chooseIcon="pi pi-folder-open"
+                                               skinSimple="true"
+                                               auto="true"
+                                               label="Выбрать"
+                                               multiple="false"
+                                               ajax="false"
+                                               value="#{dicomcreatorBean.file}"
+                                               sizeLimit="20000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                               invalidSizeMessage="Maximum file size allowed is 20 MB"
+                                               invalidFileMessage="only gif | jpg | jpeg | png is allowed"
+                                               listener="#{dicomcreatorBean.handleFileUpload}">
+                                </p:fileUpload>
 
                                 <p:commandButton value="Сохранить активный" styleClass="ui-button-success" update="tageditor:growl"
                                                  id="saveselected"
                                                  ajax="false"
                                                  disabled="#{!tagEditorBean.selectedExist}"
                                                  style="margin-right: .5rem">
-                                    <p:fileDownload value="#{tagEditorBean.saveChangeCurrent()}" />
                                 </p:commandButton>
 
                                 <p:commandButton value="Очистить форму" styleClass="ui-button-success" update="tageditor:growl"
@@ -72,70 +81,33 @@
                                                  ajax="false"
 
                                                  style="margin-right: .5rem"
-                                                 actionListener="#{tagEditorBean.onBack()}"/>
+                                                 actionListener="#{dicomcreatorBean.onUpdate}"/>
 
                                 <p:commandButton rendered="false" value="Сохранить все" styleClass="ui-button-success" update="tageditor:growl"
                                                  style="margin-right: .5rem"/>
-
-
-                                <div class="card">
-                                    <p:panelGrid id="manage-user-content" columns="3" layout="grid" styleClass="customPanelGrid"
-                                                 columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4">
-
-                                        <p:outputPanel>
-
-                                        </p:outputPanel>
-
-                                        <p:outputPanel>
-                                            <p:dataTable id="dt-tags" widgetVar="dtTag" var="dicomTag"
-                                                         scrollable="true" scrollHeight="450"
-                                                         size="small"
-                                                         editable="true"
-                                                         stripedRows="true"
-                                                         editMode="cell"
-                                                         editInitEvent="click"
-                                                         value="#{tagEditorBean.tagList}"
-                                                         styleClass="users-table"
-                                                         emptyMessage="Нет записей для отображения">
-
-                                                <p:ajax event="rowSelect" listener="#{tagEditorBean.onTagSelect}"/>
-                                                <p:ajax event="cellEdit" listener="#{tagEditorBean.onCellEdit}"/>
-
-                                                <p:column headerText="TagName" style="text-align: center">
-                                                    <h:outputText value="#{dicomTag.tagName}" />
-                                                </p:column>
-
-                                                <p:column headerText="TagValue" style="text-align: center">
-
-                                                    <p:cellEditor>
-                                                        <f:facet name="output">
-                                                            <h:outputText value="#{dicomTag.tagValue}"/>
-                                                        </f:facet>
-                                                        <f:facet name="input">
-                                                            <p:inputText value="#{dicomTag.tagValue}" />
-                                                        </f:facet>
-                                                    </p:cellEditor>
-
-                                                </p:column>
-
-                                            </p:dataTable>
-                                        </p:outputPanel>
-
-                                        <p:outputPanel>
-                                            <p:graphicImage value="#{dicomcreatorBean.image}" id="img1"  cache="false" />
-                                        </p:outputPanel>
-
-                                    </p:panelGrid>
-                                </div>
-
                             </p:toolbarGroup>
                         </p:toolbar>
+                        <div class="card">
+                            <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
+                                         columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4">
+
+                                <p:outputPanel>
+
+                                </p:outputPanel>
+
+                                <p:outputPanel>
+                                    <p:graphicImage value="#{dicomcreatorBean.image}" cache="false" id="img1"
+                                                    style="width: 400px"/>
+                                </p:outputPanel>
+
+                            </p:panelGrid>
+                        </div>
                     </p:outputPanel>
-                </p:tab>
 
 
 
-            </p:tabView>
+
+
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>

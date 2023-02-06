@@ -32,6 +32,8 @@ public class AdminBean implements UserDao {
 
     @PostConstruct
     public void init(){
+        DicomCreatorBean.onClearForm();
+        TagEditorBean.onClearForm();
         System.out.println("admin page");
         hasTrouble = MainBean.hasTrouble;
         HttpSession session = SessionUtils.getSession();
