@@ -32,7 +32,7 @@ public class AdminBean implements UserDao {
 
     @PostConstruct
     public void init(){
-        DicomCreatorBean.onClearForm();
+        DicomCreatorBean.onUpdate();
         TagEditorBean.onClearForm();
         System.out.println("admin page");
         hasTrouble = MainBean.hasTrouble;
