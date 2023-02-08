@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static ru.bitServer.beans.MainBean.mainServer;
@@ -47,6 +48,7 @@ public class DicomCreatorBean {
     static Date dateBirth;
     static Date dateStudy;
     static boolean fileEnable = false;
+    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     public boolean isFileEnable() {
         return fileEnable;
@@ -142,51 +144,71 @@ public class DicomCreatorBean {
         PrimeFaces.current().ajax().update(":dicomcreator:img1");
     }
 
-    public void convertFile() throws IOException, IllegalAccessException {
-
+    public StreamedContent convertFile() throws IOException, IllegalAccessException {
 
         System.out.println("convertFile");
         BufferedImage jpg = ImageIO.read(new ByteArrayInputStream(createImageData));
         //Convert the image to a byte array
         DataBufferByte buff = (DataBufferByte) jpg.getData().getDataBuffer();
         byte[] data = buff.getData();
-        ByteBuffer byteBuf = ByteBuffer.allocate(2*data.length);
+        ByteBuffer byteBuf = ByteBuffer.allocate(data.length);
         int i = 0;
         while (data.length > i) {
-            byteBuf.putShort(data[i]);
+            byteBuf.put(data[i]);
             i++;
         }
-
         //Copy a header
 
-        File fd = new File("");
-        //DicomInputStream dis = new DicomInputStream(fd);
-        //Attributes meta = dis.readFileMetaInformation();
-        Attributes attributes = new Attributes();// dis.readDataset(-1, Tag.PixelData);
-        //dis.close();
+        File fd = new File("D:\\blank.dcm");
+        DicomInputStream dis = new DicomInputStream(fd);
+        Attributes meta = dis.readFileMetaInformation();
+        //Attributes attributes = new Attributes();// dis.readDataset(-1, Tag.PixelData);
+        Attributes attributes = dis.readDataset();
+        dis.close();
 
         Tag tag = new Tag();
         Field[] fields = tag.getClass().getDeclaredFields();
         Field bufField = getField("PatientName", fields);
-        //System.out.println(bufField.getInt(bufField.getName())+"   "+attributes.getVR(bufField.getInt(bufField.getName()))+"  "+patientName);
-        attributes.setString(bufField.getInt(bufField.getName()), VR.valueOf(bufField.getInt(bufField.getName())), patientName);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.PN, patientName);
+        bufField = getField("PatientID", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.SH, patientId);
+        bufField = getField("PatientBirthDate", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.DA, FORMAT.format(dateBirth));
+        bufField = getField("PatientSex", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.CS, patientSex);
+        bufField = getField("Modality", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.CS, studyModality);
+        bufField = getField("StudyDescription", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.LO, studyDescription);
+        bufField = getField("AccessionNumber", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.SH, accessionNumber);
+        bufField = getField("StudyDate", fields);
+        attributes.setString(bufField.getInt(bufField.getName()), VR.DA, FORMAT.format(dateStudy));
 
         //Change the rows and columns
         attributes.setInt(Tag.Rows, VR.US, jpg.getHeight());
         attributes.setInt(Tag.Columns, VR.US, jpg.getWidth());
-        System.out.println(byteBuf.array().length);
         //Attributes attribs = new Attributes();
 
         //Write the file
         attributes.setBytes(Tag.PixelData, VR.OW, byteBuf.array());
         File f = new File("myDicom.dcm");
         DicomOutputStream dcmo = new DicomOutputStream(f);
-        //dcmo.writeFileMetaInformation(meta);
+        dcmo.writeFileMetaInformation(meta);
         attributes.writeTo(dcmo);
         dcmo.close();
 
         OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
-        connection.sendDicom("/instances", Files.readAllBytes(f.toPath()));
+        String buf = connection.sendDicom("/instances", Files.readAllBytes(f.toPath()));
+        System.out.println("buf = "+buf);
+
+        byte[] bytes = Files.readAllBytes(f.toPath());
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        return DefaultStreamedContent.builder()
+                .name("test.dcm")
+                .contentType("application/dcm")
+                .stream(() -> inputStream)
+                .build();
     }
 
     public Field getField(String TagName, Field[] fields){

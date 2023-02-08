@@ -162,6 +162,7 @@ public class TagEditorBean implements UserDao {
                 attributes.setString(bufField.getInt(bufField.getName()),
                         attributes.getVR(bufField.getInt(bufField.getName())),
                         bufTag.getTagValue().replace(", ", "\\"));
+                System.out.println(bufField.getInt(bufField.getName())+"  "+attributes.getVR(bufField.getInt(bufField.getName()))+"  "+"  "+bufTag.getTagValue().replace(", ", "\\"));
             } catch (Exception e) {
                 LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Save dicom file trouble, maybe VR compatible only number: " + e.getMessage());
             }
