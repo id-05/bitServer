@@ -160,21 +160,21 @@
 
         <dependency>
             <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-imageio</artifactId>
-            <version>3.3.7</version>
-        </dependency>
-
-
-
-
-
-        <dependency>
-            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio-rle</artifactId>
             <version>5.23.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-jpg2dcm</artifactId>
+            <version>5.23.3</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.dcm4che.tool</groupId>
+            <artifactId>dcm4che-tool-common</artifactId>
+            <version>5.23.3</version>
+        </dependency>
 
 
         <dependency>
@@ -189,6 +189,12 @@
             <groupId>com.github.stephenc.java-iso-tools</groupId>
             <artifactId>jiic</artifactId>
             <version>1.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-imageio</artifactId>
+            <version>5.29.1</version>
         </dependency>
 <!--
         <dependency>

@@ -3,6 +3,7 @@ package ru.bitServer.dicom;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import ru.bitServer.dao.DataAction;
 import ru.bitServer.util.OrthancRestApi;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-public class OrthancSettings {
+public class OrthancSettings implements DataAction {
 
     public String ServerName;
     public JsonObject dicomNode;
@@ -141,25 +142,16 @@ public class OrthancSettings {
         this.selectedWebUsers = selectedWebUsers;
     }
 
-  //  public JsonArray getLuaFolder() {
-   //     return luaFolder;
-  //  }
-
- //   public void setLuaFolder(JsonArray luaFolder) {
- ////       this.luaFolder = luaFolder;
-//    }
-
     public JsonSettings json;
 
     OrthancRestApi connection;
 
-    public OrthancSettings(OrthancRestApi connection) {
+    public OrthancSettings(OrthancRestApi connection)  {
         this.connection = connection;
-        String urlParameters = "f = io.open(\""+ ModifyStr(mainServer.getPathToJson()) +"orthanc.json\",\"r+\");"+
-                "print(f:read(\"*a\"))"+
-                "f:close()";
-        StringBuilder stringBuilder = connection.makePostConnectionAndStringBuilder("/tools/execute-script",urlParameters);
-        json = new JsonSettings(stringBuilder.toString());
+
+        String str = getJsonFromFile().toString();
+
+        json = new JsonSettings(str);
         users = json.getUsers();
         dicomNode = json.getDicomNode();
         ServerName = json.getOrthancName();

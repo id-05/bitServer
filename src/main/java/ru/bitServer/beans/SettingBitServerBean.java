@@ -684,7 +684,7 @@ public class SettingBitServerBean implements UserDao {
 
     }
 
-    public void startRemoteSync(){
+    public void startRemoteSync() throws IOException {
         PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
         int i = 0;
         progress2 = 0;

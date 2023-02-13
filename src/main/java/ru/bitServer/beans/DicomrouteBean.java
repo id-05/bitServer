@@ -77,7 +77,7 @@ public class DicomrouteBean implements UserDao {
     OrthancSettings orthancSettings;
 
     @PostConstruct
-    public void init() {
+    public void init()  {
         selectedRule = new DicomrouteRule();
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();

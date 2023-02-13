@@ -11,6 +11,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
+import ru.bitServer.dao.DataAction;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.JsonSettings;
@@ -37,7 +38,7 @@ import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingsBean")
 @ViewScoped
-public class SettingsOrthancBean implements UserDao {
+public class SettingsOrthancBean implements UserDao, DataAction {
     String ServerName;
     JsonObject dicomNode = new JsonObject();
     JsonArray pluginsFolder = new JsonArray();
@@ -109,7 +110,7 @@ public class SettingsOrthancBean implements UserDao {
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
     BitServerUser currentUser;
-    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    //SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     ArrayList<OrthancSettingSnapshot> snapShots = new ArrayList<>();
     ArrayList<OrthancSettingSnapshot> selectedSnapShots = new ArrayList<>();
     OrthancSettingSnapshot selectedSnapshot = new OrthancSettingSnapshot();
@@ -262,42 +263,44 @@ public class SettingsOrthancBean implements UserDao {
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
 
-    public JsonObject getJsonFromFile() throws IOException {
-        boolean luaRead = true;
-        StringBuilder stringBuilder = null;
-        try {
-            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
-        }catch (Exception e){
-            LogTool.getLogger().error("Error Boolean.parseBoolean(getBitServerResource(\"readOrthancSettingfromLua\").getRvalue()");
-        }
-        if(luaRead) {
-            String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"r+\");" +
-                    "print(f:read(\"*a\"))" +
-                    "f:close()";
-            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
-
-        }else{
-            try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
-                int c;
-                while ((c = reader.read()) != -1) {
-                    stringBuilder.append((char) c);
-                }
-            } catch (Exception e) {
-                LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
-            }
-        }
-
-        JsonParser parser = new JsonParser();
-        JsonObject bufJson = new JsonObject();
-        try {
-            bufJson = parser.parse(stringBuilder.toString()).getAsJsonObject();
-        }catch (Exception e){
-            e.getStackTrace();
-            LogTool.getLogger().warn("Error parse json snapshot: "+stringBuilder.toString()+" "+e.getMessage());
-        }
-        return bufJson;
-    }
+//    public JsonObject getJsonFromFile() throws IOException {
+//        boolean luaRead = true;
+//        StringBuilder stringBuilder = new StringBuilder();
+//        try{
+//            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
+//        }catch (Exception e){
+//            LogTool.getLogger().error("Error Boolean.parseBoolean(getBitServerResource(\"readOrthancSettingfromLua\").getRvalue()");
+//        }
+//        if(luaRead) {
+//            String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"r+\");" +
+//                    "print(f:read(\"*a\"))" +
+//                    "f:close()";
+//            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+//            stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
+//
+//        }else{
+//            LogTool.getLogger().debug("full path orthanc file: "+mainServer.getPathToJson()+"orthanc.json");
+//            try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
+//                int c;
+//                while ((c = reader.read()) != -1) {
+//                    stringBuilder.append((char) c);
+//                }
+//                LogTool.getLogger().debug("full  file: "+stringBuilder);
+//            } catch (Exception e) {
+//                LogTool.getLogger().error("Error of read file orthanc.json settingsBean: "+e.getMessage());
+//            }
+//        }
+//
+//        JsonParser parser = new JsonParser();
+//        JsonObject bufJson = new JsonObject();
+//        try {
+//            bufJson = parser.parse(stringBuilder.toString()).getAsJsonObject();
+//        }catch (Exception e){
+//            e.getStackTrace();
+//            LogTool.getLogger().warn("Error parse json snapshot: "+stringBuilder.toString()+" "+e.getMessage());
+//        }
+//        return bufJson;
+//    }
 
 
     public void loadConfig() {

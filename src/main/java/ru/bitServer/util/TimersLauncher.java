@@ -35,7 +35,11 @@ public class TimersLauncher implements UserDao, Runnable {
                         LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Start send task, info: source: " + bufTask.getSource() + " destination: " + bufTask.getDestination());
                         System.out.println("Start send task, info: source: " + bufTask.getSource() + " destination: " + bufTask.getDestination());
                         //поиск всех записей соответствующих условию
-                        visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModaliti(bufTask.getAltSource()));
+                        try {
+                            visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModaliti(bufTask.getAltSource()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Start send task, info: StudiesListSize: " + visibleStudiesList.size());
                         System.out.println("Start send task, info: StudiesListSize: " + visibleStudiesList.size());
                         //отправка
@@ -89,7 +93,7 @@ public class TimersLauncher implements UserDao, Runnable {
         }
     }
 
-    public String getAETbyNameModaliti(String nameModaliti){
+    public String getAETbyNameModaliti(String nameModaliti) throws IOException {
         String bufAET = "";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);

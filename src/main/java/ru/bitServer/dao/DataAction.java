@@ -1,11 +1,15 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.PrimeFaces;
+import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -55,6 +59,48 @@ public interface DataAction extends UserDao{
         HttpURLConnection conn = connection.makeGetConnection (url);
         InputStream inputStream = conn.getInputStream();
         return IOUtils.toByteArray(inputStream);
+    }
+
+    default JsonObject getJsonFromFile()  {
+        OrthancRestApi connection;
+        boolean luaRead = true;
+        StringBuilder stringBuilder = new StringBuilder();
+        try{
+            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
+        }catch (Exception e){
+            LogTool.getLogger().error("Error Boolean.parseBoolean(getBitServerResource(\"readOrthancSettingfromLua\").getRvalue()");
+        }
+        if(luaRead) {
+            String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"r+\");" +
+                    "print(f:read(\"*a\"))" +
+                    "f:close()";
+            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
+            try {
+                stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script", urlParameters);
+            }catch (Exception e){
+                LogTool.getLogger().error("DataAction:getJsonFromFile error get orthanc.json with lua");
+            }
+
+        }else{
+            try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
+                int c;
+                while ((c = reader.read()) != -1) {
+                    stringBuilder.append((char) c);
+                }
+            } catch (Exception e) {
+                LogTool.getLogger().error("Error of read file orthanc.json settingsBean: "+e.getMessage());
+            }
+        }
+
+        JsonParser parser = new JsonParser();
+        JsonObject bufJson = new JsonObject();
+        try {
+            bufJson = parser.parse(stringBuilder.toString()).getAsJsonObject();
+        }catch (Exception e){
+            e.getStackTrace();
+            LogTool.getLogger().warn("Error parse json snapshot: "+stringBuilder.toString()+" "+e.getMessage());
+        }
+        return bufJson;
     }
 
 }
