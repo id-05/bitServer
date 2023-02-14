@@ -196,6 +196,13 @@
             <artifactId>dcm4che-imageio</artifactId>
             <version>5.29.1</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.jvnet.com4j</groupId>
+            <artifactId>com4j</artifactId>
+            <version>2.1</version>
+        </dependency>
 <!--
         <dependency>
             <groupId>org.jvnet.com4j</groupId>
@@ -269,6 +276,6 @@
                     <url>http://dicom.vital-it.ch:8087/nexus/content/groups/public</url>
                 </repository>
         -->
-            </repositories>
+    </repositories>
 
         </project>

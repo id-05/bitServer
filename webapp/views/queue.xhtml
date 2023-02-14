@@ -390,9 +390,8 @@
 
                         </p:menuitem>
 
-                        <p:menuitem value="Сформировать iso" update="dt-studys"
-                        action="#{queueBean.createIsoToDVD}" rendered="false"/>
-
+                        <p:menuitem value="Сформировать iso" update="dt-studys" action="#{queueBean.createIsoToDVD}" rendered="false"/>
+                        <p:menuitem value="Записать на диск" update="searchgrowl" action="#{queueBean.writeToDC}" rendered="true"/>
 
                     </p:contextMenu>
 

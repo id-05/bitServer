@@ -131,7 +131,7 @@
                                                 <p:ajax event="rowSelect" listener="#{tagEditorBean.onTagSelect}"/>
                                                 <p:ajax event="cellEdit" listener="#{tagEditorBean.onCellEdit}"/>
 
-                                                <p:column headerText="TagName" style="text-align: center">
+                                                <p:column headerText="TagName" style="text-align: center" sortBy="#{dicomTag.tagName}">
                                                     <h:outputText value="#{dicomTag.tagName}" />
                                                 </p:column>
 

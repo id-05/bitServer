@@ -1,11 +1,11 @@
 package ru.bitServer.beans;
 
+import com.ms.imapi2.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
-//import com.sun.xml.internal.bind.v2.ClassFactory;
-import com.sun.xml.internal.bind.v2.ClassFactory;
+
 import de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl.ElToritoConfig;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ConfigException;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
@@ -734,6 +734,24 @@ public class QueueBean implements UserDao, DataAction {
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+"Возникла ошибка при отправке, удаленный сервер не отвечает!");
         }
+    }
+
+    public void writeToDC(){
+        IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
+        if(dm.count()>0) {
+            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
+            String recorderUniqueId = dm.item(0);
+            recorder.initializeDiscRecorder(recorderUniqueId);
+            System.out.println("Using recorder: " + recorder.vendorId() + " " + recorder.productId());
+        }else{
+            System.out.println(dm.count());
+            showMessage("Сообщение","В системе нет подходящих устройств!",error);
+        }
+//        IIsoImageManager imageManager = StreamClassFactory.createMsftIsoImageManager();
+//        imageManager.setPath(isoFile.getAbsolutePath());
+//        imageManager.validate();
+//        System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
+
     }
 
     public void createIsoToDVD() throws Exception {
