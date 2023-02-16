@@ -5,9 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
-
 import de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl.ElToritoConfig;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ConfigException;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.CreateISO;
@@ -15,7 +13,7 @@ import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Config;
 import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISOImageFileHandler;
 import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietConfig;
 import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.RockRidgeConfig;
-import de.tu_darmstadt.informatik.rbg.mhartle.sabre.HandlerException;
+import org.apache.commons.io.IOUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
@@ -47,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
+
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
@@ -97,6 +97,24 @@ public class QueueBean implements UserDao, DataAction {
     long timeStart;
     String showHelp;
     private boolean globalFilterOnly;
+    ArrayList<String> recorderList = new ArrayList<>();
+    String selectedRecorder = null;
+
+    public String getSelectedRecorder() {
+        return selectedRecorder;
+    }
+
+    public void setSelectedRecorder(String selectedRecorder) {
+        this.selectedRecorder = selectedRecorder;
+    }
+
+    public ArrayList<String> getRecorderList() {
+        return recorderList;
+    }
+
+    public void setRecorderList(ArrayList<String> recorderList) {
+        this.recorderList = recorderList;
+    }
 
     public boolean isGlobalFilterOnly() {
         return globalFilterOnly;
@@ -397,6 +415,8 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
+        initializeCDinfo();
+
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
@@ -644,6 +664,7 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+        System.out.println(bufStudy.getPatientName());
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
@@ -651,8 +672,8 @@ public class QueueBean implements UserDao, DataAction {
         InputStream inputStream = conn.getInputStream();
         //byte[] buf = IOUtils.toByteArray(inputStream);
         return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"dcm")
-                .contentType("application/dcm")
+                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"rar")
+                .contentType("application/rar")
                 .stream(() -> inputStream)
                 .build();
     }
@@ -736,21 +757,87 @@ public class QueueBean implements UserDao, DataAction {
         }
     }
 
-    public void writeToDC(){
+    public void changeSelectedRecorder(){
+        System.out.println(selectedRecorder);
+    }
+
+    public void initializeCDinfo(){
         IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
-        if(dm.count()>0) {
+        for(int i=0; i<dm.count();i++){
             IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
             String recorderUniqueId = dm.item(0);
             recorder.initializeDiscRecorder(recorderUniqueId);
-            System.out.println("Using recorder: " + recorder.vendorId() + " " + recorder.productId());
+            recorderList.add(recorder.vendorId() + "/" + recorder.productId());
+        }
+        selectedRecorder = recorderList.get(0);
+    }
+
+    public void writeToCD(){
+        IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
+        int selectRecorderNumber = 0;
+        System.out.println(selectedRecorder);
+        for(int i=0; i<dm.count();i++){
+            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
+            String recorderUniqueId = dm.item(0);
+            recorder.initializeDiscRecorder(recorderUniqueId);
+            if(selectedRecorder.equals(recorder.vendorId() + "/" + recorder.productId())){
+                selectRecorderNumber = i;
+                break;
+            }
+        }
+        PrimeFaces.current().executeScript("PF('CDchoose').hide()");
+
+        if(dm.count()>0) {
+            //выбор устройства для записи
+            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
+            String recorderUniqueId = dm.item(selectRecorderNumber);
+            recorder.initializeDiscRecorder(recorderUniqueId);
+            System.out.println("dm.count() "+dm.count()+"  Using recorder: " +recorder.volumeName()+" " + recorder.vendorId() + " " + recorder.productId());
+
+            //создание iso-образа
+            IIsoImageManager imageManager = ClassFactory.createMsftIsoImageManager();
+            File isoFile = new File("D:\\out.iso");
+            imageManager.setPath(isoFile.getAbsolutePath());
+            imageManager.validate();
+            System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
+
+            //запись
+            try {
+                IDiscFormat2Data discData = ClassFactory.createMsftDiscFormat2Data();
+                discData.recorder(recorder);
+                discData.clientName("test");
+                int mediaStatus = discData.currentMediaStatus().comEnumValue();//!!!!!!!!!!!
+                System.out.println("Media status: " + mediaStatus);
+                if (mediaStatus == 4) {
+                    showMessage("Сообщение", "Диск не пустой! Запись не возможна!", error);
+                }
+                if (mediaStatus == 6) {
+                    try {
+                        if ((mediaStatus & IMAPI_FORMAT2_DATA_MEDIA_STATE.IMAPI_FORMAT2_DATA_MEDIA_STATE_WRITE_PROTECTED.comEnumValue()) != 0)
+                            throw new RuntimeException("Media is write protected / not empty.");
+
+                        int addr = discData.nextWritableAddress();
+                        if (addr != 0)
+                            throw new RuntimeException("Disc is not empty, not writing.");
+
+                        IStream isoStream = imageManager.stream();
+
+                        System.out.println("Writing CD");
+                        discData.write(isoStream);
+                        recorder.ejectMedia();
+                        System.out.println("Finished writing");
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        LogTool.getLogger().error("Error during wtite disk " + e.getMessage());
+                    }
+                }
+            }catch (Exception e){
+                showMessage("Сообщение","Проверьте, что есть диск для записи!",error);
+                LogTool.getLogger().error("Error during wtite disk " + e.getMessage());
+            }
         }else{
-            System.out.println(dm.count());
             showMessage("Сообщение","В системе нет подходящих устройств!",error);
         }
-//        IIsoImageManager imageManager = StreamClassFactory.createMsftIsoImageManager();
-//        imageManager.setPath(isoFile.getAbsolutePath());
-//        imageManager.validate();
-//        System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
 
     }
 
@@ -762,15 +849,15 @@ public class QueueBean implements UserDao, DataAction {
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
         File outfile = new File("D:\\out.iso");
-        File buffile = new File("D:\\file.DCM");
+        File buffile = new File("D:\\file.rar");
         copyInputStreamToFile(inputStream, buffile);
 
         //File outfile = new File(String.valueOf(inputStream));
         ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
         ISO9660RootDirectory root = new ISO9660RootDirectory();
 
-        ISO9660File file1 = new ISO9660File("D:\\raid.txt");
-        root.addFile(file1);
+        //ISO9660File file1 = new ISO9660File("D:\\raid.txt");
+        //root.addFile(file1);
         ISO9660File file2 = new ISO9660File(buffile);
         root.addFile(file2);
 
@@ -778,9 +865,9 @@ public class QueueBean implements UserDao, DataAction {
         iso9660Config.allowASCII(false);
         iso9660Config.setInterchangeLevel(1);
         iso9660Config.restrictDirDepthTo8(true);
-        iso9660Config.setPublisher("Name Nickname");
-        iso9660Config.setVolumeID("ISO Test Jiic");
-        iso9660Config.setDataPreparer("Name Nickname");
+        //iso9660Config.setPublisher("Name Nickname");
+        //iso9660Config.setVolumeID("ISO Test Jiic");
+        //iso9660Config.setDataPreparer("Name Nickname");
         iso9660Config.forceDotDelimiter(true);
         RockRidgeConfig rrConfig = null;
         ElToritoConfig elToritoConfig = null;
