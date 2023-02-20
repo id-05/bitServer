@@ -208,8 +208,9 @@
                                      reflow="true" styleClass="users-table"
                                      emptyMessage="Нет записей для отображения"
                                      size="small"
+                                     scrollable="true" scrollHeight="650"
                                      selection="#{settingBitServerBean.selectedUsers}" rowKey="#{BitServerUser.uname}"
-                                     rows="10" rowSelectMode="add" >
+                                     rowSelectMode="add" >
 
                             <p:column headerText="ФИО" sortBy="#{bitServerUser.ruFamily}" style="text-align: center">
                                 <h:outputText value="#{bitServerUser.ruFamily} #{bitServerUser.ruName} #{bitServerUser.ruMiddleName}" />

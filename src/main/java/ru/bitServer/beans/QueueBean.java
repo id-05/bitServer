@@ -769,10 +769,12 @@ public class QueueBean implements UserDao, DataAction {
             recorder.initializeDiscRecorder(recorderUniqueId);
             recorderList.add(recorder.vendorId() + "/" + recorder.productId());
         }
-        selectedRecorder = recorderList.get(0);
+        if(recorderList.size()>0) {
+            selectedRecorder = recorderList.get(0);
+        }
     }
 
-    public void writeToCD(){
+    public void writeToCD() throws Exception {
         IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
         int selectRecorderNumber = 0;
         System.out.println(selectedRecorder);
@@ -793,6 +795,8 @@ public class QueueBean implements UserDao, DataAction {
             String recorderUniqueId = dm.item(selectRecorderNumber);
             recorder.initializeDiscRecorder(recorderUniqueId);
             System.out.println("dm.count() "+dm.count()+"  Using recorder: " +recorder.volumeName()+" " + recorder.vendorId() + " " + recorder.productId());
+            //
+            createIsoToDVD();
 
             //создание iso-образа
             IIsoImageManager imageManager = ClassFactory.createMsftIsoImageManager();
@@ -882,6 +886,12 @@ public class QueueBean implements UserDao, DataAction {
         CreateISO iso = new CreateISO(streamHandler, root);
         iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
         System.out.println("FINISH");
+        buffile.delete();
+        outfile.delete();
+        iso9660Config.notifyAll();
+        streamHandler.notifyAll();
+        iso.notifyAll();
+        notifyAll();
     }
 
     private static void copyInputStreamToFile(InputStream inputStream, File file)
