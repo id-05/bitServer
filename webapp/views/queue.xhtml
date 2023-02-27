@@ -387,7 +387,9 @@
                                     styleClass="rounded-button ui-button-warning"
                                     process="@this"/>
 
-                        <p:menuitem value="Сформировать iso" update="dt-studys" action="#{queueBean.createIsoToDVD}" rendered="true"/>
+                        <p:menuitem ajax="false" value="Сформировать iso" update="dt-studys"  rendered="true">
+                            <p:fileDownload value="#{queueBean.downloadIsoStudy()}"/>
+                        </p:menuitem>
                         <p:menuitem value="Записать на диск"
                                     update="searchgrowl"
                                     oncomplete="PF('CDchoose').show()"

@@ -1,19 +1,21 @@
 package ru.bitServer.beans;
 
+import com.github.stephenc.javaisotools.eltorito.impl.ElToritoConfig;
+import com.github.stephenc.javaisotools.iso9660.ISO9660File;
+import com.github.stephenc.javaisotools.iso9660.ISO9660RootDirectory;
+import com.github.stephenc.javaisotools.iso9660.impl.CreateISO;
+import com.github.stephenc.javaisotools.iso9660.impl.ISO9660Config;
+import com.github.stephenc.javaisotools.iso9660.impl.ISOImageFileHandler;
+import com.github.stephenc.javaisotools.joliet.impl.JolietConfig;
+import com.github.stephenc.javaisotools.rockridge.impl.RockRidgeConfig;
 import com.ms.imapi2.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
-import de.tu_darmstadt.informatik.rbg.hatlak.eltorito.impl.ElToritoConfig;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660File;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.ISO9660RootDirectory;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.CreateISO;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISO9660Config;
-import de.tu_darmstadt.informatik.rbg.hatlak.iso9660.impl.ISOImageFileHandler;
-import de.tu_darmstadt.informatik.rbg.hatlak.joliet.impl.JolietConfig;
-import de.tu_darmstadt.informatik.rbg.hatlak.rockridge.impl.RockRidgeConfig;
-import org.apache.commons.io.IOUtils;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import org.apache.commons.io.FileUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
@@ -678,12 +680,72 @@ public class QueueBean implements UserDao, DataAction {
                 .build();
     }
 
+    public StreamedContent downloadIsoStudy() throws Exception {
+        //createIsoToDVD();
+
+        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
+        String url = "/tools/create-archive";
+        //String url = "/tools/create-media";
+
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        File outfile = new File("out.iso");
+        File buffile = new File("buf.zip");
+
+        FileUtils.copyInputStreamToFile(inputStream, buffile);
+
+        try {
+            ZipFile zipFile = new ZipFile(buffile);
+            zipFile.extractAll("/");
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+        ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
+        ISO9660RootDirectory root = new ISO9660RootDirectory();
+        ISO9660File file2 = new ISO9660File(buffile);
+        root.addFile(file2);
+        ISO9660Config iso9660Config = new ISO9660Config();
+        iso9660Config.allowASCII(false);
+        iso9660Config.setInterchangeLevel(1);
+        iso9660Config.restrictDirDepthTo8(true);
+        iso9660Config.setPublisher("bitServer");
+        iso9660Config.setVolumeID(bufStudy.getPatientName());
+        iso9660Config.setDataPreparer("bitServer");
+        iso9660Config.forceDotDelimiter(true);
+        RockRidgeConfig rrConfig = null;
+        ElToritoConfig elToritoConfig = null;
+        JolietConfig jolietConfig;
+        jolietConfig = new JolietConfig();
+        jolietConfig.setPublisher("bitServer");
+        String bufName;
+        if(bufStudy.getPatientName().length()>16){
+            bufName = bufStudy.getPatientName().substring(0,15);
+        }else{
+            bufName = bufStudy.getPatientName();
+        }
+        jolietConfig.setVolumeID(bufName);
+        jolietConfig.setDataPreparer("bitServer");
+        ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
+        CreateISO iso = new CreateISO(streamHandler, root);
+        iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
+        //BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+        //File outfile = new File("out.iso");
+        InputStream inputStreamOut = new FileInputStream(outfile);
+        return DefaultStreamedContent.builder()
+                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"iso")
+                .contentType("application/rar")
+                .stream(() -> inputStreamOut)
+                .build();
+    }
+
     public void comebackStudy() throws IOException {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             if(!bufStudy.getUsergroupwhosees().equals("")){
                 bufStudy.setUsergroupwhosees("");
                 bufStudy.setStatus(0);
-                //updateStudy(bufStudy);
                 connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
                 BitServerUser bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
@@ -700,7 +762,6 @@ public class QueueBean implements UserDao, DataAction {
         for(BitServerStudy bufStudy:selectedVisibleStudies){
             bufStudy.setUsergroupwhosees("");
             bufStudy.setStatus(2);
-            //updateStudy(bufStudy);
         }
         selectedVisibleStudies.clear();
         dataoutput();
@@ -774,7 +835,7 @@ public class QueueBean implements UserDao, DataAction {
         }
     }
 
-    public void writeToCD() throws Exception {
+    public void writeToCD() {
         IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
         int selectRecorderNumber = 0;
         System.out.println(selectedRecorder);
@@ -800,7 +861,7 @@ public class QueueBean implements UserDao, DataAction {
 
             //создание iso-образа
             IIsoImageManager imageManager = ClassFactory.createMsftIsoImageManager();
-            File isoFile = new File("D:\\out.iso");
+            File isoFile = new File("out.iso");
             imageManager.setPath(isoFile.getAbsolutePath());
             imageManager.validate();
             System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
@@ -845,66 +906,42 @@ public class QueueBean implements UserDao, DataAction {
 
     }
 
-    public void createIsoToDVD() throws Exception {
-        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-        String url="/tools/create-archive";
-        JsonArray jsonArray = new JsonArray();
-        jsonArray.add(bufStudy.getSid());
-        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
-        InputStream inputStream = conn.getInputStream();
-        File outfile = new File("D:\\out.iso");
-        File buffile = new File("D:\\file.rar");
-        copyInputStreamToFile(inputStream, buffile);
-
-        //File outfile = new File(String.valueOf(inputStream));
-        ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
-        ISO9660RootDirectory root = new ISO9660RootDirectory();
-
-        //ISO9660File file1 = new ISO9660File("D:\\raid.txt");
-        //root.addFile(file1);
-        ISO9660File file2 = new ISO9660File(buffile);
-        root.addFile(file2);
-
-        ISO9660Config iso9660Config = new ISO9660Config();
-        iso9660Config.allowASCII(false);
-        iso9660Config.setInterchangeLevel(1);
-        iso9660Config.restrictDirDepthTo8(true);
-        //iso9660Config.setPublisher("Name Nickname");
-        //iso9660Config.setVolumeID("ISO Test Jiic");
-        //iso9660Config.setDataPreparer("Name Nickname");
-        iso9660Config.forceDotDelimiter(true);
-        RockRidgeConfig rrConfig = null;
-        ElToritoConfig elToritoConfig = null;
-        JolietConfig jolietConfig;
-
-        jolietConfig = new JolietConfig();
-        jolietConfig.setPublisher("Test 2");
-        jolietConfig.setVolumeID("Joliet Test");
-        jolietConfig.setDataPreparer("Jens Hatlak");
-        jolietConfig.forceDotDelimiter(true);
-        ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
-        CreateISO iso = new CreateISO(streamHandler, root);
-        iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
-        System.out.println("FINISH");
-        buffile.delete();
-        outfile.delete();
-        iso9660Config.notifyAll();
-        streamHandler.notifyAll();
-        iso.notifyAll();
-        notifyAll();
-    }
-
-    private static void copyInputStreamToFile(InputStream inputStream, File file)
-            throws IOException {
-        int DEFAULT_BUFFER_SIZE = 8192;
-        // append = false
-        try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
-            int read;
-            byte[] bytes = new byte[DEFAULT_BUFFER_SIZE];
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
+    public void createIsoToDVD()  {
+        try {
+            BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
+            String url = "/tools/create-archive";
+            JsonArray jsonArray = new JsonArray();
+            jsonArray.add(bufStudy.getSid());
+            HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
+            InputStream inputStream = conn.getInputStream();
+            File outfile = new File("out.iso");
+            File buffile = new File("file.rar");
+            FileUtils.copyInputStreamToFile(inputStream, buffile);
+            ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
+            ISO9660RootDirectory root = new ISO9660RootDirectory();
+            ISO9660File file2 = new ISO9660File(buffile);
+            root.addFile(file2);
+            ISO9660Config iso9660Config = new ISO9660Config();
+            iso9660Config.allowASCII(false);
+            iso9660Config.setInterchangeLevel(1);
+            iso9660Config.restrictDirDepthTo8(true);
+            iso9660Config.setPublisher("bitServer");
+            iso9660Config.setVolumeID(bufStudy.getPatientName());
+            iso9660Config.setDataPreparer("bitServer");
+            iso9660Config.forceDotDelimiter(true);
+            RockRidgeConfig rrConfig = null;
+            ElToritoConfig elToritoConfig = null;
+            JolietConfig jolietConfig;
+            jolietConfig = new JolietConfig();
+            jolietConfig.setPublisher("bitServer");
+            jolietConfig.setVolumeID(bufStudy.getPatientName().substring(1,16));
+            jolietConfig.setDataPreparer("bitServer");
+            ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
+            CreateISO iso = new CreateISO(streamHandler, root);
+            iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
+            System.out.println("FINISH");
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
-
     }
 }

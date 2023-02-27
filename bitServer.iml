@@ -96,12 +96,13 @@
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-net:5.23.3" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.4" level="project" />
     <orderEntry type="library" name="Maven: org.webjars.npm:primeflex:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: com.github.stephenc.java-iso-tools:jiic:1.2.2" level="project" />
-    <orderEntry type="library" name="Maven: com.github.stephenc.java-iso-tools:sabre:1.2.2" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.7.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.stephenc.java-iso-tools:iso9660-writer:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.stephenc.java-iso-tools:sabre:2.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.9.15" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.9.15" level="project" />
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-imageio:5.29.1" level="project" />
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-image:5.29.1" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.com4j:com4j:2.1" level="project" />
+    <orderEntry type="library" name="Maven: net.lingala.zip4j:zip4j:2.11.5" level="project" />
   </component>
 </module>

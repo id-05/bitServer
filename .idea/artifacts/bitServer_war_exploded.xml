@@ -57,10 +57,6 @@
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-core:5.27.0" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-dict:5.27.0" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-imageio-rle:5.23.3" />
-          <element id="library" level="project" name="Maven: org.apache.ant:ant:1.7.0" />
-          <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.7.0" />
-          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:sabre:1.2.2" />
-          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:jiic:1.2.2" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-log4j12:1.7.30" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-net:5.23.3" />
           <element id="library" level="project" name="Maven: org.dcm4che.tool:dcm4che-tool-jpg2dcm:5.23.3" />
@@ -69,10 +65,13 @@
           <element id="library" level="project" name="Maven: com.sun.activation:jakarta.activation:1.2.2" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-imageio:5.29.1" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-image:5.29.1" />
-          <element id="library" level="project" name="Maven: args4j:args4j:2.0.8" />
           <element id="library" level="project" name="Maven: org.jvnet.com4j:com4j:2.1" />
-          <element id="library" level="project" name="Maven: org.jvnet.com4j:tlbimp:2.1" />
           <element id="library" level="project" name="args4j-2.0.8" />
+          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:iso9660-writer:2.1.0" />
+          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:sabre:2.1.0" />
+          <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.9.15" />
+          <element id="library" level="project" name="Maven: org.apache.ant:ant:1.9.15" />
+          <element id="library" level="project" name="Maven: net.lingala.zip4j:zip4j:2.11.5" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="bitServer/web/webapp" />
