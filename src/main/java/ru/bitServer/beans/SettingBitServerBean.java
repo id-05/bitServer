@@ -3,9 +3,14 @@ package ru.bitServer.beans;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.apache.commons.io.FileUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.TransferEvent;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.TreeNode;
+import org.primefaces.model.file.UploadedFile;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.util.LogTool;
@@ -16,8 +21,14 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
@@ -86,6 +97,24 @@ public class SettingBitServerBean implements UserDao {
     ArrayList<BitServerUser> usersTarget;
     ArrayList<BitServerUser> usersSource;
     ArrayList<BitServerUser> usersSourceBuf;
+    private TreeNode rootCDwiever;
+    private TreeNode selectedNode;
+
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
+    public TreeNode getRootCDwiever() {
+        return rootCDwiever;
+    }
+
+    public void setRootCDwiever(TreeNode rootCDwiever) {
+        this.rootCDwiever = rootCDwiever;
+    }
 
     public String getLuaRead() {
         return luaRead;
@@ -622,6 +651,107 @@ public class SettingBitServerBean implements UserDao {
         }
 
         selectedBitServerGroup = new BitServerGroup();
+
+        rootCDwiever = createDocuments();
+    }
+
+    public void clearCDViewerDirectory() throws IOException {
+        FileUtils.deleteDirectory(new File(getBitServerResource("cdDicomViewer").getRvalue()));
+        showMessage("Внимание!","Директория очищена!",info);
+        PrimeFaces.current().ajax().update(":form:accord:filetables");
+    }
+
+    public void handleFileUpload(FileUploadEvent event) throws IOException {
+        UploadedFile file = event.getFile();
+        if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
+            Path folder = Paths.get(MainBean.pathToSaveResult);
+            String extension = FilenameUtils.getExtension(file.getFileName());
+            try (InputStream input = file.getInputStream()) {
+                FileOutputStream output = new FileOutputStream(getBitServerResource("cdDicomViewer").getRvalue()+"/" + file.getFileName());
+                byte[] buffer = new byte[input.available()];
+                input.read(buffer, 0, buffer.length);
+                output.write(buffer, 0, buffer.length);
+            }catch (Exception e){
+                LogTool.getLogger().warn("Error save file addResult settingsbitserver "+e.getMessage());
+            }
+        }else{
+            LogTool.getLogger().warn("Возникла ошибка в выборе или типе файла handleFileUpload settingsbitserver");
+        }
+        PrimeFaces.current().ajax().update(":form:accord:filetables");
+    }
+
+    public TreeNode<Document> createDocuments() {
+        TreeNode<Document> root = new DefaultTreeNode(new Document("Files", "-", "Folder"), null);
+
+        try{
+            Collection<File> files = FileUtils.listFiles(new File(getBitServerResource("cdDicomViewer").getRvalue()), new String[] {"java"}, true);
+            for (File file : files) {
+                System.out.println(file);
+                }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        TreeNode applications = new DefaultTreeNode(new Document("Applications", "", "Folder"), root);
+        TreeNode cloud = new DefaultTreeNode(new Document("Cloud", "", "Folder"), root);
+        TreeNode desktop = new DefaultTreeNode(new Document("Desktop", "", "Folder"), root);
+        TreeNode documents = new DefaultTreeNode(new Document("Documents", "b", "Folder"), root);
+        TreeNode downloads = new DefaultTreeNode(new Document("Downloads", "", "Folder"), root);
+        TreeNode main = new DefaultTreeNode(new Document("Main", "50kb", ""), root);
+        TreeNode other = new DefaultTreeNode(new Document("Other", "", "Folder"), root);
+        TreeNode pictures = new DefaultTreeNode(new Document("Pictures", "", "Folder"), root);
+        TreeNode videos = new DefaultTreeNode(new Document("Videos", "", "Folder"), root);
+
+        //Applications
+        TreeNode primeface = new DefaultTreeNode(new Document("Primefaces", "", "Folder"), applications);
+        TreeNode primefacesapp = new DefaultTreeNode("app", new Document("primefaces.app", "", "Application"), primeface);
+        TreeNode nativeapp = new DefaultTreeNode("app", new Document("native.app", "10kb", "Application"), primeface);
+        TreeNode mobileapp = new DefaultTreeNode("app", new Document("mobile.app", "5kb", "Application"), primeface);
+        TreeNode editorapp = new DefaultTreeNode("app", new Document("editor.app", "25kb", "Application"), applications);
+        TreeNode settingsapp = new DefaultTreeNode("app", new Document("settings.app", "50kb", "Application"), applications);
+
+        //Cloud
+        TreeNode backup1 = new DefaultTreeNode("document", new Document("backup-1.zip", "", "Zip"), cloud);
+        TreeNode backup2 = new DefaultTreeNode("document", new Document("backup-2.zip", "", "Zip"), cloud);
+
+        //Desktop
+        TreeNode note1 = new DefaultTreeNode("document", new Document("note-meeting.txt", "50kb", "Text"), desktop);
+        TreeNode note2 = new DefaultTreeNode("document", new Document("note-todo.txt", "100kb", "Text"), desktop);
+
+        //Documents
+        TreeNode work = new DefaultTreeNode(new Document("Work", "55kb", "Folder"), documents);
+        TreeNode expenses = new DefaultTreeNode("document", new Document("Expenses.doc", "30kb", "Document"), work);
+        TreeNode resume = new DefaultTreeNode("document", new Document("Resume.doc", "25kb", "Resume"), work);
+        TreeNode home = new DefaultTreeNode(new Document("Home", "20kb", "Folder"), documents);
+        TreeNode invoices = new DefaultTreeNode("excel", new Document("Invoice.xsl", "20kb", "Excel"), home);
+
+        //Downloads
+        TreeNode spanish = new DefaultTreeNode(new Document("Spanish", "10kb", "Folder"), downloads);
+        TreeNode tutorial1 = new DefaultTreeNode("document", new Document("tutorial-a1.txt", "5kb", "Text"), spanish);
+        TreeNode tutorial2 = new DefaultTreeNode("document", new Document("tutorial-a2.txt", "5kb", "Text"), spanish);
+        TreeNode travel = new DefaultTreeNode(new Document("Travel", "15kb", "Folder"), downloads);
+        TreeNode hotelpdf = new DefaultTreeNode("travel", new Document("Hotel.pdf", "10kb", "PDF"), travel);
+        TreeNode flightpdf = new DefaultTreeNode("travel", new Document("Flight.pdf", "5kb", "PDF"), travel);
+
+        //Main
+        TreeNode bin = new DefaultTreeNode("document", new Document("bin", "50kb", "Link"), main);
+        TreeNode etc = new DefaultTreeNode("document", new Document("etc", "100kb", "Link"), main);
+        TreeNode var = new DefaultTreeNode("document", new Document("var", "100kb", "Link"), main);
+
+        //Other
+        TreeNode todotxt = new DefaultTreeNode("document", new Document("todo.txt", "3kb", "Text"), other);
+        TreeNode logopng = new DefaultTreeNode("picture", new Document("logo.png", "2kb", "Picture"), other);
+
+        //Pictures
+        TreeNode barcelona = new DefaultTreeNode("picture", new Document("barcelona.jpg", "90kb", "Picture"), pictures);
+        TreeNode primeng = new DefaultTreeNode("picture", new Document("primefaces.png", "30kb", "Picture"), pictures);
+        TreeNode prime = new DefaultTreeNode("picture", new Document("prime.jpg", "30kb", "Picture"), pictures);
+
+        //Videos
+        TreeNode primefacesmkv = new DefaultTreeNode("video", new Document("primefaces.mkv", "1000kb", "Video"), videos);
+        TreeNode introavi = new DefaultTreeNode("video", new Document("intro.avi", "500kb", "Video"), videos);
+        System.out.println("root.getChildCount() "+root.getChildCount());
+        return root;
     }
 
 
@@ -904,65 +1034,6 @@ public class SettingBitServerBean implements UserDao {
         selectedUser = new BitServerUser();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Пользователь удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-users");
-    }
-
-    public void addNewUsergroup(){
-        if((!selectedBitServerGroup.getRuName().equals("")))
-        {
-            boolean verifiUnical = true;
-            for(BitServerGroup bufBitServerGroup : bitServerGroupList){
-                if (bufBitServerGroup.getRuName().equals(selectedBitServerGroup.getRuName())) {
-                    verifiUnical = false;
-                    break;
-                }
-            }
-            if(verifiUnical) {
-                bitServerGroupList.add(new BitServerGroup(selectedBitServerGroup.getId(), selectedBitServerGroup.getRuName(), selectedBitServerGroup.getUserList()));
-                selectedBitServerGroup.setUserList(usersTarget);
-                saveNewBitServiceGroup(selectedBitServerGroup);
-                PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
-                //usergroupList = getBitServerUsergroupList();
-            }else{
-                //updateUsergroup(selectedUsergroup);
-                //usergroupList = getBitServerUsergroupList();
-                PrimeFaces.current().executeScript("PF('manageUsergroupDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
-            }
-        }else{
-            showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
-        }
-    }
-
-    public void handleTransfer(TransferEvent event){
-        for(Object item : event.getItems()) {
-            BitServerUser buf = getUserByLogin(item.toString());
-            if(event.isRemove()) {
-                int index = 0;
-                for(int i=0;i<usersTarget.size();i++){
-                    if(usersTarget.get(i).getUid().equals(buf.getUid())){
-                        index = i;
-                    }
-                }
-                usersTarget.remove(index);
-            }
-            else if(event.isAdd()) {
-                usersTarget.add(buf);
-            }
-        }
-    }
-
-    public void deleteUsergroupSetting() {
-        try {
-            //deleteUsergroup(selectedUsergroup);
-            bitServerGroupList.remove(selectedBitServerGroup);
-            //selectedBitServerGroup = new BitServerGroup();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Группа удалена!"));
-            PrimeFaces.current().ajax().update(":form:accord:dt-usergroup");
-        }catch (Exception e){
-            PrimeFaces.current().executeScript("PF('errorDeleteUsergroupDialog').show()");
-            LogTool.getLogger().error("Error deleteUserGroupSettings SettingsBitServerBean: "+e.getMessage());
-        }
     }
 
 }

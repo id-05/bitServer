@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
-      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent" >
+      xmlns:b="http://java.sun.com/jsf/composite/jsfcomponent">
 <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
 <f:view>
     <h:head><title>bitServer Seach</title>
@@ -27,9 +27,6 @@
             function showStatus() {
                 PF('statusDialog').show();
             }
-            function hideStatus() {
-                PF('statusDialog').hide();
-            }
         </script>
 
         <style type="text/css">
@@ -43,16 +40,7 @@
                 text-transform: uppercase;
                 font-weight: 700;
                 font-size: 12px;
-                letter-spacing: .3px; }
-            .product-badge.status-yesresult {
-                background: #C8E6C9;
-                color: #256029; }
-            .product-badge.status-noresult {
-                background: #FFCDD2;
-                color: #C63737; }
-            .product-badge.status-inprocess {
-                background: #feedaf;
-                color: #8a5340; }
+                letter-spacing: 1px; }
         </style>
 
         <h:form id="seachform">
@@ -140,7 +128,7 @@
 
                             <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true"
                                              rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}">
-                                <f:selectItems value="#{queueBean.usergroupListRuName}"/>
+
                             </p:selectOneMenu>
 
                         </p:toolbarGroup>
@@ -160,7 +148,7 @@
                                             </f:facet>
 
                                             <f:facet name="start">
-                                                <i class="pi pi-spin pi-spinner loading-icon"></i>
+                                                <i class="pi pi-spin pi-spinner loading-icon"> </i>
                                             </f:facet>
                                         </p:ajaxStatus>
                             </div>
@@ -390,6 +378,7 @@
                         <p:menuitem ajax="false" value="Сформировать iso" update="dt-studys"  rendered="true">
                             <p:fileDownload value="#{queueBean.downloadIsoStudy()}"/>
                         </p:menuitem>
+
                         <p:menuitem value="Записать на диск"
                                     update="searchgrowl"
                                     oncomplete="PF('CDchoose').show()"
@@ -515,7 +504,7 @@
 
                             <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
                                 Вы не сможете приступить к другим исследованиям пока не опишите это.
-                                Срок блокировки исследования #{mainBean.timeOnWork} часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
+                                Срок блокировки исследования ___ часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
 
                         </p:card>
                         <div class="p-d-flex p-jc-between">

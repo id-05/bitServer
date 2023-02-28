@@ -417,7 +417,7 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-        initializeCDinfo();
+        //initializeCDinfo();
 
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
@@ -682,7 +682,7 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadIsoStudy() throws Exception {
         //createIsoToDVD();
-
+        String tmpdir = getBitServerResource("isoPath").getRvalue();//System.getProperty("java.io.tmpdir");
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
         String url = "/tools/create-archive";
         //String url = "/tools/create-media";
@@ -691,22 +691,25 @@ public class QueueBean implements UserDao, DataAction {
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
-        File outfile = new File("out.iso");
-        File buffile = new File("buf.zip");
+        File outfile = new File(tmpdir+"out.iso");
+        File buffile = new File(tmpdir+"buf.zip");
 
         FileUtils.copyInputStreamToFile(inputStream, buffile);
 
         try {
             ZipFile zipFile = new ZipFile(buffile);
-            zipFile.extractAll("/");
+            zipFile.extractAll(tmpdir+"/bitServer");
         } catch (ZipException e) {
             e.printStackTrace();
         }
 
         ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
         ISO9660RootDirectory root = new ISO9660RootDirectory();
-        ISO9660File file2 = new ISO9660File(buffile);
-        root.addFile(file2);
+
+       // ISO9660File file2 = new ISO9660File(buffile);
+       // root.addFile(file2);
+        root.addRecursively(new File(tmpdir+"/bitServer"));
+
         ISO9660Config iso9660Config = new ISO9660Config();
         iso9660Config.allowASCII(false);
         iso9660Config.setInterchangeLevel(1);
@@ -733,6 +736,9 @@ public class QueueBean implements UserDao, DataAction {
         iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
         //BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
         //File outfile = new File("out.iso");
+
+        FileUtils.deleteDirectory(new File(tmpdir+"/bitServer"));
+
         InputStream inputStreamOut = new FileInputStream(outfile);
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"iso")

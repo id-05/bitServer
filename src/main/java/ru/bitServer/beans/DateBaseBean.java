@@ -147,6 +147,7 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("timerEnable")){saveBitServiceResource(new BitServerResources("timerEnable","false")); sb.append("timerEnable;").append("\n");}
         if(!bufResourceName.contains("luaRead")){saveBitServiceResource(new BitServerResources("luaRead","true")); sb.append("luaRead;").append("\n");}
         if(!bufResourceName.contains("isoPath")){saveBitServiceResource(new BitServerResources("isoPath","/dataimage/results/")); sb.append("isoPath;").append("\n");}
+        if(!bufResourceName.contains("cdDicomViewer")){saveBitServiceResource(new BitServerResources("cdDicomViewer","/dataimage/results/viewer")); sb.append("cdDicomViewer;").append("\n");}
         if(sb.toString().length()>0){
             showMessage("Внимание!","Были добавлены: "+ sb.toString(),FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");

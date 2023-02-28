@@ -13,10 +13,7 @@
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-imageio:5.29.1" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-image:5.29.1" />
           <element id="library" level="project" name="Maven: org.jvnet.com4j:com4j:2.1" />
-          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:iso9660-writer:2.1.0" />
-          <element id="library" level="project" name="Maven: com.github.stephenc.java-iso-tools:sabre:2.1.0" />
           <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.9.15" />
-          <element id="library" level="project" name="Maven: org.apache.ant:ant:1.9.15" />
         </element>
         <element id="directory" name="classes">
           <element id="jpa-descriptors" facet="bitServer/jpa/JPA" />
