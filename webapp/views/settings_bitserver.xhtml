@@ -778,72 +778,7 @@
 
                     </p:outputPanel>
                 </p:tab>
-
-                <p:tab title="CD Dicom Wiever">
-                    <p:toolbar>
-                        <p:toolbarGroup>
-                            <p:commandButton value="Загрузить файлы" immediate="true" icon="pi pi-plus"
-                                             oncomplete="PF('addFile').show()"
-                                             styleClass="ui-button-success" style="margin-right: .5rem">
-                            </p:commandButton>
-
-                            <p:commandButton value="Очистить директорию" immediate="true" icon="pi pi-info-circle"
-                                             actionListener="#{settingBitServerBean.clearCDViewerDirectory}"
-                                             styleClass="ui-button-warning" style="margin-right: .5rem">
-                            </p:commandButton>
-                        </p:toolbarGroup>
-                    </p:toolbar>
-
-                    <p:tree id="filetables" value="#{settingBitServerBean.rootCDwiever}" var="document" selectionMode="single"
-                            selection="#{settingBitServerBean.selectedNode}" dynamic="true">
-                        <p:treeNode expandedIcon="pi pi-folder-open" collapsedIcon="pi pi-folder">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="app" icon="pi pi-save">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="document" icon="pi pi-file">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="excel" icon="pi pi-file-excel">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="travel" icon="pi pi-file-pdf">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="picture" icon="pi pi-image">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                        <p:treeNode type="video" icon="pi pi-video">
-                            <h:outputText value="#{document.name}"/>
-                        </p:treeNode>
-                    </p:tree>
-
-                </p:tab>
             </p:accordionPanel>
-
-            <p:dialog id="addDialog" header="Окно загрузки файлов" showEffect="fade" modal="true"
-                      widgetVar="addFile" responsive="true">
-
-                <p:fileUpload  mode="advanced"
-                               widgetVar="fUpload"
-                               listener="#{settingBitServerBean.handleFileUpload}"
-                               sequential="true"
-                               styleClass="fileupload-content"
-                               dragDropSupport="true"
-                               skinSimple="true"
-                               sizeLimit="20000000"
-                               label="Выбрать"
-                               uploadLabel="Зазрузить"
-                               cancelLabel="Отмена"
-                               multiple="true"/>
-
-                <div class="p-text-bold" style="width: 40rem">
-                    <p:outputLabel style="color: crimson">Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
-                        Используйте этот способ, для корректной загрузки всех вложенных каталогов.
-                        После завершения процесса загрузки, просто закройте это окно.</p:outputLabel>
-                </div>
-            </p:dialog>
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>

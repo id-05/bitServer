@@ -36,7 +36,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -682,33 +684,30 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadIsoStudy() throws Exception {
         //createIsoToDVD();
-        String tmpdir = getBitServerResource("isoPath").getRvalue();//System.getProperty("java.io.tmpdir");
+        String tmpdir = getBitServerResource("isoPath").getRvalue();
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
         String url = "/tools/create-archive";
-        //String url = "/tools/create-media";
-
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
-        File outfile = new File(tmpdir+"out.iso");
-        File buffile = new File(tmpdir+"buf.zip");
+        File outfile = new File(tmpdir+"/out.iso");
+        File buffile = new File(tmpdir+"/buf.zip");
 
         FileUtils.copyInputStreamToFile(inputStream, buffile);
 
         try {
             ZipFile zipFile = new ZipFile(buffile);
-            zipFile.extractAll(tmpdir+"/bitServer");
+            zipFile.extractAll(tmpdir+"/images");
         } catch (ZipException e) {
             e.printStackTrace();
         }
 
         ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
         ISO9660RootDirectory root = new ISO9660RootDirectory();
-
-       // ISO9660File file2 = new ISO9660File(buffile);
-       // root.addFile(file2);
-        root.addRecursively(new File(tmpdir+"/bitServer"));
+        root.addRecursively(new File(tmpdir+"/images"));
+        String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
+        root.addContentsRecursively(new File(relativeWebPath));
 
         ISO9660Config iso9660Config = new ISO9660Config();
         iso9660Config.allowASCII(false);
@@ -737,12 +736,12 @@ public class QueueBean implements UserDao, DataAction {
         //BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
         //File outfile = new File("out.iso");
 
-        FileUtils.deleteDirectory(new File(tmpdir+"/bitServer"));
+        FileUtils.deleteDirectory(new File(tmpdir+"/images"));
 
         InputStream inputStreamOut = new FileInputStream(outfile);
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"iso")
-                .contentType("application/rar")
+                .contentType("application/iso")
                 .stream(() -> inputStreamOut)
                 .build();
     }
