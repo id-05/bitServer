@@ -25,10 +25,10 @@ public class NetworkSettingsParcer {
                         bufAdapter = new NetworkAdapter();
                         bufAdapter.setName(subStrings[1]);
                         if(subStrings[3].contains("static")){
-                            bufAdapter.setIpmode("static");
+                            bufAdapter.setIpMode("static");
                         }
                         if(subStrings[3].contains("dhcp")){
-                            bufAdapter.setIpmode("dhcp");
+                            bufAdapter.setIpMode("dhcp");
                         }
                         firstteg = false;
                     } else {
@@ -36,10 +36,10 @@ public class NetworkSettingsParcer {
                         bufAdapter = new NetworkAdapter();
                         bufAdapter.setName(subStrings[1]);
                         if(subStrings[3].contains("static")){
-                            bufAdapter.setIpmode("static");
+                            bufAdapter.setIpMode("static");
                         }
                         if(subStrings[3].contains("dhcp")){
-                            bufAdapter.setIpmode("dhcp");
+                            bufAdapter.setIpMode("dhcp");
                         }
                     }
                 }
@@ -47,16 +47,19 @@ public class NetworkSettingsParcer {
 
             if(str.contains("address")){
                 String[] subStrings = str.split(" ");
+                assert bufAdapter != null;
                 bufAdapter.setIpaddress(subStrings[1]);
             }
 
             if(str.contains("netmask")){
                 String[] subStrings = str.split(" ");
+                assert bufAdapter != null;
                 bufAdapter.setMask(subStrings[1]);
             }
 
             if(str.contains("gateway")){
                 String[] subStrings = str.split(" ");
+                assert bufAdapter != null;
                 bufAdapter.setGateway(subStrings[1]);
             }
         }

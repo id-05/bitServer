@@ -3,7 +3,6 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
@@ -19,10 +18,10 @@
     <style type="text/css">
 
         body{
-            /* background-color: RGB(128,128,128);  Цвет фона веб-страницы */
+
         }
 
-        .fileupload-content {
+        .fUp-content {
             overflow: auto;
             height: 400px;
         }
@@ -40,7 +39,7 @@
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
-                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
                         </div>
                     </f:facet>
@@ -101,7 +100,7 @@
                                        widgetVar="fUpload"
                                        listener="#{clientBean.handleFileUpload}"
                                        sequential="true"
-                                       styleClass="fileupload-content"
+                                       styleClass="fUp-content"
                                        auto="true"
                                        dragDropSupport="true"
                                        sizeLimit="10000000"
@@ -115,7 +114,7 @@
                                 <div class="p-mr-2 p-as-center">
                                     <div class="p-d-flex">
                                         <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
-                                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                     </div>
                                 </div>
                             </f:facet>

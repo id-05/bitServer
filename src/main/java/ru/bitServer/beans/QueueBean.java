@@ -740,7 +740,7 @@ public class QueueBean implements UserDao, DataAction {
                 connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
                 BitServerUser bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
-                bufUser.setBlockStudy("0");
+                //bufUser.setBlockStudy("0");
                 updateUser(bufUser);
             }
         }
@@ -765,7 +765,7 @@ public class QueueBean implements UserDao, DataAction {
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
         //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
-        currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
+        //currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
     }

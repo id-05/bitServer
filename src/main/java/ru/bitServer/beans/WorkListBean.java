@@ -1,7 +1,6 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.service.WorkListItem;
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
-import static ru.bitServer.beans.AutoriseBean.showMessage;
+import static ru.bitServer.beans.AuthoriseBean.showMessage;
 
 @ManagedBean(name = "worklistBean")
 @ViewScoped
@@ -25,7 +24,6 @@ public class WorkListBean implements UserDao {
 
     BitServerUser currentUser;
     String currentUserId;
-    String pathToFile;
     StringBuilder worklistFile;
     String worklisttextFile;
     ArrayList<WorkListItem> items = new ArrayList<>();
@@ -62,20 +60,7 @@ public class WorkListBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-
-        BitServerResources bufResources = getBitServerResource("worklistsamplefile");
-        pathToFile = bufResources.getRvalue();
-
-        worklistFile = new StringBuilder();
-        try(FileReader reader = new FileReader(pathToFile)) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                worklistFile.append((char) c);
-            }
-        } catch (Exception e) {
-            LogTool.getLogger().warn("Error read luascript file: "+e.getMessage());
-        }
-
+        worklistFile = getFileFromResName("worklistsamplefile");
         worklisttextFile = worklistFile.toString();
         itemParcer = new WorkListItemParser(worklisttextFile);
         items = itemParcer.getItemList();
@@ -91,7 +76,7 @@ public class WorkListBean implements UserDao {
     }
 
     public void saveSampleFile(boolean mode){
-        File file = new File(pathToFile);
+        File file = new File(getBitServerResource("worklistsamplefile").getRvalue());
         FileOutputStream is;
         try{    is = new FileOutputStream(file);
             OutputStreamWriter osw = new OutputStreamWriter(is);
@@ -140,6 +125,7 @@ public class WorkListBean implements UserDao {
         String shortfilename = getBitServerResource("WorkListPath").getRvalue() + new Date().getTime();
         boolean deleteBufFileAfter = getBitServerResource("deleteBufFileAfter").getRvalue().equals("true");
         String filename = shortfilename+".txt";
+
         File file = new File(filename);
         FileOutputStream is;
         try{
@@ -159,7 +145,6 @@ public class WorkListBean implements UserDao {
         } catch (Exception e) {
             LogTool.getLogger().error("Error create wl-file: " + e.getMessage());
         }
-
 
         try {
             Process proc = Runtime.getRuntime().exec("dump2dcm "+filename+" "+shortfilename+".wl");

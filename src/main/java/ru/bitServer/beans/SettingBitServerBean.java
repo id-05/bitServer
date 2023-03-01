@@ -17,7 +17,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
-import static ru.bitServer.beans.AutoriseBean.showMessage;
+import static ru.bitServer.beans.AuthoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingBitServerBean")

@@ -3,19 +3,19 @@ package ru.bitServer.service;
 import ru.bitServer.util.LogTool;
 import java.util.ArrayList;
 
-public class DicomruleParser {
+public class DicomRuleParser {
 
     public StringBuilder textSettings;
 
-    public DicomruleParser(StringBuilder textSettings){
+    public DicomRuleParser(StringBuilder textSettings){
         this.textSettings = textSettings;
     }
 
-    public ArrayList<DicomrouteRule> getRulesList(){
+    public ArrayList<DicomRouteRule> getRulesList(){
         boolean hasIf = false;
         String tag = "";
         String tagValue = "";
-        ArrayList<DicomrouteRule> dicomrouteRuleList = new ArrayList<>();
+        ArrayList<DicomRouteRule> dicomRouteRuleList = new ArrayList<>();
         String[] strings = textSettings.toString().split("\n");
         try {
             for (String str : strings) {
@@ -36,15 +36,15 @@ public class DicomruleParser {
                         tag = "all";
                         tagValue = "all";
                     }
-                    DicomrouteRule bufRule = new DicomrouteRule(tag, tagValue, buf, false);
-                    dicomrouteRuleList.add(bufRule);
+                    DicomRouteRule bufRule = new DicomRouteRule(tag, tagValue, buf, false);
+                    dicomRouteRuleList.add(bufRule);
                     hasIf = false;
                 }
             }
         }catch (Exception e){
             LogTool.getLogger().warn("Error getRulesList() DicomRuleParser "+e.getMessage());
         }
-        return dicomrouteRuleList;
+        return dicomRouteRuleList;
     }
 }
 

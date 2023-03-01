@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = { "*.xhtml" })
 public class AuthorizationFilter implements Filter, UserDao {
@@ -29,11 +28,11 @@ public class AuthorizationFilter implements Filter, UserDao {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException {
-        HttpServletRequest reqt = (HttpServletRequest) request;
+        HttpServletRequest sRequest = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         try {
-            HttpSession ses = reqt.getSession(false);
-            String reqURI = reqt.getRequestURI();
+            HttpSession ses = sRequest.getSession(false);
+            String reqURI = sRequest.getRequestURI();
             if (reqURI.contains("/views/login.xhtml") || (ses != null && ses.getAttribute("userid") != null)
                     || reqURI.contains("/public/")
                     || reqURI.contains("/ariadna/")
@@ -41,11 +40,11 @@ public class AuthorizationFilter implements Filter, UserDao {
                     || reqURI.contains("javax.faces.resource"))
                 chain.doFilter(request, response);
             else
-                resp.sendRedirect(reqt.getContextPath() + "/views/login.xhtml");
+                resp.sendRedirect(sRequest.getContextPath() + "/views/login.xhtml");
         } catch (Exception e) {
 
-            LogTool.getLogger().error("Error in AutorizationFilter: " + e.getMessage());
-            resp.sendRedirect(reqt.getContextPath() + "/views/errorpage.xhtml");
+            LogTool.getLogger().error("Error in AuthorizationFilter: " + e.getMessage());
+            resp.sendRedirect(sRequest.getContextPath() + "/views/errorpage.xhtml");
         }
     }
 

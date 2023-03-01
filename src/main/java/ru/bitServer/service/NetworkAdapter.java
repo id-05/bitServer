@@ -6,7 +6,7 @@ public class NetworkAdapter {
     private String ipaddress;
     private String mask;
     private String gateway;
-    private String ipmode;
+    private String ipMode;
 
     public String getIpaddress() {
         return ipaddress;
@@ -40,28 +40,20 @@ public class NetworkAdapter {
         this.name = name;
     }
 
-    public String getIpmode() {
-        return ipmode;
+    public String getIpMode() {
+        return ipMode;
     }
 
-    public void setIpmode(String ipmode) {
-        this.ipmode = ipmode;
+    public void setIpMode(String ipMode) {
+        this.ipMode = ipMode;
     }
 
     public NetworkAdapter(){
 
     }
 
-    public NetworkAdapter(String name, String ipaddress, String mask, String gateway, String ipmode){
-        this.name = name;
-        this.ipaddress = ipaddress;
-        this.mask = mask;
-        this.gateway = gateway;
-        this.ipmode = ipmode;
-    }
-
     @Override
     public String toString() {
-        return "name = "+name+"; ipaddress = "+ipaddress+"; mask = "+mask+"; gateway = "+gateway+"; ipmode = "+ipmode;
+        return "name = "+name+"; ipaddress = "+ipaddress+"; mask = "+mask+"; gateway = "+gateway+"; ipMode = "+ipMode;
     }
 }

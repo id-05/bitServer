@@ -8,7 +8,6 @@ import ru.bitServer.util.OrthancRestApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import static ru.bitServer.beans.MainBean.mainServer;
 
 public class OrthancSettings implements DataAction {

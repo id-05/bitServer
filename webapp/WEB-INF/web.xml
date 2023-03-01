@@ -10,7 +10,7 @@
 
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>#{autoriseBean.currentuserTheme}</param-value>
+        <param-value>#{authoriseBean.currentUserTheme}</param-value>
     </context-param>
 
     <context-param>

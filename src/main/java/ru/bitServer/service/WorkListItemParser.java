@@ -1,6 +1,5 @@
 package ru.bitServer.service;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,14 +7,6 @@ public class WorkListItemParser {
 
     String worklisttextFile;
     HashMap<Integer,String> commentMap;
-
-    public HashMap<Integer, String> getCommentMap() {
-        return commentMap;
-    }
-
-    public void setWorklisttextFile(String worklisttextFile) {
-        this.worklisttextFile = worklisttextFile;
-    }
 
     public WorkListItemParser(String worklisttextFile) {
         this.worklisttextFile = worklisttextFile;

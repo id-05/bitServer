@@ -1,21 +1,13 @@
 package ru.bitServer.service;
 
-
-
-import org.apache.poi.ss.usermodel.Color;
-
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-
-
-
 
 public class ColorBar {
 
     ArrayList<String> colorList = new ArrayList<>();
 
     public ColorBar(){
-
         colorList.add("rgb(128,0,0)");
         colorList.add("rgb(255,99,71)");
         colorList.add("rgb(255,69,0)");

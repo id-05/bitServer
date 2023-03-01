@@ -46,17 +46,17 @@
                     </p:submenu>
                     <p:menuitem style="margin-right: 5px" value="LOG" outcome="logpage" icon="pi pi-info-circle"/>
 
-                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{autoriseBean.currentuserTheme}" rendered="false">
-                        <p:menuitem value="saga" actionListener="#{autoriseBean.setTheme('saga')}" process="@this"/>
-                        <p:menuitem value="arya" actionListener="#{autoriseBean.setTheme('arya')}" process="@this"/>
-                        <p:menuitem value="vela" actionListener="#{autoriseBean.setTheme('vela')}" process="@this"/>
-                        <p:menuitem value="nova-light" actionListener="#{autoriseBean.setTheme('nova-light')}" process="@this"/>
-                        <p:menuitem value="nova-dark" actionListener="#{autoriseBean.setTheme('nova-dark')}" process="@this"/>
-                        <p:menuitem value="nova-colored" actionListener="#{autoriseBean.setTheme('nova-colored')}" process="@this"/>
-                        <p:menuitem value="luna-blue" actionListener="#{autoriseBean.setTheme('luna-blue')}" process="@this"/>
-                        <p:menuitem value="luna-amber" actionListener="#{autoriseBean.setTheme('luna-amber')}" process="@this"/>
-                        <p:menuitem value="luna-green" actionListener="#{autoriseBean.setTheme('luna-green')}" process="@this"/>
-                        <p:menuitem value="luna-pink" actionListener="#{autoriseBean.setTheme('luna-pink')}" process="@this"/>
+                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{authoriseBean.currentUserTheme}" rendered="false">
+                        <p:menuitem value="saga" actionListener="#{authoriseBean.setTheme('saga')}" process="@this"/>
+                        <p:menuitem value="arya" actionListener="#{authoriseBean.setTheme('arya')}" process="@this"/>
+                        <p:menuitem value="vela" actionListener="#{authoriseBean.setTheme('vela')}" process="@this"/>
+                        <p:menuitem value="nova-light" actionListener="#{authoriseBean.setTheme('nova-light')}" process="@this"/>
+                        <p:menuitem value="nova-dark" actionListener="#{authoriseBean.setTheme('nova-dark')}" process="@this"/>
+                        <p:menuitem value="nova-colored" actionListener="#{authoriseBean.setTheme('nova-colored')}" process="@this"/>
+                        <p:menuitem value="luna-blue" actionListener="#{authoriseBean.setTheme('luna-blue')}" process="@this"/>
+                        <p:menuitem value="luna-amber" actionListener="#{authoriseBean.setTheme('luna-amber')}" process="@this"/>
+                        <p:menuitem value="luna-green" actionListener="#{authoriseBean.setTheme('luna-green')}" process="@this"/>
+                        <p:menuitem value="luna-pink" actionListener="#{authoriseBean.setTheme('luna-pink')}" process="@this"/>
                     </p:submenu>
 
                     <f:facet name="options">
@@ -65,7 +65,7 @@
                                 <p:commandButton rendered="#{adminBean.hasTrouble}" icon="pi pi-bell"  oncomplete="PF('troubleInfo').show()" style="margin-right: 10px" styleClass="rounded-button ui-button-danger"/>
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}"  styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
-                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             </div>
                         </div>
                     </f:facet>

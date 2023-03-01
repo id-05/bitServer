@@ -2,7 +2,6 @@ package ru.bitServer.dao;
 
 public class BitServerResources {
 
-
     private Long id;
     private String rname;
     private String rvalue;

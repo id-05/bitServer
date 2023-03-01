@@ -33,7 +33,7 @@
                         <div class="p-d-flex">
                             <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                             <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
-                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                         </div>
                     </div>
                 </f:facet>
@@ -72,7 +72,7 @@
                             </p:column>
 
                             <p:column headerText="MODE" style="text-align: center">
-                                <h:outputText value="#{networkAdapter.ipmode}"/>
+                                <h:outputText value="#{networkAdapter.ipMode}"/>
                             </p:column>
 
 
@@ -110,7 +110,7 @@
                                 <p:inputMask id="gateway" value="#{networkSettingsBean.selectedAdapter.gateway}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
 
                                 <p:outputLabel for="ipmode" style="margin-right: .5rem">Mode</p:outputLabel>
-                                <p:selectOneMenu id="ipmode" value="#{networkSettingsBean.selectedAdapter.ipmode}">
+                                <p:selectOneMenu id="ipmode" value="#{networkSettingsBean.selectedAdapter.ipMode}">
                                     <f:selectItem itemLabel="DHCP" itemValue="dhcp"/>
                                     <f:selectItem itemLabel="Static" itemValue="static"/>
                                 </p:selectOneMenu>

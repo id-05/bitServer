@@ -12,15 +12,13 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
 
-@ManagedBean(name = "autoriseBean")
+@ManagedBean(name = "authoriseBean")
 @SessionScoped
-public class AutoriseBean implements UserDao {
+public class AuthoriseBean implements UserDao {
 
     FacesMessage.Severity info = FacesMessage.SEVERITY_INFO;
     FacesMessage.Severity error = FacesMessage.SEVERITY_ERROR;
-    FacesMessage.Severity warning = FacesMessage.SEVERITY_WARN;
     String inputUserName;
     String inputPassword;
 
@@ -34,14 +32,14 @@ public class AutoriseBean implements UserDao {
 
     public BitServerUser currentUser;
 
-    public String currentuserTheme = "saga";
+    public String currentUserTheme = "saga";
 
-    public String getCurrentuserTheme() {
-        return currentuserTheme;
+    public String getCurrentUserTheme() {
+        return currentUserTheme;
     }
 
-    public void setCurrentuserTheme(String currentuserTheme) {
-        this.currentuserTheme = currentuserTheme;
+    public void setCurrentUserTheme(String currentUserTheme) {
+        this.currentUserTheme = currentUserTheme;
     }
 
     public String getInputUserName() {
@@ -62,17 +60,12 @@ public class AutoriseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-//        try {
-//            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-//        }catch (Exception e){
-//            saveBitServiceResource(new BitServerResources("logpath","/dataimage/results/"));
-//            LogTool.setFileName(getBitServerResource("logpath").getRvalue());
-//        }
+
     }
 
     public void setTheme(String tName){
-        currentuserTheme = tName;
-        currentUser.setuTheme(currentuserTheme);
+        currentUserTheme = tName;
+        currentUser.setuTheme(currentUserTheme);
         updateUser(currentUser);
         PrimeFaces.current().executeScript("location.reload();");
     }
@@ -85,7 +78,7 @@ public class AutoriseBean implements UserDao {
             if (currentUser.getUname()!=null) {
                 HttpSession session = SessionUtils.getSession();
                 session.setAttribute("userid", currentUser.getUid());
-                currentuserTheme = "saga";
+                currentUserTheme = "saga";
 
                 switch (currentUser.getRole()){
                     case "localuser":

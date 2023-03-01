@@ -6,8 +6,6 @@ import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import java.io.File;
 
 @ManagedBean(name = "dataStorageBean")
@@ -65,14 +63,7 @@ public class DataStorageBean implements UserDao {
                 usedSpace = (100 - (int) (bufDouble * 100)) + " %";
             }
         }catch (Exception e){
-            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
             LogTool.getLogger().warn("Error in DataStorageBean: "+e.getMessage());
-//            try{
-//                ec.redirect(ec.getRequestContextPath()
-//                        + "/views/errorpage.xhtml"+"?"+e.getMessage());
-//            }catch (Exception e2){
-//                LogTool.getLogger().warn("Error during redirect from DataStorageBean: "+e2.getMessage());
-//            }
         }
     }
 }

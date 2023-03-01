@@ -1,13 +1,12 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
-import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
-import ru.bitServer.service.DicomrouteRule;
-import ru.bitServer.service.DicomruleParser;
+import ru.bitServer.service.DicomRouteRule;
+import ru.bitServer.service.DicomRuleParser;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -25,17 +24,16 @@ import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "dicomrouteBean")
 @ViewScoped
-public class DicomrouteBean implements UserDao {
+public class DicomRouteBean implements UserDao {
 
     BitServerUser currentUser;
     String currentUserId;
-    String pathToFile;
-    ArrayList<DicomrouteRule> rules = new ArrayList<>();
+    ArrayList<DicomRouteRule> rules = new ArrayList<>();
     StringBuilder luascriptFile;
     String luascripttextFile;
     List<DicomModaliti> modalities;
     List<String> modalitiesName;
-    DicomrouteRule selectedRule;
+    DicomRouteRule selectedRule;
 
     public List<String> getModalitiesName() {
         modalitiesName = new ArrayList<>();
@@ -49,11 +47,11 @@ public class DicomrouteBean implements UserDao {
         this.modalitiesName = modalitiesName;
     }
 
-    public DicomrouteRule getSelectedRule() {
+    public DicomRouteRule getSelectedRule() {
         return selectedRule;
     }
 
-    public void setSelectedRule(DicomrouteRule selectedRule) {
+    public void setSelectedRule(DicomRouteRule selectedRule) {
         this.selectedRule = selectedRule;
     }
 
@@ -65,11 +63,11 @@ public class DicomrouteBean implements UserDao {
         this.luascripttextFile = luascripttextFile;
     }
 
-    public ArrayList<DicomrouteRule> getRules() {
+    public ArrayList<DicomRouteRule> getRules() {
         return rules;
     }
 
-    public void setRules(ArrayList<DicomrouteRule> rules) {
+    public void setRules(ArrayList<DicomRouteRule> rules) {
         this.rules = rules;
     }
 
@@ -78,28 +76,16 @@ public class DicomrouteBean implements UserDao {
 
     @PostConstruct
     public void init()  {
-        selectedRule = new DicomrouteRule();
+        selectedRule = new DicomRouteRule();
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         modalities = orthancSettings.getDicomModalitis();
-
-        BitServerResources bufResources = getBitServerResource("luascriptpathfile");
-        pathToFile = bufResources.getRvalue();
-
-        luascriptFile = new StringBuilder();
-        try(FileReader reader = new FileReader(pathToFile)) {
-            int c;
-            while ((c = reader.read()) != -1) {
-                luascriptFile.append((char) c);
-            }
-        } catch (Exception e) {
-            LogTool.getLogger().warn("Error read luascript file: "+e.getMessage());
-        }
+        luascriptFile = getFileFromResName("luascriptpathfile");
         luascripttextFile = luascriptFile.toString();
-        DicomruleParser ruleParcer = new DicomruleParser(luascriptFile);
+        DicomRuleParser ruleParcer = new DicomRuleParser(luascriptFile);
         rules = ruleParcer.getRulesList();
     }
 
@@ -109,7 +95,7 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void addNewRule(){
-        selectedRule.setDeleteAfteRoute(false);
+        selectedRule.setDeleteAfterRoute(false);
         rules.add(selectedRule);
         PrimeFaces.current().executeScript("PF('manageRule').hide()");
         PrimeFaces.current().ajax().update(":dicomroute:tabview1:dt-rules");
@@ -122,7 +108,7 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void initNewRule(){
-        selectedRule = new DicomrouteRule();
+        selectedRule = new DicomRouteRule();
     }
 
     public void onInputTextChange(){
@@ -135,7 +121,7 @@ public class DicomrouteBean implements UserDao {
     }
 
     public void saveSettingsCustomMode(){
-        try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
+        try(FileOutputStream fileOutputStream = new FileOutputStream(getBitServerResource("luascriptpathfile").getRvalue()))
         {
             byte[] buffer = luascripttextFile.getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);
@@ -150,7 +136,7 @@ public class DicomrouteBean implements UserDao {
         StringBuilder bufStringBuilder = new StringBuilder();
         bufStringBuilder.append("function OnStoredInstance(instanceId, tags, metadata)\n");
 
-        for(DicomrouteRule bufRule:rules){
+        for(DicomRouteRule bufRule:rules){
             if(bufRule.getTag().equals("all")){
                 bufStringBuilder.append("   SendToModality(instanceId, '").append(bufRule.getNameRemoteModality()).append("')").append("\n");
             }else {
@@ -162,7 +148,7 @@ public class DicomrouteBean implements UserDao {
 
         bufStringBuilder.append("end\n");
 
-        try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFile))
+        try(FileOutputStream fileOutputStream = new FileOutputStream(getBitServerResource("luascriptpathfile").getRvalue()))
         {
             byte[] buffer = bufStringBuilder.toString().getBytes();
             fileOutputStream.write(buffer, 0, buffer.length);

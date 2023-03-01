@@ -16,7 +16,6 @@ import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.util.LogTool;
-import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -32,8 +31,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "clientBean", eager = true)
 @SessionScoped

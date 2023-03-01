@@ -134,7 +134,7 @@ public class QueueremoteBean implements UserDao {
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
         //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
-        currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
+        //currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteusercurrenttask.xhtml");
     }

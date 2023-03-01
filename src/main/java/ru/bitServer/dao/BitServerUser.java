@@ -11,11 +11,7 @@ public class BitServerUser {
     private String role;
     private String ugroup;
     private String uTheme;
-    private String blockStudy;
     private boolean hasBlockStudy;
-    private int successStudyCount;
-    private int returnStudyCount;
-    private int rating;
 
     public String getRuName() {
         return ruName;
@@ -71,30 +67,6 @@ public class BitServerUser {
         this.hasBlockStudy = hasBlockStudy;
     }
 
-    public int getSuccessStudyCount() {
-        return successStudyCount;
-    }
-
-    public void setSuccessStudyCount(int successStudyCount) {
-        this.successStudyCount = successStudyCount;
-    }
-
-    public int getReturnStudyCount() {
-        return returnStudyCount;
-    }
-
-    public void setReturnStudyCount(int returnStudyCount) {
-        this.returnStudyCount = returnStudyCount;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     public Long getUid() {
         return uid;
     }
@@ -125,14 +97,6 @@ public class BitServerUser {
 
     public void setuTheme(String uTheme) {
         this.uTheme = uTheme;
-    }
-
-    public String getBlockStudy() {
-        return blockStudy;
-    }
-
-    public void setBlockStudy(String blockStudy) {
-        this.blockStudy = blockStudy;
     }
 
     public BitServerUser(){

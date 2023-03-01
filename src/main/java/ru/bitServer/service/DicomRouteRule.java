@@ -1,10 +1,10 @@
 package ru.bitServer.service;
 
-public class DicomrouteRule {
+public class DicomRouteRule {
     String Tag;
     String TagValue;
     String NameRemoteModality;
-    boolean deleteAfteRoute;
+    boolean deleteAfterRoute;
 
     public String getTag() {
         return Tag;
@@ -30,22 +30,22 @@ public class DicomrouteRule {
         NameRemoteModality = nameRemoteModality;
     }
 
-    public boolean isDeleteAfteRoute() {
-        return deleteAfteRoute;
+    public boolean isDeleteAfterRoute() {
+        return deleteAfterRoute;
     }
 
-    public void setDeleteAfteRoute(boolean deleteAfteRoute) {
-        this.deleteAfteRoute = deleteAfteRoute;
+    public void setDeleteAfterRoute(boolean deleteAfterRoute) {
+        this.deleteAfterRoute = deleteAfterRoute;
     }
 
-    public DicomrouteRule(){
+    public DicomRouteRule(){
 
     }
 
-    public DicomrouteRule(String Tag, String TagValue, String NameRemoteModality, boolean deleteAfteRoute){
+    public DicomRouteRule(String Tag, String TagValue, String NameRemoteModality, boolean deleteAfterRoute){
         this.Tag = Tag;
         this.TagValue = TagValue;
         this.NameRemoteModality = NameRemoteModality;
-        this.deleteAfteRoute = deleteAfteRoute;
+        this.deleteAfterRoute = deleteAfterRoute;
     }
 }

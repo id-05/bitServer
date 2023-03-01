@@ -95,7 +95,7 @@ public class LocalUserCurTask implements UserDao {
         //selectedVisibleStudy.setUserwhodiagnost(currentUserId);
         selectedVisibleStudy.setDateresult(new Date());
         currentUser.setHasBlockStudy(false);
-        currentUser.setBlockStudy("");
+        //currentUser.setBlockStudy("");
         updateUser(currentUser);
         if(resultFile!=null){
             Path folder = Paths.get(MainBean.pathToSaveResult);

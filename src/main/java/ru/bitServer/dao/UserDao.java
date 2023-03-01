@@ -8,6 +8,7 @@ import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.OrthancSettingSnapshot;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -23,7 +24,6 @@ import static ru.bitServer.beans.MainBean.*;
 public interface UserDao {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat bufFORMAT = new SimpleDateFormat("yyyyMMdd HH:mm");
     SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     default Connection getConnection() throws SQLException, ClassNotFoundException {
@@ -157,7 +157,7 @@ public interface UserDao {
                 while(subRs.next()){
                     bufInstances.add(getDicomAsByte(connection,subRs.getString(1)));
                 }
-                seriesList.add(new OrthancSerie(rs.getString(2), rs.getString(4),bufInstances,0));
+                seriesList.add(new OrthancSerie(rs.getString(2), rs.getString(4),bufInstances));
             }
             conn.close();
         } catch (Exception  e) {
@@ -457,40 +457,6 @@ public interface UserDao {
         return resultList;
     }
 
-    default void alternativeSaveResource(BitServerResources bitServerResources){
-        try {
-            Connection conn = getConnection();
-            //Statement statement = conn.createStatement();
-
-            String sql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1',?)";
-            PreparedStatement statement2 = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
-            statement2.setString(1,bitServerResources.getRname());
-            statement2.executeUpdate();
-            ResultSet resultSet = statement2.getGeneratedKeys();
-            if(resultSet.next()) {
-                int key = resultSet.getInt(1);
-                String strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+key+"')";
-                Statement statement = conn.createStatement();
-                statement.executeUpdate(strSql);
-                conn.close();
-            }
-
-            //String strSql = "INSERT INTO bitserver (rtype,rvalue) VALUES ( '1','"+ bitServerResources.getRname()+"')";
-            //statement.executeUpdate(strSql);
-            //strSql = "SELECT internalId FROM bitserver WHERE bitserver.rvalue = '"+ bitServerResources.getRname()+"' and bitserver.rtype = '1'";
-            //statement = conn.createStatement();
-            //ResultSet rs = statement.executeQuery(strSql);
-            //rs.next();
-            //String bufStudy = rs.getString(1);
-//            String strSql = "INSERT INTO bitserver (rtype,rvalue,parentId) VALUES ( '2','"+ bitServerResources.getRvalue()+"','"+key+"')";
-//            statement.executeUpdate(strSql);
-//            conn.close();
-        }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-        }
-    }
-
     default void deleteFromBitServerTable(Long id) {
         try {
             Connection conn = getConnection();
@@ -505,14 +471,11 @@ public interface UserDao {
 
     default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String source) {
         List<BitServerStudy> resultList = new ArrayList<>();
-        Calendar c = Calendar.getInstance();
+        Calendar c;
         switch (dateSeachType){
             case "today":
                 firstdate = new Date();
                 seconddate = firstdate;
-//                c.setTime(firstdate);
-//                c.add(Calendar.DATE, 1);
-//                seconddate = c.getTime();
                 break;
             case "week":
                 seconddate = new Date();
@@ -704,23 +667,7 @@ public interface UserDao {
         return returnDate;
     }
 
-    default Date getDateFromText2(String strDate) throws ParseException {
-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd HH:mm");
-        Date returnDate = new Date();
-        try {
-            if (!strDate.equals("")) {
-                returnDate = formatter.parse(strDate);
-            }
-        }catch (Exception e){
-            if((getBitServerResource("debug").getRvalue().equals("true"))) {
-                LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Ошибка парсинга даты: " + strDate);
-            }
-        }
-        return returnDate;
-    }
-
-    default void saveJsonSettingtToFile(JsonObject newJson) throws IOException {
-        boolean result;
+    default void saveJsonSettingtToFile(JsonObject newJson) {
         boolean luaRead = true;
         try {
             luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
@@ -734,15 +681,12 @@ public interface UserDao {
                     "f:close()";
             OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
             connection.makePostConnectionAndStringBuilder("/tools/execute-script", urlParameters);
-            result = true;
         } else {
             try (FileOutputStream fileOutputStream = new FileOutputStream(mainServer.getPathToJson() + "orthanc.json")) {
                 byte[] buffer = newJson.toString().getBytes();
                 fileOutputStream.write(buffer, 0, buffer.length);
-                result = true;
             } catch (IOException e) {
                 LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: " + e.getMessage());
-                result = false;
             }
         }
     }
@@ -806,7 +750,6 @@ public interface UserDao {
         }
     }
 
-
     default String ModifyStr(String str){
         String result;
         String buf0;
@@ -816,6 +759,19 @@ public interface UserDao {
         buf = buf0.replace("/","\\/");
         buf2 = buf.replace("\"","\\\"");
         result = buf2.replace(",",",\\n");
+        return result;
+    }
+
+    default StringBuilder getFileFromResName(String resName){
+        StringBuilder result = new StringBuilder();
+        try(FileReader reader = new FileReader(getBitServerResource(resName).getRvalue())) {
+            int c;
+            while ((c = reader.read()) != -1) {
+                result.append((char) c);
+            }
+        } catch (Exception e) {
+            LogTool.getLogger().warn("Error read luascript file: "+e.getMessage());
+        }
         return result;
     }
 

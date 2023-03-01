@@ -2,7 +2,6 @@ package ru.bitServer.dao;
 
 import java.util.ArrayList;
 
-
 public class BitServerGroup {
 
     private Long id;
@@ -39,15 +38,7 @@ public class BitServerGroup {
         this.userList = userList;
     }
 
-    public BitServerGroup(Long id, String ruName){
-        this.id = id;
-        this.ruName = ruName;
-    }
-
     public BitServerGroup(){
-    }
-    public BitServerGroup(String ruName){
-        this.ruName = ruName;
     }
 
 }

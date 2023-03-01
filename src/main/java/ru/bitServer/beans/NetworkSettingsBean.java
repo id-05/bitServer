@@ -197,13 +197,13 @@ public class NetworkSettingsBean implements UserDao {
         bufStringBuilder.append("iface lo inet loopback\n");
         bufStringBuilder.append("\n");
         for(NetworkAdapter bufAdapter:adapters){
-            if(bufAdapter.getIpmode().equals("dhcp")){
-                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
+            if(bufAdapter.getIpMode().equals("dhcp")){
+                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpMode()).append("\n");
                 bufStringBuilder.append("auto ").append(bufAdapter.getName()).append("\n");
                 bufStringBuilder.append("allow-hotplug ").append(bufAdapter.getName()).append("\n");
                 bufStringBuilder.append("\n");
             }else {
-                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpmode()).append("\n");
+                bufStringBuilder.append("iface ").append(bufAdapter.getName()).append(" inet ").append(bufAdapter.getIpMode()).append("\n");
                 bufStringBuilder.append("address ").append(bufAdapter.getIpaddress()).append("\n");
                 if(!bufAdapter.getMask().equals("")) {
                     bufStringBuilder.append("netmask ").append(bufAdapter.getMask()).append("\n");

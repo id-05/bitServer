@@ -11,7 +11,7 @@ public class LogTool {
     private static boolean initializationFlag = false;
     private static String fileName;
 
-    private static void intializeLogger(){
+    private static void initializeLogger(){
         log.setLevel(Level.DEBUG);
         LogTool.setFileName(fileName);
         RollingFileAppender appender = new RollingFileAppender();
@@ -28,13 +28,10 @@ public class LogTool {
 
     public static Logger getLogger(){
         if(!initializationFlag){
-            intializeLogger();
+            initializeLogger();
             initializationFlag = true;
-            return LogTool.log;
         }
-        else{
-            return LogTool.log;
-        }
+        return LogTool.log;
     }
 
     public static void setFileName(String fileName){

@@ -103,5 +103,6 @@
     <orderEntry type="library" name="Maven: org.dcm4che:dcm4che-image:5.29.1" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.com4j:com4j:2.1" level="project" />
     <orderEntry type="library" name="Maven: net.lingala.zip4j:zip4j:2.11.5" level="project" />
+    <orderEntry type="library" name="primeflex" level="application" />
   </component>
 </module>

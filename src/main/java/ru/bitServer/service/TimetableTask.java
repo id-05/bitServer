@@ -11,7 +11,6 @@ public class TimetableTask {
     int id;
     LocalTime timeTask;
     DicomModaliti sourceAET;
-    DicomModaliti destinationAET;
     String action;
     String source;
     String destination;
@@ -28,14 +27,6 @@ public class TimetableTask {
 
     public void setSourceAET(DicomModaliti sourceAET) {
         this.sourceAET = sourceAET;
-    }
-
-    public DicomModaliti getDestinationAET() {
-        return destinationAET;
-    }
-
-    public void setDestinationAET(DicomModaliti destinationAET) {
-        this.destinationAET = destinationAET;
     }
 
     public LocalTime getTimeTask() {

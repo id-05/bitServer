@@ -74,7 +74,6 @@ public class OrthancStudy {
         return date;
     }
 
-
     public OrthancStudy(String InstitutionName, String studyDescription, String modality, Date date, String accession, String StudyOrthancId, String patientName, String patientID, Date birthDate, String sex, String patientOrthancId, String studyInstanceUID) {
         this.InstitutionName = InstitutionName;
         this.studyDescription = studyDescription;

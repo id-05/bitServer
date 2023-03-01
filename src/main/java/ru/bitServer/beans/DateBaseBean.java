@@ -11,7 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.util.*;
-import static ru.bitServer.beans.AutoriseBean.showMessage;
+import static ru.bitServer.beans.AuthoriseBean.showMessage;
 
 @ManagedBean(name = "datebaseBean")
 @ViewScoped

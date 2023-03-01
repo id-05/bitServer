@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 import static ru.bitServer.beans.MainBean.mainServer;
 
 public class LinkServlet extends HttpServlet implements UserDao {

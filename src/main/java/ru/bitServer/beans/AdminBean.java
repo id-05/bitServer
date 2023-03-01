@@ -10,8 +10,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.servlet.http.HttpSession;
 import java.io.FileReader;
-
-
 import static ru.bitServer.beans.MainBean.mainServer;
 
 @ManagedBean(name = "adminBean", eager = true)
@@ -36,7 +34,6 @@ public class AdminBean implements UserDao {
     public void init(){
         DicomCreatorBean.onUpdate();
         TagEditorBean.onClearForm();
-        System.out.println("admin page");
         hasTrouble = MainBean.hasTrouble;
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();

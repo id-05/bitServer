@@ -6,6 +6,7 @@
         <element id="directory" name="classes">
           <element id="module-output" name="bitServer" />
           <element id="library" level="application" name="ckeditor" />
+          <element id="library" level="application" name="primeflex" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: us.fatehi:schemacrawler:14.05.01" />

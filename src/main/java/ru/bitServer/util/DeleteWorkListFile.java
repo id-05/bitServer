@@ -12,13 +12,14 @@ public class DeleteWorkListFile implements UserDao, Runnable {
         this.condition = condition;
     }
 
-    String[] pathnames;
+    String[] pathNames;
     @Override
     public void run() {
         int lifeHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
         File f = new File(getBitServerResource("WorkListPath").getRvalue());
-        pathnames = f.list();
-        for (String pathname : pathnames) {
+        pathNames = f.list();
+        assert pathNames != null;
+        for (String pathname : pathNames) {
             long curTime = new Date().getTime();
             int i = pathname.indexOf(".");
             String buf = pathname.substring(0,i);

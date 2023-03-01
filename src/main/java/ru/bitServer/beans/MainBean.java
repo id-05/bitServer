@@ -67,14 +67,6 @@ public class MainBean implements UserDao, DataAction {
         this.versionInfo = versionInfo;
     }
 
-    public String getSelectTheme() {
-        return selectTheme;
-    }
-
-    public void setSelectTheme(String selectTheme) {
-        this.selectTheme = selectTheme;
-    }
-
     public ArrayList<String> getThemeList() {
         return themeList;
     }
@@ -178,7 +170,6 @@ public class MainBean implements UserDao, DataAction {
     }
 
     public static void HL7service() {
-        boolean useSecureConnection = false;
         BitServerResources bufRes = UserDao.getStaticBitServerResource("hl7port");
         int port = 104;
         try {
@@ -189,7 +180,7 @@ public class MainBean implements UserDao, DataAction {
 
         LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
         LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
-        HL7Service ourHl7Server = context.newServer(port, useSecureConnection);
+        HL7Service ourHl7Server = context.newServer(port, false);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
         ourHl7Server.registerConnectionListener(new OurConnectionListener());
         ourHl7Server.registerApplication(ourRouter, new HL7toWorkList());

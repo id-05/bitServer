@@ -6,12 +6,8 @@ import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.service.TimetableTask;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.time.LocalTime;
 import java.util.*;
-
 import static ru.bitServer.beans.MainBean.mainServer;
 
 public class TimersLauncher implements UserDao, Runnable {
@@ -36,9 +32,9 @@ public class TimersLauncher implements UserDao, Runnable {
                         System.out.println("Start send task, info: source: " + bufTask.getSource() + " destination: " + bufTask.getDestination());
                         //поиск всех записей соответствующих условию
                         try {
-                            visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModaliti(bufTask.getAltSource()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModality(bufTask.getAltSource()));
+                        } catch (Exception e) {
+                            LogTool.getLogger().error(this.getClass().getSimpleName() + ": Ошибка во время выполенения задания по расписанию getStudyFromOrthanc:" + e.getMessage());
                         }
                         LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Start send task, info: StudiesListSize: " + visibleStudiesList.size());
                         System.out.println("Start send task, info: StudiesListSize: " + visibleStudiesList.size());
@@ -93,35 +89,17 @@ public class TimersLauncher implements UserDao, Runnable {
         }
     }
 
-    public String getAETbyNameModaliti(String nameModaliti) throws IOException {
+    public String getAETbyNameModality(String nameModality) {
         String bufAET = "";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         orthancSettings = new OrthancSettings(connection);
         allModalities = orthancSettings.getDicomModalitis();
-        for(DicomModaliti bufModaliti:allModalities){
-            if(bufModaliti.getDicomName().equals(nameModaliti)){
-                bufAET = bufModaliti.getDicomTitle();
+        for(DicomModaliti bufModality:allModalities){
+            if(bufModality.getDicomName().equals(nameModality)){
+                bufAET = bufModality.getDicomTitle();
                 break;
             }
         }
         return bufAET;
     }
-
-//    ArrayList<TimetableTask> getAllTasks() {
-//        ArrayList<TimetableTask> resultList = new ArrayList<>();
-//        try {
-//            Connection conn = getConnection();
-//            String resultSQL = "SELECT internalid, rvalue FROM bitserver WHERE rtype = '11'";
-//            Statement statement = conn.createStatement();
-//            ResultSet rs = statement.executeQuery(resultSQL);
-//            while (rs.next()) {
-//                TimetableTask bufTask = new TimetableTask(rs.getString(1),rs.getString(2));
-//                resultList.add(bufTask);
-//            }
-//            conn.close();
-//        } catch (Exception  e) {
-//            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
-//        }
-//        return resultList;
-//    }
 }

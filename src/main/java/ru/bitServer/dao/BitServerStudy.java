@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 public class BitServerStudy implements Serializable {
 
     private Long id;
@@ -147,10 +146,6 @@ public class BitServerStudy implements Serializable {
         this.userwhoblock = userwhoblock;
     }
 
-//    public void setDatablock(Date datablock) {
-//        this.datablock = datablock;
-//    }
-
     public boolean isTypeResult() {
         return typeResult;
     }
@@ -239,10 +234,6 @@ public class BitServerStudy implements Serializable {
         return PatientBirthDate;
     }
 
-    public String getStringPatientBirthdate() {
-        return new SimpleDateFormat("dd.MM.yyyy").format(PatientBirthDate);
-    }
-
     public void setPatientBirthDate(Date patientBirthDate) {
         this.PatientBirthDate = patientBirthDate;
     }
@@ -325,14 +316,6 @@ public class BitServerStudy implements Serializable {
     public void setAnonimstudyid(String anonimstudyid) {
         this.anonimstudyid = anonimstudyid;
     }
-
-//    public void setUserwhosent(String userwhosent) {
-//        this.userwhosent = userwhosent;
-//    }
-//
-//    public void setUserwhodiagnost(String userwhodiagnost) {
-//        this.userwhodiagnost = userwhodiagnost;
-//    }
 
     public Date getDatesent() {
         return datesent;
