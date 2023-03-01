@@ -11,26 +11,7 @@
 
     <h:head>
         <style type="text/css">
-            .my_text
-            {
-                font-family:    Arial, Helvetica, sans-serif;
-            }
-            div.centercard
-            {
-                display: flex;
-                justify-content: center;
-                vertical-align: middle;
-                horiz-align: center;
-                vert-align: middle;
-            }
-            .grid
-            {
-                display: flex;
-                flex-wrap: wrap;
-                margin-right: -0.5rem;
-                margin-left: -0.5rem;
-                margin-top: -0.5rem;
-            }
+
         </style>
 
         <f:facet name="last">
@@ -181,7 +162,7 @@
                         </p:divider>
 
                         <p class="p-m-0">
-                            <p:toggleSwitch value="#{settingBitServerBean.httpmode}">
+                            <p:toggleSwitch value="#{settingBitServerBean.httpMode}">
                                 <p:ajax listener="#{settingBitServerBean.saveParam}" />
                             </p:toggleSwitch>
                         </p>
@@ -329,6 +310,7 @@
 
                         <br/>
                         <div >Если включено, все пользователи видят статистику сервера на своей домашней странице</div>
+                        <br/>
 
                         <p:divider align="left" type="dashed">
                             <b>Включить службу заданий по времени</b>
@@ -342,6 +324,22 @@
 
                         <br/>
                         <div >Если включено, будут выполняться задания по времени из меню "Задания"</div>
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
+                            <b>Включать в iso образ DICOM-viewer</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.cdViewerInclude}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, в содержимое iso файла будет включен DICOM-viewer</div>
+                        <br/>
+
 
                         <p:divider align="left" type="dashed">
                             <b>Удаление всех DICOM-данных</b>
@@ -474,7 +472,7 @@
 
                         <div >Введите данные для доступа к серверу и нажмите Старт. Синхронизацию можно остановить в любой момент просто закрыв страницу, а после продолжить, причем
                             ранее переданные данные не будут переданы повторно</div>
-
+                        <br/>
                     </p:outputPanel>
                 </p:tab>
 

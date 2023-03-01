@@ -36,9 +36,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -49,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 import static ru.bitServer.beans.MainBean.*;
 
@@ -95,7 +92,7 @@ public class QueueBean implements UserDao, DataAction {
     private int number;
     int recordCount;
     List<String> modalityName = new ArrayList<>();
-    String dataoutputState;
+    //String dataoutputState;
     double timeRequest;
     double timeDrawing;
     long timeStart;
@@ -577,8 +574,6 @@ public class QueueBean implements UserDao, DataAction {
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
         UploadedFile file = event.getFile();
         connection.sendDicom("/instances", file.getContent());
-        //StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+newID);
-        //JsonObject bufJson = (JsonObject) new JsonParser().parse(sb.toString());
         uploadCount++;
         PrimeFaces.current().ajax().update(":addDICOM");
     }
@@ -605,8 +600,6 @@ public class QueueBean implements UserDao, DataAction {
                 bufStudy.setStatus(1);
                 bufStudy.setDatesent(new Date());
                 bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
-                //bufStudy.setUserwhosent(currentUser.getUid().toString());
-                //updateStudy(bufStudy);
                 i++;
             }else{
                 showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientName()+" имеет недопустимый для этого действия статус!",info);
@@ -668,13 +661,11 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-        System.out.println(bufStudy.getPatientName());
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
-        //byte[] buf = IOUtils.toByteArray(inputStream);
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"rar")
                 .contentType("application/rar")
@@ -683,17 +674,14 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public StreamedContent downloadIsoStudy() throws Exception {
-        //createIsoToDVD();
         String tmpdir = getBitServerResource("isoPath").getRvalue();
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
-        String url = "/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
-        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
+        HttpURLConnection conn = connection.makePostConnection("/tools/create-archive", jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
         File outfile = new File(tmpdir+"/out.iso");
         File buffile = new File(tmpdir+"/buf.zip");
-
         FileUtils.copyInputStreamToFile(inputStream, buffile);
 
         try {
@@ -706,9 +694,11 @@ public class QueueBean implements UserDao, DataAction {
         ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
         ISO9660RootDirectory root = new ISO9660RootDirectory();
         root.addRecursively(new File(tmpdir+"/images"));
-        String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
-        root.addContentsRecursively(new File(relativeWebPath));
 
+        if(getBitServerResource("cdViewerInclude").getRvalue().equals("true")) {
+            String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
+            root.addContentsRecursively(new File(relativeWebPath));
+        }
         ISO9660Config iso9660Config = new ISO9660Config();
         iso9660Config.allowASCII(false);
         iso9660Config.setInterchangeLevel(1);
@@ -733,11 +723,7 @@ public class QueueBean implements UserDao, DataAction {
         ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
         CreateISO iso = new CreateISO(streamHandler, root);
         iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
-        //BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
-        //File outfile = new File("out.iso");
-
         FileUtils.deleteDirectory(new File(tmpdir+"/images"));
-
         InputStream inputStreamOut = new FileInputStream(outfile);
         return DefaultStreamedContent.builder()
                 .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"iso")

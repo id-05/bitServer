@@ -20,12 +20,8 @@ public class DateBaseBean implements UserDao {
     List<BitServerResources> listResources = new ArrayList<>();
     BitServerResources selectedResource;
     BitServerStudy selectedStudy;
-    List<BitServerScheduler> listSchedulers = new ArrayList<>();
-    BitServerScheduler selectedScheduler;
-    BitServerScheduler selectedSchedulers;
     BitServerUser currentUser;
     String currentUserId;
-    List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     boolean debug;
 
     public boolean isDebug() {
@@ -34,30 +30,6 @@ public class DateBaseBean implements UserDao {
 
     public void setDebug(boolean debug) {
         this.debug = debug;
-    }
-
-    public BitServerScheduler getSelectedSchedulers() {
-        return selectedSchedulers;
-    }
-
-    public void setSelectedSchedulers(BitServerScheduler selectedSchedulers) {
-        this.selectedSchedulers = selectedSchedulers;
-    }
-
-    public List<BitServerScheduler> getListSchedulers() {
-        return listSchedulers;
-    }
-
-    public void setListSchedulers(List<BitServerScheduler> listSchedulers) {
-        this.listSchedulers = listSchedulers;
-    }
-
-    public BitServerScheduler getSelectedScheduler() {
-        return selectedScheduler;
-    }
-
-    public void setSelectedScheduler(BitServerScheduler selectedScheduler) {
-        this.selectedScheduler = selectedScheduler;
     }
 
     public BitServerResources getSelectedResource() {
@@ -84,7 +56,6 @@ public class DateBaseBean implements UserDao {
         listResources = getAllBitServerResource();
         selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
-        selectedScheduler = new BitServerScheduler();
         debug = getBitServerResource("debug").getRvalue().equals("true");
     }
 
@@ -98,7 +69,6 @@ public class DateBaseBean implements UserDao {
         }
         listResources.clear();
         selectedResource = new BitServerResources();
-        //bitServerResourcesList = getAllBitServerResource();
         checkResources();
         listResources = getAllBitServerResource();
         showMessage("Внимание!","Все данные были удалены и заполнены значениями по умолчанию!",FacesMessage.SEVERITY_ERROR);
@@ -147,14 +117,14 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("timerEnable")){saveBitServiceResource(new BitServerResources("timerEnable","false")); sb.append("timerEnable;").append("\n");}
         if(!bufResourceName.contains("luaRead")){saveBitServiceResource(new BitServerResources("luaRead","true")); sb.append("luaRead;").append("\n");}
         if(!bufResourceName.contains("isoPath")){saveBitServiceResource(new BitServerResources("isoPath","/dataimage/results/")); sb.append("isoPath;").append("\n");}
+        if(!bufResourceName.contains("cdViewerInclude")){saveBitServiceResource(new BitServerResources("cdViewerInclude","true")); sb.append("cdViewerInclude;").append("\n");}
         if(sb.toString().length()>0){
             showMessage("Внимание!","Были добавлены: "+ sb.toString(),FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");
-            PrimeFaces.current().ajax().update(":form:growl2");
         }else{
             showMessage("Внимание!","В таблице есть все актуальный параметры!",FacesMessage.SEVERITY_INFO);
-            PrimeFaces.current().ajax().update(":form:growl2");
         }
+        PrimeFaces.current().ajax().update(":form:growl2");
     }
 
     public void addNewResource(){
@@ -188,35 +158,6 @@ public class DateBaseBean implements UserDao {
         }
     }
 
-    public void addNewScheduler(){
-        if((!selectedScheduler.getModality().equals(""))&(!selectedScheduler.getSource().equals("")))
-        {
-            boolean verifiUnical = true;
-            for(BitServerScheduler bufScheduler:listSchedulers){
-                if (bufScheduler.getModality().equals(selectedScheduler.getModality())) {
-                    verifiUnical = false;
-                    break;
-                }
-            }
-            if(verifiUnical) {
-                PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
-            }else{
-                PrimeFaces.current().executeScript("PF('manageSchedulerDialog').hide()");
-                PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
-            }
-        }else{
-            showMessage("Внимание!","Все поля должны быть заполнены!",FacesMessage.SEVERITY_ERROR);
-        }
-    }
-
-    public void deleteScheduler(){
-        listSchedulers.remove(selectedScheduler);
-        selectedScheduler = new BitServerScheduler();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Правило удалено!"));
-        PrimeFaces.current().ajax().update(":form:accord:dt-scheduler");
-    }
-
     public void deleteResource(){
         deleteFromBitServerTable(selectedResource.getId());
         listResources.remove(selectedResource);
@@ -225,5 +166,4 @@ public class DateBaseBean implements UserDao {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Ресурс удален!"));
         PrimeFaces.current().ajax().update(":form:accord:dt-resources");
     }
-
 }

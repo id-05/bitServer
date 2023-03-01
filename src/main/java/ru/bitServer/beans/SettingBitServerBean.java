@@ -3,14 +3,7 @@ package ru.bitServer.beans;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.apache.commons.io.FileUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.DualListModel;
-import org.primefaces.model.TreeNode;
-import org.primefaces.model.file.UploadedFile;
-import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.OrthancSettings;
 import ru.bitServer.util.LogTool;
@@ -21,14 +14,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import static ru.bitServer.beans.AutoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
@@ -37,8 +24,6 @@ import static ru.bitServer.beans.MainBean.*;
 @ViewScoped
 public class SettingBitServerBean implements UserDao {
 
-//    final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
-//    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     int progress1;
     int progress2;
     List<BitServerUser> bitServerUserList;
@@ -47,10 +32,11 @@ public class SettingBitServerBean implements UserDao {
     List<BitServerGroup> bitServerGroupList;
     List<BitServerGroup> selectedBitServerGroups;
     BitServerGroup selectedBitServerGroup;
-    String httpmode;
+    String httpMode;
     String showStat;
     String luaRead;
     String timerEnable;
+    String cdViewerInclude;
     String osimisAddress;
     String orthancAddress;
     String orthancWebPort;
@@ -93,27 +79,23 @@ public class SettingBitServerBean implements UserDao {
     List<String> modalityName = new ArrayList<>();
     List<String> selectedModalitiName = new ArrayList<>();
     String showHelp;
-    DualListModel<BitServerUser> bufUsers;
     ArrayList<BitServerUser> usersTarget;
     ArrayList<BitServerUser> usersSource;
-    ArrayList<BitServerUser> usersSourceBuf;
-    private TreeNode rootCDwiever;
-    private TreeNode selectedNode;
 
-    public TreeNode getSelectedNode() {
-        return selectedNode;
+    public String getHttpMode() {
+        return httpMode;
     }
 
-    public void setSelectedNode(TreeNode selectedNode) {
-        this.selectedNode = selectedNode;
+    public void setHttpMode(String httpMode) {
+        this.httpMode = httpMode;
     }
 
-    public TreeNode getRootCDwiever() {
-        return rootCDwiever;
+    public String getCdViewerInclude() {
+        return cdViewerInclude;
     }
 
-    public void setRootCDwiever(TreeNode rootCDwiever) {
-        this.rootCDwiever = rootCDwiever;
+    public void setCdViewerInclude(String cdViewerInclude) {
+        this.cdViewerInclude = cdViewerInclude;
     }
 
     public String getLuaRead() {
@@ -132,28 +114,12 @@ public class SettingBitServerBean implements UserDao {
         this.timerEnable = timerEnable;
     }
 
-    public BitServerGroup getSelectedBitServerGroup() {
-        return selectedBitServerGroup;
-    }
-
-    public void setSelectedBitServerGroup(BitServerGroup selectedBitServerGroup) {
-        this.selectedBitServerGroup = selectedBitServerGroup;
-    }
-
     public List<BitServerUser> getBitServerUserList() {
         return bitServerUserList;
     }
 
     public void setBitServerUserList(List<BitServerUser> bitServerUserList) {
         this.bitServerUserList = bitServerUserList;
-    }
-
-    public List<BitServerGroup> getBitServerGroupList() {
-        return bitServerGroupList;
-    }
-
-    public void setBitServerGroupList(List<BitServerGroup> bitServerGroupList) {
-        this.bitServerGroupList = bitServerGroupList;
     }
 
     public String getShowHelp() {
@@ -360,14 +326,6 @@ public class SettingBitServerBean implements UserDao {
         this.luaScriptPath = luaScriptPath;
     }
 
-    public String getHttpmode() {
-        return httpmode;
-    }
-
-    public void setHttpmode(String httpmode) {
-        this.httpmode = httpmode;
-    }
-
     public String getNetworksetpathfile() {
         return networksetpathfile;
     }
@@ -512,35 +470,6 @@ public class SettingBitServerBean implements UserDao {
         this.workListLifeTime = workListLifeTime;
     }
 
-    public DualListModel<BitServerUser> getBufUsers() {
-
-        //usersSource = getAllBitServerUserList();
-        usersTarget = selectedBitServerGroup.getUserList();
-        if(selectedBitServerGroup.getUserList()!=null){
-            //usersTarget = selectedBitServerGroup.getUserList();
-            usersSourceBuf = getAllBitServerUserList();
-
-            for(BitServerUser bufUser:usersSourceBuf){
-                for(BitServerUser bufUser2:usersTarget){
-                    if(bufUser2.equals(bufUser)){
-                        usersSource.add(bufUser2);
-                    }
-                }
-            }
-
-           //System.out.println("resultDel "+resultDel);
-        }else{
-            usersTarget = new ArrayList<>();
-        }
-        //System.out.println("usersTarget.size() "+usersTarget.size());
-        bufUsers = new DualListModel<>(usersSource, usersTarget);
-        return bufUsers;
-    }
-
-    public void setBufUsers(DualListModel<BitServerUser> bufUsers) {
-        this.bufUsers = bufUsers;
-    }
-
     @PostConstruct
     public void init() {
         System.out.println("settingBitServerBean");
@@ -562,7 +491,6 @@ public class SettingBitServerBean implements UserDao {
         remotelogin = "doctor";
         remotepass = "doctor";
 
-        boolean updateRes = false;
         boolean haspreview = false;
 
         for(BitServerResources buf: bitServerResourcesList){
@@ -590,7 +518,7 @@ public class SettingBitServerBean implements UserDao {
 
                 case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
-                case "httpmode": httpmode = buf.getRvalue();
+                case "httpmode": httpMode = buf.getRvalue();
                     break;
                 case "showStat": showStat = buf.getRvalue();
                     break;
@@ -645,6 +573,8 @@ public class SettingBitServerBean implements UserDao {
                 case "ShowHelp": showHelp = buf.getRvalue();
                     break;
                 case "luaRead": luaRead = buf.getRvalue();
+                    break;
+                case "cdViewerInclude": cdViewerInclude = buf.getRvalue();
                     break;
             }
         }
@@ -709,7 +639,7 @@ public class SettingBitServerBean implements UserDao {
 
     }
 
-    public void startRemoteSync() throws IOException {
+    public void startRemoteSync() {
         PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
         int i = 0;
         progress2 = 0;
@@ -725,9 +655,9 @@ public class SettingBitServerBean implements UserDao {
             while (studiesIterator.hasNext()) {
                 remoteStudyList.add(studiesIterator.next().getAsString());
             }
-            ArrayList<String> localStudyList = new ArrayList<>();
+            //ArrayList<String> localStudyList = new ArrayList<>();
 
-            remoteStudyList.removeAll(localStudyList);
+            //remoteStudyList.removeAll(localStudyList);
             if(remoteStudyList.size()>0) {
                 double dProgress = (double) 100 / studies.size();
                 for (String bufId : remoteStudyList) {
@@ -760,7 +690,7 @@ public class SettingBitServerBean implements UserDao {
             switch (buf.getRname()){
                 case "orthancaddress": buf.setRvalue(orthancAddress);
                     break;
-                case "httpmode": buf.setRvalue(httpmode);
+                case "httpmode": buf.setRvalue(httpMode);
                     break;
                 case "luascriptpathfile": buf.setRvalue(luaScriptPath);
                     break;
@@ -816,6 +746,8 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "timerEnable": buf.setRvalue(timerEnable);
                     break;
+                case "cdViewerInclude": buf.setRvalue(cdViewerInclude);
+                    break;
             }
             updateBitServiceResource(buf);
         }
@@ -840,7 +772,9 @@ public class SettingBitServerBean implements UserDao {
         usersSource = getAllBitServerUserList();
         if(selectedBitServerGroup.getUserList()!=null){
             usersTarget = selectedBitServerGroup.getUserList();
-            usersSource.remove(usersTarget);
+            if(usersTarget.size()>0) {
+                usersSource.remove(usersTarget);
+            }
         }else{
             usersTarget = new ArrayList<>();
         }

@@ -30,7 +30,7 @@
         </script>
 
         <style type="text/css">
-            .fileupload-content {
+            .fUpload-content {
                 overflow: auto;
                 height: 300px;
             }
@@ -179,7 +179,7 @@
                                        widgetVar="fUpload"
                                        listener="#{queueBean.handleFileUpload}"
                                        sequential="true"
-                                       styleClass="fileupload-content"
+                                       styleClass="fUpload-content"
                                        dragDropSupport="true"
                                        skinSimple="true"
                                        sizeLimit="20000000"
@@ -382,7 +382,7 @@
                         <p:menuitem value="Записать на диск"
                                     update="searchgrowl"
                                     oncomplete="PF('CDchoose').show()"
-                                    rendered="true" process="@this"/>
+                                    rendered="false" process="@this"/>
 
                     </p:contextMenu>
 
@@ -509,7 +509,7 @@
                         </p:card>
                         <div class="p-d-flex p-jc-between">
                             <div class="p-mr-2">
-                                <p:commandButton value="Отказаться" onclick="PF('confirmtogetstudy').hide()"/>
+                                <p:commandButton value="Отказаться" onclick="PF('confGetStudy').hide()"/>
                             </div>
 
                             <div class="p-mr-2">
@@ -519,13 +519,13 @@
 
                     </p:dialog>
 
-                    <p:dialog widgetVar="confirmtodelstudy" showEffect="fade" width="350"
+                    <p:dialog widgetVar="confGetStudy" showEffect="fade" width="350"
                               message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
                         <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
-                                         oncomplete="PF('confirmtodelstudy').hide()"/>
+                                         oncomplete="PF('confGetStudy').hide()"/>
                         <span style="padding: 20px;">&nbsp;</span>
                         <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                                         onclick="PF('confirmtodelstudy').hide()"/>
+                                         onclick="PF('confGetStudy').hide()"/>
 
                     </p:dialog>
 
