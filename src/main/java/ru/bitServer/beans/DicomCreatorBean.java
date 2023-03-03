@@ -172,7 +172,7 @@ public class DicomCreatorBean {
         dicom.setString(Tag.StudyInstanceUID, VR.UI, UIDUtils.createUID());
         dicom.setString(Tag.SeriesInstanceUID, VR.UI, UIDUtils.createUID());
         dicom.setString(Tag.SOPInstanceUID, VR.UI, UIDUtils.createUID());
-        dicom.createFileMetaInformation(UID.DigitalXRayImageStorageForPresentation);//UID.//////////////////////////////////CHANGE IT
+        dicom.createFileMetaInformation(UID.BasicColorImageBox );//UID.//////////////////////////////////CHANGE IT
 
         //FileOutputStream fos = new FileOutputStream(dcmDestination);
         //BufferedOutputStream bos = new BufferedOutputStream(fos);

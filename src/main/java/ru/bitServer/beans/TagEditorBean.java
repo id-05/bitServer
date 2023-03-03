@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-
 @ManagedBean(name = "tagEditorBean")
 @SessionScoped
 public class TagEditorBean implements UserDao {
@@ -44,16 +42,16 @@ public class TagEditorBean implements UserDao {
     static boolean selectedExist = false;
     static byte[] curDicom;
 
-    public byte[] getCurDicom() {
-        return curDicom;
-    }
+//    public byte[] getCurDicom() {
+//        return curDicom;
+//    }
 
     public boolean isSelectedExist() {
         return selectedExist;
     }
 
     public void setSelectedExist(boolean selectedExist) {
-        this.selectedExist = selectedExist;
+        TagEditorBean.selectedExist = selectedExist;
     }
 
     public ArrayList<UploadDicomFile> getFileList() {
@@ -69,7 +67,7 @@ public class TagEditorBean implements UserDao {
     }
 
     public void setSelectedFile(UploadDicomFile selectedFile) {
-        this.selectedFile = selectedFile;
+        TagEditorBean.selectedFile = selectedFile;
     }
 
     public ArrayList<DicomTag> getTagList() {
@@ -85,7 +83,7 @@ public class TagEditorBean implements UserDao {
     }
 
     public void setSelectTag(DicomTag selectTag) {
-        this.selectTag = selectTag;
+        TagEditorBean.selectTag = selectTag;
     }
 
     @PostConstruct
@@ -106,11 +104,12 @@ public class TagEditorBean implements UserDao {
         PrimeFaces.current().ajax().update(":tageditor:tabview1:saveselected");
     }
 
+
+
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
         UploadedFile file = event.getFile();
-        UploadDicomFile dfile = new UploadDicomFile(file.getContent(),file.getFileName());
-        FileList.add(dfile);
-        //prepareTagTable(dfile.getData());
+        UploadDicomFile dFile = new UploadDicomFile(file.getContent(),file.getFileName());
+        FileList.add(dFile);
         PrimeFaces.current().executeScript("PF('addDICOM').hide()");
         PrimeFaces.current().ajax().update(":tageditor:tabview1:dt-files");
     }
@@ -162,7 +161,7 @@ public class TagEditorBean implements UserDao {
                 attributes.setString(bufField.getInt(bufField.getName()),
                         attributes.getVR(bufField.getInt(bufField.getName())),
                         bufTag.getTagValue().replace(", ", "\\"));
-                System.out.println(bufField.getInt(bufField.getName())+"  "+attributes.getVR(bufField.getInt(bufField.getName()))+"  "+"  "+bufTag.getTagValue().replace(", ", "\\"));
+                //System.out.println(bufField.getInt(bufField.getName())+"  "+attributes.getVR(bufField.getInt(bufField.getName()))+"  "+"  "+bufTag.getTagValue().replace(", ", "\\"));
             } catch (Exception e) {
                 LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Save dicom file trouble, maybe VR compatible only number: " + e.getMessage());
             }
@@ -192,29 +191,28 @@ public class TagEditorBean implements UserDao {
 
     public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException {
         Raster raster = null ;
+        System.out.println("Input: " + dicomf.length);
+        //Open the DICOM file and get its pixel data
         try {
             ImageIO.scanForPlugins();
+            File f = new File("");
             ByteArrayInputStream bais = new ByteArrayInputStream(dicomf);
-            System.out.println("0");
-            Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
-            System.out.println("1");
+
             String[] buf = ImageIO.getReaderFormatNames();
             for(String bufStr:buf){
                 System.out.println(bufStr);
             }
+
+            Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
             ImageReader reader = (ImageReader) iter.next();
-            System.out.println("2");
+            System.out.println("fname "+reader.getFormatName());
             DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
-            //ImageReadParam param =  reader.getDefaultReadParam();
-            System.out.println("3");
             ImageInputStream iis = ImageIO.createImageInputStream(bais);
-            System.out.println("4");
             reader.setInput(iis, false);
-            System.out.println("5");
+            //Returns a new Raster (rectangular array of pixels) containing the raw pixel data from the image stream
             raster = reader.readRaster(0, param);
-            System.out.println("6");
             if (raster == null)
-                System.out.println("Error:  raster == null");
+                System.out.println("Error: couldn't read Dicom image!");
             iis.close();
         }
         catch(Exception e) {
@@ -225,7 +223,6 @@ public class TagEditorBean implements UserDao {
 
     public StreamedContent getImageOut() {
         if (curDicom!=null) {
-
             return DefaultStreamedContent.builder()
                     .contentType("image/png")
                     .name("test")
@@ -236,9 +233,7 @@ public class TagEditorBean implements UserDao {
                             ByteArrayOutputStream os = new ByteArrayOutputStream();
                             ImageIO.write(bufferedImg, "png", os);
                             int w = bufferedImg.getWidth(null);
-                            //System.out.println("w = "+w);
                             int h = bufferedImg.getHeight(null);
-                            //System.out.println("h = "+w);
                             // image is scaled two times at run time]
                             int scale = 2;
                             if (w == 512) {
@@ -251,7 +246,6 @@ public class TagEditorBean implements UserDao {
                             ImageIO.write(bi, "png", bos);
                             return new ByteArrayInputStream(bos.toByteArray());//, "image/png");
                         } catch (Exception e) {
-                            //System.out.println(this.getClass().getSimpleName()+":getImageOut  error = "+e.getMessage());
                             LogTool.getLogger().info(this.getClass().getSimpleName() + ":" + "getImageOut " + e.getMessage());
                             return null;
                         }
@@ -262,7 +256,7 @@ public class TagEditorBean implements UserDao {
         }
     }
 
-    public BufferedImage get16bitBuffImage(Raster raster) throws IOException{
+    public BufferedImage get16bitBuffImage1(Raster raster) throws IOException {
         short[] pixels = ((DataBufferUShort) raster.getDataBuffer()).getData();
         ColorModel colorModel = new ComponentColorModel(
                 ColorSpace.getInstance(ColorSpace.CS_GRAY),
@@ -274,9 +268,9 @@ public class TagEditorBean implements UserDao {
         DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(curDicom));
         Attributes attributes = din.readDataset();
         Attributes fmi = din.readFileMetaInformation();
-//        int windowWidth = Integer.parseInt(attributes.getString(Tag.WindowWidth , "1"));
-//        int windowCenter = Integer.parseInt(attributes.getString(Tag.WindowCenter , "1"));
-        int minY = 0;
+        int windowWidth = Integer.parseInt(attributes.getString(Tag.WindowWidth , "1"));
+        int windowCenter = Integer.parseInt(attributes.getString(Tag.WindowCenter , "1"));
+        int minY;
         int maxY = 0;
 
         for(short buf:pixels){
@@ -304,6 +298,64 @@ public class TagEditorBean implements UserDao {
 //                pixels[i] = (short) (((pixels[i] - (windowCenter - 0.5)) / (windowWidth-1) + 0.5) * (maxY- minY) + minY);
 //            }
            pixels[i] = (short) (pixels[i] * koef);
+        }
+        DataBufferUShort db = new DataBufferUShort(pixels, pixels.length);
+        WritableRaster outRaster = Raster.createInterleavedRaster(
+                db,
+                raster.getWidth(),
+                raster.getHeight(),
+                raster.getWidth(),
+                1,
+                new int[1],
+                null);
+        return new BufferedImage(colorModel, outRaster, false, null);
+    }
+
+    public BufferedImage get16bitBuffImage(Raster raster) throws IOException{
+        short[] pixels = ((DataBufferUShort) raster.getDataBuffer()).getData();
+        ColorModel colorModel = new ComponentColorModel(
+                ColorSpace.getInstance(ColorSpace.CS_GRAY),
+                new int[]{16},
+                false,
+                false,
+                Transparency.OPAQUE,
+                DataBuffer.TYPE_USHORT);
+
+        DicomInputStream din = new DicomInputStream(new ByteArrayInputStream(curDicom));
+        Attributes attributes = din.readDataset();
+        Attributes fmi = din.readFileMetaInformation();
+
+        int windowWidth = Integer.parseInt(attributes.getString(Tag.WindowWidth , "1"));
+        int windowCenter = Integer.parseInt(attributes.getString(Tag.WindowCenter , "1"));
+
+        int minY = 0;
+        int maxY = 0;
+
+        for(short buf:pixels){
+            if(buf > maxY){
+                maxY = buf;
+            }
+        }
+        System.out.println("maxY = "+maxY);
+        minY = maxY;
+        for(short buf:pixels){
+            if(buf < minY){
+                minY = buf;
+            }
+        }
+
+        int koef = 65536 / maxY;
+
+        for(int i=0;i<pixels.length;i++){
+//            short buf = pixels[i];
+//            if (pixels[i] <= (windowCenter - 0.5 - (windowWidth-1) /2)) {
+//                pixels[i] = (short) minY;
+//            } else if (pixels[i] > (windowCenter - 0.5 + (windowWidth-1) /2)){
+//                pixels[i] = (short) maxY;
+//            } else {
+//                pixels[i] = (short) (((pixels[i] - (windowCenter - 0.5)) / (windowWidth-1) + 0.5) * (maxY- minY) + minY);
+//            }
+            pixels[i] = Short.valueOf((short) (pixels[i] * koef));
         }
         DataBufferUShort db = new DataBufferUShort(pixels, pixels.length);
         WritableRaster outRaster = Raster.createInterleavedRaster(

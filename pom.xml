@@ -157,12 +157,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-imageio-rle</artifactId>
-            <version>5.23.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.dcm4che.tool</groupId>
             <artifactId>dcm4che-tool-jpg2dcm</artifactId>
             <version>5.23.3</version>
@@ -187,12 +181,38 @@
             <version>2.1.0</version>
         </dependency>
 
+        <!--
+
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
             <version>5.29.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-imageio-rle</artifactId>
+            <version>5.23.3</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-imageio</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-imageio-rle</artifactId>
+            <version>3.3.7</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.media</groupId>
+            <artifactId>jai_imageio</artifactId>
+            <version>1.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jvnet.com4j</groupId>

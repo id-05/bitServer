@@ -10,7 +10,7 @@
 <f:view>
 
     <style type="text/css">
-        .customPanelGrid .ui-panelgrid-content {
+        .customPanelGrid  {
             align-items: center;
         }
     </style>
@@ -27,7 +27,7 @@
         <h:form id="tageditor">
             <p:growl id="growl" showDetail="true" />
             <p:menubar>
-                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward" actionListener="#{tagEditorBean.onBack}"/>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
                 <p:divider layout="vertical"/>
                 <p:menuitem value="TAG Редактор" disabled="true"/>
 
@@ -43,7 +43,7 @@
             </p:menubar>
 
             <p:tabView id="tabview1">
-                <p:ajax event="tabChange" listener="#{tagEditorBean.onTabChange}"/>
+
 
                 <p:tab title="Загрузить внешний файл">
                     <p:outputPanel>
@@ -129,7 +129,7 @@
                                                          emptyMessage="Нет записей для отображения">
 
                                                 <p:ajax event="rowSelect" listener="#{tagEditorBean.onTagSelect}"/>
-                                                <p:ajax event="cellEdit" listener="#{tagEditorBean.onCellEdit}"/>
+
 
                                                 <p:column headerText="TagName" style="text-align: center" sortBy="#{dicomTag.tagName}">
                                                     <h:outputText value="#{dicomTag.tagName}" />
