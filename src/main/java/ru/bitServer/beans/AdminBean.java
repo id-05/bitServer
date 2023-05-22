@@ -21,6 +21,15 @@ public class AdminBean implements UserDao {
     BitServerUser currentUser;
     String currentUserId;
     String errorText;
+    boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
     public String getErrorText() {
         return errorText;
@@ -32,6 +41,7 @@ public class AdminBean implements UserDao {
 
     @PostConstruct
     public void init(){
+        debug = getBitServerResource("debug").getRvalue().equals("true");
         DicomCreatorBean.onUpdate();
         TagEditorBean.onClearForm();
         hasTrouble = MainBean.hasTrouble;
@@ -54,7 +64,7 @@ public class AdminBean implements UserDao {
                 hasTrouble = true;
             }
         }catch (Exception e){
-            LogTool.getLogger().error("Error of orthancGetInfo: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error of orthancGetInfo: "+e.getMessage());
             hasTrouble = true;
         }
     }
@@ -64,7 +74,7 @@ public class AdminBean implements UserDao {
             Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/raidinfo");
             proc.waitFor();
         }catch (Exception e){
-            LogTool.getLogger().error("Error during raidGetInfo()");
+            LogTool.getLogger().error(LogTool.getLogger() +" Error during raidGetInfo()");
         }
         String raidStatusFilePath = getBitServerResource("raidStatusFilePath").getRvalue();
         StringBuilder bufFile = new StringBuilder();
@@ -82,7 +92,7 @@ public class AdminBean implements UserDao {
             }
 
         } catch (Exception e) {
-            LogTool.getLogger().error("Error of read raidStatusFile: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() +" Error of read raidStatusFile: "+e.getMessage());
             errorText = "RAID STATUS: Error of read raidStatusFile: "+e.getMessage() + "\n" + "\n";
             hasTrouble = true;
         }

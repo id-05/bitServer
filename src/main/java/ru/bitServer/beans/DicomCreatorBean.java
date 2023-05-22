@@ -6,9 +6,6 @@ import org.dcm4che3.data.UID;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
-
-
-import org.dcm4che3.tool.jpg2dcm.Jpg2Dcm;
 import org.dcm4che3.util.UIDUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
@@ -26,7 +23,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import static ru.bitServer.beans.MainBean.mainServer;
@@ -197,8 +193,6 @@ public class DicomCreatorBean {
         if ((jpgLen&1) != 0) dos.write(0);
         dos.writeHeader(Tag.SequenceDelimitationItem, null, 0);
         dos.close();
-
-
 
         //jpg2Dcm.convert(jpgFileOS, dcmFileOS);
 //        String[] args = new String[4];

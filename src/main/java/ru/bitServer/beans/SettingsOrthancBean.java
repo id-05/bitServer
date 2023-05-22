@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.bitServer.beans.AuthoriseBean.showMessage;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "settingsBean")
@@ -378,7 +379,7 @@ public class SettingsOrthancBean implements UserDao, DataAction {
             webUsers = getWebUserFromJson(users.toString());
             dicomModalities = getDicomModalitisFromJson(dicomNode.toString());
         }catch (Exception e){
-            LogTool.getLogger().error("Error during open orthanc.json! Try again! "+e.getMessage());
+            LogTool.getLogger().error("Error during open orthanc.json! Try again! " + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -508,8 +509,14 @@ public class SettingsOrthancBean implements UserDao, DataAction {
     }
 
     public void resetServer() {
-        connection.makePostConnectionAndStringBuilder("/tools/reset","" );
-        showMessage("Сообщение","Сервис перезагружен!", info);
+        showMessage("Сообщение","Сервис будет перезагружен!", info);
+        try {
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/orthancreset");
+            proc.waitFor();
+        }catch (Exception e){
+            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+            LogTool.getLogger().error(this.getClass().getSimpleName()+" Error resetServer() NetworkSettingsBean: "+e.getMessage());
+        }
     }
 
     public String ModifyStr(String str){
@@ -687,7 +694,7 @@ public class SettingsOrthancBean implements UserDao, DataAction {
 
     }
 
-    public void applySnapshot() throws IOException {
+    public void applySnapshot(){
         saveJsonSettingtToFile(selectedSnapshot.getSettingJson());
         loadConfig();
         showMessage("Внимание", "Настройки применены!",FacesMessage.SEVERITY_INFO);

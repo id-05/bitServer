@@ -106,7 +106,6 @@ public class StatisticsBean implements UserDao {
         if(showStat){
             typeChart = "mounth";
 
-
             chartOutput();
             pieOutput();
 

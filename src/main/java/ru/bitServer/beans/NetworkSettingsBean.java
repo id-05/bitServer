@@ -72,7 +72,7 @@ public class NetworkSettingsBean implements UserDao {
                 newtworkSettingsFile.append((char) c);
             }
         } catch (Exception e) {
-            LogTool.getLogger().error("Error of read file init() networkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error of read file init() networkSettingsBean: "+e.getMessage());
         }
         configFileText = newtworkSettingsFile.toString();
         NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(newtworkSettingsFile);
@@ -86,7 +86,7 @@ public class NetworkSettingsBean implements UserDao {
             proc.waitFor();
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.getLogger().error("Error resAdapter() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error resAdapter() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -98,7 +98,7 @@ public class NetworkSettingsBean implements UserDao {
             LogTool.getLogger().info("Admin: "+currentUser.getUid().toString()+" select service mode ");
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.getLogger().error("Error serviceMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error serviceMode() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -110,7 +110,7 @@ public class NetworkSettingsBean implements UserDao {
             LogTool.getLogger().info("Admin: "+currentUser.getUid().toString()+" select normal mode ");
         }catch (Exception e){
             showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.getLogger().error("Error normalMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() +" Error normalMode() NetworkSettingsBean: "+e.getMessage());
         }
     }
 
@@ -137,10 +137,10 @@ public class NetworkSettingsBean implements UserDao {
                 PrimeFaces.current().executeScript("PF('manageAdapter').hide()");
                 PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
             } else {
-                LogTool.getLogger().debug("selectedAdapter.getName()==null");
+                LogTool.getLogger().debug(LogTool.getLogger() +" selectedAdapter.getName()==null");
             }
         }catch (Exception e){
-            LogTool.getLogger().error("Error during save new adapter");
+            LogTool.getLogger().error(LogTool.getLogger() + " Error during save new adapter");
             showMessage("Внимание","Изменения сохранены! Ошибка сохранения нового адаптера!",FacesMessage.SEVERITY_ERROR);
         }
     }
@@ -181,7 +181,7 @@ public class NetworkSettingsBean implements UserDao {
             fileOutputStream.write(buffer, 0, buffer.length);
         }
         catch(IOException e){
-            LogTool.getLogger().error("Error saveSettingsCustomMode() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error saveSettingsCustomMode() NetworkSettingsBean: "+e.getMessage());
         }
         showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
     }
@@ -223,7 +223,7 @@ public class NetworkSettingsBean implements UserDao {
             showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите сетевую службу!",FacesMessage.SEVERITY_INFO);
         }
         catch(IOException e){
-            LogTool.getLogger().error("Error saveSettings() NetworkSettingsBean: "+e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error saveSettings() NetworkSettingsBean: "+e.getMessage());
             showMessage("Внимание","Возникла ошибка в процессе сохранения! Более подробно смотрите в лог файле!",FacesMessage.SEVERITY_ERROR);
         }
     }

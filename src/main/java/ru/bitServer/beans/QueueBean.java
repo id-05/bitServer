@@ -417,7 +417,10 @@ public class QueueBean implements UserDao, DataAction {
     @PostConstruct
     private void init() {
         //initializeCDinfo();
-
+        addTwoNumbers(1);
+        addTwoNumbers(-22);
+        addTwoNumbers(333);
+        addTwoNumbers(1234);
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
@@ -528,6 +531,21 @@ public class QueueBean implements UserDao, DataAction {
         dt.resetValue();
         PrimeFaces.current().ajax().update(":seachform:datecard",":seachform:dt-studys");
         PrimeFaces.current().executeScript("PF('visibleStudy').filter()");
+    }
+
+    public boolean addTwoNumbers(int x) {
+        boolean result = false;
+        String buf = Integer.toString(x);
+        StringBuilder reverceString = new StringBuilder();
+        System.out.println("buf.length() = "+buf.length());
+        for(int j=buf.length()-1; j>-1; j--){
+            reverceString.append(buf.charAt(j));
+            System.out.println("buf.length("+j+") = "+buf.charAt(j));
+        }
+        if(reverceString.toString().equals(buf) | (buf.length()==1)){
+            result = true;
+        }
+        return result;
     }
 
     public void onRowSelect(SelectEvent event) {
@@ -884,12 +902,12 @@ public class QueueBean implements UserDao, DataAction {
                         System.out.println("Finished writing");
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
-                        LogTool.getLogger().error("Error during wtite disk " + e.getMessage());
+                        LogTool.getLogger().error(LogTool.getLogger()+" Error during wtite disk " + e.getMessage());
                     }
                 }
             }catch (Exception e){
                 showMessage("Сообщение","Проверьте, что есть диск для записи!",error);
-                LogTool.getLogger().error("Error during wtite disk " + e.getMessage());
+                LogTool.getLogger().error(LogTool.getLogger() + " Error during wtite disk " + e.getMessage());
             }
         }else{
             showMessage("Сообщение","В системе нет подходящих устройств!",error);
