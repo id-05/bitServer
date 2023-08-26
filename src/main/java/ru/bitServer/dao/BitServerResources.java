@@ -5,6 +5,7 @@ public class BitServerResources {
     private Long id;
     private String rname;
     private String rvalue;
+    private boolean isBoolType;
 
     public String getRname() {
         return rname;

@@ -60,6 +60,7 @@
                     <f:facet name="options">
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
+                                <p:linkButton rendered="#{adminBean.debug}" styleClass="rounded-button ui-button-danger" outcome="settings_datebase" value="DEBUG MODE" style="margin-right:20px;"/>
                                 <p:commandButton rendered="#{adminBean.hasTrouble}" icon="pi pi-bell"  oncomplete="PF('troubleInfo').show()" style="margin-right: 10px" styleClass="rounded-button ui-button-danger"/>
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}"  styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
@@ -79,9 +80,7 @@
             </p:dialog>
 
             <p:dialog id="troubleInfo" showEffect="fade" modal="true" widgetVar="troubleInfo" responsive="true">
-
                     <h:inputTextarea style="width: 650px; height: 400px" value="#{adminBean.errorText}"/>
-
             </p:dialog>
 
         </h:form>

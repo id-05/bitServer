@@ -112,14 +112,15 @@
                                              onclick="PF('defaultResource').hide()"/>
                         </p:dialog>
 
-                        <p:dialog id="dialogNewResource" header="Пользователь" showEffect="fade" modal="true"
+                        <p:dialog id="dialogNewResource" header="Ресурс" showEffect="fade" modal="true"
                                   widgetVar="manageResourceDialog" responsive="true">
                             <p:panelGrid id="manage-resource-content" class="ui-fluid" columns="2">
                                 <p:outputLabel for="rname" style="margin-right: .5rem">rname</p:outputLabel>
                                 <p:inputText id="rname" value="#{datebaseBean.selectedResource.rname}" />
 
                                 <p:outputLabel for="rvalue" style="margin-right: .5rem">rvalue</p:outputLabel>
-                                <p:inputText id="rvalue" value="#{datebaseBean.selectedResource.rvalue}" />
+                                <p:inputText rendered="#{datebaseBean.selectedResource.rvalue != 'true' and datebaseBean.selectedResource.rvalue != 'false'}"                                             id="rvalue" value="#{datebaseBean.selectedResource.rvalue}" />
+                                <p:toggleSwitch rendered="#{datebaseBean.selectedResource.rvalue == 'true' or datebaseBean.selectedResource.rvalue == 'false'}" id="rval" value="#{datebaseBean.selectedResource.rvalue}" />
 
                             </p:panelGrid>
 
