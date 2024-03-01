@@ -47,6 +47,7 @@
         <servlet-name>hl7_listener</servlet-name>
         <servlet-class>ExampleRawHl7OverHttpServlet</servlet-class>
     </servlet>
+
     <servlet-mapping>
         <servlet-name>hl7_listener</servlet-name>
         <url-pattern>/hl7list</url-pattern>

@@ -527,7 +527,7 @@ public interface UserDao {
                     " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
                     " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
                     " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
-                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //ФИО
+                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
                     " LEFT JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
                     " LEFT JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
                     " LEFT JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
@@ -551,10 +551,22 @@ public interface UserDao {
             }
             ResultSet rs = statement.executeQuery(resultSQL);
 
+
             while (rs.next()) {
-                BitServerStudy bufStudy = new BitServerStudy(rs.getString(2), rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
-                        rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),rs.getString(6),0, rs.getString(11),
-                        rs.getString(12), rs.getString(13), rs.getString(14));
+
+ //               if(getBitServerResource("debug").getRvalue().equals("true")){
+//                    LogTool.getLogger().debug(this.getClass().getSimpleName()+":"+rs.getString(2)+"/"+
+//                            rs.getString(4)+"/"+ rs.getString(9)+"/"+ getDateFromText(rs.getString(7))+"/"+
+//                            rs.getString(10)+"/"+rs.getString(3)+"/"+getDateFromText(rs.getString(5))+"/"+
+//                            rs.getString(6)+"/"+0+"/"+ rs.getString(11)+"/"+ rs.getString(12)+"/"+
+//                            rs.getString(13)+"/"+ rs.getString(14));
+//                }
+
+                BitServerStudy bufStudy = new BitServerStudy(rs.getString(2),
+                        rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
+                        rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),
+                        rs.getString(6),0, rs.getString(11), rs.getString(12),
+                        rs.getString(13), rs.getString(14));
                 resultList.add(bufStudy);
             }
 
@@ -564,7 +576,7 @@ public interface UserDao {
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
         if((getBitServerResource("debug").getRvalue().equals("true"))) {
-            LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количетсво найденных записей при поиске: " + resultList.size());
+            LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количеcтво найденных записей при поиске: " + resultList.size());
         }
         return resultList;
     }

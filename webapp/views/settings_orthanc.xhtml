@@ -17,7 +17,7 @@
             <p:menubar>
                 <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
                 <p:menuitem style="margin-right: 5px" value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
-                <p:menuitem style="margin-right: 5px" value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{settingsBean.resetServer()}" process="@this" update="form, growl"/>
+                <p:menuitem style="margin-right: 5px" value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{settingsBean.resetServer()}" update="form, growl"/>
                 <p:menuitem style="margin-right: 5px" value="Отменить изменения" icon="pi pi-replay"    actionListener="#{settingsBean.restoreBackup()}" process="@this" update="form, growl"/>
                 <p:menuitem style="margin-right: 5px" value="Резервные копии" icon="pi pi-copy" oncomplete="PF('backupDiaolg').show()" process="@this" update="form, growl"/>
                 <p:divider layout="vertical"/>

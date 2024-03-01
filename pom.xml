@@ -21,9 +21,6 @@
     </build>
 
     <dependencies>
-
-
-
         <dependency>
             <groupId>us.fatehi</groupId>
             <artifactId>schemacrawler</artifactId>
@@ -226,6 +223,12 @@
             <version>2.11.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+
 
 
 <!--
@@ -289,6 +292,16 @@
             <url>http://repository.primefaces.org</url>
             <layout>default</layout>
         </repository>
+
+
+
+            <repository>
+                <id>primefaces</id>
+                <name>PrimeFaces Maven Repository</name>
+                <url>http://repository.primefaces.org</url>
+                <layout>default</layout>
+            </repository>
+
 
         <repository>
             <id>java.net</id>

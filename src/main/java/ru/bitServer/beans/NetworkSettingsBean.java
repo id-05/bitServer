@@ -1,6 +1,8 @@
 package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
@@ -54,6 +56,8 @@ public class NetworkSettingsBean implements UserDao {
     public void setAdapters(ArrayList<NetworkAdapter> adapters) {
         this.adapters = adapters;
     }
+
+
 
     @PostConstruct
     public void init() {
@@ -234,4 +238,13 @@ public class NetworkSettingsBean implements UserDao {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
+    public StreamedContent getGetResult() throws IOException {
+        String strpath = "/home/tomcat/webapps/bitServer.war";
+        InputStream inputStream = new FileInputStream(strpath);
+        return DefaultStreamedContent.builder()
+                .name("bitServer.war")
+                .contentType("application/war")
+                .stream(() -> inputStream)
+                .build();
+    }
 }

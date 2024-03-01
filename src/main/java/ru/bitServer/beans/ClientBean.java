@@ -1,7 +1,7 @@
 package ru.bitServer.beans;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
@@ -171,8 +171,8 @@ public class ClientBean implements UserDao {
             System.out.println("output image");
             File outputJpegFile = new File(outputPath);
             OutputStream output = new BufferedOutputStream(new FileOutputStream(outputJpegFile));
-            JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
-            encoder.encode(outputImage);
+           // JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
+            //encoder.encode(outputImage);
             output.close();
         } catch (IOException e) {
             System.out.println("Error: couldn't write jpeg image! "+ e.getMessage());

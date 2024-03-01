@@ -21,12 +21,14 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
+import ru.bitServer.service.LazyBitServerStudyDataModel;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -408,6 +410,12 @@ public class QueueBean implements UserDao, DataAction {
     public static final String CYRILLIC_TO_LATIN = "Cyrillic-Latin";
     public static final String LATIN_TO_CYRILLIC = "Latin-Cyrillic";
 
+    public LazyDataModel<BitServerStudy> getLazyModel() {
+        return lazyModel;
+    }
+
+    private LazyDataModel<BitServerStudy> lazyModel;
+
     ////Status
     /// Заблокирован на описание - 3
     /// Описан - 2
@@ -471,6 +479,12 @@ public class QueueBean implements UserDao, DataAction {
             }
         }
         dataoutput();
+        //lazyModel = new LazyBitServerStudyDataModel(visibleStudiesList);
+
+//        {
+//            BitServerStudy bufStudy = new BitServerStudy("123","", "123", new Date() , "123" , "123" , new Date(), "123",0, "123", "123", "123", "123");
+//            System.out.println(bufStudy.getSid());
+//        }
     }
 
     public void toggleGlobalFilter() {
@@ -500,17 +514,22 @@ public class QueueBean implements UserDao, DataAction {
                 datepickerVisible2 = false;
             }
         }
+
+        selectedVisibleStudies.clear();
+        timeStart = (new Date()).getTime();
+        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, "all");
+        timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
+
         PrimeFaces.current().ajax().update(":seachform:");
         PrimeFaces.current().ajax().update(":seachform:txt_count2");
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
         PrimeFaces.current().ajax().update(":seachform:ajs");
         PrimeFaces.current().executeScript("PF('ajs').show()");
         resetViewTable();
-        selectedVisibleStudies.clear();
-        timeStart = (new Date()).getTime();
-        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, "all");
+
         recordCount = visibleStudiesList.size();
-        timeDrawing = ((new Date()).getTime() - timeStart)/1000.00 - timeRequest;
+        timeDrawing = ((new Date()).getTime() - timeStart       )/1000.00 - timeRequest;
+
         if(showSeachTime.equals("true")) {
             showMessage("Всего: " + recordCount, "SQL-запрос: " + String.format("%.2f", timeRequest) + "c \r\n" +
                     "Отображение: " + String.format("%.2f", timeDrawing) + "c \n\r", info);
@@ -537,10 +556,10 @@ public class QueueBean implements UserDao, DataAction {
         boolean result = false;
         String buf = Integer.toString(x);
         StringBuilder reverceString = new StringBuilder();
-        System.out.println("buf.length() = "+buf.length());
+        //System.out.println("buf.length() = "+buf.length());
         for(int j=buf.length()-1; j>-1; j--){
             reverceString.append(buf.charAt(j));
-            System.out.println("buf.length("+j+") = "+buf.charAt(j));
+            //System.out.println("buf.length("+j+") = "+buf.charAt(j));
         }
         if(reverceString.toString().equals(buf) | (buf.length()==1)){
             result = true;
@@ -806,7 +825,7 @@ public class QueueBean implements UserDao, DataAction {
         StringBuilder sb = null;
         if(ids.size()!=0) {
             try {
-                System.out.println("/modalities/" + selectedModaliti.getDicomName() + "/store");
+                //System.out.println("/modalities/" + selectedModaliti.getDicomName() + "/store");
                 sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomName() + "/store", ids.toString());
             } catch (IOException e) {
                 showMessage("Сообщение:", "Возникла ошибка при отправке, удаленный сервер не отвечает! " + e.getMessage(), error);
@@ -847,7 +866,7 @@ public class QueueBean implements UserDao, DataAction {
     public void writeToCD() {
         IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
         int selectRecorderNumber = 0;
-        System.out.println(selectedRecorder);
+        //System.out.println(selectedRecorder);
         for(int i=0; i<dm.count();i++){
             IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
             String recorderUniqueId = dm.item(0);
@@ -864,7 +883,7 @@ public class QueueBean implements UserDao, DataAction {
             IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
             String recorderUniqueId = dm.item(selectRecorderNumber);
             recorder.initializeDiscRecorder(recorderUniqueId);
-            System.out.println("dm.count() "+dm.count()+"  Using recorder: " +recorder.volumeName()+" " + recorder.vendorId() + " " + recorder.productId());
+            //System.out.println("dm.count() "+dm.count()+"  Using recorder: " +recorder.volumeName()+" " + recorder.vendorId() + " " + recorder.productId());
             //
             createIsoToDVD();
 
@@ -873,7 +892,7 @@ public class QueueBean implements UserDao, DataAction {
             File isoFile = new File("out.iso");
             imageManager.setPath(isoFile.getAbsolutePath());
             imageManager.validate();
-            System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
+            //System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
 
             //запись
             try {
@@ -881,7 +900,7 @@ public class QueueBean implements UserDao, DataAction {
                 discData.recorder(recorder);
                 discData.clientName("test");
                 int mediaStatus = discData.currentMediaStatus().comEnumValue();//!!!!!!!!!!!
-                System.out.println("Media status: " + mediaStatus);
+                //System.out.println("Media status: " + mediaStatus);
                 if (mediaStatus == 4) {
                     showMessage("Сообщение", "Диск не пустой! Запись не возможна!", error);
                 }
@@ -893,15 +912,13 @@ public class QueueBean implements UserDao, DataAction {
                         int addr = discData.nextWritableAddress();
                         if (addr != 0)
                             throw new RuntimeException("Disc is not empty, not writing.");
-
                         IStream isoStream = imageManager.stream();
-
-                        System.out.println("Writing CD");
+                        //System.out.println("Writing CD");
                         discData.write(isoStream);
                         recorder.ejectMedia();
-                        System.out.println("Finished writing");
+                        //System.out.println("Finished writing");
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        //System.out.println(e.getMessage());
                         LogTool.getLogger().error(LogTool.getLogger()+" Error during wtite disk " + e.getMessage());
                     }
                 }
@@ -948,7 +965,7 @@ public class QueueBean implements UserDao, DataAction {
             ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
             CreateISO iso = new CreateISO(streamHandler, root);
             iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
-            System.out.println("FINISH");
+            //System.out.println("FINISH");
         }catch (Exception e){
             System.out.println(e.getMessage());
         }

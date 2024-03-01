@@ -32,6 +32,11 @@
       <option name="url" value="https://mvnrepository.com/artifact/org.richfaces/richfaces" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="primefaces" />
+      <option name="name" value="PrimeFaces Maven Repository" />
+      <option name="url" value="http://repository.primefaces.org" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="dcm4che" />
       <option name="name" value="dcm4che Repository" />
       <option name="url" value="http://www.dcm4che.org/maven2" />

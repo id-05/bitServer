@@ -3,7 +3,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:b="http://java.sun.com/jsf/composite/jsfcomponent">
 <link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
 <f:view>
@@ -200,6 +201,7 @@
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения" ajax="false"
+
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}">
 
@@ -348,7 +350,7 @@
                                              icon="pi pi-trash"
                                              styleClass="rounded-button ui-button-danger" process="@this"
                                              rendered="#{queueBean.currentUser.role == 'admin'}"
-                                             oncomplete="PF('confirmtodelstudy').show()">
+                                             oncomplete="PF('confDelStudy').show()">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
@@ -519,14 +521,13 @@
 
                     </p:dialog>
 
-                    <p:dialog widgetVar="confGetStudy" showEffect="fade" width="350"
+                    <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
                               message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
                         <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
-                                         oncomplete="PF('confGetStudy').hide()"/>
+                                         oncomplete="PF('confDelStudy').hide()"/>
                         <span style="padding: 20px;">&nbsp;</span>
                         <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('confGetStudy').hide()"/>
-
                     </p:dialog>
 
                 </div>
@@ -538,7 +539,6 @@
                 <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
                     <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
                 </p:dialog>
-
 
         </h:form>
     </h:body>

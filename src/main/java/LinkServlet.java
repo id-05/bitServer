@@ -1,8 +1,12 @@
+import com.google.common.net.HttpHeaders;
 import com.google.gson.JsonObject;
+
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +17,7 @@ public class LinkServlet extends HttpServlet implements UserDao {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        System.out.println("LinkServlet");
         String sid = req.getParameter("id");
         if(sid.length()==6) {
             OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
@@ -24,7 +29,9 @@ public class LinkServlet extends HttpServlet implements UserDao {
             StringBuilder sb = connection.makePostConnectionAndStringBuilder("/tools/find", query.toString());
             sid = sb.toString();
             sid = sid.replace("[", "").replace("]", "").replace(" ", "").replace("\"", "");
-            String referrer = req.getHeader("Referer");
+
+           // String originalUri = req.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+            String referrer = req.getHeader(HttpHeaders.REFERER);
             int i = referrer.indexOf("/bitServer/");
             int j = referrer.indexOf("://");
             String address = referrer.substring(j+3,i);

@@ -34,9 +34,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.bitServer.beans.AuthoriseBean.showMessage;
-import static ru.bitServer.beans.MainBean.*;
-
 @ManagedBean(name = "settingsBean")
 @ViewScoped
 public class SettingsOrthancBean implements UserDao, DataAction {
@@ -508,16 +505,43 @@ public class SettingsOrthancBean implements UserDao, DataAction {
         }
     }
 
+//    public void resetServer() {
+//        showMessage("Сообщение","Сервис будет перезагружен!", info);
+//        try {
+//            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/orthancreset");
+//            proc.waitFor();
+//        }catch (Exception e){
+//            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+//            LogTool.getLogger().error(this.getClass().getSimpleName()+" Error resetServer() NetworkSettingsBean: "+e.getMessage());
+//        }
+//    }
+
+//     this.showMessage("Сообщение", "Сервис будет перезагружен!", this.info);
+//
+//        try {
+//        Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/orthancreset");
+//        proc.waitFor();
+//    } catch (Exception var2) {
+//        this.showMessage("Внимание", var2.getMessage(), FacesMessage.SEVERITY_INFO);
+//        LogTool.getLogger().error(this.getClass().getSimpleName() + " Error resetServer() NetworkSettingsBean: " + var2.getMessage());
+//    }
+
+
     public void resetServer() {
         showMessage("Сообщение","Сервис будет перезагружен!", info);
+        StringBuilder sb = new StringBuilder();
+        sb.append("////");
         try {
-            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/orthancreset");
-            proc.waitFor();
-        }catch (Exception e){
-            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
-            LogTool.getLogger().error(this.getClass().getSimpleName()+" Error resetServer() NetworkSettingsBean: "+e.getMessage());
+            sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
+       }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+" result of command resetServer(): "+e.getMessage());
         }
+
+        //sb.append("test");//connection.makePostConnectionAndStringBuilder("/tools/reset","" );
+
+        //showMessage("Сообщение","Сервис перезагружен!", info);
     }
+
 
     public String ModifyStr(String str){
         String result;
