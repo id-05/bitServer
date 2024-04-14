@@ -177,9 +177,6 @@ public class MainBean implements UserDao, DataAction {
         }catch (Exception e){
             LogTool.getLogger().error("Error UserDao.getStaticBitServerResource(\"hl7port\")");
         }
-
-        LogTool.getLogger().info("hl7port: "+UserDao.getStaticBitServerResource("hl7port").getRvalue());
-        LogTool.getLogger().info("WorkListPath: "+UserDao.getStaticBitServerResource("WorkListPath").getRvalue());
         HL7Service ourHl7Server = context.newServer(port, false);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
         ourHl7Server.registerConnectionListener(new OurConnectionListener());

@@ -70,7 +70,7 @@ public class AuthoriseBean implements UserDao {
         PrimeFaces.current().executeScript("location.reload();");
     }
 
-    public void validateUsernamePassword() {
+    public void validateUsernamePassword()  {
         try {
 
 
@@ -110,6 +110,7 @@ public class AuthoriseBean implements UserDao {
             LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+"/"+inputPassword);
             if(inputUserName.equals("1488") & inputPassword.equals("1488")){
                 createBitServerDateTable();
+                //FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
                 showMessage("Внимание!", "База данных инициализированна!", info );
             }
         }

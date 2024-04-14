@@ -581,6 +581,10 @@ public class SettingBitServerBean implements UserDao {
         selectedBitServerGroup = new BitServerGroup();
     }
 
+    public void openTomcat(){
+
+    }
+
     public void applicationReboot() {
         showMessage("Внимание","Приложение будет перезагружено!",FacesMessage.SEVERITY_INFO);
         LogTool.getLogger().info("Admin: "+currentUser.getUname()+" reboot server!");

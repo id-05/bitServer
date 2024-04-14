@@ -528,18 +528,8 @@ public class SettingsOrthancBean implements UserDao, DataAction {
 
 
     public void resetServer() {
-        showMessage("Сообщение","Сервис будет перезагружен!", info);
-        StringBuilder sb = new StringBuilder();
-        sb.append("////");
-        try {
-            sb = connection.makePostConnectionAndStringBuilder("/tools/reset","" );
-       }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName()+" result of command resetServer(): "+e.getMessage());
-        }
-
-        //sb.append("test");//connection.makePostConnectionAndStringBuilder("/tools/reset","" );
-
-        //showMessage("Сообщение","Сервис перезагружен!", info);
+        showMessage("Внимание","Сервис Orthanc, будет перезагружен!",FacesMessage.SEVERITY_INFO);
+        connection.makePostConnectionAndStringBuilder("/tools/reset","" );
     }
 
 

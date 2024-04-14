@@ -56,12 +56,19 @@ public class LogBean implements UserDao {
 
     public void setLogInfo() throws IOException {
         String filename = getBitServerResource("logpath").getRvalue()+"bitServer.log";
-        FileReader fileReader= new FileReader(filename);
+        FileReader fileReader;
+        if(logLevel.equals("ORTHANC")){
+            fileReader= new FileReader("/var/log/orthanc/Orthanc.log");
+
+        }else{
+            fileReader= new FileReader(filename);
+        }
+
         Scanner scanner = new Scanner(fileReader);
         StringBuilder buf = new StringBuilder();
         while (scanner.hasNextLine()) {
             String bufStr = scanner.nextLine();
-            if(logLevel.equals("ALL")){
+            if(logLevel.equals("ALL")|(logLevel.equals("ORTHANC"))){
                 buf.insert(0,(bufStr+"\n"));
             }else{
                 if (bufStr.contains(logLevel)){

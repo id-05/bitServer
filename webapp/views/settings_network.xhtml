@@ -55,13 +55,6 @@
                                 <p:commandButton value="Сохранить" styleClass="ui-button-success" update="form:growl2"
                                                  immediate="true" actionListener="#{networkSettingsBean.saveSettings}"/>
 
-                                <p:commandButton id="result"
-                                                 ajax="false" style="margin-right: 10px"
-                                                 styleClass="edit-button rounded-button ui-button-success"
-                                                 icon="pi pi-file">
-                                    <p:fileDownload value="#{networkSettingsBean.getResult}"/>
-                                </p:commandButton>
-
                             </p:toolbarGroup>
                         </p:toolbar>
 

@@ -1,12 +1,9 @@
 import com.google.common.net.HttpHeaders;
 import com.google.gson.JsonObject;
-
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

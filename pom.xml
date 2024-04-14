@@ -195,6 +195,7 @@
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-imageio</artifactId>
+
             <version>3.3.7</version>
         </dependency>
 
@@ -276,6 +277,7 @@
             <id>dcm4che</id>
             <name>dcm4che Repository</name>
             <url>http://www.dcm4che.org/maven2</url>
+
         </repository>
 
             <repository>
@@ -293,15 +295,12 @@
             <layout>default</layout>
         </repository>
 
-
-
             <repository>
                 <id>primefaces</id>
                 <name>PrimeFaces Maven Repository</name>
                 <url>http://repository.primefaces.org</url>
                 <layout>default</layout>
             </repository>
-
 
         <repository>
             <id>java.net</id>
