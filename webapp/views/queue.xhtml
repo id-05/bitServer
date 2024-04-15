@@ -381,11 +381,6 @@
                             <p:fileDownload value="#{queueBean.downloadIsoStudy()}"/>
                         </p:menuitem>
 
-                        <p:menuitem value="Записать на диск"
-                                    update="searchgrowl"
-                                    oncomplete="PF('CDchoose').show()"
-                                    rendered="false" process="@this"/>
-
                     </p:contextMenu>
 
                     <p:dialog id="dialogAEchoose" header="Выберите клиента для отправки" showEffect="fade" modal="true"
@@ -432,34 +427,6 @@
                             <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('AEchoose').hide()"
                                              class="ui-button-secondary" update="dialogAEchoose">
                                 <p:resetInput target="dialogAEchoose"/>
-                            </p:commandButton>
-
-                        </f:facet>
-
-                    </p:dialog>
-
-                    <p:dialog id="dialogCDchoose" header="Выберите устройство для записи" showEffect="fade" modal="true"
-                              widgetVar="CDchoose" responsive="false">
-
-                        <p:selectOneMenu id="longItemLabel" value="#{queueBean.selectedRecorder}">
-                            <f:selectItems value="#{queueBean.recorderList}"/>
-                            <p:ajax event="change" listener="#{queueBean.changeSelectedRecorder}"/>
-                        </p:selectOneMenu>
-
-                        <p:commandButton value="Выбрать"
-                                         action="#{queueBean.writeToCD}"
-                                         update="seachform:searchgrowl"
-                                         style="margin-left: 20px"
-                                         styleClass="edit-button rounded-button ui-button-success" process="@this">
-                        </p:commandButton>
-
-                        <f:facet name="footer">
-
-                            <span style="padding: 20px;"> </span>
-
-                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('CDchoose').hide()"
-                                             class="ui-button-secondary" update="dialogCDchoose">
-                                <p:resetInput target="dialogCDchoose"/>
                             </p:commandButton>
 
                         </f:facet>

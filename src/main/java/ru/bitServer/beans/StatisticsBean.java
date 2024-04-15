@@ -1,5 +1,8 @@
 package ru.bitServer.beans;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
@@ -16,6 +19,10 @@ import ru.bitServer.util.LogTool;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,7 +39,9 @@ public class StatisticsBean implements UserDao {
     String typeChart = "mounth";
     Map<Long, Integer> resultMapLong = new TreeMap<>();
     Map<Long, Integer> resultMapShort = new TreeMap<>();
-    ArrayList<String> bufDateList = new ArrayList<>();
+    Map<String, Long> ModalityMap = new TreeMap<>();
+    Map<String, Long> SourceMap = new TreeMap<>();
+    //ArrayList<String> bufDateList = new ArrayList<>();
     String diagramTitle;
 
     public String getDiagramTitle() {
@@ -93,17 +102,53 @@ public class StatisticsBean implements UserDao {
     @PostConstruct
     public void init() {
         showStat = getBitServerResource("showStat").getRvalue().equals("true");
-        resultMapLong.clear();
-        resultMapShort.clear();
-
-        bufDateList = getDateFromMaindicomTags("",32);
-        Collections.sort(bufDateList);
-
-        resultMapLong = getStatMap(bufDateList,"MM.yyyy");
-        resultMapShort = getStatMap(bufDateList,"yyyy");
-        diagramTitle = "Распределение по модальностям";
 
         if(showStat){
+            resultMapLong.clear();
+            resultMapShort.clear();
+            ModalityMap.clear();
+            SourceMap.clear();
+            JsonObject statJson;
+            JsonParser parser = new JsonParser();
+            try {
+                String sourceString = makeGetConnectionAndStringBuilder("/bitServerStat/statistics/getinfo").toString();
+                statJson = parser.parse(sourceString).getAsJsonObject();
+
+                String buf = statJson.get("DateMapLong").toString().replace("\\","").replace("{","").replace("}","").replace("\"","");
+                String[] lines = buf.split(",");
+                int i;
+                for(String line:lines){
+                    i = line.indexOf(":");
+                    resultMapLong.put(Long.parseLong(line.substring(0,i)),Integer.parseInt(line.substring(i+1)));
+                }
+
+                buf = statJson.get("DateMapShort").toString().replace("\\","").replace("{","").replace("}","").replace("\"","");
+                lines = buf.split(",");
+                for(String line:lines){
+                    i = line.indexOf(":");
+                    resultMapShort.put(Long.parseLong(line.substring(0,i)),Integer.parseInt(line.substring(i+1)));
+                }
+
+                buf = statJson.get("ModalityMap").toString().replace("\\","").replace("{","").replace("}","").replace("\"","");
+                lines = buf.split(",");
+                for(String line:lines){
+                    i = line.indexOf(":");
+                    ModalityMap.put(line.substring(0,i),Long.parseLong(line.substring(i+1)));
+                }
+
+                buf = statJson.get("SourceMap").toString().replace("\\","").replace("{","").replace("}","").replace("\"","");
+                lines = buf.split(",");
+                for(String line:lines){
+                    i = line.indexOf(":");
+                    SourceMap.put(line.substring(0,i),Long.parseLong(line.substring(i+1)));
+                }
+
+
+            }catch (Exception e){
+                System.out.println("error get state  = " + e.getMessage());
+            }
+
+            diagramTitle = "Распределение по модальностям";
             typeChart = "mounth";
 
             chartOutput();
@@ -119,10 +164,39 @@ public class StatisticsBean implements UserDao {
 
             model.addColumn(column1);
             model.addColumn(column2);
-
         }
     }
 
+    public StringBuilder makeGetConnectionAndStringBuilder(String apiUrl) {
+        StringBuilder stringBuilder;
+        try {
+            stringBuilder = new StringBuilder();
+            HttpURLConnection conn = makeGetConnection(apiUrl);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String output;
+            while ((output = br.readLine()) != null) {
+                stringBuilder.append(output);
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            LogTool.getLogger().error("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
+            stringBuilder = new StringBuilder();
+            stringBuilder.append("error");
+        }
+        return stringBuilder;
+    }
+
+    public HttpURLConnection makeGetConnection(String apiUrl) throws Exception {
+        HttpURLConnection conn;
+        String fulladdress = "http://127.0.0.1:8080";
+        URL url = new URL(fulladdress+apiUrl);
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("GET");
+        conn.getResponseMessage();
+        return conn;
+    }
     private void pieOutput() {
         ChartData dataPie = new ChartData();
         PieChartDataSet dataSetPie = new PieChartDataSet();
@@ -131,19 +205,21 @@ public class StatisticsBean implements UserDao {
         List<String> bgColorsPie = new ArrayList<>();
         ColorBar colorBar = new ColorBar();
         if(diagramTitle.equals("Распределение по модальностям")) {
-            List<String> modalityList = getDateFromMaindicomTags("DISTINCT", 96);
-            for (String bufModality : modalityList) {
-                valuesPie.add(getModalitiOfStudies().stream().filter(String -> String.equals(bufModality)).count());
-                labelsPie.add(bufModality);
-                bgColorsPie.add(colorBar.getColor());
+            if(ModalityMap.size()>0) {
+                for (Map.Entry<String, Long> item : ModalityMap.entrySet()) {
+                    valuesPie.add(item.getValue());
+                    labelsPie.add(item.getKey());
+                    bgColorsPie.add(colorBar.getColor());
+                }
             }
         }
         if(diagramTitle.equals("Распределение по источникам")) {
-            List<String> sourceList = getSourceDicom().stream().distinct().collect(Collectors.toList());
-            for (String bufSource : sourceList) {
-                valuesPie.add(getSourceDicom().stream().filter(String -> String.equals(bufSource)).count());
-                labelsPie.add(bufSource);
-                bgColorsPie.add(colorBar.getColor());
+            if(SourceMap.size()>0) {
+                for (Map.Entry<String, Long> item : SourceMap.entrySet()) {
+                    valuesPie.add(item.getValue());
+                    labelsPie.add(item.getKey());
+                    bgColorsPie.add(colorBar.getColor());
+                }
             }
         }
         dataSetPie.setData(valuesPie);
@@ -156,24 +232,20 @@ public class StatisticsBean implements UserDao {
     public void setMounths(){
         typeChart = "mounth";
         chartOutput();
-        System.out.println("mounth");
     }
 
     public void setYears(){
         typeChart = "year";
         chartOutput();
-        System.out.println("year");
     }
 
     public void setModaliti(){
         diagramTitle = "Распределение по модальностям";
-        System.out.println("Распределение по модальностям");
         pieOutput();
     }
 
     public void setSource(){
         diagramTitle = "Распределение по источникам";
-        System.out.println("Распределение по источникам");
         pieOutput();
     }
 

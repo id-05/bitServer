@@ -1,14 +1,12 @@
 package ru.bitServer.beans;
 
 import com.github.stephenc.javaisotools.eltorito.impl.ElToritoConfig;
-import com.github.stephenc.javaisotools.iso9660.ISO9660File;
 import com.github.stephenc.javaisotools.iso9660.ISO9660RootDirectory;
 import com.github.stephenc.javaisotools.iso9660.impl.CreateISO;
 import com.github.stephenc.javaisotools.iso9660.impl.ISO9660Config;
 import com.github.stephenc.javaisotools.iso9660.impl.ISOImageFileHandler;
 import com.github.stephenc.javaisotools.joliet.impl.JolietConfig;
 import com.github.stephenc.javaisotools.rockridge.impl.RockRidgeConfig;
-import com.ms.imapi2.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -28,7 +26,6 @@ import org.primefaces.shaded.commons.io.FilenameUtils;
 import ru.bitServer.dao.*;
 import ru.bitServer.dicom.DicomModaliti;
 import ru.bitServer.dicom.OrthancSettings;
-import ru.bitServer.service.LazyBitServerStudyDataModel;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -94,7 +91,7 @@ public class QueueBean implements UserDao, DataAction {
     private int number;
     int recordCount;
     List<String> modalityName = new ArrayList<>();
-    //String dataoutputState;
+
     double timeRequest;
     double timeDrawing;
     long timeStart;
@@ -424,7 +421,6 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-        //initializeCDinfo();
         addTwoNumbers(1);
         addTwoNumbers(-22);
         addTwoNumbers(333);
@@ -479,12 +475,6 @@ public class QueueBean implements UserDao, DataAction {
             }
         }
         dataoutput();
-        //lazyModel = new LazyBitServerStudyDataModel(visibleStudiesList);
-
-//        {
-//            BitServerStudy bufStudy = new BitServerStudy("123","", "123", new Date() , "123" , "123" , new Date(), "123",0, "123", "123", "123", "123");
-//            System.out.println(bufStudy.getSid());
-//        }
     }
 
     public void toggleGlobalFilter() {
@@ -777,7 +767,6 @@ public class QueueBean implements UserDao, DataAction {
                 connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
                 BitServerUser bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
                 bufUser.setHasBlockStudy(false);
-                //bufUser.setBlockStudy("0");
                 updateUser(bufUser);
             }
         }
@@ -843,131 +832,6 @@ public class QueueBean implements UserDao, DataAction {
         }else{
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+"Возникла ошибка при отправке, удаленный сервер не отвечает!");
-        }
-    }
-
-    public void changeSelectedRecorder(){
-        System.out.println(selectedRecorder);
-    }
-
-    public void initializeCDinfo(){
-        IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
-        for(int i=0; i<dm.count();i++){
-            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
-            String recorderUniqueId = dm.item(0);
-            recorder.initializeDiscRecorder(recorderUniqueId);
-            recorderList.add(recorder.vendorId() + "/" + recorder.productId());
-        }
-        if(recorderList.size()>0) {
-            selectedRecorder = recorderList.get(0);
-        }
-    }
-
-    public void writeToCD() {
-        IDiscMaster2 dm = ClassFactory.createMsftDiscMaster2();
-        int selectRecorderNumber = 0;
-        //System.out.println(selectedRecorder);
-        for(int i=0; i<dm.count();i++){
-            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
-            String recorderUniqueId = dm.item(0);
-            recorder.initializeDiscRecorder(recorderUniqueId);
-            if(selectedRecorder.equals(recorder.vendorId() + "/" + recorder.productId())){
-                selectRecorderNumber = i;
-                break;
-            }
-        }
-        PrimeFaces.current().executeScript("PF('CDchoose').hide()");
-
-        if(dm.count()>0) {
-            //выбор устройства для записи
-            IDiscRecorder2 recorder = ClassFactory.createMsftDiscRecorder2();
-            String recorderUniqueId = dm.item(selectRecorderNumber);
-            recorder.initializeDiscRecorder(recorderUniqueId);
-            //System.out.println("dm.count() "+dm.count()+"  Using recorder: " +recorder.volumeName()+" " + recorder.vendorId() + " " + recorder.productId());
-            //
-            createIsoToDVD();
-
-            //создание iso-образа
-            IIsoImageManager imageManager = ClassFactory.createMsftIsoImageManager();
-            File isoFile = new File("out.iso");
-            imageManager.setPath(isoFile.getAbsolutePath());
-            imageManager.validate();
-            //System.out.println("ISO Validation successful: " + isoFile.getAbsolutePath());
-
-            //запись
-            try {
-                IDiscFormat2Data discData = ClassFactory.createMsftDiscFormat2Data();
-                discData.recorder(recorder);
-                discData.clientName("test");
-                int mediaStatus = discData.currentMediaStatus().comEnumValue();//!!!!!!!!!!!
-                //System.out.println("Media status: " + mediaStatus);
-                if (mediaStatus == 4) {
-                    showMessage("Сообщение", "Диск не пустой! Запись не возможна!", error);
-                }
-                if (mediaStatus == 6) {
-                    try {
-                        if ((mediaStatus & IMAPI_FORMAT2_DATA_MEDIA_STATE.IMAPI_FORMAT2_DATA_MEDIA_STATE_WRITE_PROTECTED.comEnumValue()) != 0)
-                            throw new RuntimeException("Media is write protected / not empty.");
-
-                        int addr = discData.nextWritableAddress();
-                        if (addr != 0)
-                            throw new RuntimeException("Disc is not empty, not writing.");
-                        IStream isoStream = imageManager.stream();
-                        //System.out.println("Writing CD");
-                        discData.write(isoStream);
-                        recorder.ejectMedia();
-                        //System.out.println("Finished writing");
-                    } catch (Exception e) {
-                        //System.out.println(e.getMessage());
-                        LogTool.getLogger().error(LogTool.getLogger()+" Error during wtite disk " + e.getMessage());
-                    }
-                }
-            }catch (Exception e){
-                showMessage("Сообщение","Проверьте, что есть диск для записи!",error);
-                LogTool.getLogger().error(LogTool.getLogger() + " Error during wtite disk " + e.getMessage());
-            }
-        }else{
-            showMessage("Сообщение","В системе нет подходящих устройств!",error);
-        }
-
-    }
-
-    public void createIsoToDVD()  {
-        try {
-            BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
-            String url = "/tools/create-archive";
-            JsonArray jsonArray = new JsonArray();
-            jsonArray.add(bufStudy.getSid());
-            HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
-            InputStream inputStream = conn.getInputStream();
-            File outfile = new File("out.iso");
-            File buffile = new File("file.rar");
-            FileUtils.copyInputStreamToFile(inputStream, buffile);
-            ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
-            ISO9660RootDirectory root = new ISO9660RootDirectory();
-            ISO9660File file2 = new ISO9660File(buffile);
-            root.addFile(file2);
-            ISO9660Config iso9660Config = new ISO9660Config();
-            iso9660Config.allowASCII(false);
-            iso9660Config.setInterchangeLevel(1);
-            iso9660Config.restrictDirDepthTo8(true);
-            iso9660Config.setPublisher("bitServer");
-            iso9660Config.setVolumeID(bufStudy.getPatientName());
-            iso9660Config.setDataPreparer("bitServer");
-            iso9660Config.forceDotDelimiter(true);
-            RockRidgeConfig rrConfig = null;
-            ElToritoConfig elToritoConfig = null;
-            JolietConfig jolietConfig;
-            jolietConfig = new JolietConfig();
-            jolietConfig.setPublisher("bitServer");
-            jolietConfig.setVolumeID(bufStudy.getPatientName().substring(1,16));
-            jolietConfig.setDataPreparer("bitServer");
-            ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
-            CreateISO iso = new CreateISO(streamHandler, root);
-            iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
-            //System.out.println("FINISH");
-        }catch (Exception e){
-            System.out.println(e.getMessage());
         }
     }
 }

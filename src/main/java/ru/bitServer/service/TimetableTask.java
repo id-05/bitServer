@@ -107,7 +107,7 @@ public class TimetableTask {
 
     public TimetableTask(String id, String buf) {
         JsonParser parser = new JsonParser();
-        JsonObject bufJson=new JsonObject();
+        JsonObject bufJson = new JsonObject();
         try {
             bufJson = parser.parse(buf).getAsJsonObject();
         }catch (Exception e){
