@@ -421,10 +421,6 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
-        addTwoNumbers(1);
-        addTwoNumbers(-22);
-        addTwoNumbers(333);
-        addTwoNumbers(1234);
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();

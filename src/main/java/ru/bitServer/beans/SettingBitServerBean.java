@@ -472,7 +472,7 @@ public class SettingBitServerBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("settingBitServerBean");
+        System.out.println("bitserverSetting");
         remoteTransStatus = "Статус: не запущено";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();

@@ -40,31 +40,36 @@
                 </f:facet>
             </p:menubar>
 
-            <p:dataTable id="dt-apps" widgetVar="dtApps" var="bitServerApp" value="#{appManagerBean.appList}"
-                         reflow="true" styleClass="users-table"
-                         emptyMessage="Нет записей для отображения"
-                         size="small"
-                         scrollable="true" scrollHeight="650"
-                         selection="#{settingBitServerBean.selectedUsers}" rowKey="#{BitServerApp.name}"
-                         rowSelectMode="add" >
+            <p:card style="width: 65rem; margin-bottom: 4em; alignment: center">
+                <p:dataTable id="dt-apps" widgetVar="dtApps" var="bitServerApp" value="#{appManagerBean.appList}"
+                             reflow="true" styleClass="users-table"
+                             emptyMessage="Нет записей для отображения"
+                             size="small"
+                             scrollable="true" scrollHeight="650"
+                             selection="#{settingBitServerBean.selectedUsers}" rowKey="#{BitServerApp.name}"
+                             rowSelectMode="add" >
 
-                <p:column headerText="Название" sortBy="#{bitServerApp.name}" style="text-align: center">
-                    <h:outputText value="#{bitServerApp.name}"/>
-                </p:column>
+                    <p:column headerText="Название" sortBy="#{bitServerApp.name}" style="text-align: center">
+                        <h:outputText value="#{bitServerApp.name}"/>
+                    </p:column>
 
-                <p:column headerText="Дата" sortBy="#{bitServerApp.date}" style="text-align: center">
-                    <h:outputText value="#{bitServerApp.date}"/>
-                </p:column>
+                    <p:column headerText="Дата" sortBy="#{bitServerApp.date}" style="text-align: center">
+                        <h:outputText value="#{bitServerApp.date}"/>
+                    </p:column>
 
-                <p:column exportable="false">
-                    <p:commandButton id="result"
-                                     ajax="false" style="margin-right: 10px"
-                                     styleClass="edit-button rounded-button ui-button-success"
-                                     icon="pi pi-download">
-                        <p:fileDownload value="#{appManagerBean.getResult}"/>
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
+                    <p:column exportable="false">
+                        <p:commandButton id="result"
+                                         ajax="false" style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         icon="pi pi-download">
+                            <p:fileDownload value="#{appManagerBean.getResult}"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+            </p:card>
+
+
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>

@@ -34,9 +34,11 @@ public interface DataAction extends UserDao{
             String port = bufResources.getRvalue();
             int k = address.indexOf(":");
             String addressCutPort = address.substring(0,k);
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+
+                    mainServer.getPassword()+"@"+addressCutPort+":"+port+"/osimis-viewer/app/index.html?study="+sid+"','_blank')");
         }else{
-            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
+            PrimeFaces.current().executeScript("window.open('"+HttpOrHttps+"://"+mainServer.getLogin()+":"+
+                    mainServer.getPassword()+"@"+address+"/viewer/osimis-viewer/app/index.html?study="+sid+"','_blank')");
         }
     }
 
@@ -88,7 +90,7 @@ public interface DataAction extends UserDao{
                     stringBuilder.append((char) c);
                 }
             } catch (Exception e) {
-                LogTool.getLogger().error("Error of read file orthanc.json settingsBean: "+e.getMessage());
+                LogTool.getLogger().error("Error of read file orthanc.json SettingsOrthancBean.java: "+e.getMessage());
             }
         }
 

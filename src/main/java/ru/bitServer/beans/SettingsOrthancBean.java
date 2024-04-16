@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@ManagedBean(name = "settingsBean")
+@ManagedBean(name = "setOrthBean")
 @ViewScoped
 public class SettingsOrthancBean implements UserDao, DataAction {
     String ServerName;
@@ -108,7 +108,6 @@ public class SettingsOrthancBean implements UserDao, DataAction {
     boolean AllowFindSopClassesInStudy;
     String luaScriptsFolder;
     BitServerUser currentUser;
-    //SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     ArrayList<OrthancSettingSnapshot> snapShots = new ArrayList<>();
     ArrayList<OrthancSettingSnapshot> selectedSnapShots = new ArrayList<>();
     OrthancSettingSnapshot selectedSnapshot = new OrthancSettingSnapshot();
@@ -223,10 +222,12 @@ public class SettingsOrthancBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
+        System.out.println("OrthancSetting");
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
         selectedSnapshot = new OrthancSettingSnapshot();
         snapShots = getAllOrthancSnapshots();
+        System.out.println("snapShots.size"+snapShots.size());
         try {
             selectedUser = new OrthancWebUser("", "");
             selectedDicomModality = new DicomModaliti("", "", "", "", "");
@@ -260,46 +261,6 @@ public class SettingsOrthancBean implements UserDao, DataAction {
         }
         PrimeFaces.current().executeScript("PF('statusDialog').hide()");
     }
-
-//    public JsonObject getJsonFromFile() throws IOException {
-//        boolean luaRead = true;
-//        StringBuilder stringBuilder = new StringBuilder();
-//        try{
-//            luaRead = Boolean.parseBoolean(getBitServerResource("luaRead").getRvalue());
-//        }catch (Exception e){
-//            LogTool.getLogger().error("Error Boolean.parseBoolean(getBitServerResource(\"readOrthancSettingfromLua\").getRvalue()");
-//        }
-//        if(luaRead) {
-//            String urlParameters = "f = io.open(\"" + ModifyStr(mainServer.getPathToJson()) + "orthanc.json\",\"r+\");" +
-//                    "print(f:read(\"*a\"))" +
-//                    "f:close()";
-//            connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-//            stringBuilder = connection.makePostConnectionAndStringBuilderWithIOE("/tools/execute-script",urlParameters);
-//
-//        }else{
-//            LogTool.getLogger().debug("full path orthanc file: "+mainServer.getPathToJson()+"orthanc.json");
-//            try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
-//                int c;
-//                while ((c = reader.read()) != -1) {
-//                    stringBuilder.append((char) c);
-//                }
-//                LogTool.getLogger().debug("full  file: "+stringBuilder);
-//            } catch (Exception e) {
-//                LogTool.getLogger().error("Error of read file orthanc.json settingsBean: "+e.getMessage());
-//            }
-//        }
-//
-//        JsonParser parser = new JsonParser();
-//        JsonObject bufJson = new JsonObject();
-//        try {
-//            bufJson = parser.parse(stringBuilder.toString()).getAsJsonObject();
-//        }catch (Exception e){
-//            e.getStackTrace();
-//            LogTool.getLogger().warn("Error parse json snapshot: "+stringBuilder.toString()+" "+e.getMessage());
-//        }
-//        return bufJson;
-//    }
-
 
     public void loadConfig() {
         try{
@@ -380,7 +341,7 @@ public class SettingsOrthancBean implements UserDao, DataAction {
         }
     }
 
-    public void saveConfig() throws IOException {
+    public void saveConfig() {
         JsonObject jsonOb = new JsonObject();
         jsonOb.addProperty("Name", ServerName);
         jsonOb.addProperty("StorageDirectory", storageDirectory);
@@ -485,7 +446,7 @@ public class SettingsOrthancBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":form:backupDiaolg");
     }
 
-    public void saveFile(JsonObject newJson) throws IOException {
+    public void saveFile(JsonObject newJson) {
         ArrayList<String> changeList = new ArrayList<>();
         JsonObject oldJson = getJsonFromFile();
         Set<Map.Entry<String, JsonElement>> entrySet = oldJson.entrySet();
@@ -683,13 +644,15 @@ public class SettingsOrthancBean implements UserDao, DataAction {
     }
 
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
-        UploadedFile file = event.getFile();
-        InputStream inputStream = new ByteArrayInputStream(file.getContent());
-        String text = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.joining("\n"));
+
         try {
+            UploadedFile file = event.getFile();
+            InputStream inputStream = new ByteArrayInputStream(file.getContent());
+
+            String text = new BufferedReader(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
             JsonParser parser = new JsonParser();
             JsonObject orthancJson;
             orthancJson = parser.parse(text).getAsJsonObject();

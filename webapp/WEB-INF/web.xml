@@ -43,16 +43,6 @@
         <url-pattern>/ariadna/viewer</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>hl7_listener</servlet-name>
-        <servlet-class>ExampleRawHl7OverHttpServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>hl7_listener</servlet-name>
-        <url-pattern>/hl7list</url-pattern>
-    </servlet-mapping>
-
     <welcome-file-list>
         <welcome-file>views/login.xhtml</welcome-file>
     </welcome-file-list>

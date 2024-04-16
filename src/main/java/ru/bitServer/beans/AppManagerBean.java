@@ -4,7 +4,6 @@ import com.google.common.net.HttpHeaders;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -71,8 +70,6 @@ public class AppManagerBean implements UserDao {
         int j = referrer.indexOf("://");
         String address = referrer.substring(j+3,i);
         if(address.contains(":")){
-            BitServerResources bufResources = getBitServerResource("port");
-            String port = bufResources.getRvalue();
             int k = address.indexOf(":");
             String addressCutPort = address.substring(0,k);
             PrimeFaces.current().executeScript("window.open('"+"http://"+"admin"+":"+"password"+"@"+addressCutPort+":8080/manager/','_blank')");

@@ -1,6 +1,5 @@
 package ru.bitServer.beans;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.model.DashboardColumn;
@@ -26,7 +25,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ManagedBean(name = "statisticsBean")
 @ViewScoped
@@ -41,7 +39,6 @@ public class StatisticsBean implements UserDao {
     Map<Long, Integer> resultMapShort = new TreeMap<>();
     Map<String, Long> ModalityMap = new TreeMap<>();
     Map<String, Long> SourceMap = new TreeMap<>();
-    //ArrayList<String> bufDateList = new ArrayList<>();
     String diagramTitle;
 
     public String getDiagramTitle() {
@@ -52,7 +49,6 @@ public class StatisticsBean implements UserDao {
         this.diagramTitle = diagramTitle;
     }
 
-    List<String> sourcelist = new ArrayList<>();
     boolean showStat;
 
     public boolean isShowStat() {
@@ -61,14 +57,6 @@ public class StatisticsBean implements UserDao {
 
     public void setShowStat(boolean showStat) {
         this.showStat = showStat;
-    }
-
-    public List<String> getSourcelist() {
-        return sourcelist;
-    }
-
-    public void setSourcelist(List<String> sourcelist) {
-        this.sourcelist = sourcelist;
     }
 
     public PieChartModel getPieModality() {
@@ -302,51 +290,5 @@ public class StatisticsBean implements UserDao {
                 break;
         }
         return resultMap;
-    }
-
-    public Map<Long, Integer> getStatMap(List<String> studiesList, String dateformat) {
-        Map<Long, Integer> resultMap = new TreeMap<>();
-        DateFormat formatter = new SimpleDateFormat(dateformat);
-        Date firstdate;
-        Date seconddate;
-
-        try {
-            firstdate = strToDate(studiesList.get(0));
-            seconddate = strToDate(studiesList.get(studiesList.size() - 1));
-        }catch (Exception e){
-            firstdate = new Date();
-            seconddate = new Date();
-        }
-
-        for(String bufStr:studiesList){
-            if( (strToDate(bufStr).after(firstdate)&&(strToDate(bufStr).before(seconddate))) |
-                    ( (strToDate(bufStr).equals(firstdate))|(strToDate(bufStr).equals(seconddate)) ) ){
-                long bufDatemillis = 0;
-                try {
-                    bufDatemillis = (formatter.parse(formatter.format(strToDate(bufStr)))).getTime();
-                } catch (Exception e) {
-                    LogTool.getLogger().error(this.getClass().getSimpleName()+": Error getStatMap: "+e.getMessage());
-                }
-                Integer bufCount = resultMap.get(bufDatemillis);
-                if(bufCount==null){
-                    resultMap.put(bufDatemillis,1);
-                }else{
-                    bufCount = bufCount + 1;
-                    resultMap.replace(bufDatemillis,bufCount);
-                }
-            }
-        }
-        return resultMap;
-    }
-
-    public Date strToDate(String buf) {
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
-        try{
-            date = formatter.parse(buf);
-        }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName() + ": " + "Error on procedure: strToDate " + e.getMessage());
-        }
-        return date;
     }
 }

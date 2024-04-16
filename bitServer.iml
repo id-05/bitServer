@@ -43,7 +43,7 @@
     <orderEntry type="library" name="primeflex" level="application" />
     <orderEntry type="library" name="Maven: us.fatehi:schemacrawler:14.05.01" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
-    <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.10" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish:javax.faces:2.2.5" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:12.0.0-RC3" level="project" />
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-api:2.2.20" level="project" />
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-impl:2.2.20" level="project" />

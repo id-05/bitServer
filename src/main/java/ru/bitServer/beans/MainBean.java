@@ -145,9 +145,6 @@ public class MainBean implements UserDao, DataAction {
         }
 
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //ЗДЕСЬ СОБИРАТЬ СТАТИСТИКУ
-
         //удаление файлов рабочих списков
         try {
             int wlDelHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
