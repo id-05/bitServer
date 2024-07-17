@@ -524,21 +524,21 @@ public interface UserDao {
             String resultSQL;
             String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
                     "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value, tag9.value, tag10.value, tag11.value, tag12.value FROM patientrecyclingorder" +
-                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
-                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
-                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
-                    " LEFT JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
-                    " LEFT JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
-                    " LEFT JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
-                    " LEFT JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
-                    " LEFT JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +   //STUDY DATE
-                    " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //!!error delete this
-                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'" +  //DESCRIPTION
-                    " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
-                    " LEFT JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
-                    " LEFT JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
-                    " LEFT JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'" +   //StationName
-                    " LEFT JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
+                    " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
+                    " JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
+                    " JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
+                    " JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
+                    " JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +   //STUDY DATE
+                    " JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //!!error delete this
+                    " JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'  AND tag7.value  <> ''"+//DESCRIPTION
+                    " JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
+                    " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
+                    " JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
+                    " JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'" +   //StationName
+                    " JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
             Statement statement = conn.createStatement();
 
             if(dateSeachType.equals("all")){
@@ -554,7 +554,7 @@ public interface UserDao {
 
             while (rs.next()) {
 
- //               if(getBitServerResource("debug").getRvalue().equals("true")){
+                //               if(getBitServerResource("debug").getRvalue().equals("true")){
 //                    LogTool.getLogger().debug(this.getClass().getSimpleName()+":"+rs.getString(2)+"/"+
 //                            rs.getString(4)+"/"+ rs.getString(9)+"/"+ getDateFromText(rs.getString(7))+"/"+
 //                            rs.getString(10)+"/"+rs.getString(3)+"/"+getDateFromText(rs.getString(5))+"/"+
@@ -579,6 +579,45 @@ public interface UserDao {
             LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количеcтво найденных записей при поиске: " + resultList.size());
         }
         return resultList;
+    }
+
+    default BitServerStudy getBitServerStudyById(String studyid){
+        BitServerStudy resultStudy = new BitServerStudy();
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value," +
+                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value, tag8.value, tag9.value, tag10.value, tag11.value, tag12.value FROM patientrecyclingorder" +
+                    " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
+                    " JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
+                    " JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
+                    " JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '16' AND tag4.tagelement = '64'" +  //SEX
+                    " JOIN maindicomtags AS tag5 ON tag5.id = part1.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '32'" +   //STUDY DATE
+                    " JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '128'" +  //!!error delete this
+                    " JOIN maindicomtags AS tag7 ON tag7.id = part2.internalid AND tag7.taggroup = '24' AND tag7.tagelement = '21'  AND tag7.value  <> ''"+//DESCRIPTION
+                    " JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'" +   //MODALITY
+                    " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
+                    " JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
+                    " JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'" +   //StationName
+                    " JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'" +
+                    " WHERE part1.publicid = '"+studyid+"'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+
+            while (rs.next()) {
+                resultStudy = new BitServerStudy(rs.getString(2),
+                        rs.getString(4), rs.getString(9), getDateFromText(rs.getString(7)),
+                        rs.getString(10),rs.getString(3),getDateFromText(rs.getString(5)),
+                        rs.getString(6),0, rs.getString(11), rs.getString(12),
+                        rs.getString(13), rs.getString(14));
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultStudy;
     }
 
     default ArrayList<String> getDateFromMaindicomTags(String distinctOrNo,int tagElement){

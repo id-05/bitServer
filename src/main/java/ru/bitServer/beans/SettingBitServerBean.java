@@ -42,6 +42,8 @@ public class SettingBitServerBean implements UserDao {
     String orthancWebPort;
     String hl7port;
     String workListLifeTime;
+
+    String statUpdateTime;
     String orthancLogin;
     String orthancPassword;
     String orthancPathToJson;
@@ -112,6 +114,14 @@ public class SettingBitServerBean implements UserDao {
 
     public void setTimerEnable(String timerEnable) {
         this.timerEnable = timerEnable;
+    }
+
+    public String getStatUpdateTime() {
+        return statUpdateTime;
+    }
+
+    public void setStatUpdateTime(String statUpdateTime) {
+        this.statUpdateTime = statUpdateTime;
     }
 
     public List<BitServerUser> getBitServerUserList() {
@@ -544,6 +554,8 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "workListLifeTime": workListLifeTime = buf.getRvalue();
                     break;
+                case "statUpdateTime": statUpdateTime = buf.getRvalue();
+                    break;
                 case "colstatus": colStatus = buf.getRvalue();
                     break;
                 case "colpreview": colPreview = buf.getRvalue();
@@ -743,6 +755,8 @@ public class SettingBitServerBean implements UserDao {
                 case "hl7port": buf.setRvalue(hl7port);
                     break;
                 case "workListLifeTime": buf.setRvalue(workListLifeTime);
+                    break;
+                case "statUpdateTime": buf.setRvalue(statUpdateTime);
                     break;
                 case "ShowHelp": buf.setRvalue(showHelp);
                     break;

@@ -313,6 +313,22 @@
                         <br/>
 
                         <p:divider align="left" type="dashed">
+                            <b>Время обновления статистических данных</b>
+                        </p:divider>
+                        <p class="p-m-0">
+
+                            <p:spinner id="updatePeriod" value="#{settingBitServerBean.workListLifeTime}" min="0" max="60">
+                                <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
+                            </p:spinner>
+
+
+                        </p>
+                        <br/>
+                        <div >Интервал в минутах, через который будут обновляться данные статистики</div>
+
+                        <br/>
+
+                        <p:divider align="left" type="dashed">
                             <b>Включить службу заданий по времени</b>
                         </p:divider>
 

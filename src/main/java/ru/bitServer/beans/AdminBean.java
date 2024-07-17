@@ -2,6 +2,7 @@ package ru.bitServer.beans;
 
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.dicom.OrthancJob;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 import ru.bitServer.util.SessionUtils;
@@ -21,7 +22,27 @@ public class AdminBean implements UserDao {
     BitServerUser currentUser;
     String currentUserId;
     String errorText;
+    Integer numTask;
+
+    String countTask;
+    boolean existTask = false;
     boolean debug;
+
+    public String getCountTask() {
+        return countTask;
+    }
+
+    public void setCountTask(String countTask) {
+        this.countTask = countTask;
+    }
+
+    public boolean isExistTask() {
+        return existTask;
+    }
+
+    public void setExistTask(boolean existTask) {
+        this.existTask = existTask;
+    }
 
     public boolean isDebug() {
         return debug;
@@ -39,9 +60,19 @@ public class AdminBean implements UserDao {
         return hasTrouble;
     }
 
+    OrthancRestApi connection;
+    StringBuilder stringBuilder;
+
+
     @PostConstruct
     public void init(){
+        connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         debug = getBitServerResource("debug").getRvalue().equals("true");
+        numTask = getCountAllTask();
+        countTask = "Активных заданий: "+numTask;
+        if(numTask>0){
+            existTask = true;
+        }
         DicomCreatorBean.onUpdate();
         TagEditorBean.onClearForm();
         hasTrouble = MainBean.hasTrouble;
@@ -53,10 +84,21 @@ public class AdminBean implements UserDao {
         orthancGetInfo();
     }
 
+    public Integer getCountAllTask(){
+        Integer result = 0;
+        stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs");
+        String[] jobs = stringBuilder.toString().replace("[","").replace("]","").split(",");
+        for(String job:jobs) {
+            stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+job.replace(" ","").replace("\"",""));
+            OrthancJob orJob = new OrthancJob(stringBuilder.toString());
+            if(!orJob.getState().equals("Success")) result++;
+        }
+        return result;
+    }
+
     public void orthancGetInfo(){
         try{
-            OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-            StringBuilder stringBuilder = connection.makeGetConnectionAndStringBuilder("/statistics");
+            stringBuilder = connection.makeGetConnectionAndStringBuilder("/statistics");
             if(!stringBuilder.toString().contains("error")){
                 errorText = errorText + "\n"+ "\n" + "\n"+"ORTHANC STATUS GOOD" + "\n" + "\n";
             }else{

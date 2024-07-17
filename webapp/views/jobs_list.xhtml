@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+            //]]>
+        </script>
+
+        <script type="text/javascript">
+            function showStatus() {
+                PF('statusDialog').show();
+            }
+        </script>
+
+        <style type="text/css">
+            .fUpload-content {
+                overflow: auto;
+                height: 300px;
+            }
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: 1px; }
+             .success {
+                 background-color: #CCEEFF !important;
+             }
+            .failure {
+                background-color: #FFCCCC !important;
+            }
+            .running {
+                background-color: #FFEE99 !important;
+            }
+        </style>
+
+        <h:form id="seachform">
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Список задач" disabled="true"/>
+
+                <f:facet name="options">
+                    <div class="p-d-flex">
+                        <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <div style="align-content: center">
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton id="pause-button" value="Остановить все активные"
+                                         action="#{jobsBean.pauseAllRunning}"
+                                         update="searchgrowl"
+                                         style="margin-right: 15px">
+                        </p:commandButton>
+
+                        <p:commandButton id="resubmit-button" value="Возобновить все остановленные"
+                                         action="#{jobsBean.resumeAllPause}"
+                                         update="searchgrowl"
+                                         style="margin-right: 15px">
+                        </p:commandButton>
+
+                        <p:commandButton id="cancel-button" value="Отменить все активные"
+                                         action="#{jobsBean.cancelAllRunning}"
+                                         update="searchgrowl"
+                                         style="margin-right: 15px">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+
+                    <p:toolbarGroup align="centr">
+
+                    </p:toolbarGroup>
+
+                </p:toolbar>
+
+                <p:dataTable id="dt-jobs" widgetVar="visibleJobs" var="orthancJob" value="#{jobsBean.orthancJobs}"
+                             reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                             emptyMessage="Нет записей для отображения" ajax="false"
+                             rowStyleClass="#{orthancJob.state == 'Success' ? 'success' :
+                                                orthancJob.state == 'Failure' ? 'failure' :
+                                                   orthancJob.state == 'Running' ? 'running' : null}"
+                             selection="#{jobsBean.selectedOrthancJobs}" rowKey="#{orthancJob.identificator}" paginator="true"
+                             rows="25" rowSelectMode="add" paginatorPosition="bottom" >
+
+                    <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
+
+                    <p:column headerText="ParentResources" sortBy="#{orthancJob.parentResources}" style="text-align: center"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{orthancJob.bitServerSudy.patientName}"/>
+                    </p:column>
+
+                    <p:column headerText="RemoteAet" sortBy="#{orthancJob.remoteAet}" style="text-align: center"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{orthancJob.remoteAet}"/>
+                    </p:column>
+
+                    <p:column headerText="Progress" sortBy="#{orthancJob.progress}" style="text-align: center"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{orthancJob.progress}"/>
+                    </p:column>
+
+                    <p:column headerText="State" sortBy="#{orthancJob.state}" style="text-align: center">
+                        <h:outputText value="#{orthancJob.state}" styleClass="product-badge status-#{orthancJob.statusStyle}"/>
+                    </p:column>
+
+                    <p:column headerText="CreationTime" sortBy="#{orthancJob.creationTime}" style="text-align: center"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{orthancJob.creationTime}"/>
+                    </p:column>
+
+                    <p:column headerText="effectiveRuntime" sortBy="#{orthancJob.effectiveRuntime}" style="text-align: center"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{orthancJob.effectiveRuntime}"/>
+                    </p:column>
+
+                    <p:column exportable="false" style="align-content: center; ">
+
+                        <p:commandButton id="pause"
+                                         style="margin-right: 10px" styleClass="rounded-button ui-button-help"
+                                         icon="pi pi-pause" process="@this"
+                                         update=":seachform:dt-jobs"
+
+                                         actionListener="#{jobsBean.pause(orthancJob.identificator)}">
+                            <f:setPropertyActionListener value="#{orthancJob}" target="#{jobsBean.selectedOrthancJob}"/>
+                        </p:commandButton>
+
+                        <p:commandButton id="resubmit"
+                                         style="margin-right: 10px" styleClass="rounded-button"
+                                         icon="pi pi-refresh" process="@this"
+                                         update=":seachform:dt-jobs"
+
+                                         actionListener="#{jobsBean.resubmit(orthancJob.identificator)}">
+                            <f:setPropertyActionListener value="#{orthancJob}" target="#{jobsBean.selectedOrthancJob}"/>
+                        </p:commandButton>
+
+                        <p:commandButton id="resume"
+                                         style="margin-right: 10px" styleClass="rounded-button"
+                                         icon="pi pi-play" process="@this"
+                                         update=":seachform:dt-jobs"
+
+                                         actionListener="#{jobsBean.resubmit(orthancJob.identificator)}">
+                            <f:setPropertyActionListener value="#{orthancJob}" target="#{jobsBean.selectedOrthancJob}"/>
+                        </p:commandButton>
+
+                        <p:commandButton id="cancel"
+                                         style="margin-right: 10px" styleClass="rounded-button"
+                                         icon="pi pi-times-circle" process="@this"
+                                         update=":seachform:dt-jobs"
+
+                                         actionListener="#{jobsBean.resubmit(orthancJob.identificator)}">
+                            <f:setPropertyActionListener value="#{orthancJob}" target="#{jobsBean.selectedOrthancJob}"/>
+                        </p:commandButton>
+
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
+                          message="Удалить задачу?" header="Удалить задачу?" severity="warn" responsive="true" modal="true">
+                    <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{jobsBean.DelJob}"
+                                     oncomplete="PF('confDelStudy').hide()"/>
+                    <span style="padding: 20px;">&nbsp;</span>
+                    <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('confGetStudy').hide()"/>
+                </p:dialog>
+
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

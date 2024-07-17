@@ -4,6 +4,8 @@ import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,7 @@ public class LinkServlet extends HttpServlet implements UserDao {
 
            // String originalUri = req.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
             String referrer = req.getHeader(HttpHeaders.REFERER);
+            //String referrer = req.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
             int i = referrer.indexOf("/bitServer/");
             int j = referrer.indexOf("://");
             String address = referrer.substring(j+3,i);

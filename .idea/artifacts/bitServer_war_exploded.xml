@@ -88,6 +88,7 @@
           <element id="library" level="project" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" />
           <element id="library" level="project" name="Maven: com.google.guava:failureaccess:1.0.1" />
           <element id="library" level="project" name="Java EE 6-Java EE 6 (2)" />
+          <element id="library" level="project" name="Maven: org.glassfish:javax.faces:2.2.5" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="bitServer/web/webapp" />

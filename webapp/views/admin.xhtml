@@ -38,7 +38,8 @@
 
                     <p:menuitem style="margin-right: 5px" value="Редактор базы данных" rendered="true" outcome="settings_datebase" icon="pi pi-table"/>
                     <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
-                    <p:submenu label="Управление питанием" icon="pi power-off">
+                    <p:submenu label="Управление сервером" icon="pi power-off">
+                        <p:menuitem style="margin-right: 5px" value="Список задач" rendered="true" outcome="jobslist" ajax="false" icon="pi pi-tags" process="@this"/>
                         <p:menuitem style="margin-right: 5px" value="Перезагрузка" actionListener="#{settingBitServerBean.powerReboot()}" icon="pi pi-refresh" process="@this" update="growlMessageId"/>
                         <p:menuitem style="margin-right: 5px" value="Выключение" actionListener="#{settingBitServerBean.powerShotdown()}" icon="pi pi-power-off" process="@this" update="growlMessageId"/>
                     </p:submenu>
@@ -61,6 +62,7 @@
                         <div class="p-mr-2 p-as-center">
                             <div class="p-d-flex">
                                 <p:linkButton rendered="#{adminBean.debug}" styleClass="rounded-button ui-button-danger" outcome="settings_datebase" value="DEBUG MODE" style="margin-right:20px;"/>
+                                <p:linkButton rendered="#{adminBean.existTask}" styleClass="ui-button-secondary" outcome="settings_datebase" value="#{adminBean.countTask}" style="margin-right:20px;"/>
                                 <p:commandButton rendered="#{adminBean.hasTrouble}" icon="pi pi-bell"  oncomplete="PF('troubleInfo').show()" style="margin-right: 10px" styleClass="rounded-button ui-button-danger"/>
                                 <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}"  styleClass="rounded-button ui-button-secondary ui-button-flat"/>
                                 <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>

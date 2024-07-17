@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BitServerStudy implements Serializable {
-
     private Long id;
     private String sid;
     private String shortid;
