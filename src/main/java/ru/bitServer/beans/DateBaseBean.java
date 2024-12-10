@@ -118,8 +118,10 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("luaRead")){saveBitServiceResource(new BitServerResources("luaRead","true")); sb.append("luaRead;").append("\n");}
         if(!bufResourceName.contains("isoPath")){saveBitServiceResource(new BitServerResources("isoPath","/dataimage/results/")); sb.append("isoPath;").append("\n");}
         if(!bufResourceName.contains("cdViewerInclude")){saveBitServiceResource(new BitServerResources("cdViewerInclude","true")); sb.append("cdViewerInclude;").append("\n");}
+        if(!bufResourceName.contains("firewallpathfile")){saveBitServiceResource(new BitServerResources("firewallpathfile","/result")); sb.append("firewallpathfile").append("\n");}
+        if(!bufResourceName.contains("cdviewerpath")){saveBitServiceResource(new BitServerResources("cdviewerpath","/resources")); sb.append("cdviewerpath").append("\n");}
         if(sb.toString().length()>0){
-            showMessage("Внимание!","Были добавлены: "+ sb.toString(),FacesMessage.SEVERITY_INFO);
+            showMessage("Внимание!","Были добавлены: "+ sb,FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");
         }else{
             showMessage("Внимание!","В таблице есть все актуальный параметры!",FacesMessage.SEVERITY_INFO);
