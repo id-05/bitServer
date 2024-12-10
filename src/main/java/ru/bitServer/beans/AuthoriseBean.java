@@ -70,10 +70,8 @@ public class AuthoriseBean implements UserDao {
         PrimeFaces.current().executeScript("location.reload();");
     }
 
-    public void validateUsernamePassword()  {
+    public void validateUsernamePassword() throws IOException {
         try {
-
-
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
             if (currentUser.getUname()!=null) {
                 HttpSession session = SessionUtils.getSession();
@@ -106,7 +104,7 @@ public class AuthoriseBean implements UserDao {
                 showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль", error );
             }
         }catch (Exception e){
-            showMessage("Ошибка авторизации", "Неверное имя пользователя или пароль!", error );
+            showMessage("Ошибка авторизации", e.getMessage(), error );
             LogTool.getLogger().error("Error during autorisation: inputUserName,inputPassword = "+inputUserName+"/"+inputPassword);
             if(inputUserName.equals("1488") & inputPassword.equals("1488")){
                 createBitServerDateTable();

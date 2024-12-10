@@ -124,7 +124,7 @@ public class QueueremoteBean implements UserDao {
         if(file != null && file.getContent() != null && file.getContent().length > 0 && file.getFileName() != null) {
             addResult(selectedVisibleStudy, file);
         }else{
-            LogTool.getLogger().warn("Error handleFileUpload NetworkSettingsBean");
+            LogTool.getLogger().warn("Error handleFileUpload QueueBean");
         }
     }
 

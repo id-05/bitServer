@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:p="http://primefaces.org/ui">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+
+        <h:form id="remoteform">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="remoteuser" icon="pi pi-backward"/>
+                    <f:facet name="options">
+
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+
+
+        <h:form id="rumyresults">
+
+            <p:dataTable id="dt-studys"  widgetVar="visibleStudy" var="bitServerStudy" value="#{ruresultsBean.visibleStudiesList}"
+                         reflow="true" styleClass="borderless"
+                         emptyMessage="Нет записей для отображения"
+                         rowKey="#{bitServerStudy.sid}">
+                <f:facet name="header">
+                    <div class="products-table-header">
+                        <span style="font-weight: bold">Ваши описания</span>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="Дата описания" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.dateresult}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="ID" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.shortid}"/>
+                </p:column>
+
+                <p:column headerText="Пол"  style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.patientSex}"/>
+                </p:column>
+
+                <p:column headerText="Дата рождения" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.patientBirthDate}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Description" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.sdescription}"/>
+                </p:column>
+
+                <p:column headerText="Модальность" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.modality}"/>
+                </p:column>
+
+                <p:column exportable="false" style="align-content: center; ">
+                    <p:commandButton id="result"
+                                     ajax="false" style="margin-right: 10px"
+                                     styleClass="edit-button rounded-button ui-button-success"
+                                     icon="pi pi-file">
+                        <p:fileDownload value="#{ruresultsBean.getResult(bitServerStudy)}"/>
+                    </p:commandButton>
+                    <p:tooltip for="result" value="Результат/Описание"/>
+                </p:column>
+            </p:dataTable>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

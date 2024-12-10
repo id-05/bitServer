@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:p="http://primefaces.org/ui" >
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+
+        <h:form id="localform">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="localuser" icon="pi pi-backward"/>
+                    <f:facet name="options">
+
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+
+
+        <h:form id="lucurrenttask">
+
+            <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{lucurrenttaskBean.visibleStudiesList}"
+                         reflow="true" styleClass="products-table"
+                         emptyMessage="Нет записей для отображения">
+                <f:facet name="header">
+                    <div class="products-table-header">
+                        <span style="font-weight: bold">Информация об исследовании</span>
+                    </div>
+
+                    <div class="p-d-flex p-flex-column" style="margin-top: 10px">
+                        <div class="my_text" style="margin-bottom: 5px">Внимание! Указанное ниже исследование, заблокировано вами для описания! Пока вы не сохраните результат, вам будут не доступны другие задания!</div>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="ID" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.shortid}"/>
+                </p:column>
+
+                <p:column headerText="Пациент" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.patientName}"/>
+                </p:column>
+
+                <p:column headerText="Дата" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.sdate}">
+                        <f:convertDateTime pattern="dd.MM.yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Description" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.sdescription}"/>
+                </p:column>
+
+                <p:column headerText="Модальность" style="text-align: center">
+                    <h:outputText value="#{bitServerStudy.modality}"/>
+                </p:column>
+
+                <p:column exportable="false" style="align-content: center; ">
+
+                    <p:commandButton icon="pi pi-id-card" update=":lucurrenttask:dialogStudyAnamnes" oncomplete="PF('manageAnamnes').show()"
+                                     id="anamnes"
+                                     styleClass="rounded-button ui-button-warning" process="@this" style="margin-right: 10px">
+                        <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                    </p:commandButton>
+                    <p:tooltip for="anamnes" value="Анамнез"/>
+
+                    <p:commandButton id="viewinosimis"
+                                     style="margin-right: 10px" styleClass="rounded-button ui-button-help"
+                                     icon="pi pi-eye" process="@this"
+                                     actionListener="#{queueBean.redirectToOsimis(bitServerStudy.sid)}">
+                    </p:commandButton>
+                    <p:tooltip for="viewinosimis" value="Открыть в OSIMIS"/>
+
+                    <p:commandButton id="uploadresult"
+                                     style="margin-right: 10px" styleClass="rounded-button ui-button-danger"
+                                     icon="pi pi-upload" process="@this"
+                                     oncomplete="PF('addResult').show()"
+                                     update=":lucurrenttask:addResult"
+                                     >
+                    </p:commandButton>
+                    <p:tooltip for="uploadresult" value="Загрузить файл результата"/>
+
+                    <p:commandButton id="writeresult"
+                                     rendered="false"
+                                     style="margin-right: 10px" styleClass="rounded-button ui-button-danger"
+                                     icon="pi pi-pencil" process="@this"
+                                     oncomplete="PF('editorResult').show()"
+                                     update=":lucurrenttask:addResult"
+                                     >
+                    </p:commandButton>
+                    <p:tooltip for="writeresult" value="Ввести описание вручную"/>
+
+                </p:column>
+            </p:dataTable>
+
+            <p:contextMenu for="dt-studys">
+
+                <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
+                    <p:fileDownload value="#{queueBean.downloadStudy()}"/>
+                </p:menuitem>
+
+            </p:contextMenu>
+
+            <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                      widgetVar="manageAnamnes" responsive="true">
+                <div class="p-d-flex p-flex-column">
+                    <div class="p-mb-2">Укажите здесь например:</div>
+                    <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                    <div class="p-mb-2">- причина обращения за обследованием</div>
+                    <div class="p-mb-2">- текущее состояние пациента</div>
+                    <div class="p-mb-2">- информация об удаленных у пациента органах</div>
+                    <div class="p-mb-2">- другая важная информация</div>
+                </div>
+                <p:inputTextarea value="#{lucurrenttaskBean.currentStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                 autoResize="false" inputmode="auto"/>
+
+                <f:facet name="footer">
+
+                    <span style="padding: 20px;"> </span>
+
+                </f:facet>
+
+            </p:dialog>
+
+            <p:dialog id="addResult" header="Окно загрузки файла описания" showEffect="fade" modal="true"
+                      widgetVar="addResult" responsive="true">
+
+                <p:fileUpload  mode="advanced"
+                               widgetVar="fUpload"
+                               listener="#{lucurrenttaskBean.handleFileUpload}"
+                               sequential="true"
+                               styleClass="fileupload-content"
+                               dragDropSupport="true"
+                               skinSimple="true"
+                               sizeLimit="10000000"
+                               label="Выбрать"
+                               uploadLabel="Зазрузить и Сохранить"
+                               cancelLabel="Отмена"
+                               multiple="true"
+                               allowTypes="/(\.|\/)(gif|jpe?g|png|doc|docx)$/"
+                               invalidSizeMessage="Maximum file size allowed is 10 MB"
+                               invalidFileMessage="only gif | jpg | jpeg | png | doc | docx is allowed"
+                />
+                <br/>
+                <div class="p-text-bold" style="width: 40rem">
+                    <p:outputLabel style="color: #dc143c">После того как вы нажмете кнопку "Зазрузить и Сохранить", выбранный файл результата, будет прикреплен к исследованию,
+                    а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>
+                </div>
+            </p:dialog>
+
+            <p:dialog id="editorResultDialog" header="Окно редактора описания" modal="false"
+                      widgetVar="editorResult" responsive="true" resizable="false" position="center center"
+                        onShow="PF('editorResult').initPosition()">
+
+                <h3 class="first">Описание</h3>
+                <p:textEditor widgetVar="editor1" value="#{lucurrenttaskBean.resulttext}" height="200" placeholder="Описание..." secure="false" >
+                    <f:facet name="toolbar">
+                         <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                    </f:facet>
+                </p:textEditor>
+
+
+                <h3 class="first">Заключение</h3>
+                <p:textEditor widgetVar="editor2" value="#{lucurrenttaskBean.resulttext}" height="100" placeholder="Заключение..." secure="false">
+                    <f:facet name="toolbar">
+                         <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                    </f:facet>
+                </p:textEditor>
+
+
+                <br/>
+                <div class="p-text-bold" style="width: 40rem">
+                    <p:outputLabel style="color: #dc143c">После того как вы нажмете кнопку "Сохранить", указанное вами описание в текстовом виде, будет прикреплен к исследованию,
+                        а исследование перейдет в статус "Описано" и будет доступно для просмотра остальным пользователям, обладающим соответствующими правами</p:outputLabel>
+                </div>
+            </p:dialog>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

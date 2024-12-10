@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+      xmlns:p="http://primefaces.org/ui">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="log">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+
+                    <f:facet name="options">
+                        <div >
+                            <p:commandButton icon="pi pi-info-circle" disabled="true" value="bitServer LOG" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </f:facet>
+                </p:menubar>
+            </div>
+            <p:commandButton value="Очистить" rendered="#{logBean.debug}" actionListener="#{logBean.clearLog}"/>
+            <p:textEditor id="textEditor" widgetVar="editor" secure="false" value="#{fn:replace(logBean.logText,'\\n','&lt;br/&gt;')}">
+
+
+
+                <f:facet name="toolbar">
+                    <p:selectOneButton id="longItemLabel" value="#{logBean.logLevel}" ajax="false">
+                        <f:selectItem itemLabel="ALL" itemValue="ALL"/>
+                        <f:selectItem itemLabel="ERROR" itemValue="ERROR"/>
+                        <f:selectItem itemLabel="WARN" itemValue="WARN"/>
+                        <f:selectItem itemLabel="INFO" itemValue="INFO"/>
+                        <f:selectItem itemLabel="DEBUG" itemValue="DEBUG"/>
+                        <f:selectItem itemLabel="Orthanc Log" itemValue="ORTHANC"/>
+                        <p:ajax event="change" listener="#{logBean.setLogInfo}"/>
+                    </p:selectOneButton>
+
+                    <span class="ql-action">
+                        <button class="ql-save" />
+                    </span>
+                </f:facet>
+            </p:textEditor>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+            <p:dialog id="userstat" showEffect="fade" modal="true" widgetVar="userstat" responsive="true">
+                <b:userstat/>
+            </p:dialog>
+
+        </h:form>
+
+        <div class="card">
+            <h:form>
+
+            </h:form>
+        </div>
+
+    </h:body>
+</f:view>
+
+</html>

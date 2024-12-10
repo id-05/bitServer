@@ -87,11 +87,17 @@ public class AdminBean implements UserDao {
     public Integer getCountAllTask(){
         Integer result = 0;
         stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs");
-        String[] jobs = stringBuilder.toString().replace("[","").replace("]","").split(",");
-        for(String job:jobs) {
-            stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+job.replace(" ","").replace("\"",""));
-            OrthancJob orJob = new OrthancJob(stringBuilder.toString());
-            if(!orJob.getState().equals("Success")) result++;
+        try {
+            if (!stringBuilder.toString().equals("[]") & !stringBuilder.toString().equals("error")) {
+                String[] jobs = stringBuilder.toString().replace("[", "").replace("]", "").split(",");
+                for (String job : jobs) {
+                    stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/" + job.replace(" ", "").replace("\"", ""));
+                    OrthancJob orJob = new OrthancJob(stringBuilder.toString());
+                    if (orJob.getState().equals("Running")) result++;
+                }
+            }
+        } catch(Exception e){
+            LogTool.getLogger().error("getjobs: "+e.getMessage()+" / "+stringBuilder.toString());
         }
         return result;
     }

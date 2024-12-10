@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+
+  <h:head><title>bitServer Settings</title></h:head>
+
+  <h:body>
+    <h:form id="form">
+      <p:growl id="growl" showDetail="true" />
+      <p:menubar>
+        <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+        <p:menuitem style="margin-right: 5px" value="Сохранить" oncomplete="PF('saveDialog').show()" icon="pi pi-save"/>
+        <p:menuitem style="margin-right: 5px" value="Перезагрузить сервер" icon="pi pi-refresh" actionListener="#{newSetOrth.resetServer()}" process="@this" update="growl"/>
+        <p:menuitem style="margin-right: 5px" value="Отменить изменения" icon="pi pi-replay" actionListener="#{newSetOrth.restoreBackup()}" process="@this" update="form, growl"/>
+        <p:menuitem style="margin-right: 5px" value="Резервные копии" icon="pi pi-copy" oncomplete="PF('backupDiaolg').show()" process="@this" update="form, growl"/>
+        <p:divider layout="vertical"/>
+        <p:menuitem value="New Orthanc настройки" disabled="true"/>
+
+        <f:facet name="options">
+          <div class="p-mr-2 p-as-center">
+            <div class="p-d-flex">
+              <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+              <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+              <p:commandButton icon="pi pi-sign-in"  actionListener="#{autoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+            </div>
+          </div>
+        </f:facet>
+      </p:menubar>
+
+      <p:dialog id="backupDiaolg" header="Резервные копии настроек" showEffect="fade" modal="true"
+                widgetVar="backupDiaolg" responsive="false">
+
+        <p:dataTable id="dt-snap" widgetVar="dtSnapshot" var="orthancSettingSnapshot" value="#{newSetOrth.snapShots}"
+                     reflow="true" styleClass="users-table"
+                     style="width: 700px"
+                     size="small"
+                     scrollable="true" scrollHeight="350"
+                     emptyMessage="Нет записей для отображения"
+                     selection="#{newSetOrth.selectedSnapShots}" rowKey="#{orthancSettingSnapshot.date}"
+                     rows="12" rowSelectMode="add" paginator="false">
+
+          <f:facet name="header">
+            <div class="flex justify-content-end">
+              <p:fileUpload  mode="simple"
+                             widgetVar="fUpload"
+                             auto="true"
+                             listener="#{newSetOrth.handleFileUpload}"
+                             styleClass="fileupload-content"
+                             skinSimple="true"
+                             sizeLimit="1000000"
+                             label="Загрузить .json файл настроек"
+                             invalidFileMessage="Можно загрузить только файлы с расширением '.json'"
+                             allowTypes="/(\.|\/)(json)$/"/>
+            </div>
+          </f:facet>
+
+          <p:column headerText="Дата создания" sortBy="#{orthancSettingSnapshot.date}" style="text-align: center">
+            <h:outputText value="#{orthancSettingSnapshot.date}"/>
+          </p:column>
+
+          <p:column headerText="Изменения в"  style="text-align: center">
+            <h:outputText value="#{orthancSettingSnapshot.description}" />
+          </p:column>
+
+          <p:column exportable="false">
+
+            <p:commandButton icon="pi pi-download"
+                             id="bDownload"
+                             update="form:growl"
+                             ajax="false"
+                             style="margin-right: 10px"
+                             styleClass="edit-button rounded-button ui-button-success" process="@this">
+              <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{newSetOrth.selectedSnapshot}"/>
+              <p:fileDownload value="#{newSetOrth.downloadSnapshot(orthancSettingSnapshot)}"/>
+            </p:commandButton>
+            <p:tooltip for="bDownload" value="Скачать"/>
+
+            <p:commandButton icon="pi pi-reply"
+                             action="#{newSetOrth.applySnapshot}"
+                             id="bApply"
+                             update="form:growl, :form:accordion"
+                             ajax="false"
+                             style="margin-right: 10px"
+                             styleClass="edit-button rounded-button ui-button-info" process="@this">
+              <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{newSetOrth.selectedSnapshot}"/>
+            </p:commandButton>
+            <p:tooltip for="bApply" value="Применить"/>
+
+            <p:commandButton icon="pi pi-trash"
+                             action="#{newSetOrth.delSnapshot}"
+                             id="bDelete"
+                             style="margin-right: 10px"
+                             styleClass="edit-button rounded-button ui-button-danger" process="@this">
+              <f:setPropertyActionListener value="#{orthancSettingSnapshot}" target="#{newSetOrth.selectedSnapshot}"/>
+            </p:commandButton>
+            <p:tooltip for="bDelete" value="Удалить"/>
+          </p:column>
+        </p:dataTable>
+
+      </p:dialog>
+
+      <p:dialog widgetVar="saveDialog" showEffect="fade" width="300"
+                message="Сохранить изменения?" header="Сохранить изменения?" severity="warn">
+
+        <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{newSetOrth.saveConfig}"
+                         process="@this" oncomplete="PF('saveDialog').hide()" update="growl"/>
+
+        <span style="padding: 20px;">&nbsp;</span>
+
+        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                         onclick="PF('saveDialog').hide()"/>
+
+      </p:dialog>
+
+      <p:accordionPanel widgetVar="serverSettings" id="accordion" activeIndex="-1">
+        <p:tab title="Основные настройки">
+
+          <p:divider align="left" type="dashed">
+            <b>Имя сервера</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.serverName}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Каталог хранения</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.storageDirectory}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Каталог указателей</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.indexDirectory}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
+
+          <p:divider align="left" type="dashed" rendered="false">
+            <b>Lua-scripts</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.luaScriptsFolder}" rendered="false"> </p:inputText>
+          </p>
+
+          <p:divider align="left" type="dashed">
+            <b>Сжатие хранилища</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.storageCompression}"/>
+          </p>
+          <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Максимальный размер хранилища</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.maximumStorageSize}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Максимальное количество пациентов</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.maximumPatientCount}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Одновременные задания</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.concurrentJobs}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize" style="margin-bottom: 35px">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
+        </p:tab>
+        <p:tab title="Конфигурация HTTP сервера">
+          <p:divider align="left" type="dashed">
+            <b>HTTP сервер</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.httpServerEnabled}"/>
+          </p>
+          <div class="p-text-capitalize">Если этот параметр выключен, Orthanc действует как чистый DICOM-сервер. REST API и Orthanc Explorer не доступны. Так же Orthac Manager, тоже не сможет получить доступ к серверу, так как использует REST API</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP порт</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.httpPort}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">HTTP порт для службы REST и графического интерфейса</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP описание ошибок</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.httpDescribeErrors}"/>
+          </p>
+          <div class="p-text-capitalize">Если включено, и при вызове REST API возникает ошибка, в HTTP ответ, добавляется сообщение JSON с описанием ошибки. Эту функцию можно отключить, если HTTP-клиент неправильно обрабатывает такие ответы</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP сжатие</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.httpCompressionEnabled}"/>
+          </p>
+          <div class="p-text-capitalize">Сжатие HTTP улучшает использование полосы пропускания сети, за счет большего количества вычислений на сервере. Orthanc поддерживает HTTP-кодировки «gzip» и «deflate»</div>
+        </p:tab>
+
+        <p:tab title="Конфигурация DICOM сервера">
+          <p:divider align="left" type="dashed">
+            <b>DICOM сервер</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.dicomServerEnabled}"/>
+          </p>
+          <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
+
+          <p:divider align="left" type="dashed">
+            <b>DICOM AET</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.dicomAet}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
+
+          <p:divider align="left" type="dashed">
+            <b>DICOM проверка AET</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.dicomCheckCalledAet}"/>
+          </p>
+          <div class="p-text-capitalize">Проверка соответствия AET, во время входящего запроса SCU DICOM</div>
+
+          <p:divider align="left" type="dashed">
+            <b>DICOM порт</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.dicomPort}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+
+          <p:divider align="left" type="dashed">
+            <b>Кодировка по умолачнию</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:selectOneMenu id="role" value="#{newSetOrth.defaultEncoding}">
+              <f:selectItem itemLabel="Utf8" itemValue="Utf8"/>
+              <f:selectItem itemLabel="Ascii" itemValue="Ascii"/>
+              <f:selectItem itemLabel="Latin1" itemValue="Latin1"/>
+              <f:selectItem itemLabel="Latin2" itemValue="Latin2"/>
+              <f:selectItem itemLabel="Latin4" itemValue="Latin4"/>
+              <f:selectItem itemLabel="Latin5" itemValue="Latin5"/>
+              <f:selectItem itemLabel="Cyrillic" itemValue="Cyrillic"/>
+              <f:selectItem itemLabel="Windows1251" itemValue="Windows1251"/>
+              <f:selectItem itemLabel="Arabic" itemValue="Arabic"/>
+              <f:selectItem itemLabel="Greek" itemValue="Greek"/>
+              <f:selectItem itemLabel="Hebrew" itemValue="Hebrew"/>
+              <f:selectItem itemLabel="Thai" itemValue="Thai"/>
+              <f:selectItem itemLabel="Japanese" itemValue="Japanese"/>
+            </p:selectOneMenu>
+          </p>
+          <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
+
+
+          <p:divider align="left" type="dashed">
+            <b>Синтаксис передачи</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:selectBooleanCheckbox value="#{newSetOrth.deflatedTransferSyntaxAccepted}"  itemLabel="Deflated Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.jpegTransferSyntaxAccepted}" itemLabel="Jpeg Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.jpeg2000TransferSyntaxAccepted}" itemLabel="Jpeg2000 Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.jpegLosslessTransferSyntaxAccepted}" itemLabel="Jpeg Lossless Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.jpipTransferSyntaxAccepted}" itemLabel="Jpip Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.mpeg2TransferSyntaxAccepted}" itemLabel="Mpeg2 Transfer"/>
+            <br/>
+            <p:selectBooleanCheckbox value="#{newSetOrth.rleTransferSyntaxAccepted}" itemLabel="Rle Transfer"/>
+          </p>
+          <div class="p-text-capitalize">Синтаксисы передачи принятые в Orthanc C-Store SCP</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Разрешить принимать данные из неизвестных источников</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.unknownSopClassAccepted}"/>
+          </p>
+          <div class="p-text-capitalize">Принимать или нет, роль S-Store SCP для неизвестных источников («Неразборчивый режим»)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>DICOM SCP Timeout</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.dicomScpTimeout}">
+              <p:keyFilter mask="num" />
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc закроет соединение, если больше нет DIMSE-команд от SCU (клиента)</div>
+        </p:tab>
+
+        <p:tab title="Параметры безопасности HTTP-сервера" id="tab1">
+
+          <p:divider align="left" type="dashed">
+            <b>Разрешение удаленного доступа</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.remoteAccessAllowed}"/>
+          </p>
+          <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу</div>
+
+          <p:divider align="left" type="dashed">
+            <b>SSL protocol</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.sslEnabled}"/>
+          </p>
+          <div class="p-text-capitalize">Включение протокола SSL</div>
+
+          <p:divider align="left" type="dashed">
+            <b>SSL Certificate</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.sslCertificate}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Путь к SSL-сертификату в формате PEM (значимый только в том случае, если включен SSL)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Включение аутентификации</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.authenticationEnabled}"/>
+          </p>
+          <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Регистрация пользователей</b>
+          </p:divider>
+
+          <p:outputPanel>
+            <p:toolbar>
+              <p:toolbarGroup>
+                <p:commandButton value="Новый" immediate="true" icon="pi pi-plus" actionListener="#{newSetOrth.openNew}"
+                                 update="dialogNewUser" oncomplete="PF('manageUserDialog').show()"
+                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                  <p:resetInput target="dialogNewUser"/>
+
+                </p:commandButton>
+              </p:toolbarGroup>
+            </p:toolbar>
+
+            <p:dataTable id="dt-users" widgetVar="dtUsers" var="orthancWebUser" value="#{newSetOrth.webUsers}"
+                         reflow="true" styleClass="users-table"
+                         emptyMessage="Нет записей для отображения"
+                         lazy="false"
+                         selection="#{newSetOrth.selectedWebUsers}" rowKey="#{orthancWebUser.login}"
+                         rows="10" rowSelectMode="add" >
+
+              <p:column headerText="Логин" sortBy="#{orthancWebUser.login}" style="text-align: center">
+                <h:outputText value="#{orthancWebUser.login}" />
+              </p:column>
+
+              <p:column headerText="Пароль" sortBy="#{orthancWebUser.pass}" style="text-align: center">
+                <h:outputText value="#{orthancWebUser.pass}"/>
+              </p:column>
+
+              <p:column exportable="false">
+                <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-user-content"
+                                 oncomplete="PF('manageUserDialog').show()"
+                                 style="margin-right: 10px"
+                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                  <f:setPropertyActionListener value="#{orthancWebUser}" target="#{newSetOrth.selectedUser}"/>
+                  <p:resetInput target=":form:accordion:manage-user-content"/>
+                </p:commandButton>
+                <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash" process="@this"
+                                 style="margin-right: 10px"
+                                 oncomplete="PF('deleteUserDialog').show()">
+                  <f:setPropertyActionListener value="#{orthancWebUser}" target="#{newSetOrth.selectedUser}"/>
+                </p:commandButton>
+              </p:column>
+            </p:dataTable>
+
+            <p:dialog id="dialogNewUser" header="Новый пользователь" showEffect="fade" modal="true"
+                      widgetVar="manageUserDialog" responsive="true">
+              <p:panelGrid id="manage-user-content" class="ui-fluid" columns="2">
+                <p:outputLabel for="login" style="margin-right: .5rem">Логин</p:outputLabel>
+                <p:inputText id="login" value="#{newSetOrth.selectedUser.login}" />
+                <p:outputLabel for="pass" style="margin-right: .5rem">Пароль</p:outputLabel>
+                <p:inputText id="pass" value="#{newSetOrth.selectedUser.pass}" />
+              </p:panelGrid>
+
+              <f:facet name="footer">
+
+                <p:commandButton value="Сохранить" icon="pi pi-check" onclick="" actionListener="#{newSetOrth.AddNewWebUser}"
+                                 update="dialogNewUser">
+                  <p:resetInput target="dialogNewUser"/>
+                </p:commandButton>
+
+                <span style="padding: 20px;">&nbsp;</span>
+
+                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageUserDialog').hide()"
+                                 class="ui-button-secondary" update="dialogNewUser">
+                  <p:resetInput target="dialogNewUser"/>
+                </p:commandButton>
+
+              </f:facet>
+            </p:dialog>
+
+            <p:dialog widgetVar="deleteUserDialog" showEffect="fade" width="300"
+                      message="Удалить пользователя?" header="Удалить пользователя?" severity="warn">
+              <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{newSetOrth.deleteWebUser}"
+                               oncomplete="PF('deleteUserDialog').hide()"/>
+              <span style="padding: 20px;">&nbsp;</span>
+              <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                               onclick="PF('deleteUserDialog').hide()"/>
+            </p:dialog>
+
+          </p:outputPanel>
+
+          <div class="p-text-capitalize">Списко зарегистрированных пользователей. Поскольку Orthanc использует HTTP Basic Authentication, пароли хранятся как текст</div>
+        </p:tab>
+
+        <p:tab title="Топология сети">
+          <div>
+            <p:divider align="left" type="dashed">
+              <b>DICOM Модальности</b>
+            </p:divider>
+
+            <p:outputPanel>
+              <p:toolbar>
+                <p:toolbarGroup>
+                  <p:commandButton value="Новая модальность" immediate="true" icon="pi pi-plus" actionListener="#{newSetOrth.openNewModaliti}"
+                                   update="dialogNewModaliti" oncomplete="PF('manageModalitiDialog').show()"
+                                   styleClass="ui-button-success" style="margin-right: .5rem">
+                    <p:resetInput target="dialogNewModaliti"/>
+                  </p:commandButton>
+                </p:toolbarGroup>
+              </p:toolbar>
+
+              <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{newSetOrth.dicomModalities}"
+                           reflow="true" styleClass="users-table"
+                           emptyMessage="Нет записей для отображения"
+                           lazy="false"
+                           selection="#{newSetOrth.selectedDicomModalities}" rowKey="#{dicomModaliti.dicomtitle}"
+                           rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
+
+                <p:column headerText="Name" sortBy="#{dicomModaliti.dicomName}" style="text-align: center">
+                  <h:outputText value="#{dicomModaliti.dicomName}"/>
+                </p:column>
+
+                <p:column headerText="AE Title" sortBy="#{dicomModaliti.dicomTitle}" style="text-align: center">
+                  <h:outputText value="#{dicomModaliti.dicomTitle}" />
+                </p:column>
+
+                <p:column headerText="IP" sortBy="#{dicomModaliti.ip}" style="text-align: center">
+                  <h:outputText value="#{dicomModaliti.ip}"/>
+                </p:column>
+
+                <p:column headerText="Port" sortBy="#{dicomModaliti.dicomPort}" style="text-align: center">
+                  <h:outputText value="#{dicomModaliti.dicomPort}"/>
+                </p:column>
+
+                <p:column headerText="Property" sortBy="#{dicomModaliti.dicomProperty}" style="text-align: center">
+                  <h:outputText value="#{dicomModaliti.dicomProperty}"/>
+                </p:column>
+
+                <p:column exportable="false">
+                  <p:commandButton icon="pi pi-pencil" update=":form:accordion:manage-modaliti-content"
+                                   oncomplete="PF('manageModalitiDialog').show()"
+                                   style="margin-right: 10px"
+                                   styleClass="edit-button rounded-button ui-button-success" process="@this">
+                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{newSetOrth.selectedDicomModality}"/>
+                    <p:resetInput target=":form:accordion:manage-modaliti-content"/>
+                  </p:commandButton>
+                  <p:commandButton class="ui-button-danger rounded-button" icon="pi pi-trash" process="@this"
+                                   style="margin-right: 10px"
+                                   oncomplete="PF('deleteModalitiDialog').show()">
+                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{newSetOrth.selectedDicomModality}"/>
+                  </p:commandButton>
+                  <p:commandButton icon="pi pi-wifi" process="echo"
+                                   widgetVar="widget"
+                                   onclick="PF('statusDialog').show()"
+                                   style="margin-right: 10px" styleClass="rounded-button ui-button-info"
+                                   id="echo" update=":form:growl"
+                                   action="#{newSetOrth.echoTestClick}">
+                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{newSetOrth.selectedDicomModality}"/>
+                  </p:commandButton>
+
+                </p:column>
+              </p:dataTable>
+              <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                <p:graphicImage value="/resources/images/internet.gif" />
+              </p:dialog>
+              <p:dialog id="dialogNewModaliti" header="Новая модальность" showEffect="fade" modal="true"
+                        widgetVar="manageModalitiDialog" responsive="true">
+                <p:panelGrid id="manage-modaliti-content" class="ui-fluid" columns="2">
+
+                  <p:outputLabel for="dicomname" style="margin-right: .5rem">Name</p:outputLabel>
+                  <p:inputText id="dicomname" value="#{newSetOrth.selectedDicomModality.dicomName}" />
+
+                  <p:outputLabel for="dicomtitle" style="margin-right: .5rem">AE Title</p:outputLabel>
+                  <p:inputText id="dicomtitle" value="#{newSetOrth.selectedDicomModality.dicomTitle}" />
+
+                  <p:outputLabel for="ip" style="margin-right: .5rem">IP</p:outputLabel>
+                  <p:inputMask id="ip" value="#{newSetOrth.selectedDicomModality.ip}" mask="[9][9][9].[9][9][9].[9][9][9].[9][9][9]" size="20"/>
+
+                  <p:outputLabel for="dicomport" style="margin-right: .5rem">Port</p:outputLabel>
+                  <p:inputText id="dicomport" value="#{newSetOrth.selectedDicomModality.dicomPort}">
+                    <p:keyFilter mask="num" />
+                  </p:inputText>
+
+                  <p:outputLabel for="dicomproperty" style="margin-right: .5rem">Property</p:outputLabel>
+                  <p:selectOneMenu id="dicomproperty" value="#{newSetOrth.selectedDicomModality.dicomProperty}">
+                    <f:selectItem itemLabel="Generic" itemValue="Generic"/>
+                    <f:selectItem itemLabel="Vitrea" itemValue="Vitrea"/>
+                    <f:selectItem itemLabel="GenericNoWildcardInDates" itemValue="GenericNoWildcardInDates"/>
+                    <f:selectItem itemLabel="GenericNoUniversalWildcard" itemValue="GenericNoUniversalWildcard"/>
+                    <f:selectItem itemLabel="StoreScp" itemValue="StoreScp"/>
+                    <f:selectItem itemLabel="ClearCanvas" itemValue="ClearCanvas"/>
+                    <f:selectItem itemLabel="Dcm4Chee" itemValue="Dcm4Chee"/>
+                  </p:selectOneMenu>
+
+                </p:panelGrid>
+
+                <f:facet name="footer" >
+                  <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{newSetOrth.AddNewModaliti}"
+                                   update="form:growl">
+                    <p:resetInput target="dialogNewModaliti"/>
+
+                  </p:commandButton>
+                  <span style="padding: 20px;">&nbsp;</span>
+                  <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageModalitiDialog').hide()"
+                                   class="ui-button-secondary" update="dialogNewModaliti">
+                    <p:resetInput target="dialogNewModaliti"/>
+                  </p:commandButton>
+                </f:facet>
+
+              </p:dialog>
+
+              <p:dialog widgetVar="deleteModalitiDialog" showEffect="fade" width="300"
+                        message="Удалить модальность?" header="Удалить модальность?" severity="warn">
+                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{newSetOrth.deleteModaliti}"
+                                 process="@this" oncomplete="PF('deleteModalitiDialog').hide()"/>
+                <span style="padding: 20px;">&nbsp;</span>
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteModalitiDialog').hide()"/>
+              </p:dialog>
+
+            </p:outputPanel>
+
+          </div>
+          <div class="p-text-capitalize">Список клиентов рабочей группы</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Хранить DICOM модальности в базе данных</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.dicomModalitiesInDb}"/>
+          </p>
+          <div class="p-text-capitalize">Выбор хранения DICOM модальностей в базе данных Orthanc, а не в этом конфигурационном файле (с версии Orthanc 1.5.0)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Всегда отвечать на специфичные для DICOM протокола Эхо запросы</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.dicomAlwaysAllowEcho}"/>
+          </p>
+          <div class="p-text-capitalize">Разрешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Всегда принимать DICOM данные для хранения</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.dicomAlwaysStore}"/>
+          </p>
+          <div class="p-text-capitalize">Разрешение для Orthanc всегда принимать входящие C-Store запросы , даже от модальностей которых нет в списке "DICOM Модальности"</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Проверять DICOM Модальности при подключении</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.checkModalityHost}"/>
+          </p>
+          <div class="p-text-capitalize">Определяет, проверяет ли Orthanc IP адрес и имя удаленного хоста, инициирующего соединение DICOM (как указано в списке "DICOM Модальности"). Если для этой опции установлено значение "false", Orthanc проверяет только AET</div>
+
+          <p:divider align="left" type="dashed">
+            <b>DICOM SCU Timeout</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.dicomScuTimeout}">
+              <p:keyFilter mask="num"/>
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc считает DICOM соединение закрытым, если удаленный SCP DICOM (сервер) не отвечает</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Orthanc peers</b>
+          </p:divider>
+
+          <div class="p-text-capitalize">Список одноранговых серверов, в качестве реквизитов доступа используется URL, логин и пароль, как при доступе по HTTP</div>
+
+          <p:divider align="left" type="dashed">
+            <b>Хранить информацию об одноранговых узлах (peer) в базе данных</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.orthancPeerInDb}"/>
+          </p>
+          <div class="p-text-capitalize">Определяет хранение информации об одноранговых узлах (peer) в базе данных Orthanc, а не в этом файле конфигурации (с версии Orthanc 1.5.0)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP Proxy</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.httpProxy}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Параметры прокси-сервера HTTP, используемого Orthanc. Если установлена пустая строка, HTTP-прокси не используется. Например: «HttpProxy»: «192.168.0.1:3128» «HttpProxy»: «proxyUser:proxyPassword@192.168.0.1:3128»</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP Verbose</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.httpVerbose}"/>
+          </p>
+          <div class="p-text-capitalize">Включение означает, что отладочные сообщения из "libcurl", будут выдаваться всякий раз, когда Orthanc делает исходящий HTTP-запрос. Это особенно полезно для отладки проблем, связанных с HTTPS</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTP Timeout</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.httpTimeout}">
+              <p:keyFilter mask="num"/>
+            </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Установка времени ожидания для HTTP запросов, сделанных Orthanc (в секундах)</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTPS Проверка одноранговых узлов (Verify Peers)</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:toggleSwitch value="#{newSetOrth.httpsVerifyPeers}"/>
+          </p>
+          <div class="p-text-capitalize">Включиние проверки одноранговых узлов во время HTTPS-запросов. Выключено, если используются самозаверяющие сертификаты. Обратите внимание, что включение этого параметра приводит к угрозам безопасности! Ссылка: http://curl.haxx.se/docs/sslcerts.html</div>
+
+          <p:divider align="left" type="dashed">
+            <b>HTTPS CA Certificates</b>
+          </p:divider>
+          <p class="p-m-0">
+            <p:inputText  value="#{newSetOrth.httpsCACertificates}" > </p:inputText>
+          </p>
+          <div class="p-text-capitalize">Путь к сертификатам CA (certification authority) для проверки одноранговых узлов в HTTPS-запросах. Из документации curl (опция "—cacert"): предлагает использовать указанный файл сертификата для проверки одноранговых узлов. Этот файл может содержать несколько сертификатов CA. Сертификат(ы) должен быть в формате PEM. В системах на базе Debian этот параметр может быть установлен в значение: /etc / ssl/certs/ca-certificates.crt</div>
+
+
+        </p:tab>
+
+        <p:tab title="Дополнительные параметры">
+          <p:outputPanel>
+
+            <p:divider align="left" type="dashed">
+              <b>Stable Age</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.stableAge}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Количество секунд без получения какого-либо экземпляра, до того как пациент, исследование или серия считаются стабильными</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Сравнение AET с учетом регистра</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.strictAetComparison}"/>
+            </p>
+            <div class="p-text-capitalize">По умолчанию Orthanc сравнивает AET без учета регистра. Включение этого параметра, предполагает дальнейшее сопоставление с учетом регистра</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Хранить MD5 сумму для полученных данных</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.storeMD5ForAttachments}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено, суммы MD5 файлов DICOM будут вычислены и сохранены в базе данных Orthanc. Эта информация может использоваться для обнаружения повреждения диска за счет небольших затрат на производительность</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Limit Find Results</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.limitFindResults}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне пациента, исследования или серии. Установка этого параметра в "0" означает отсутствие ограничения</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Limit Find Instances</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.limitFindInstances}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне экземпляра. Установка этого параметра в "0" означает отсутствие ограничения</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Limit Jobs</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.limitJobs}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное число активных заданий в планировщике Orthanc. При достижении этого предела, добавление новых заданий блокируется до завершения выполнения текущих задач</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Log Exported Resources</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.logExportedResources}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено (поведение по умолчанию до Orthanc 1.3.2), Orthanc регистрирует ресурсы, экспортируемые в другие DICOM модальности или одноранговые узлы, внутри URI "/export". Выключение этого параметра, позволяет предотвратить бесконечный рост индекса в задачах автоматической маршрутизации (это поведение по умолчанию с Orthanc 1.4.0)</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Keep Alive</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.keepAlive}"/>
+            </p>
+            <div class="p-text-capitalize">Включить или отключить режим HTTP Keep Alive "Остаться в живых". Рекомендуется включать только в случае высоких нагрузок HTTP</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Store DICOM</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.storeDicom}"/>
+            </p>
+            <div class="p-text-capitalize">Если выключено, Orthanc будет работать в режиме хранения только индекса. Файлы DICOM не будут храниться на диске. Обратите внимание, что этот параметр может препятствовать обновлению до более новых версий Orthanc</div>
+
+            <p:divider align="left" type="dashed">
+              <b>DICOM Association Close Delay</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.dicomAssociationCloseDelay}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">DICOM соединения, инициированные сценариями Lua, остаются открытыми до тех пор, пока выдаются новые команды DICOM. Этот параметр задает время ожидания в секундах перед автоматическим закрытием DICOM соединения, инициифрованного Lua. Если установлено значение 0, соединение немедленно закрывается</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Query Retrieve Size</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.queryRetrieveSize}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное число DICOM запросов, поддерживаемых сервером. Редко используемые запросы удаляются по мере выдачи новых запросов</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Case Sensitive PN</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.caseSensitivePN}"/>
+            </p>
+            <div class="p-text-capitalize">Включение этого параметра означает выполнение поисковых запросов с учетом регистра для представленого значения PN (например, RapidName). По умолчанию поиск выполняется без учета регистра, что не соответствует стандарту DICOM</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Allow Find Sop Classes In Study</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.allowFindSopClassesInStudy}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено, сервер будет обрабатывать "классы SOP в исследовании" (0008, 0062) в запросах к серверу, даже если метаданные "SOP Class UID" недоступны в базе данных (что имеет место, если база данных ранее использовалась Orthanc младше 1.1.0). Этот параметр отключен по умолчанию, так как для него требуется интенсивный доступ к жесткому диску</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Load Private Dictionary</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.loadPrivateDictionary}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено, сервер не загружает словарь частных тегов по умолчанию. Это может потребоваться, если невозможно импортировать DICOM-файл, закодированный с помощью синтаксиса передачи неявного VR Endian и содержащий частные теги: Такая ошибка импорта может быть вызвана неправильным словарем. Вы можете перечислить ваши частные теги, в опции конфигурации "Словарь" ниже</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Locale</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.locale}" > </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Язык, используемый Orthanc. В настоящее время используется только при сравнении строк без учета регистра. Рекомендуется не указывать это значение</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Synchronous C Move</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.synchronousCMove}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено (по умолчанию), каждый входящий запрос C-Move приводит к созданию нового фонового задания. До Orthanc 1.3.2 неявным поведением было использование синхронного C-Move. Между Orthanc 1.4.0 и 1.4.2 поведение по умолчанию было установлено как асинхронное C-Move. Начиная с Orthanc 1.5.0, поведение по умолчанию - синхронное C-Move (обратная совместимость с Orthanc младше 1.3.2)</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Jobs History Size</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.jobsHistorySize}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное число завершенных заданий, хранящихся в памяти. Задание обработки считается выполненным, если оно помечено как "Успешное" или "Неуспешное". Начиная с Orthanc 1.5.0, значение "0" означает, что задания удаляются из истории сразу после их завершения</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Overwrite Instances</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.overwriteInstances}"/>
+            </p>
+            <div class="p-text-capitalize">Определяет, как сервер реагирует, когда  получает DICOM-данные, уже сохраненные ранее. Если включено, новый экземпляр заменяет старый. Если выключено, новый экземпляр отбрасывается, а старый сохраняется. До Orthanc 1.4.1 данный параметр по умолчанию был выключен</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Media Archive Size</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.mediaArchiveSize}">
+                <p:keyFilter mask="num"/>
+              </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Максимальное количество ZIP/медиа-архивов, поддерживаемых сервером. Недавно использованные архивы удаляются по мере создания новых архивов. Эта опция была введена в Orthanc 1.5.0, и не оказывает влияния на синхронное формирование архивов</div>
+
+          </p:outputPanel>
+        </p:tab>
+
+        <p:tab title="Рабочие списки (WorkList)">
+          <p:outputPanel>
+
+            <p:divider align="left" type="dashed">
+              <b>Включить сервис рабочих списков</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:toggleSwitch value="#{newSetOrth.worklistEnabled}"/>
+            </p>
+            <div class="p-text-capitalize">Если включено, сервер поддерживает сервис рабочих списков</div>
+
+            <p:divider align="left" type="dashed">
+              <b>Каталог рабочих списков</b>
+            </p:divider>
+            <p class="p-m-0">
+              <p:inputText  value="#{newSetOrth.worklistPath}" > </p:inputText>
+            </p>
+            <div class="p-text-capitalize">Путь к каталогу в котором система будет хранить и искать рабочие списки</div>
+
+          </p:outputPanel>
+        </p:tab>
+
+      </p:accordionPanel>
+
+      <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+        <b:about/>
+      </p:dialog>
+
+      <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+        <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+      </p:dialog>
+
+    </h:form>
+  </h:body>
+</f:view>
+</html>

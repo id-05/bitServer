@@ -1,12 +1,15 @@
 package ru.bitServer.beans;
+import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancJob;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +18,6 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ManagedBean(name = "jobsBean", eager = true)
 @ViewScoped
 public class JobsBean implements UserDao {
-
-
     List<OrthancJob> orthancJobs = new ArrayList<>();
 
     List<OrthancJob> selectedOrthancJobs = new ArrayList<>();
@@ -57,29 +58,45 @@ public class JobsBean implements UserDao {
     }
 
     public void resumeAllPause(){
-        System.out.println("resume all pause");
+        showMessage("Внимание","Все остановленные задания, будут возобновлены!", FacesMessage.SEVERITY_INFO);
+        for(OrthancJob orthancJob:orthancJobs){
+            stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+orthancJob.getIdentificator()+"/resume","");
+            LogTool.getLogger().info("resume answer api: "+stringBuilder.toString());
+        }
     }
 
     public void pauseAllRunning(){
-        System.out.println("pause all");
+        showMessage("Внимание","Все задания, будут остановлены!", FacesMessage.SEVERITY_INFO);
+        for(OrthancJob orthancJob:orthancJobs){
+            stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+orthancJob.getIdentificator()+"/pause","");
+            LogTool.getLogger().info("pause answer api: "+stringBuilder.toString());
+        }
     }
 
     public void cancelAllRunning(){
-        System.out.println("cancelAllRunning");
+        showMessage("Внимание","Все задания, будут отменены!", FacesMessage.SEVERITY_INFO);
+        for(OrthancJob orthancJob:orthancJobs){
+            stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+orthancJob.getIdentificator()+"/cancel","");
+            LogTool.getLogger().info("cancel answer api: "+stringBuilder.toString());
+        }
     }
-
-
 
     public List<OrthancJob> getAllJobs(){
         List<OrthancJob> allJobs = new ArrayList<>();
         stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs");
-        String[] jobs = stringBuilder.toString().replace("[","").replace("]","").split(",");
-        for(String job:jobs) {
-            stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+job.replace(" ","").replace("\"",""));
-            OrthancJob orJob = new OrthancJob(stringBuilder.toString());
-            System.out.println(orJob.getIdentificator());
-            allJobs.add(orJob);
+        try {
+            if (!stringBuilder.toString().equals("[]") & !stringBuilder.toString().equals("error")) {
+                String[] jobs = stringBuilder.toString().replace("[", "").replace("]", "").split(",");
+                for (String job : jobs) {
+                    stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/" + job.replace(" ", "").replace("\"", ""));
+                    OrthancJob orJob = new OrthancJob(stringBuilder.toString());
+                    allJobs.add(orJob);
+                }
+            }
         }
+        catch(Exception e){
+            LogTool.getLogger().error("getjobs: allJobs.count = "+allJobs.size()+e.getMessage()+" / "+stringBuilder.toString());
+            }
         return allJobs;
     }
 
@@ -88,27 +105,29 @@ public class JobsBean implements UserDao {
     }
 
     public void pause(String buf){
-        stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+buf+"/pause");
+        stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+buf+"/pause","");
         LogTool.getLogger().info("pause answer api: "+stringBuilder.toString());
     }
 
     public void resume(String buf){
-        stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+buf+"/resume");
+        stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+buf+"/resume","");
         LogTool.getLogger().info("resume answer api: "+stringBuilder.toString());
     }
 
     public void resubmit(String buf){
-        stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+buf+"/resubmit");
+        stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+buf+"/resubmit","");
         LogTool.getLogger().info("resubmit answer api: "+stringBuilder.toString());
     }
 
     public void cancel(String buf){
-        stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/"+buf+"/cancel");
+        stringBuilder = connection.makePostConnectionAndStringBuilder("/jobs/"+buf+"/cancel","");
         LogTool.getLogger().info("cancel answer api: "+stringBuilder.toString());
     }
 
-    public void DelJob(){
-        System.out.println("DelJob()");
+    public void showMessage(String title, String note, FacesMessage.Severity type) {
+        FacesMessage message = new FacesMessage(title, note);
+        message.setSeverity(type);
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
 }

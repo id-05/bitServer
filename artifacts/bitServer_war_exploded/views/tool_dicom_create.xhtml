@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+
+    <style type="text/css">
+        .customPanelGrid .ui-panelgrid-content {
+            align-items: center;
+        }
+
+        .ui-state-drag {
+            display: none;
+        }
+
+        .ui-fileupload-withdropzone {
+            display: none;
+        }
+
+        .ui-fileupload-content {
+            display: none;
+        }
+    </style>
+
+    <h:head>
+        <title>DICOM Creator</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="dicomcreator" enctype="multipart/form-data">
+            <p:growl id="growl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward" actionListener="#{dicomcreatorBean.onBack}"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="DICOM-Creator" disabled="true"/>
+
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+                    <p:outputPanel>
+                        <p:toolbar>
+                            <p:toolbarGroup>
+                                <p:fileUpload  mode="advanced"
+                                               chooseIcon="pi pi-folder-open"
+                                               skinSimple="true"
+                                               auto="true"
+                                               label="Выбрать"
+                                               multiple="false"
+                                               dragDropSupport="false"
+                                               value="#{dicomcreatorBean.file}"
+                                               sizeLimit="20000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                               invalidSizeMessage="Maximum file size allowed is 20 MB"
+                                               invalidFileMessage="only gif | jpg | jpeg | png is allowed"
+                                               listener="#{dicomcreatorBean.handleFileUpload}">
+                                </p:fileUpload>
+
+                                <p:commandButton value="Сохранить" styleClass="ui-button-success" update="dicomcreator:growl"
+                                                 id="saveselected"
+                                                 ajax="false"
+                                                 actionListener="#{dicomcreatorBean.convertFile}"
+                                                 disabled="#{!dicomcreatorBean.fileEnable}"
+                                                 style="margin-right: 10px; margin-left: 10px">
+                                    <p:fileDownload value="#{dicomcreatorBean.convertFile()}" />
+                                </p:commandButton>
+
+                                <p:commandButton value="Очистить форму" styleClass="ui-button-success" update="dicomcreator:growl"
+                                                 id="clear"
+                                                 ajax="false"
+                                                 style="margin-right: .5rem"
+                                                 actionListener="#{dicomcreatorBean.onUpdate}"/>
+
+                                <p:commandButton rendered="false" value="Сохранить все" styleClass="ui-button-success" update="dicomcreator:growl"
+                                                 style="margin-right: .5rem"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <div class="card">
+                            <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
+                                         columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4">
+
+                                <p:outputPanel>
+
+                                    <div class="formgrid grid">
+                                        <div class="field col-12 md:col-6">
+                                            <p:outputLabel for="firstname1">Name</p:outputLabel>
+                                        </div>
+                                        <div class="field">
+                                            <p:inputText value="#{dicomcreatorBean.patientName}" id="firstname1" type="text" style="margin-top: 5px; margin-bottom: 10px"/>
+                                        </div>
+
+                                        <div class="field col-12 md:col-6">
+                                            <p:outputLabel for="sex">Sex</p:outputLabel>
+                                        </div>
+                                        <div class="field">
+                                            <p:selectOneMenu id="sex" value="#{dicomcreatorBean.patientSex}" style="margin-top: 5px; margin-bottom: 10px">
+                                                <f:selectItem itemLabel="M" itemValue="M"/>
+                                                <f:selectItem itemLabel="F" itemValue="F"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="lastname1">Ptient id</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:inputText id="lastname1" value="#{dicomcreatorBean.patientId}" type="text" style="margin-top: 5px; margin-bottom: 10px"/>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="accession">Accession №</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:inputText id="accession" value="#{dicomcreatorBean.accessionNumber}" type="text" style="margin-top: 5px; margin-bottom: 10px"/>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="description">Study description</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:inputText id="description" value="#{dicomcreatorBean.studyDescription}" type="text" style="margin-top: 5px; margin-bottom: 10px"/>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="modality">Modality</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:inputText id="modality" value="#{dicomcreatorBean.studyModality}" type="text" style="margin-top: 5px; margin-bottom: 10px"/>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="dateofbirth">Date of birth</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:datePicker id="dateofbirth" value="#{dicomcreatorBean.dateBirth}" style="margin-top: 5px; margin-bottom: 10px">
+                                            <p:ajax event="dateSelect"/>
+                                        </p:datePicker>
+                                    </div>
+
+                                    <div class="field">
+                                        <p:outputLabel for="dateofstudy">Date of study</p:outputLabel>
+                                    </div>
+                                    <div class="field">
+                                        <p:datePicker id="dateofstudy" value="#{dicomcreatorBean.dateStudy}" style="margin-top: 5px; margin-bottom: 10px">
+                                            <p:ajax event="dateSelect"/>
+                                        </p:datePicker>
+                                    </div>
+
+                                </p:outputPanel>
+
+                                <p:outputPanel>
+                                    <p:graphicImage value="#{dicomcreatorBean.image}" cache="false" id="img1"
+                                                    style="width: 800px"/>
+                                </p:outputPanel>
+
+                            </p:panelGrid>
+                        </div>
+                    </p:outputPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

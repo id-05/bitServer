@@ -1,0 +1,33 @@
+<html xmlns = "http://www.w3.org/1999/xhtml"
+      xmlns:h = "http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite = "http://java.sun.com/jsf/composite">
+
+<composite:interface>
+    <composite:attribute name = "usernameLabel" />
+    <composite:attribute name = "usernameValue" />
+</composite:interface>
+
+<composite:implementation>
+    <h:form>
+        <div class="p-d-flex p-jc-center">
+            <p:graphicImage name="logo.png" library="images"/>
+        </div>
+        <br/>
+                <div class="p-text-bold" align="right">ООО "Бит-Сервис"</div>
+                <div class="p-text-bold" align="right">г.Чита, ул.Нечаева,68, тел: +7(3022)21-70-71</div>
+                <div class="p-text-bold" style="font-size: larger" align="right">Комплексные решения в рентгенологии</div>
+                <br/>
+                <div align="right">Сервер для хранения DICOM-снимков</div>
+                <div align="right">bitServer версия: #{mainBean.versionInfo}</div>
+                <br/>
+                <div align="right">
+                    <a href="https://github.com/id-05/bitServer/raw/master/Руководство_пользователя.docx" >Руководство пользователя</a>
+                </div>
+        <br/>
+        <div class="p-d-flex p-jc-center p-text-bold">
+           2022г
+        </div>
+    </h:form>
+</composite:implementation>
+</html>

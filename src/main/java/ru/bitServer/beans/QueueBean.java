@@ -432,7 +432,7 @@ public class QueueBean implements UserDao, DataAction {
             orthancSettings = new OrthancSettings(connection);
             modalities = orthancSettings.getDicomModalitis();
         }catch (Exception e){
-            LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error connect orthanc! " + e.getMessage());
+            LogTool.getLogger().error(this.getClass().getSimpleName() + ": Error connect orthanc: " + e.getMessage());
         }
         firstdate = new Date();
         seconddate = new Date();
@@ -514,7 +514,7 @@ public class QueueBean implements UserDao, DataAction {
         resetViewTable();
 
         recordCount = visibleStudiesList.size();
-        timeDrawing = ((new Date()).getTime() - timeStart       )/1000.00 - timeRequest;
+        timeDrawing = ((new Date()).getTime() - timeStart  )/1000.00 - timeRequest;
 
         if(showSeachTime.equals("true")) {
             showMessage("Всего: " + recordCount, "SQL-запрос: " + String.format("%.2f", timeRequest) + "c \r\n" +
@@ -719,7 +719,8 @@ public class QueueBean implements UserDao, DataAction {
         root.addRecursively(new File(tmpdir+"/images"));
 
         if(getBitServerResource("cdViewerInclude").getRvalue().equals("true")) {
-            String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
+            //String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
+            String relativeWebPath = getBitServerResource("cdviewerpath").getRvalue();
             root.addContentsRecursively(new File(relativeWebPath));
         }
         ISO9660Config iso9660Config = new ISO9660Config();

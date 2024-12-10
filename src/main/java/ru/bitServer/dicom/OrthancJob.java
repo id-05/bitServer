@@ -111,8 +111,8 @@ public class OrthancJob implements UserDao {
 
     public String getEffectiveRuntime() {
         String result ="--:--";
-        if(effectiveRuntime!=null)
-            {result = effectiveRuntime.substring(0,5);}
+//        if(effectiveRuntime!=null)
+//            {result = effectiveRuntime.substring(0,5);}
         return result;
     }
 
@@ -232,6 +232,7 @@ public class OrthancJob implements UserDao {
         if (orthancJson.has("Type"))                 this.type = orthancJson.get("Type").getAsString();
         JsonObject bufJson = null;
         if (orthancJson.has("Content"))              bufJson = orthancJson.get("Content").getAsJsonObject();
+        assert bufJson != null;
         if (bufJson.has("Description"))              this.description = bufJson.get("Description").getAsString();
         if (bufJson.has("FailedInstancesCount"))     this.failedInstancesCount = bufJson.get("FailedInstancesCount").getAsInt();
         if (bufJson.has("InstancesCount"))           this.instancesCount = bufJson.get("InstancesCount").getAsInt();

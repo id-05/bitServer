@@ -9,8 +9,5 @@
         <module name="bitServer" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bitServer" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -2,7 +2,8 @@ package ru.bitServer.dao;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.io.IOUtils;
+//import org.apache.commons.io.IOUtils;
+import org.apache.commons.compress.utils.IOUtils;
 import org.primefaces.PrimeFaces;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
@@ -60,6 +61,7 @@ public interface DataAction extends UserDao{
         String url="/instances/"+fileName+"/file";
         HttpURLConnection conn = connection.makeGetConnection (url);
         InputStream inputStream = conn.getInputStream();
+        //!!!!!!!!!!!!!
         return IOUtils.toByteArray(inputStream);
     }
 
@@ -84,6 +86,8 @@ public interface DataAction extends UserDao{
             }
 
         }else{
+            LogTool.getLogger().error(mainServer.getPathToJson()+"orthanc.json");
+            System.out.println(mainServer.getPathToJson()+"orthanc.json");
             try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
                 int c;
                 while ((c = reader.read()) != -1) {

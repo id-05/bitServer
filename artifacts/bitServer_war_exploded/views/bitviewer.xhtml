@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+
+    <style type="text/css">
+        .customPanelGrid .ui-panelgrid-content {
+            align-items: center;
+        }
+        body {
+            background-color:gray;
+        }
+    </style>
+
+    <h:head>
+        <title>DICOM TAG Editor</title>
+        <f:facet name="last">
+            <link rel="stylesheet" href="https://unpkg.com/primeflex@3.1.2/primeflex.css"/>
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="bitviewer">
+            <p:growl id="growl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem style="margin-right: 5px" value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <f:facet name="options">
+                    <div class="p-mr-2 p-as-center">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+                    <p:outputPanel style="background-color: white">
+                                <div class="card">
+                                    <p:panelGrid id="manage-user-content" columns="2" layout="grid" styleClass="customPanelGrid"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-8">
+
+                                        <p:outputPanel style="background-color: white">
+                                            <p:dataTable id="dt-series" widgetVar="visibleSerie" var="orthancSerie"
+                                                         rowKey="#{orthancSerie.serieDescription}"
+                                                         size="small"
+                                                         selectionMode="single"
+                                                         selection="#{bitviewerBean.selectedSerie}"
+                                                         value="#{bitviewerBean.seriesList}"
+                                                         styleClass="users-table"
+                                                         emptyMessage="Нет записей для отображения">
+                                                <p:ajax event="rowSelect" listener="#{bitviewerBean.onSerieSelected}"/>
+
+                                                <p:column headerText="Serie title" style="text-align: center">
+                                                    <h:outputText value="#{orthancSerie.serieDescription}" />
+                                                </p:column>
+
+                                            </p:dataTable>
+                                        </p:outputPanel>
+
+                                        <p:outputPanel style="background-color: white">
+                                            <p:toolbar style="height: max-content">
+                                                <p:toolbarGroup>
+
+                                                    <p:commandButton actionListener="#{bitviewerBean.lastInstance}"
+
+                                                                     style="margin-right: 10px"
+                                                                     value="Last" styleClass="ui-button-success" />
+
+                                                    <p:commandButton actionListener="#{bitviewerBean.nextInstance}"
+                                                                     style="margin-right: 10px"
+                                                                     value="Next" styleClass="ui-button-success" />
+
+                                                </p:toolbarGroup>
+                                            </p:toolbar>
+                                            <div class="pt-5 pb-5 flex justify-content-center flex-wrap card-container">
+                                                <p:graphicImage ajax="true" value="#{bitviewerBean.imgDcm}" id="img1"  cache="false" stream="false">
+                                                    <f:ajax event="click" execute="x y" listener="#{bitviewerBean.imageclick}" />
+                                                </p:graphicImage>
+                                                <h:inputHidden id="x" value="#{bitviewerBean.x}" />
+                                                <h:inputHidden id="y" value="#{bitviewerBean.y}" />
+
+                                                <h:outputScript>
+                                                    jQuery("img[id$=':img1']").on("mousedown", function(event) {
+                                                        var $form = jQuery(this).closest("form");
+                                                        $form.find("input[id$=':x']").val(event.pageX);
+                                                        $form.find("input[id$=':y']").val(event.pageY);
+                                                    });
+                                                </h:outputScript>
+
+                                            </div>
+                                        </p:outputPanel>
+
+                                    </p:panelGrid>
+                                </div>
+                    </p:outputPanel>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+</html>

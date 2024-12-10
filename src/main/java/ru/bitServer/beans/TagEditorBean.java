@@ -104,13 +104,11 @@ public class TagEditorBean implements UserDao {
         PrimeFaces.current().ajax().update(":tageditor:tabview1:saveselected");
     }
 
-
-
     public void handleFileUpload(FileUploadEvent event) throws IOException, SQLException {
         UploadedFile file = event.getFile();
         UploadDicomFile dFile = new UploadDicomFile(file.getContent(),file.getFileName());
         FileList.add(dFile);
-        PrimeFaces.current().executeScript("PF('addDICOM').hide()");
+        //PrimeFaces.current().executeScript("PF('addDICOM').hide()");
         PrimeFaces.current().ajax().update(":tageditor:tabview1:dt-files");
     }
 
@@ -191,21 +189,21 @@ public class TagEditorBean implements UserDao {
 
     public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException {
         Raster raster = null ;
-        System.out.println("Input: " + dicomf.length);
+        //System.out.println("Input: " + dicomf.length);
         //Open the DICOM file and get its pixel data
         try {
             ImageIO.scanForPlugins();
             File f = new File("");
             ByteArrayInputStream bais = new ByteArrayInputStream(dicomf);
 
-            String[] buf = ImageIO.getReaderFormatNames();
-            for(String bufStr:buf){
-                System.out.println(bufStr);
-            }
+//            String[] buf = ImageIO.getReaderFormatNames();
+//            for(String bufStr:buf){
+//                System.out.println(bufStr);
+//            }
 
             Iterator iter = ImageIO.getImageReadersByFormatName("DICOM");
             ImageReader reader = (ImageReader) iter.next();
-            System.out.println("fname "+reader.getFormatName());
+            //System.out.println("fname "+reader.getFormatName());
             DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
             ImageInputStream iis = ImageIO.createImageInputStream(bais);
             reader.setInput(iis, false);

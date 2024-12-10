@@ -1,0 +1,14 @@
+/* styles.css */
+
+.bodyClass {
+	margin : 25px 25px 10px 25px;
+	font-family : helvetica;
+	color : gray;
+	font-size : 18px;
+}
+
+.whitespacePrewrap {
+	white-space : pre-wrap;
+}
+
+/* end styles.css */

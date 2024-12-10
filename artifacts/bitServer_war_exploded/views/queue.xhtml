@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head><title>bitServer Seach</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+            //]]>
+        </script>
+
+        <script type="text/javascript">
+            function showStatus() {
+                PF('statusDialog').show();
+            }
+        </script>
+
+        <style type="text/css">
+            .fUpload-content {
+                overflow: auto;
+                height: 300px;
+            }
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: 1px; }
+        </style>
+
+        <h:form id="seachform">
+            <p:growl id="searchgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="localuser" icon="pi pi-backward" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.currentUser.role != 'admin'}"/>
+                <p:menuitem value="Назад" outcome="adminPage" icon="pi pi-backward" rendered="#{queueBean.currentUser.role == 'admin'}"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Очередь" disabled="true"/>
+
+                <f:facet name="options">
+                        <div class="p-d-flex">
+                            <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        </div>
+                </f:facet>
+            </p:menubar>
+
+                <div style="align-content: center">
+
+                    <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:selectOneButton id="dateStudySelector" value="#{queueBean.filtrDate}" style="width: 700px; " ajax="false">
+                            <f:selectItem itemLabel="Сегодня " itemValue="today" />
+                            <f:selectItem itemLabel="Вчера " itemValue="yesterday"/>
+                            <f:selectItem itemLabel="Неделя " itemValue="week"/>
+                            <f:selectItem itemLabel="Месяц " itemValue="mounth"/>
+                            <f:selectItem itemLabel="Год " itemValue="year"/>
+                            <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
+                            <f:selectItem itemLabel="Диапазон" itemValue="range"/>
+                            <f:selectItem itemLabel=" Все" itemValue="all"/>
+                            <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
+                        </p:selectOneButton>
+                        <p:datePicker id="firstDate" value="#{queueBean.firstdate}" style="margin-right: 10px" rendered="#{queueBean.datepickerVisible1}">
+                            <p:ajax event="dateSelect" listener="#{queueBean.firstDateSelect}" update=":seachform:dateStudySelector"/>
+                        </p:datePicker>
+
+                        <p:datePicker id="secondDate" style="width: 30px" value="#{queueBean.seconddate}" rendered="#{queueBean.datepickerVisible2}">
+                            <p:ajax event="dateSelect" listener="#{queueBean.secondDateSelect}" update=":seachform:dateStudySelector"/>
+                        </p:datePicker>
+                    </p:toolbarGroup>
+
+                    <p:toolbarGroup align="centr">
+
+                        <p:inplace label="#{queueBean.getModalitiNameToString}" style="font-weight: bold" effect="slide" id="modality" rendered="false">
+                            <p:selectManyButton value="#{queueBean.selectedModalitiName}"
+                                                 dynamic="true">
+                                <f:selectItems value="#{queueBean.modalityName}"/>
+                                <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
+                            </p:selectManyButton>
+                        </p:inplace>
+                        <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="modality" value="Модальности"/>
+
+
+                        <p:inplace label="Состояние" style="font-weight: bold" effect="slide" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}">
+                            <p:selectOneButton id="state" ajax="false" value="#{queueBean.typeSeach}" style="width: 500px;"
+                                               rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
+                                <f:selectItem itemLabel="Не описан" itemValue="0" />
+                                <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
+                                <f:selectItem itemLabel="Описан" itemValue="2"/>
+                                <f:selectItem itemLabel="Все" itemValue="5"/>
+                                <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
+                            </p:selectOneButton>
+                        </p:inplace>
+
+                    </p:toolbarGroup>
+
+                    </p:toolbar>
+
+                    <p:toolbar>
+                        <p:toolbarGroup>
+                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                                <p:graphicImage value="/resources/images/upload.gif" />
+                            </p:dialog>
+                            <p:commandButton id="send-button" value="Отправить на описание в:"
+                                             icon="pi pi-send" action="#{queueBean.sendToAgent}"
+                                             styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
+                                             onclick="PF('statusDialog').show()"
+                                             update="searchgrowl"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
+                                             style="margin-right: 5px">
+                            </p:commandButton>
+
+                            <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}">
+
+                            </p:selectOneMenu>
+
+                        </p:toolbarGroup>
+
+                        <p:toolbarGroup align="centr" ajax="false">
+
+                            <div class="grid" align="center">
+                                        <p:ajaxStatus widgetVar="progress" id="ajs" >
+                                            <f:facet name="default">
+                                                <h:outputText  style="font-weight: bold;" id="txt_count4" value="#{queueBean.recordCount}"/>
+                                                <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="txt_count2" value="Всего в списке"/>
+                                            </f:facet>
+
+                                            <f:facet name="complete">
+                                                <h:outputText  style="font-weight: bold;" id="txt_count2" value="#{queueBean.recordCount}"/>
+                                                <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="txt_count2" value="Всего в списке"/>
+                                            </f:facet>
+
+                                            <f:facet name="start">
+                                                <i class="pi pi-spin pi-spinner loading-icon"> </i>
+                                            </f:facet>
+                                        </p:ajaxStatus>
+                            </div>
+                        </p:toolbarGroup>
+
+                        <p:toolbarGroup align="right">
+                            <p:commandButton id="uploaddicom" oncomplete="PF('addDICOM').show()"
+                                             rendered="#{queueBean.optDownload == 'true'}"
+                                             update=":seachform:addDialog"
+                                             style="margin-right: 10px"
+                                             icon="pi pi-upload" styleClass="ui-button-success" />
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
+
+                            <p:dialog modal="true" widgetVar="statusDialog2" draggable="false" closable="false">
+                                <h1 class="p-text-center">
+                                    <h:outputLabel for="txt_count" value="Выполненно:  "/>
+                                    <h:outputText id="txt_count" value="#{queueBean.number}"/>
+                                </h1>
+                            </p:dialog>
+                        </p:toolbarGroup>
+
+                    </p:toolbar>
+
+                    <p:dialog id="addDialog" header="Окно загрузки DICOM-данных вручную" showEffect="fade" modal="true"
+                              widgetVar="addDICOM" responsive="true">
+
+                        <p:fileUpload  mode="advanced"
+                                       widgetVar="fUpload"
+                                       listener="#{queueBean.handleFileUpload}"
+                                       sequential="true"
+                                       styleClass="fUpload-content"
+                                       dragDropSupport="true"
+                                       skinSimple="true"
+                                       sizeLimit="20000000"
+                                       label="Выбрать"
+                                       uploadLabel="Зазрузить"
+                                       cancelLabel="Отмена"
+                                       multiple="true"
+                                       invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
+                                       allowTypes="/(\.|\/)(dcm|DCM)$/"/>
+
+                        <div class="p-text-bold" style="width: 40rem">
+                            <p:outputLabel style="color: crimson">Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
+                                Используйте этот способ, для корректной загрузки всех вложенных каталогов.
+                                После завершения процесса загрузки, просто закройте это окно.</p:outputLabel>
+                        </div>
+                    </p:dialog>
+
+                    <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
+                                 reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                                 emptyMessage="Нет записей для отображения" ajax="false"
+
+                                 selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
+                                 rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}">
+
+                        <p:ajax event="rowSelect" update=":seachform:send-button"/>
+                        <p:ajax event="rowUnselect" update=":seachform:send-button"/>
+                        <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
+                        <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
+                        <p:ajax event="toggleSelect" update=":seachform:send-button"/>
+                        <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
+                        <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
+
+                        <f:facet name="header">
+                            <div class="flex justify-content-end">
+                                <p:inputText id="globalFilter" onkeyup="PF('visibleStudy').filter()" style="width:300px"
+                                             placeholder="Поиск по всем полям..."
+                                             filterMatchMode="contains"/>
+                                <p:commandButton icon="pi pi-filter" update="@form" styleClass="ml-2" style="margin-left: 10px"
+                                                 action="#{queueBean.toggleGlobalFilter()}" rendered="#{queueBean.globalFilterOnly}"/>
+                                <p:commandButton icon="pi pi-filter-fill" update="@form" styleClass="ml-2" style="margin-left: 10px"
+                                                 action="#{queueBean.toggleGlobalFilter()}" rendered="#{!queueBean.globalFilterOnly}"/>
+                            </div>
+                        </f:facet>
+
+                        <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
+
+                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
+                            <h:outputText styleClass="product-badge status-#{bitServerStudy.statusStyle.toLowerCase()}"
+                                          value="#{bitServerStudy.rustatus}"/>
+                        </p:column>
+
+                        <p:column headerText="Preview" style="text-align: center" rendered="#{queueBean.colPreview == 'true'}">
+                            <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
+                        </p:column>
+
+                        <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center"
+                                  filterMatchMode="contains">
+                            <h:outputText value="#{bitServerStudy.shortid}"/>
+                        </p:column>
+
+                        <p:column headerText="Пациент" sortBy="#{bitServerStudy.patientName}"
+                                  filterBy="#{bitServerStudy.patientName}"
+                                  filterFunction="#{queueBean.filterByCustom}"
+                                  globalFilterFunction="#{queueBean.filterByCustom}"
+
+                                  style="text-align: center"
+                                  filterMatchMode="contains">
+
+                            <h:outputText value="#{bitServerStudy.patientName}"/>
+                        </p:column>
+
+                        <p:column headerText="Дата рождения" sortBy="#{bitServerStudy.patientBirthDateStr}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.patientBirthDateStr}"
+                                  rendered="#{queueBean.colDateBirth == 'true'}">
+                            <h:outputText value="#{bitServerStudy.patientBirthDateStr}"/>
+                        </p:column>
+
+                        <p:column headerText="Дата" sortBy="#{bitServerStudy.sdate}" style="text-align: center"
+                                  rendered="#{queueBean.colDate == 'true'}">
+                            <h:outputText value="#{bitServerStudy.stringStudyDate}"/>
+                        </p:column>
+
+                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.sdescription}"
+                                  rendered="#{queueBean.colDescription == 'true'}">
+                            <h:outputText value="#{bitServerStudy.sdescription}"/>
+                        </p:column>
+
+                        <p:column headerText="Модальность" sortBy="#{bitServerStudy.modality}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.modality}"
+                                  rendered="#{queueBean.colModality == 'true'}">
+                            <h:outputText value="#{bitServerStudy.modality}"/>
+                        </p:column>
+
+                        <p:column headerText="Учреждение" sortBy="#{bitServerStudy.institutionName}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.institutionName}"
+                                  rendered="#{queueBean.colInstitution == 'true'}">
+                            <h:outputText value="#{bitServerStudy.institutionName}"/>
+                        </p:column>
+
+                        <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.stationName}"
+                                  rendered="#{queueBean.colStation == 'true'}">
+                            <h:outputText value="#{bitServerStudy.stationName}"/>
+                        </p:column>
+
+                        <p:column headerText="Источник" sortBy="#{bitServerStudy.AETSource}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.AETSource}"
+                                  rendered="#{queueBean.colSource == 'true'}">
+                            <h:outputText value="#{bitServerStudy.AETSource}"/>
+                        </p:column>
+
+                        <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
+                                  filterBy="#{bitServerStudy.usergroupwhosees}"
+                                  rendered="#{queueBean.colWhereSend == 'true'}">
+                            <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
+                        </p:column>
+
+                        <p:column exportable="false" style="align-content: center; ">
+
+                            <p:commandButton icon="pi pi-id-card"
+                                             update=":seachform:dialogStudyAnamnes"
+                                             oncomplete="PF('manageAnamnes').show()"
+                                             id="anamnes"
+                                             styleClass="rounded-button ui-button-warning"
+                                             process="@this"
+                                             style="margin-right: 10px">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="anamnes" value="Анамнез"/>
+
+                            <p:commandButton id="viewinosimis"
+                                             style="margin-right: 10px" styleClass="rounded-button ui-button-help"
+                                             icon="pi pi-eye" process="@this"
+                                             update=":seachform:dt-studys"
+                                             actionListener="#{queueBean.redirectToViewer(bitServerStudy.sid)}">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
+
+                            <p:commandButton id="result"
+                                             ajax="false" style="margin-right: 10px"
+                                             styleClass="edit-button rounded-button ui-button-success"
+                                             icon="pi pi-file"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
+                                             disabled="#{!not empty bitServerStudy.result}">
+                                <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="result" value="Результат/Описание"/>
+
+                            <p:commandButton id="gettowork"
+                                             icon="pi pi-pencil"
+                                             style="margin-right: 10px"
+                                             styleClass="rounded-button" process="@this"
+                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
+                                             disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
+                                                            or bitServerStudy.status == 1 or bitServerStudy.status == 3
+                                                                or queueBean.currentUser.role == 'onlyview'}"
+                                             oncomplete="PF('confirmtogetstudy').show()">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="gettowork" value="Взять на описание"/>
+
+                            <p:commandButton id="delete"
+                                             icon="pi pi-trash"
+                                             styleClass="rounded-button ui-button-danger" process="@this"
+                                             rendered="#{queueBean.currentUser.role == 'admin'}"
+                                             oncomplete="PF('confDelStudy').show()">
+                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                            </p:commandButton>
+                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:contextMenu for="dt-studys" >
+
+                        <p:menuitem value="Отозвать с описания" update="dt-studys"
+                                    rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
+                                    action="#{queueBean.comebackStudy}"
+                                    disabled="#{not empty bitServerStudy.usergroupwhosees or queueBean.currentUser.role == 'onlyview'}"/>
+                        <p:menuitem value="Пометить как описанное" update="dt-studys"
+                                    rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
+                                    action="#{queueBean.markAsHasResult}"
+                                    disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
+                        <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
+                            <p:fileDownload value="#{queueBean.downloadStudy()}"/>
+                        </p:menuitem>
+
+                        <p:menuitem value="Отправить в ..."
+                                    update="searchgrowl"
+                                    oncomplete="PF('AEchoose').show()"
+                                    styleClass="rounded-button ui-button-warning"
+                                    process="@this"/>
+
+                        <p:menuitem ajax="false" value="Скачать iso для записи" update="dt-studys"  rendered="true">
+                            <p:fileDownload value="#{queueBean.downloadIsoStudy()}"/>
+                        </p:menuitem>
+
+                    </p:contextMenu>
+
+                    <p:dialog id="dialogAEchoose" header="Выберите клиента для отправки" showEffect="fade" modal="true"
+                              widgetVar="AEchoose" responsive="false">
+
+                        <p:dataTable id="dt-modaliti" widgetVar="dtModaliti" var="dicomModaliti" value="#{queueBean.modalities}"
+                                     reflow="true" styleClass="users-table"
+                                     style="width: 700px"
+                                     size="small"
+                                     scrollable="true" scrollHeight="650"
+                                     emptyMessage="Нет записей для отображения"
+                                     selection="#{queueBean.selectedModalities}" rowKey="#{dicomModaliti.dicomtitle}"
+                                     rows="10" rowSelectMode="add" paginator="true" paginatorPosition="bottom">
+
+                            <p:column headerText="Name" sortBy="#{dicomModaliti.dicomName}" style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.dicomName}"/>
+                            </p:column>
+
+                            <p:column headerText="AE Title"  style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.dicomTitle}" />
+                            </p:column>
+
+                            <p:column headerText="IP"  style="text-align: center">
+                                <h:outputText value="#{dicomModaliti.ip}"/>
+                            </p:column>
+
+                            <p:column exportable="false">
+                                <p:commandButton icon="pi pi-upload"
+                                                 action="#{queueBean.chooseAETitle}"
+                                                 onclick="PF('statusDialog').show()"
+                                                 update="seachform:searchgrowl"
+                                                 style="margin-right: 10px"
+                                                 styleClass="edit-button rounded-button ui-button-success" process="@this">
+                                    <f:setPropertyActionListener value="#{dicomModaliti}" target="#{queueBean.selectedModaliti}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <f:facet name="footer">
+
+                            <span style="padding: 20px;"> </span>
+
+                            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('AEchoose').hide()"
+                                             class="ui-button-secondary" update="dialogAEchoose">
+                                <p:resetInput target="dialogAEchoose"/>
+                            </p:commandButton>
+
+                        </f:facet>
+
+                    </p:dialog>
+
+                    <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
+                              widgetVar="manageAnamnes" responsive="true">
+                            <div class="p-d-flex p-flex-column">
+                                <div class="p-mb-2">Укажите здесь, например:</div>
+                                <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                                <div class="p-mb-2">- причина обращения за обследованием</div>
+                                <div class="p-mb-2">- текущее состояние пациента</div>
+                                <div class="p-mb-2">- информация об удаленных у пациента органах</div>
+                                <div class="p-mb-2">- другая важная информация</div>
+                            </div>
+                            <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                             autoResize="false"/>
+
+                            <f:facet name="footer">
+
+                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueBean.addAnamnes}"
+                                                 update=":seachform">
+                                    <p:resetInput target="dialogStudyAnamnes"/>
+                                </p:commandButton>
+
+                                <span style="padding: 20px;"> </span>
+
+                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
+                                                 class="ui-button-secondary" update="dialogStudyAnamnes">
+                                    <p:resetInput target="dialogStudyAnamnes"/>
+                                </p:commandButton>
+
+                            </f:facet>
+
+                    </p:dialog>
+
+                    <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
+                              widgetVar="confirmtogetstudy" responsive="true">
+                        <p:card style="width: 25rem; margin-bottom: 2em">
+                            <f:facet name="title">
+                                Внимание, вы собираетесь взять исследование на описание!
+                            </f:facet>
+
+                            <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
+                                Вы не сможете приступить к другим исследованиям пока не опишите это.
+                                Срок блокировки исследования ___ часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
+
+                        </p:card>
+                        <div class="p-d-flex p-jc-between">
+                            <div class="p-mr-2">
+                                <p:commandButton value="Отказаться" onclick="PF('confGetStudy').hide()"/>
+                            </div>
+
+                            <div class="p-mr-2">
+                                <p:commandButton value="Согласиться" action="#{queueBean.getStudyToDiag}"/>
+                            </div>
+                        </div>
+
+                    </p:dialog>
+
+                    <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
+                              message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
+                        <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
+                                         oncomplete="PF('confDelStudy').hide()"/>
+                        <span style="padding: 20px;">&nbsp;</span>
+                        <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('confGetStudy').hide()"/>
+                    </p:dialog>
+
+                </div>
+
+                <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                    <b:about/>
+                </p:dialog>
+
+                <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                    <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+                </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

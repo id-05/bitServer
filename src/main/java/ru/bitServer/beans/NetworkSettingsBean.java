@@ -6,6 +6,8 @@ import org.primefaces.model.StreamedContent;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.service.FirewallParcer;
+import ru.bitServer.service.FirewallPort;
 import ru.bitServer.service.NetworkAdapter;
 import ru.bitServer.service.NetworkSettingsParcer;
 import ru.bitServer.util.LogTool;
@@ -27,14 +29,30 @@ public class NetworkSettingsBean implements UserDao {
     BitServerUser currentUser;
     String currentUserId;
     String pathToFile;
+    String pathToFileFirewall;
     ArrayList<NetworkAdapter> adapters = new ArrayList<>();
+
+    ArrayList<FirewallPort> ports = new ArrayList<>();
     NetworkAdapter selectedAdapter;
+    FirewallParcer firewallParcer;
+
+    FirewallPort selectedPort;
     boolean advancedmode;
     String configFileText;
-    StringBuilder newtworkSettingsFile;
+
+    StringBuilder SettingsFile;
+    StringBuilder SettingsFileFirewall;
 
     public String getConfigFileText() {
         return configFileText;
+    }
+
+    public FirewallPort getSelectedPort() {
+        return selectedPort;
+    }
+
+    public void setSelectedPort(FirewallPort selectedPort) {
+        this.selectedPort = selectedPort;
     }
 
     public void setConfigFileText(String configFileText) {
@@ -57,30 +75,53 @@ public class NetworkSettingsBean implements UserDao {
         this.adapters = adapters;
     }
 
+    public ArrayList<FirewallPort> getPorts() {
+        return ports;
+    }
 
+    public void setPorts(ArrayList<FirewallPort> ports) {
+        this.ports = ports;
+    }
 
     @PostConstruct
     public void init() {
-        System.out.println("networkSettingsBean");
         selectedAdapter = new NetworkAdapter();
+        selectedPort = new FirewallPort();
         advancedmode = false;
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
+
         BitServerResources bufResources = getBitServerResource("networksetpathfile");
         pathToFile = bufResources.getRvalue();
-        newtworkSettingsFile = new StringBuilder();
+        SettingsFile = new StringBuilder();
         try(FileReader reader = new FileReader(pathToFile)) {
             int c;
             while ((c = reader.read()) != -1) {
-                newtworkSettingsFile.append((char) c);
+                SettingsFile.append((char) c);
             }
         } catch (Exception e) {
             LogTool.getLogger().error(LogTool.getLogger() + " Error of read file init() networkSettingsBean: "+e.getMessage());
         }
-        configFileText = newtworkSettingsFile.toString();
-        NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(newtworkSettingsFile);
+        configFileText = SettingsFile.toString();
+        NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(SettingsFile);
         adapters = settingsParcer.getAdapterList();
+
+        BitServerResources bufResFirewall = getBitServerResource("firewallpathfile");
+        pathToFileFirewall = bufResFirewall.getRvalue();
+        SettingsFileFirewall = new StringBuilder();
+        try(FileReader reader = new FileReader(pathToFileFirewall)) {
+            int c;
+            while ((c = reader.read()) != -1) {
+                SettingsFileFirewall.append((char) c);
+            }
+        } catch (Exception e) {
+
+            LogTool.getLogger().error(LogTool.getLogger() + " Error of read file init() networkSettingsBean: "+e.getMessage());
+        }
+
+        firewallParcer = new FirewallParcer(SettingsFileFirewall);
+        ports = firewallParcer.getFirewallList();
     }
 
     public void resAdapter() {
@@ -149,6 +190,38 @@ public class NetworkSettingsBean implements UserDao {
         }
     }
 
+    public void addNewPort(){
+        try {
+            boolean verifiUnical;
+            if (selectedPort.getPort() != null) {
+                verifiUnical = true;
+                for (FirewallPort bufPort : ports) {
+                    if (bufPort.getPort().equals(selectedPort.getPort())) {
+                        verifiUnical = false;
+                        break;
+                    }
+                }
+                if (verifiUnical) {
+                    ports.add(selectedPort);
+                    LogTool.getLogger().info("Admin: " + currentUser.getUid().toString() + " add new firewallport " + selectedPort.getPort());
+                } else {
+                    ports.remove(delPortFromList(selectedPort.getPort()));
+                    ports.add(selectedPort);
+                    ports.sort(Comparator.comparing(FirewallPort::getPort));
+                    LogTool.getLogger().info("Admin: " + currentUser.getUid().toString() + " change one of exist Firewallport " + selectedPort.getPort());
+                }
+                PrimeFaces.current().executeScript("PF('managePort').hide()");
+                PrimeFaces.current().ajax().update(":form:tabview1:dt-ports");
+            } else {
+                LogTool.getLogger().debug(LogTool.getLogger() +" selectedAdapter.getName()==null");
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            LogTool.getLogger().error(LogTool.getLogger() + " Error during save new adapter");
+            showMessage("Внимание","Изменения сохранены! Ошибка сохранения нового адаптера!",FacesMessage.SEVERITY_ERROR);
+        }
+    }
+
     public NetworkAdapter delAdapterFromList(String buf){
         NetworkAdapter delAdapter = new NetworkAdapter();
         for(NetworkAdapter bufAdapter : adapters){
@@ -159,14 +232,34 @@ public class NetworkSettingsBean implements UserDao {
         return delAdapter;
     }
 
+    public FirewallPort delPortFromList(String buf){
+        FirewallPort delPort = new FirewallPort();
+        for(FirewallPort bufPort : ports){
+            if(bufPort.getPort().equals(buf)){
+                return bufPort;
+            }
+        }
+        return delPort;
+    }
+
     public void deleteAdapter(){
         adapters.remove(selectedAdapter);
         LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete networkadapter "+selectedAdapter.getName());
         PrimeFaces.current().ajax().update(":form:tabview1:dt-adapters");
     }
 
+    public void deletePort(){
+        ports.remove(selectedPort);
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" delete firewall port "+selectedPort.getPort());
+        PrimeFaces.current().ajax().update(":form:tabview1:dt-ports");
+    }
+
     public void initNewAdapter(){
         selectedAdapter = new NetworkAdapter();
+    }
+
+    public void initNewPort(){
+        selectedPort = new FirewallPort();
     }
 
     public void save() {
@@ -176,6 +269,21 @@ public class NetworkSettingsBean implements UserDao {
     public void onTabChange(){
         init();
         PrimeFaces.current().ajax().update(":form:tabview1");
+    }
+
+    public void saveSettingsFirewall(){
+        BitServerResources bufResFirewall = getBitServerResource("firewallpathfile");
+        pathToFileFirewall = bufResFirewall.getRvalue();
+
+        try(FileOutputStream fileOutputStream = new FileOutputStream(pathToFileFirewall))
+        {
+            byte[] buffer = firewallParcer.updateFirewallFile(ports).toString().getBytes();
+            fileOutputStream.write(buffer, 0, buffer.length);
+        }
+        catch(IOException e){
+            LogTool.getLogger().error(LogTool.getLogger() + " Error saveSettingsFirewall() NetworkSettingsBean: "+e.getMessage());
+        }
+        showMessage("Внимание","Изменения сохранены! Для их применения перезагрузите службу!",FacesMessage.SEVERITY_INFO);
     }
 
     public void saveSettingsCustomMode(){
@@ -236,6 +344,17 @@ public class NetworkSettingsBean implements UserDao {
         FacesMessage message = new FacesMessage(title, note);
         message.setSeverity(type);
         FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void resetIptables(){
+        showMessage("Внимание","Служба IPTABLES будет перезагружена!",FacesMessage.SEVERITY_INFO);
+        try {
+            Process proc = Runtime.getRuntime().exec("sudo ./home/tomcat/scripts/iptablesresetscript");
+            proc.waitFor();
+        }catch (Exception e){
+            showMessage("Внимание",e.getMessage(),FacesMessage.SEVERITY_INFO);
+            LogTool.getLogger().error(LogTool.getLogger() + " Error resetIptables() NetworkSettingsBean: "+e.getMessage());
+        }
     }
 
     public StreamedContent getGetResult() throws IOException {

@@ -51,6 +51,8 @@ public class SettingBitServerBean implements UserDao {
     String luaScriptPath;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     String networksetpathfile;
+
+    String firewallpathfile;
     Date syncdate;
     Date startDate;
     Date stopDate;
@@ -83,6 +85,24 @@ public class SettingBitServerBean implements UserDao {
     String showHelp;
     ArrayList<BitServerUser> usersTarget;
     ArrayList<BitServerUser> usersSource;
+
+    String cdviewerpath;
+
+    public String getCdviewerpath() {
+        return cdviewerpath;
+    }
+
+    public void setCdviewerpath(String cdviewerpath) {
+        this.cdviewerpath = cdviewerpath;
+    }
+
+    public String getFirewallpathfile() {
+        return firewallpathfile;
+    }
+
+    public void setFirewallpathfile(String firewallpathfile) {
+        this.firewallpathfile = firewallpathfile;
+    }
 
     public String getHttpMode() {
         return httpMode;
@@ -550,6 +570,8 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "networksetpathfile": networksetpathfile = buf.getRvalue();
                     break;
+                case "firewallpathfile": firewallpathfile = buf.getRvalue();
+                    break;
                 case "hl7port": hl7port= buf.getRvalue();
                     break;
                 case "workListLifeTime": workListLifeTime = buf.getRvalue();
@@ -587,6 +609,8 @@ public class SettingBitServerBean implements UserDao {
                 case "luaRead": luaRead = buf.getRvalue();
                     break;
                 case "cdViewerInclude": cdViewerInclude = buf.getRvalue();
+                    break;
+                case "cdviewerpath": cdviewerpath = buf.getRvalue();
                     break;
             }
         }
@@ -651,7 +675,7 @@ public class SettingBitServerBean implements UserDao {
         LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start dateBaseFactoryReset()");
     }
 
-    public void deleteDicomPeriod() throws IOException {
+    public void deleteDicomPeriod() {
 
     }
 
@@ -765,6 +789,12 @@ public class SettingBitServerBean implements UserDao {
                 case "timerEnable": buf.setRvalue(timerEnable);
                     break;
                 case "cdViewerInclude": buf.setRvalue(cdViewerInclude);
+                    break;
+                case "networksetpathfile": buf.setRvalue(networksetpathfile);
+                    break;
+                case "firewallpathfile": buf.setRvalue(firewallpathfile);
+                    break;
+                case "cdviewerpath": buf.setRvalue(cdviewerpath);
                     break;
             }
             updateBitServiceResource(buf);

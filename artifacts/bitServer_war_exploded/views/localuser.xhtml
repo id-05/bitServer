@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent"
+      xmlns:p="http://primefaces.org/ui">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <h:form id="form">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
+                    <p:menuitem style="margin-right: 5px" value="Текущее задание" outcome="lucurtask" icon="pi pi-file" disabled="#{!localDashboard.currentUser.hasBlockStudy}"
+                                rendered="#{localDashboard.optSend == 'true'}"/>
+                    <p:menuitem style="margin-right: 5px" value="Мои описания" outcome="luresults" icon="pi pi-inbox" disabled="#{localDashboard.currentUser.role == 'onlyview'}"
+                                rendered="#{localDashboard.optSend == 'true'}"/>
+                    <p:menuitem style="margin-right: 5px" value="Правила по времени" rendered="false" outcome="scheduler" icon="pi pi-clock" disabled="#{localDashboard.currentUser.role == 'onlyview'}"/>
+                    <f:facet name="options">
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-user" disabled="true" value="Вы вошли как: #{localDashboard.currentUser.ruFamily} #{localDashboard.currentUser.ruName} #{localDashboard.currentUser.ruMiddleName}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+            <p:dialog id="userstat" showEffect="fade" modal="true" widgetVar="userstat" responsive="true">
+                <b:userstat/>
+            </p:dialog>
+
+        </h:form>
+
+        <div class="card">
+            <h:form>
+
+            </h:form>
+        </div>
+
+        <h:form id="db">
+
+            <p:dashboard id="board" model="#{statisticsBean.model}" style="margin: 10px" rendered="#{statisticsBean.showStat}">
+
+                <p:panel id="serverstatistics" header="Распределение по времени" style="width: 800px; height: 300px; margin-right: 10px" closable="true" >
+                    <p:lineChart id="chart1" model="#{statisticsBean.lineModel}" style="height:400px;"/>
+
+                    <f:facet name="options">
+                        <p:menu>
+                            <p:submenu label="Периоды">
+                                <p:menuitem value="Месяцы" icon="pi pi-calendar" actionListener="#{statisticsBean.setMounths}" update=":db:chart1"/>
+                                <p:menuitem value="Годы" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setYears}" update=":db:chart1"/>
+                            </p:submenu>
+                        </p:menu>
+                    </f:facet>
+
+                </p:panel>
+
+                <p:panel id="pieName" header="#{statisticsBean.diagramTitle}" style="width: 400px; height: 400px; margin-left: 10px; margin-right: 10px" closable="true">
+                    <p:pieChart id="pie1" model="#{statisticsBean.pieModality}" style="width: 100px; height: 500px;"/>
+
+                    <f:facet name="options">
+                        <p:menu>
+                            <p:submenu label="Диаграмма по">
+                                <p:menuitem value="Модальностям" icon="pi pi-calendar" actionListener="#{statisticsBean.setModaliti}" update=":db:pie1, :db:pieName"/>
+                                <p:menuitem value="Источникам" icon="pi pi-calendar-minus" actionListener="#{statisticsBean.setSource}" update=":db:pie1, :db:pieName"/>
+                            </p:submenu>
+                        </p:menu>
+                    </f:facet>
+                </p:panel>
+
+            </p:dashboard>
+
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>

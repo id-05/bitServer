@@ -133,7 +133,7 @@ public class StatisticsBean implements UserDao {
 
 
             }catch (Exception e){
-                System.out.println("error get state  = " + e.getMessage());
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": (Error during get state):"+ e.getMessage());
             }
 
             diagramTitle = "Распределение по модальностям";

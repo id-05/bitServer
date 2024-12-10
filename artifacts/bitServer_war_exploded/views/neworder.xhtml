@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b = "http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head>
+        <title>bitServer</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+    <style type="text/css">
+
+        body{
+
+        }
+
+        .fUp-content {
+            overflow: auto;
+            height: 400px;
+        }
+
+    </style>
+
+    <h:body>
+
+        <h:form id="remoteform">
+            <p:growl id="growlMessageId" showDetail="true" widgetVar="growlMessageId"/>
+            <div class="card">
+                <p:menubar>
+                    <p:menuitem style="margin-right: 5px" value="Назад" outcome="client" icon="pi pi-backward"/>
+                    <f:facet name="options">
+                        <div class="p-mr-2 p-as-center">
+                            <div class="p-d-flex">
+                                <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                            </div>
+                        </div>
+                    </f:facet>
+                </p:menubar>
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+        </h:form>
+
+        <h:form id="stepbystep">
+            <p:steps activeIndex="#{clientBean.activeStep}" styleClass="custom" readonly="false">
+                <p:menuitem value="Название исследования" url="#"/>
+                <p:menuitem value="Анамнез и дополнительная информация" url="#"/>
+                <p:menuitem value="Файлы исследования" url="#"/>
+                <p:menuitem value="Подтверждение" url="#"/>
+            </p:steps>
+
+            <p:card style="background-color: darkgray; margin-bottom: 2em; margin-top: 2em">
+                <p:commandButton value="Назад" actionListener="#{clientBean.onPreviewClick}" rendered="#{clientBean.skip}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
+                <p:commandButton value="Далее" actionListener="#{clientBean.onNextClick}" rendered="#{clientBean.skipNext}" style="margin-bottom: 10px; margin-left: 10px" update="stepbystep"/>
+
+                <div class="p-d-flex p-jc-center">
+
+                    <p:card rendered="#{clientBean.selectcard(0)}"  style="width: 700px">
+                        <f:facet name="title">
+                            Название исследования
+                        </f:facet>
+                        <p:inputText value="#{clientBean.currentStudyName}" style="width: 400px"/>
+                        <p>Укажите здесь название исследования. Если вы оставите поле пустым, то по умолчанию название назначится как "Название вашей организации" + "Время создания".
+                        Мы рекомендуем не менять такой принцип. Так же рекомендуем не указывать здесь персональные данные пациентов и т.п. информацию.</p>
+                    </p:card>
+
+                    <p:card rendered="#{clientBean.selectcard(1)}" style="width: 700px">
+                        <f:facet name="title">
+                            Анамнез и дополнительная информация
+                        </f:facet>
+                        <div class="p-d-flex p-flex-column">
+                            <div class="p-mb-2" style="margin-left: 10px">Укажите здесь например:</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- причина обращения за обследованием</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- текущее состояние пациента</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- информация об удаленных у пациента органах</div>
+                            <div class="p-mb-2" style="margin-left: 10px">- другая важная информация</div>
+                        </div>
+                        <p:inputTextarea value="#{clientBean.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
+                                         autoResize="false"/>
+                    </p:card>
+
+                    <p:card rendered="#{clientBean.selectcard(2)}">
+                        <f:facet name="title">
+                            Файлы исследования
+                        </f:facet>
+                        <p:outputPanel showEffect="fade" modal="true">
+                        <p:fileUpload  mode="advanced"
+                                       widgetVar="fUpload"
+                                       listener="#{clientBean.handleFileUpload}"
+                                       sequential="true"
+                                       styleClass="fUp-content"
+                                       auto="true"
+                                       dragDropSupport="true"
+                                       sizeLimit="10000000"
+                                       label="Выбрать"
+                                       uploadLabel="Зазрузить"
+                                       cancelLabel="Отмена"
+                                       multiple="true"
+                                       invalidFileMessage="Можно загрузить только файлы с расширением '.dcm'"
+                                       allowTypes="/(\.|\/)(dcm)$/"/>
+                            <f:facet name="options">
+                                <div class="p-mr-2 p-as-center">
+                                    <div class="p-d-flex">
+                                        <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                    </div>
+                                </div>
+                            </f:facet>
+                        </p:outputPanel>
+
+                        <div style="width: 40rem" >
+                            <div class="p-text-bold">
+                                <p:outputLabel id="count">Всего выбрано: #{clientBean.uploadCount}
+                                    <p:commandButton icon="pi pi-trash"  actionListener="#{clientBean.clearfileList()}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                                </p:outputLabel>
+
+                            </div>
+
+                            <br/>
+                        <p:outputLabel>Для загрузки данных из папки, перетащите папку на прямоугольник в центре окна!
+                            Используйте этот способ, для корректной загрузки всех вложенных каталогов.</p:outputLabel>
+                        </div>
+                    </p:card>
+
+                    <p:card rendered="#{clientBean.selectcard(3)}" style="margin-bottom: 2em; margin-top: 4em">
+                        <p:panel header="Подтверждение" style="width: 800px">
+                            <p class="p-m-0">
+                               Нажимая кнопку подтвердить - вы соглашаетесь с условиями работы платформы.
+                               Прикрепленные вами данные, будут обезличены и отправлены на сервер для описания.
+                            </p>
+                            <p:commandButton style="margin-top: 40px" value="Подтвердить"
+                                             onclick="PF('statusDialog').show()"
+                                             process="@this"
+                                             actionListener="#{clientBean.aprove()}"/>
+                        </p:panel>
+                        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
+                            <p:graphicImage value="/resources/images/upload.gif" />
+                        </p:dialog>
+                    </p:card>
+                </div>
+
+            </p:card>
+        </h:form>
+
+    </h:body>
+</f:view>
+
+</html>
