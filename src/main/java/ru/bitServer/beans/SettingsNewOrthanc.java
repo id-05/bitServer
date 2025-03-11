@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import ru.bitServer.dao.BitServerResources;
 import ru.bitServer.dao.BitServerUser;
@@ -74,9 +76,59 @@ public class SettingsNewOrthanc implements UserDao, DataAction{
         }
     }
 
+    public void echoTestClick(){
+        JsonObject query = new JsonObject();
+        query.addProperty("AET", selectedDicomModality.getDicomTitle());
+        query.addProperty("CheckFind", false);
+        query.addProperty("Host", selectedDicomModality.getIp());
+        query.addProperty("Manufacturer", selectedDicomModality.getDicomProperty());
+        query.addProperty("Port", selectedDicomModality.getDicomPort());
+        query.addProperty("Timeout", 100);
+        StringBuilder sb;
+        sb = connection.makePostConnectionAndStringBuilder("/tools/dicom-echo", query.toString());
+        if(sb!=null) {
+            showMessage("Сообщение:","Echo-тест прошёл успешно!",info);
+        }else{
+            showMessage("Сообщение:","Устройство не ответило!",error);
+        }
+        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
+    }
+
+    public StreamedContent downloadSnapshot(OrthancSettingSnapshot snapshot) {
+        JsonObject bufJson = selectedSnapshot.getSettingJson();
+        JsonSettings bufSettings = new JsonSettings(snapshot.getSettingJson().toString());
+        InputStream inputStream = new ByteArrayInputStream(bufJson.toString().replace(",",",\n").getBytes(StandardCharsets.UTF_8));
+        return DefaultStreamedContent.builder()
+                .name(bufSettings.getOrthancName()+"_"+selectedSnapshot.getDate()+"_orthanc.json")
+                .contentType("image/jpg")
+                .stream(() -> inputStream)
+                .build();
+    }
+
+    public void applySnapshot() throws IOException {
+        saveJsonSettingtToFile(selectedSnapshot.getSettingJson());
+        loadConfig();
+        showMessage("Внимание", "Настройки применены!",FacesMessage.SEVERITY_INFO);
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" apply snapshot settings! Snapshot date: "+selectedSnapshot.getDate());
+        PrimeFaces.current().ajax().update(":form:accordion:dt-users");
+        PrimeFaces.current().ajax().update(":form:accordion:dt-modaliti");
+    }
+
+    public void delSnapshot(){
+        LogTool.getLogger().info("Admin: "+currentUser.getSignature()+" dell snapshot settings! Snapshot date: "+selectedSnapshot.getDate());
+        deleteFromBitServerTable(Long.parseLong(selectedSnapshot.getId()));
+        snapShots = getAllOrthancSnapshots();
+        PrimeFaces.current().ajax().update(":form:dt-snap:");
+    }
+
     public void  resetServer(){
         showMessage("Внимание","Сервис Orthanc, будет перезагружен!",FacesMessage.SEVERITY_INFO);
         connection.makePostConnectionAndStringBuilder("/tools/reset","" );
+    }
+
+    public void restoreBackup(){
+        init();
+        showMessage("Сообщение","Все изменения отменены!", info);
     }
 
 

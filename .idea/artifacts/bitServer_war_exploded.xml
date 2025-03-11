@@ -86,6 +86,7 @@
           <element id="library" level="project" name="Maven: org.jberet:jberet-se:2.2.1.Final" />
           <element id="library" level="project" name="Maven: javax.annotation:javax.annotation-api:1.2" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:4.0.1" />
+          <element id="library" level="project" name="dicom-20120929" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="bitServer/web/Web" />

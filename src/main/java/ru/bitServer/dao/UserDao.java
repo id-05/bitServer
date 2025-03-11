@@ -1,7 +1,6 @@
 package ru.bitServer.dao;
 
 import com.google.gson.JsonObject;
-//import org.apache.commons.io.IOUtils;
 import org.apache.commons.compress.utils.IOUtils;
 import ru.bitServer.dicom.OrthancSerie;
 import ru.bitServer.service.TimetableTask;
@@ -34,6 +33,41 @@ public interface UserDao {
         props.setProperty("password", "orthanc");
         return DriverManager.getConnection(url, props);
     }
+
+    default BitServerStudy parcerStudyFromCFIND(String buf) throws ParseException {
+        BitServerStudy resultStudy = new BitServerStudy();
+        String studyDate = null;
+        String studyDescription = null;
+        String patientName = null;
+        String patientBirthDate = null;
+        String patientID = null;
+        String patientSex = null;
+        String modality = null;
+
+//        (0x0008,0x0005) SpecificCharacterSet VR=<CS> VL=<0xa> <ISO_IR 100>
+//                (0x0008,0x0018) SOPInstanceUID VR=<UI> VL=<0x3a> <1.2.840.113619.2.408.14196467.855406.15416.1604274827.329 >
+//                (0x0008,0x0020) StudyDate VR=<DA> VL=<0x8> <20230830>
+//                (0x0008,0x0052) QueryRetrieveLevel VR=<CS> VL=<0x6> <STUDY >
+//                (0x0008,0x0054) RetrieveAETitle VR=<AE> VL=<0x8> <ORTHANC >
+//                (0x0008,0x1030) StudyDescription VR=<LO> VL=<0x4> <HEAD>
+//                (0x0010,0x0010) PatientName VR=<PN> VL=<0x6> <test2 >
+//                (0x0010,0x0020) PatientID VR=<LO> VL=<0x4> <9164>
+//                (0x0010,0x0030) PatientBirthDate VR=<DA> VL=<0x8> <19970923>
+//                (0x0010,0x0040) PatientSex VR=<CS> VL=<0x2> <F >
+//                (0x0020,0x000d) StudyInstanceUID VR=<UI> VL=<0x3c> <1.2.840.113619.6.408.340175501651765976559840422134033351654>
+        String[] strings = buf.toString().split("\n");
+        for(String bufstr:strings){
+            if(bufstr.contains("StudyDate")){studyDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("StudyDescription")){studyDescription = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("PatientName")){patientName = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("PatientID")){patientID = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("PatientBirthDate")){patientBirthDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("StudyDate")){patientSex = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("Modality")){modality = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+        }
+        return new BitServerStudy(studyDate, studyDescription, patientName, patientBirthDate, patientID, patientSex, modality);
+    }
+
 
     default void updateUser(BitServerUser user) {
         try {

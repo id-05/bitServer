@@ -50,6 +50,7 @@ public class DateBaseBean implements UserDao {
 
     @PostConstruct
     public void init() {
+        System.out.println("init");
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
@@ -120,6 +121,8 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("cdViewerInclude")){saveBitServiceResource(new BitServerResources("cdViewerInclude","true")); sb.append("cdViewerInclude;").append("\n");}
         if(!bufResourceName.contains("firewallpathfile")){saveBitServiceResource(new BitServerResources("firewallpathfile","/result")); sb.append("firewallpathfile").append("\n");}
         if(!bufResourceName.contains("cdviewerpath")){saveBitServiceResource(new BitServerResources("cdviewerpath","/result")); sb.append("cdviewerpath").append("\n");}
+        if(!bufResourceName.contains("logpathorthanc")){saveBitServiceResource(new BitServerResources("logpathorthanc","/var/log/orthanc")); sb.append("logpathorthanc").append("\n");}
+        if(!bufResourceName.contains("QueueGetType")){saveBitServiceResource(new BitServerResources("QueueGetType","false")); sb.append("QueueGetType;").append("\n");}
         if(sb.toString().length()>0){
             showMessage("Внимание!","Были добавлены: "+ sb,FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");

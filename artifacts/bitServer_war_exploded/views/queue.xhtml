@@ -162,6 +162,13 @@
                                              icon="pi pi-upload" styleClass="ui-button-success" />
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
 
+                            <p:commandButton id="test"
+                                             rendered="false"
+                                             update=":seachform:addDialog"
+                                             style="margin-right: 10px"
+                                             actionListener="#{queueBean.testnewdicomqueue}"
+                                             icon="pi pi-upload" styleClass="ui-button-success" />
+
                             <p:dialog modal="true" widgetVar="statusDialog2" draggable="false" closable="false">
                                 <h1 class="p-text-center">
                                     <h:outputLabel for="txt_count" value="Выполненно:  "/>

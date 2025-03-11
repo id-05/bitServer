@@ -1,6 +1,7 @@
 package ru.bitServer.dao;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,6 +36,8 @@ public class BitServerStudy implements Serializable {
     private String InstitutionName;
     private String StationName;
     private String AETSource;
+
+    SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
     public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
 
@@ -110,19 +113,23 @@ public class BitServerStudy implements Serializable {
         this.sdate = sdate;
     }
 
-    public BitServerStudy(String sid, String shortid, Date sdate, String patientname){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
-//        if(sid.length()>59){
-//            this.sid = sid.substring(0,59);
-//        }else{
-            this.sid = sid;
-        //}
-//        if(shortid.length()>63){
-//            this.shortid = shortid.substring(0,63);
-//        }else{
-            this.shortid = shortid;
-        //}
+    public BitServerStudy(String sid, String shortid, Date sdate, String patientname){
+        this.sid = sid;
+        this.shortid = shortid;
         this.sdate = sdate;
         this.PatientName = patientname;
+    }
+
+    public BitServerStudy(String studyDate, String studyDescription, String patientName, String patientBirthDate, String patientID, String patientSex, String modality) throws ParseException {
+        this.sdate = FORMAT.parse(studyDate);
+        this.sdescription = studyDescription;
+        this.PatientName = patientName;
+        this.PatientBirthDate = FORMAT.parse(patientBirthDate);
+        this.patientBirthDateStr = patientBirthDate;
+        this.PatientSex = patientSex;
+        this.sid = patientID;
+        this.shortid = patientID;
+        this.modality = modality;
     }
 
     public String getPreview() {

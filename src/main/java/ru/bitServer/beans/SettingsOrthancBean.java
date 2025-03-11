@@ -255,6 +255,7 @@ public class SettingsOrthancBean implements UserDao, DataAction {
         query.addProperty("Timeout", 100);
         StringBuilder sb;
         sb = connection.makePostConnectionAndStringBuilder("/tools/dicom-echo", query.toString());
+        System.out.println(sb.toString());
         if(sb!=null) {
             showMessage("Сообщение:","Echo-тест прошёл успешно!",info);
         }else{

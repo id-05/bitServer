@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="dicom-20120929">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/dicom-20120929.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/dicom-20120929.jar!/" />
+    </SOURCES>
+  </library>
+</component>

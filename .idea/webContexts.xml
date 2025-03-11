@@ -11,6 +11,7 @@
         <entry key="file://$PROJECT_DIR$/webapp/views/settings_bitserver.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
         <entry key="file://$PROJECT_DIR$/webapp/views/settings_datebase.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
         <entry key="file://$PROJECT_DIR$/webapp/views/settings_network.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
+        <entry key="file://$PROJECT_DIR$/webapp/views/settings_neworthanc.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
         <entry key="file://$PROJECT_DIR$/webapp/views/settings_orthanc.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
         <entry key="file://$PROJECT_DIR$/webapp/views/tool_tag_editor.xhtml" value="file://$PROJECT_DIR$/webapp/views" />
       </map>

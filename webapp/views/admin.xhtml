@@ -38,12 +38,17 @@
 
                     <p:menuitem style="margin-right: 5px" value="Редактор базы данных" rendered="true" outcome="settings_datebase" icon="pi pi-table"/>
                     <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
+
                     <p:submenu label="Управление сервером" icon="pi power-off">
                         <p:menuitem style="margin-right: 5px" value="Список задач" rendered="true" outcome="jobslist" ajax="false" icon="pi pi-list" process="@this"/>
                         <p:menuitem style="margin-right: 5px" value="Перезагрузка" actionListener="#{settingBitServerBean.powerReboot()}" icon="pi pi-refresh" process="@this" update="growlMessageId"/>
                         <p:menuitem style="margin-right: 5px" value="Выключение" actionListener="#{settingBitServerBean.powerShotdown()}" icon="pi pi-power-off" process="@this" update="growlMessageId"/>
                     </p:submenu>
-                    <p:menuitem style="margin-right: 5px" value="LOG" outcome="logpage" icon="pi pi-info-circle"/>
+
+                    <p:submenu label="LOG" icon="pi power-off">
+                        <p:menuitem style="margin-right: 5px" value="SERVER LOG" outcome="logpage" icon="pi pi-info-circle"/>
+                        <p:menuitem style="margin-right: 5px" value="ORTHANC LOG" outcome="logorthanc" icon="pi pi-info-circle"/>
+                    </p:submenu>
 
                     <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{authoriseBean.currentUserTheme}" rendered="false">
                         <p:menuitem value="saga" actionListener="#{authoriseBean.setTheme('saga')}" process="@this"/>

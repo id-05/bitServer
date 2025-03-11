@@ -31,7 +31,7 @@ public class MainBean implements UserDao, DataAction {
 
     public static OrthancServer mainServer;
     public static String pathToSaveResult;
-    public String periodUpdate = "2";
+    //public String periodUpdate = "2";
     public DashboardModel model;
     public String selectTheme;
     public ArrayList<String> themeList;
@@ -47,7 +47,6 @@ public class MainBean implements UserDao, DataAction {
 
     public static final String user = "orthanc";
     public static final String password = "orthanc";
-    //public static final String url = "jdbc:postgresql://192.168.1.58:5432/orthanc";
     public static final String url = "jdbc:postgresql://127.0.0.1:5432/orthanc";
 
     boolean showStat;
@@ -102,8 +101,8 @@ public class MainBean implements UserDao, DataAction {
                     case "pathtoresultfile":
                         pathToSaveResult = buf.getRvalue();
                         break;
-                    case "PeriodUpdate": periodUpdate = buf.getRvalue();
-                        break;
+//                    case "PeriodUpdate": periodUpdate = buf.getRvalue();
+//                        break;
                     case "showStat": showStat = buf.getRvalue().equals("true");
                         break;
                 }
@@ -114,11 +113,11 @@ public class MainBean implements UserDao, DataAction {
         themeList = themeListinit();
         selectTheme = themeList.get(1);
 
-        try {
-            periodUpdate = getBitServerResource("PeriodUpdate").getRvalue();
-        }catch (Exception e){
-            saveBitServiceResource(new BitServerResources("PeriodUpdate","2"));
-        }
+//        try {
+//            periodUpdate = getBitServerResource("PeriodUpdate").getRvalue();
+//        }catch (Exception e){
+//            saveBitServiceResource(new BitServerResources("PeriodUpdate","2"));
+//        }
 
         try {
             if(getBitServerResource("deleteBufFileAfter").getRvalue().equals("")){

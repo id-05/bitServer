@@ -11,6 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
+import com.pixelmed.dicom.*;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -42,10 +43,18 @@ import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
+
+import com.pixelmed.dicom.AttributeList;
+import com.pixelmed.dicom.SOPClass;
+import com.pixelmed.dicom.SpecificCharacterSet;
+import com.pixelmed.dicom.TagFromName;
+import com.pixelmed.network.FindSOPClassSCU;
+import com.pixelmed.network.IdentifierHandler;
 
 import static ru.bitServer.beans.MainBean.*;
 
@@ -99,6 +108,8 @@ public class QueueBean implements UserDao, DataAction {
     private boolean globalFilterOnly;
     ArrayList<String> recorderList = new ArrayList<>();
     String selectedRecorder = null;
+
+    boolean queueGetType = false;
 
     public String getSelectedRecorder() {
         return selectedRecorder;
@@ -468,9 +479,72 @@ public class QueueBean implements UserDao, DataAction {
                     break;
                 case "ShowHelp": showHelp = buf.getRvalue();
                     break;
+                case "QueueGetType": queueGetType = buf.getRvalue().equals("true");
+                    break;
             }
         }
         dataoutput();
+    }
+
+    public void testnewdicomqueue() {
+        System.out.println("test");
+        try {
+            // use the default character set for VR encoding - override this as necessary
+            SpecificCharacterSet specificCharacterSet = new SpecificCharacterSet((String[])null);
+            AttributeList identifier = new AttributeList();
+            //build the attributes that you would like to retrieve as well as passing in any search criteria
+            identifier.putNewAttribute(TagFromName.QueryRetrieveLevel).addValue("STUDY"); //specific query root
+            identifier.putNewAttribute(TagFromName.PatientName);//,specificCharacterSet).addValue("Bowen*");
+            identifier.putNewAttribute(TagFromName.PatientID);//,specificCharacterSet);
+            identifier.putNewAttribute(TagFromName.PatientBirthDate);
+            identifier.putNewAttribute(TagFromName.PatientSex);
+            identifier.putNewAttribute(TagFromName.StudyInstanceUID);
+            identifier.putNewAttribute(TagFromName.SOPInstanceUID);
+            identifier.putNewAttribute(TagFromName.StudyDescription);
+            identifier.putNewAttribute(TagFromName.StudyDate);
+            OurCustomFindIdentifierHandler cFind =  new OurCustomFindIdentifierHandler();
+
+            //retrieve all studies belonging to patient with name 'Bowen'
+            new FindSOPClassSCU("localhost",
+                    4242,
+                    "DS4TB",
+                    "DS4TB",
+                    SOPClass.StudyRootQueryRetrieveInformationModelFind,identifier,
+                    cFind,0);
+
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage()); // in real life, do something about this exception
+        }
+    }
+
+    class OurCustomFindIdentifierHandler extends IdentifierHandler implements UserDao {
+        List<BitServerStudy> bitServerStudyList = new ArrayList<>();
+
+        public List<BitServerStudy> getBitServerStudyList() {
+            return bitServerStudyList;
+        }
+
+        public void setBitServerStudyList(List<BitServerStudy> bitServerStudyList) {
+            this.bitServerStudyList = bitServerStudyList;
+        }
+
+        OurCustomFindIdentifierHandler(){
+
+        }
+        OurCustomFindIdentifierHandler(List<BitServerStudy> bitServerStudyList){
+            this.bitServerStudyList = bitServerStudyList;
+            bitServerStudyList.clear();
+        }
+        @Override
+        public void doSomethingWithIdentifier(AttributeList attributeListForFindResult) throws DicomException {
+            //System.out.println("Matched result:" + attributeListForFindResult);
+            try {
+                bitServerStudyList.add(parcerStudyFromCFIND(attributeListForFindResult.toString()));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void toggleGlobalFilter() {
@@ -503,7 +577,12 @@ public class QueueBean implements UserDao, DataAction {
 
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
-        visibleStudiesList = getStudyFromOrthanc(typeSeach,filtrDate,firstdate,seconddate, "all");
+        //queueGetType = true;
+        if(queueGetType){
+            visibleStudiesList = getStudyFromCFINDRequest(filtrDate, firstdate, seconddate);
+        }else {
+            visibleStudiesList = getStudyFromOrthanc(typeSeach, filtrDate, firstdate, seconddate, "all");
+        }
         timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
 
         PrimeFaces.current().ajax().update(":seachform:");
@@ -527,6 +606,90 @@ public class QueueBean implements UserDao, DataAction {
         if( (getBitServerResource("debug").getRvalue().equals("false"))|(getBitServerResource("debug") == null) ){
             sortListener();
         }
+    }
+
+    public List<BitServerStudy> getStudyFromCFINDRequest(String dateSeachType, Date firstdate, Date seconddate) {
+        //List<BitServerStudy> bitServerStudies = new ArrayList<>();
+        Calendar c;
+        switch (dateSeachType) {
+            case "today":
+                firstdate = new Date();
+                seconddate = firstdate;
+                break;
+            case "week":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, -7);
+                firstdate = c.getTime();
+                break;
+            case "mounth":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.MONTH, -1);
+                firstdate = c.getTime();
+                break;
+            case "year":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.YEAR, -1);
+                firstdate = c.getTime();
+                break;
+            case "yesterday":
+                seconddate = new Date();
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, -1);
+                firstdate = c.getTime();
+                seconddate = firstdate;
+                break;
+            case "targetdate":
+                c = Calendar.getInstance();
+                c.setTime(firstdate);
+                c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+            case "range":
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+        }
+
+        OurCustomFindIdentifierHandler cFind = null;
+        try {
+            // use the default character set for VR encoding - override this as necessary
+            SpecificCharacterSet specificCharacterSet = new SpecificCharacterSet((String[]) null);
+            AttributeList identifier = new AttributeList();
+            //build the attributes that you would like to retrieve as well as passing in any search criteria
+            identifier.putNewAttribute(TagFromName.QueryRetrieveLevel).addValue("STUDY"); //specific query root
+            identifier.putNewAttribute(TagFromName.PatientName);//,specificCharacterSet).addValue("Bowen*");
+            identifier.putNewAttribute(TagFromName.PatientID);//,specificCharacterSet);
+            identifier.putNewAttribute(TagFromName.PatientBirthDate);
+            identifier.putNewAttribute(TagFromName.PatientSex);
+            identifier.putNewAttribute(TagFromName.StudyInstanceUID);
+            identifier.putNewAttribute(TagFromName.SOPInstanceUID);
+            identifier.putNewAttribute(TagFromName.StudyDescription);
+            identifier.putNewAttribute(TagFromName.StudyDate);
+            identifier.putNewAttribute(TagFromName.Modality);
+            cFind = new OurCustomFindIdentifierHandler();
+
+            //retrieve all studies belonging to patient with name 'Bowen'
+            new FindSOPClassSCU("localhost",
+                    4242,
+                    "ORTHANC",
+                    "ORTHANC",
+                    SOPClass.StudyRootQueryRetrieveInformationModelFind, identifier,
+                    cFind, 0);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // in real life, do something about this exception
+        }
+
+        return cFind.getBitServerStudyList();
     }
 
     public void sortListener(){
