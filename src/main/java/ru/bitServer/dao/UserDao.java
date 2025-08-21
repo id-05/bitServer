@@ -37,7 +37,6 @@ public interface UserDao {
     }
 
     default BitServerStudy parcerStudyFromCFIND(String buf) throws ParseException {
-        BitServerStudy resultStudy = new BitServerStudy();
         String studyDate = null;
         String studyDescription = null;
         String patientName = null;
@@ -57,7 +56,7 @@ public interface UserDao {
 //                (0x0010,0x0030) PatientBirthDate VR=<DA> VL=<0x8> <19970923>
 //                (0x0010,0x0040) PatientSex VR=<CS> VL=<0x2> <F >
 //                (0x0020,0x000d) StudyInstanceUID VR=<UI> VL=<0x3c> <1.2.840.113619.6.408.340175501651765976559840422134033351654>
-        String[] strings = buf.toString().split("\n");
+        String[] strings = buf.split("\n");
         for(String bufstr:strings){
             if(bufstr.contains("StudyDate")){studyDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("StudyDescription")){studyDescription = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
@@ -634,23 +633,12 @@ public interface UserDao {
             }else{
                 resultSQL = staticSQL + " WHERE tag4.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
             }
-//            if(!source.equals("all")){
-//                resultSQL = resultSQL + " AND tag12.value = '"+source+"'";
-//            }
+
             ResultSet rs = statement.executeQuery(resultSQL);
 
 
             while (rs.next()) {
 
-                //               if(getBitServerResource("debug").getRvalue().equals("true")){
-//                    LogTool.getLogger().debug(this.getClass().getSimpleName()+":"+rs.getString(2)+"/"+
-//                            rs.getString(4)+"/"+ rs.getString(9)+"/"+ getDateFromText(rs.getString(7))+"/"+
-//                            rs.getString(10)+"/"+rs.getString(3)+"/"+getDateFromText(rs.getString(5))+"/"+
-//                            rs.getString(6)+"/"+0+"/"+ rs.getString(11)+"/"+ rs.getString(12)+"/"+
-//                            rs.getString(13)+"/"+ rs.getString(14));
-//                }
-//                BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
-//                String Manufacturer, String InstitutionName, String StationName, String AetSource)
                 String bufInstitution = "";
                 String bufStation = "";
                 String bufSource = "";
@@ -672,7 +660,6 @@ public interface UserDao {
                         rs.getString(6),
                         rs.getString(2),
                         getDateFromText(rs.getString(4)),
-
                         "",
                         0,
                         "",
@@ -1016,13 +1003,7 @@ public interface UserDao {
             }
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
-//                BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
-//                String Manufacturer, String InstitutionName, String StationName, String AetSource)
-//                if(rs.getString(7).equals("")){
-//                    buf = "Manual upload";
-//                }else{
                     buf = rs.getString(7);
-         //       }
                 if(selectedModalitiName.contains(buf)) {
                     BitServerStudy bufStudy = new BitServerStudy(
                             rs.getString(1),
@@ -1047,6 +1028,4 @@ public interface UserDao {
         }
         return resultList;
     }
-
-
 }
