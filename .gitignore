@@ -1,5 +1,5 @@
 /artifacts/bitServer_war_exploded
 /artifacts/bitServer/bitServer.war
+/out/artifacts/bitServer_war_exploded
+/out/artifacts/bitServer/bitServer.war
 /dop
-
-git filter-branch --index-filter 'git rm --cached --ignore-unmatch /artifacts/bitServer/' --tag-name-filter cat -- --all
