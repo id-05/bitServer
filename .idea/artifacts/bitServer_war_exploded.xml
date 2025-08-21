@@ -50,7 +50,6 @@
           <element id="library" level="project" name="Maven: ca.uhn.hapi:hapi-structures-v26:1.2" />
           <element id="library" level="project" name="Maven: javax.mail:mail:1.4.1" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
-          <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.0" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-core:5.27.0" />
           <element id="library" level="project" name="Maven: org.dcm4che:dcm4che-dict:5.27.0" />
           <element id="library" level="project" name="Maven: org.dcm4che.tool:dcm4che-tool-jpg2dcm:5.23.3" />
@@ -75,7 +74,6 @@
           <element id="library" level="project" name="Maven: com.google.guava:failureaccess:1.0.1" />
           <element id="library" level="project" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" />
           <element id="library" level="project" name="Maven: com.google.code.findbugs:jsr305:3.0.2" />
-          <element id="library" level="project" name="Maven: org.checkerframework:checker-qual:3.33.0" />
           <element id="library" level="project" name="Maven: com.google.errorprone:error_prone_annotations:2.18.0" />
           <element id="library" level="project" name="Maven: com.google.j2objc:j2objc-annotations:2.8" />
           <element id="library" level="project" name="Maven: org.jberet.test-apps:postConstruct:2.2.1.Final" />
@@ -87,6 +85,12 @@
           <element id="library" level="project" name="Maven: javax.annotation:javax.annotation-api:1.2" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:4.0.1" />
           <element id="library" level="project" name="dicom-20120929" />
+          <element id="library" level="project" name="Maven: com.itextpdf:itextpdf:5.5.10" />
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.7.5" />
+          <element id="library" level="project" name="Maven: org.checkerframework:checker-qual:3.48.3" />
+          <element id="library" level="project" name="args4j-2.0.8" />
+          <element id="library" level="project" name="com4j-2" />
+          <element id="library" level="project" name="Java EE 6-Java EE 6" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="bitServer/web/Web" />

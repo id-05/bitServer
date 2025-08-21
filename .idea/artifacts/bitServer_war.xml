@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="war" build-on-make="true" name="bitServer:war">
+  <artifact type="war" name="bitServer:war">
     <output-path>$PROJECT_DIR$/artifacts/bitServer</output-path>
     <root id="archive" name="bitServer.war">
       <element id="artifact" artifact-name="bitServer:war exploded" />

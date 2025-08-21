@@ -21,6 +21,7 @@ public class TimersLauncher implements UserDao, Runnable {
     @Override
     public void run() {
         tasks = getAllTasks();
+        //LogTool.getLogger().info(this.getClass().getSimpleName()+":TimersLauncher size = "+tasks.size());
         connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
         StringBuilder sb;
         for (TimetableTask bufTask:tasks){
@@ -29,21 +30,18 @@ public class TimersLauncher implements UserDao, Runnable {
                 switch (bufTask.getAction()) {
                     case "send":
                         LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Start send task, info: source: " + bufTask.getSource() + " destination: " + bufTask.getDestination());
-                        System.out.println("Start send task, info: source: " + bufTask.getSource() + " destination: " + bufTask.getDestination());
                         //поиск всех записей соответствующих условию
                         try {
-                            visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModality(bufTask.getAltSource()));
+                            visibleStudiesList = getStudyFromOrthanc(0, "today", new Date(), new Date(), getAETbyNameModality(bufTask.getAltSource()),"","");
                         } catch (Exception e) {
                             LogTool.getLogger().error(this.getClass().getSimpleName() + ": Ошибка во время выполенения задания по расписанию getStudyFromOrthanc:" + e.getMessage());
                         }
                         LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Start send task, info: StudiesListSize: " + visibleStudiesList.size());
-                        System.out.println("Start send task, info: StudiesListSize: " + visibleStudiesList.size());
                         //отправка
                         for (BitServerStudy bufStudy : visibleStudiesList) {
                             try {
                                 sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + bufTask.getDestination() + "/store", bufStudy.getSid());
                                 LogTool.getLogger().info(this.getClass().getSimpleName() + ": Ответ на оптравку:" + sb.toString());
-                                System.out.println("Ответ на оптравку:" + sb.toString());
                             } catch (IOException e) {
                                 LogTool.getLogger().error(this.getClass().getSimpleName() + ": Ошибка во время выполенения задания по расписанию:" + e.getMessage());
                             }

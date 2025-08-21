@@ -2,6 +2,7 @@ package ru.bitServer.beans;
 
 import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.*;
+import ru.bitServer.service.Maindicomtags;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
@@ -18,11 +19,21 @@ import static ru.bitServer.beans.AuthoriseBean.showMessage;
 public class DateBaseBean implements UserDao {
 
     List<BitServerResources> listResources = new ArrayList<>();
+
+    List<Maindicomtags> listMaindicomtags = new ArrayList<>();
     BitServerResources selectedResource;
     BitServerStudy selectedStudy;
     BitServerUser currentUser;
     String currentUserId;
     boolean debug;
+
+    public List<Maindicomtags> getListMaindicomtags() {
+        return listMaindicomtags;
+    }
+
+    public void setListMaindicomtags(List<Maindicomtags> listMaindicomtags) {
+        this.listMaindicomtags = listMaindicomtags;
+    }
 
     public boolean isDebug() {
         return debug;
@@ -50,14 +61,16 @@ public class DateBaseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("init");
+        //System.out.println("init");
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         listResources = getAllBitServerResource();
+        //LogTool.getLogger().info("Получили данные из таблицы bitserver в колличестве: "+listResources.size());
+        //listMaindicomtags = getTableMaindicomtags();
         selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
-        debug = getBitServerResource("debug").getRvalue().equals("true");
+        debug = false;//getBitServerResource("debug").getRvalue().equals("true");
     }
 
     public void initNewResources(){
@@ -123,13 +136,25 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("cdviewerpath")){saveBitServiceResource(new BitServerResources("cdviewerpath","/result")); sb.append("cdviewerpath").append("\n");}
         if(!bufResourceName.contains("logpathorthanc")){saveBitServiceResource(new BitServerResources("logpathorthanc","/var/log/orthanc")); sb.append("logpathorthanc").append("\n");}
         if(!bufResourceName.contains("QueueGetType")){saveBitServiceResource(new BitServerResources("QueueGetType","false")); sb.append("QueueGetType;").append("\n");}
+        if(!bufResourceName.contains("CT")){saveBitServiceResource(new BitServerResources("CT","CT")); sb.append("CT;").append("\n");}
+        if(!bufResourceName.contains("MR")){saveBitServiceResource(new BitServerResources("MR","MR")); sb.append("MR;").append("\n");}
+        if(!bufResourceName.contains("DX")){saveBitServiceResource(new BitServerResources("DX","DX")); sb.append("DX;").append("\n");}
+        if(!bufResourceName.contains("CR")){saveBitServiceResource(new BitServerResources("CR","CR")); sb.append("CR;").append("\n");}
+        if(!bufResourceName.contains("MG")){saveBitServiceResource(new BitServerResources("MG","MG")); sb.append("MG;").append("\n");}
+        if(!bufResourceName.contains("XA")){saveBitServiceResource(new BitServerResources("XA","XA")); sb.append("XA;").append("\n");}
+        if(!bufResourceName.contains("US")){saveBitServiceResource(new BitServerResources("US","US")); sb.append("US;").append("\n");}
+        if(!bufResourceName.contains("RF")){saveBitServiceResource(new BitServerResources("RF","RF")); sb.append("RF;").append("\n");}
+        if(!bufResourceName.contains("worklistsamplefile")){saveBitServiceResource(new BitServerResources("worklistsamplefile","/dataimage/sampleworklist")); sb.append("worklistsamplefile;").append("\n");}
+        if(!bufResourceName.contains("FontForPdfFilePath")){saveBitServiceResource(new BitServerResources("FontForPdfFilePath","/dataimage/font/ArialRegular.ttf")); sb.append("FontForPdfFilePath;").append("\n");}
         if(sb.toString().length()>0){
             showMessage("Внимание!","Были добавлены: "+ sb,FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");
         }else{
             showMessage("Внимание!","В таблице есть все актуальный параметры!",FacesMessage.SEVERITY_INFO);
         }
+        PrimeFaces.current().ajax().update(":form:accord:dt-resources");
         PrimeFaces.current().ajax().update(":form:growl2");
+
     }
 
     public void addNewResource(){

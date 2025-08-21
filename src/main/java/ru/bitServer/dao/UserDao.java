@@ -3,6 +3,8 @@ package ru.bitServer.dao;
 import com.google.gson.JsonObject;
 import org.apache.commons.compress.utils.IOUtils;
 import ru.bitServer.dicom.OrthancSerie;
+import ru.bitServer.service.Maindicomtags;
+import ru.bitServer.service.SourceDevice;
 import ru.bitServer.service.TimetableTask;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
@@ -373,6 +375,24 @@ public interface UserDao {
         return resultList;
     }
 
+    default List<Maindicomtags> getTableMaindicomtags() {
+        List<Maindicomtags> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String resultSQL = "SELECT * FROM maindicomtags";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+                Maindicomtags bufResource = new Maindicomtags(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+                resultList.add(bufResource);
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultList;
+    }
+
     default void updateBitServiceResource(BitServerResources bitServerResources) {
         try {
             Connection conn = getConnection();
@@ -504,7 +524,7 @@ public interface UserDao {
         }
     }
 
-    default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String source) {
+    default List<BitServerStudy> getStudyFromOrthanc(int state, String dateSeachType, Date firstdate, Date seconddate, String colInstitution, String colStation, String colSource) {
         List<BitServerStudy> resultList = new ArrayList<>();
         Calendar c;
         switch (dateSeachType){
@@ -557,8 +577,41 @@ public interface UserDao {
         try {
             Connection conn = getConnection();
             String resultSQL;
+            ArrayList<String> argList = new ArrayList<>();
+
+            String colInstitutionBuf1 = "";
+            String colInstitutionBuf2 = "";
+            if(colInstitution.equals("true")){
+                argList.add("colInstitution");
+                colInstitutionBuf1 = ",tag7.value";
+                colInstitutionBuf2 = " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '128'";  //InstitutionName
+            }
+
+            String colStationBuf1 = "";
+            String colStationBuf2 = "";
+            if(colStation.equals("true")){
+                argList.add("colStation");
+                colStationBuf1 = ",tag8.value";
+                colStationBuf2 = " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '4112'" ;   //StationName;
+            }
+
+            String colSourceBuf1 = "";
+            String colSourceBuf2 = "";
+            if(colSource.equals("true")){
+                argList.add("colSource");
+                colSourceBuf1 = ",tag9.value";
+                colSourceBuf2 = " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" ;  //Manufacturer
+            }
+
+
+
+
             String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value, tag2.value," +
-                    "tag3.value, tag4.value, tag5.value, tag6.value, tag7.value FROM patientrecyclingorder" +
+                    "tag3.value, tag4.value, tag5.value, tag6.value " +
+                    colInstitutionBuf1 +
+                    colStationBuf1 +
+                    colSourceBuf1 +
+                    " FROM patientrecyclingorder" +
                     " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
                     " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
                     " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
@@ -568,16 +621,14 @@ public interface UserDao {
                     " JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '8' AND tag4.tagelement = '32'" +   //STUDY DATE
                     " JOIN maindicomtags AS tag5 ON tag5.id = part2.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '96'" +   //MODALITY
                     " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '4144'" +//DESCRIPTION
-                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '128'";
+                    colInstitutionBuf2 +
+                    colStationBuf2 +
+                    colSourceBuf2 +
+                    " JOIN bitserver AS tag10 on tag10.rvalue = tag5.value"; //source
 //                    " JOIN maindicomtags AS tag8 ON tag8.id = part1.internalid AND tag8.taggroup = '16' AND tag8.tagelement = '64'" +  //SEX
-//                    " JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '128'" +  //InstitutionName
-//                    " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
-//                    " JOIN maindicomtags AS tag10 ON tag10.id = part1.internalid AND tag10.taggroup = '8' AND tag10.tagelement = '128'" +  //InstitutionName
-//                    " JOIN maindicomtags AS tag11 ON tag11.id = part2.internalid AND tag11.taggroup = '8' AND tag11.tagelement = '4112'" +   //StationName
 //                    " JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
 
             Statement statement = conn.createStatement();
-
             if(dateSeachType.equals("all")){
                 resultSQL = staticSQL;
             }else{
@@ -600,6 +651,19 @@ public interface UserDao {
 //                }
 //                BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
 //                String Manufacturer, String InstitutionName, String StationName, String AetSource)
+                String bufInstitution = "";
+                String bufStation = "";
+                String bufSource = "";
+                if(colInstitution.equals("true")){
+                    bufInstitution = rs.getString(7+argList.indexOf("colInstitution")+1);
+                }
+                if(colStation.equals("true")){
+                    bufStation = rs.getString(7+argList.indexOf("colStation")+1);
+                }
+                if(colSource.equals("true")){
+                    bufSource = rs.getString(7+argList.indexOf("colSource")+1);
+                }
+
                 BitServerStudy bufStudy = new BitServerStudy(
                         rs.getString(1),
                         rs.getString(3),
@@ -612,9 +676,9 @@ public interface UserDao {
                         "",
                         0,
                         "",
-                        rs.getString(8),
-                        "",
-                        "");
+                        bufInstitution,
+                        bufStation,
+                        bufSource);
                 resultList.add(bufStudy);
             }
 
@@ -686,28 +750,64 @@ public interface UserDao {
         return resultList;
     }
 
-    default ArrayList<String> getSourceDicom(){
-        ArrayList<String> resultList = new ArrayList<>();
+    default ArrayList<SourceDevice> getDeviceList(){
+        ArrayList<SourceDevice> resultList = new ArrayList<>();
         try {
             Connection conn = getConnection();
-            String staticSQL = "SELECT DISTINCT patientid, tag12.value FROM patientrecyclingorder" +
-                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
-                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
-                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
-                    " LEFT JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
+            String staticSQL = "SELECT DISTINCT tag12.value, tag8.value FROM patientrecyclingorder" +
+            " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+            " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+            " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+            " INNER JOIN maindicomtags AS tag12 ON tag12.id = part2.internalid AND tag12.taggroup = '8' AND tag12.tagelement = '4112'" +  //stationname
+            " JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '96'"+  //modality
+            " JOIN bitserver AS tag9 on tag9.rvalue = tag8.value"; //source
+           // "LEFT JOIN metadata AS tag1 ON tag1.id = part3.internalid AND tag1.type = '2'"; //date
+
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery(staticSQL);
             while (rs.next()) {
-                if(rs.getString(2).equals("")){
-                    resultList.add("Manual upload");
-                }else{
-                    resultList.add(rs.getString(2));
-                }
+                resultList.add(new SourceDevice(rs.getString(1)," ",rs.getString(2)));
             }
             conn.close();
         }catch (Exception e){
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
         }
+        for(SourceDevice bufDevice:resultList){
+            BitServerResources bufResource = getBitServerResource(bufDevice.getStationName());
+            if(bufResource.getRname().equals("empty")){
+                saveBitServiceResource(new BitServerResources(bufDevice.getStationName(), bufDevice.getStationName()));
+                bufDevice.setVisibleName(bufDevice.getStationName());
+            }else{
+                bufDevice.setVisibleName(bufResource.getRvalue());
+            }
+        }
+        return resultList;
+    }
+
+
+
+
+    default ArrayList<String> getUnicSourceDicom(){
+        ArrayList<String> resultList = new ArrayList<>();
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT patientid, tag13.value FROM patientrecyclingorder" +
+                    " INNER JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " INNER JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " INNER JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag13 ON tag13.id = part2.internalid AND tag13.taggroup = '8' AND tag13.tagelement = '4112'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+            while (rs.next()) {
+                resultList.add(rs.getString(2));
+            }
+            conn.close();
+        }catch (Exception e){
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        Set<String> bufResultList = new LinkedHashSet<>(resultList);
+        resultList.clear();
+        resultList.addAll(bufResultList);
         return resultList;
     }
 
@@ -872,5 +972,81 @@ public interface UserDao {
         }
         return result;
     }
+
+    default List<BitServerStudy> getStudyFromOrthancShort(String dateSeachType, Date firstdate, Date seconddate, List<String> selectedModalitiName) {
+        List<BitServerStudy> resultList = new ArrayList<>();
+        Calendar c;
+        String buf = "";
+        switch (dateSeachType){
+            case "targetdate":
+                c = Calendar.getInstance();
+                c.setTime(firstdate);
+                //c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+            case "range":
+                c = Calendar.getInstance();
+                c.setTime(seconddate);
+                //c.add(Calendar.DATE, 1);
+                seconddate = c.getTime();
+                break;
+        }
+        try {
+            Connection conn = getConnection();
+            String resultSQL;
+            String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value, tag2.value," +
+                    "tag4.value, tag6.value, tag7.value, tag13.value FROM patientrecyclingorder" +
+                    " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
+                    " JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
+                    " JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '8' AND tag4.tagelement = '32'" +   //STUDY DATE
+                    " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '4144'" +//DESCRIPTION
+                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '128'" +
+                   // " JOIN metadata AS tag12 ON tag12.id = part3.internalid AND tag12.type = '3'";   //source
+                    " LEFT JOIN maindicomtags AS tag13 ON tag13.id = part2.internalid AND tag13.taggroup = '8' AND tag13.tagelement = '4112'"; //source station name
+
+            Statement statement = conn.createStatement();
+
+            if(dateSeachType.equals("all")){
+                resultSQL = staticSQL;
+            }else{
+                resultSQL = staticSQL + " WHERE tag4.value BETWEEN  '"+FORMAT.format(firstdate)+"' AND '"+FORMAT.format(seconddate)+"'";
+            }
+            ResultSet rs = statement.executeQuery(resultSQL);
+            while (rs.next()) {
+//                BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
+//                String Manufacturer, String InstitutionName, String StationName, String AetSource)
+//                if(rs.getString(7).equals("")){
+//                    buf = "Manual upload";
+//                }else{
+                    buf = rs.getString(7);
+         //       }
+                if(selectedModalitiName.contains(buf)) {
+                    BitServerStudy bufStudy = new BitServerStudy(
+                            rs.getString(1),
+                            rs.getString(3),
+                            rs.getString(5),
+                            getDateFromText(rs.getString(4)),
+                            "",
+                            rs.getString(2),
+                            getDateFromText(rs.getString(4)),
+                            "",
+                            0,
+                            "",
+                            "",
+                            buf,
+                            "");
+                    resultList.add(bufStudy);
+                }
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+":getStudyFromOrthancShort: "+ e.getMessage());
+        }
+        return resultList;
+    }
+
 
 }

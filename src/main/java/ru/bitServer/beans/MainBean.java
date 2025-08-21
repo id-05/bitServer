@@ -162,7 +162,7 @@ public class MainBean implements UserDao, DataAction {
             timeExecServ.scheduleAtFixedRate(new TimersLauncher(), 0, 50, TimeUnit.SECONDS);
         }
 
-       HL7service();
+        HL7service();
     }
 
     public static void HL7service() {

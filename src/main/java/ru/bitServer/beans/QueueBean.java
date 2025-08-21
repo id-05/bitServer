@@ -581,7 +581,7 @@ public class QueueBean implements UserDao, DataAction {
         if(queueGetType){
             visibleStudiesList = getStudyFromCFINDRequest(filtrDate, firstdate, seconddate);
         }else {
-            visibleStudiesList = getStudyFromOrthanc(typeSeach, filtrDate, firstdate, seconddate, "all");
+            visibleStudiesList = getStudyFromOrthanc(typeSeach, filtrDate, firstdate, seconddate, colInstitution, colStation, colSource);
         }
         timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
 
@@ -678,12 +678,15 @@ public class QueueBean implements UserDao, DataAction {
             cFind = new OurCustomFindIdentifierHandler();
 
             //retrieve all studies belonging to patient with name 'Bowen'
+            System.out.println("test 1");
+
             new FindSOPClassSCU("localhost",
                     4242,
                     "ORTHANC",
                     "ORTHANC",
                     SOPClass.StudyRootQueryRetrieveInformationModelFind, identifier,
                     cFind, 0);
+            System.out.println("test 2");
 
         } catch (Exception e) {
             System.out.println(e.getMessage()); // in real life, do something about this exception

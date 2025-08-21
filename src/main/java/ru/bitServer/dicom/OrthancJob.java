@@ -8,7 +8,14 @@ import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.util.LogTool;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class OrthancJob implements UserDao {
 
@@ -102,7 +109,17 @@ public class OrthancJob implements UserDao {
     }
 
     public String getCreationTime() {
-        return creationTime;
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        ZoneId defaultZone = ZoneId.systemDefault();
+
+        //defaultZone.getId();
+        LocalDateTime datetime = LocalDateTime.parse(creationTime.replace('T',' '), DateTimeFormatter.ofPattern("yyyyMMdd HHmmss.SSSSSS"));
+
+        ZonedDateTime dateReal = datetime.atZone(defaultZone.normalized());
+        //Date date = Date.from(dateReal.atZone(ZoneId.systemDefault()).toInstant());
+
+        System.out.println("defaultZone  = " + dateReal.getDayOfMonth()+"-"+dateReal.getMonthValue()+"-"+dateReal.getYear()+" "+dateReal.getHour()+":"+dateReal.getMinute());
+        return dateReal.getDayOfMonth()+"-"+dateReal.getMonthValue()+"-"+dateReal.getYear()+" "+dateReal.getHour()+":"+dateReal.getMinute();
     }
 
     public void setCreationTime(String creationTime) {
@@ -110,9 +127,9 @@ public class OrthancJob implements UserDao {
     }
 
     public String getEffectiveRuntime() {
-        String result ="--:--";
-//        if(effectiveRuntime!=null)
-//            {result = effectiveRuntime.substring(0,5);}
+        String result ="--.--";
+        if(effectiveRuntime!=null)
+            {result = effectiveRuntime.substring(0,5);}
         return result;
     }
 

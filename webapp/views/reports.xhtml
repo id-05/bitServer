@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:b="http://java.sun.com/jsf/composite/jsfcomponent">
+<link rel="shortcut icon" href="#{facesContext.externalContext.requestContextPath}/resources/favicon.ico"  type="image/x-icon" />
+<f:view>
+    <h:head><title>bitServer Report</title>
+        <f:facet name="last">
+            <link rel="stylesheet" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/css/primeflex.min.css" />
+        </f:facet>
+    </h:head>
+
+    <h:body>
+        <script type="text/javascript">
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+            //]]>
+        </script>
+
+        <script type="text/javascript">
+            function showStatus() {
+                PF('statusDialog').show();
+            }
+        </script>
+
+        <style type="text/css">
+            .fUpload-content {
+                overflow: auto;
+                height: 300px;
+            }
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: 1px; }
+        </style>
+
+        <h:form id="reportform">
+            <p:growl id="reportgrowl" showDetail="true" />
+            <p:menubar>
+                <p:menuitem value="Назад" outcome="adminPage" icon="pi pi-backward"/>
+                <p:divider layout="vertical"/>
+                <p:menuitem value="Отчет" disabled="true"/>
+
+                <f:facet name="options">
+                    <div class="p-d-flex">
+                        <p:commandButton icon="pi pi-save"  oncomplete="PF('diskspace').show()" value="#{dataStorageBean.usedSpace}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        <p:commandButton icon="pi pi-question-circle"  oncomplete="PF('about').show()" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                        <p:commandButton icon="pi pi-sign-in"  actionListener="#{authoriseBean.logout}" styleClass="rounded-button ui-button-secondary ui-button-flat"/>
+                    </div>
+                </f:facet>
+            </p:menubar>
+
+            <div style="align-content: center">
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <h:outputLabel for="dateStudySelector" value="Дата  :  " styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                        <p:selectOneButton id="dateStudySelector" value="#{reportBean.filtrDate}" style="width: 300px; margin-left: 10px" ajax="false">
+                            <f:selectItem itemLabel="Выбрать дату" itemValue="targetdate"/>
+                            <f:selectItem itemLabel="Диапазон" itemValue="range"/>
+                            <f:selectItem itemLabel=" Все" itemValue="all"/>
+                            <p:ajax event="change" listener="#{reportBean.dataoutput}"/>
+                        </p:selectOneButton>
+
+                        <p:datePicker id="firstDate" value="#{reportBean.firstdate}" style="margin-right: 10px" rendered="#{reportBean.datepickerVisible1}">
+                            <p:ajax event="dateSelect" listener="#{reportBean.firstDateSelect}" update=":reportform:dateStudySelector"/>
+                        </p:datePicker>
+
+                        <p:datePicker id="secondDate" style="width: 30px" value="#{reportBean.seconddate}" rendered="#{reportBean.datepickerVisible2}">
+                            <p:ajax event="dateSelect" listener="#{reportBean.secondDateSelect}" update=":reportform:dateStudySelector"/>
+                        </p:datePicker>
+
+                    </p:toolbarGroup>
+
+                </p:toolbar>
+
+                <p:toolbar>
+                    <p:toolbarGroup id="test" align="centr">
+                        <h:outputLabel for="modality" value="Источник  :  " styleClass="col-12 mb-2 md:col-2 md:mb-0"/>
+                        <p:inplace label="#{reportBean.getModalitiNameToString}" style="font-weight: bold" effect="slide" id="modality" rendered="true">
+                            <p:selectManyButton value="#{reportBean.selectedModalitiName}"
+                                                dynamic="true">
+                                <f:selectItems value="#{reportBean.modalityName}"/>
+                                <p:ajax event="change" listener="#{reportBean.dataoutput}"/>
+                            </p:selectManyButton>
+                        </p:inplace>
+
+                    </p:toolbarGroup>
+
+                    <p:toolbarGroup align="right">
+                        <p:commandButton icon="pi pi-cog"  oncomplete="PF('diveceNameEditDiaolg').show()" process="@this" update="reportform, reportgrowl" styleClass="rounded-button ui-button-secondary ui-button-flat">
+                            <p:ajax event="dialogReturn" listener="#{reportBean.onUpdate}" update="reportform"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <p:dialog id="diveceNameEditDiaolg" header="Редактирование названий источников изображений" showEffect="fade" modal="true"
+                          widgetVar="diveceNameEditDiaolg" responsive="false">
+
+                    <p:dataTable id="dt-snap" widgetVar="dtDevice" var="sourceDevice" value="#{reportBean.devicesList}"
+                                 reflow="true" styleClass="users-table"
+                                 style="width: 700px"
+                                 size="small"
+                                 editable="true" editMode="cell"
+                                 emptyMessage="Нет записей для отображения">
+
+                        <p:ajax event="cellEdit" listener="#{reportBean.onDeviceEdit}" />
+
+                        <p:column headerText="Тэг из DICOM-файла" sortBy="#{sourceDevice.stationName}" style="text-align: center">
+                            <h:outputText value="#{sourceDevice.stationName}"/>
+                        </p:column>
+
+                        <p:column headerText="Модальность"  sortBy="#{sourceDevice.modality}" style="text-align: center">
+                            <h:outputText value="#{sourceDevice.modality}" />
+                        </p:column>
+
+                        <p:column headerText="Отображаемое имя" sortBy="#{sourceDevice.visibleName}" style="text-align: center">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{sourceDevice.visibleName}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{sourceDevice.visibleName}" style="width:100%" label="Name"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                    </p:dataTable>
+
+
+                </p:dialog>
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="Сформировать и скачать"
+                                         id="result"
+                                         ajax="false" style="margin-right: 10px"
+                                         styleClass="edit-button rounded-button ui-button-success"
+                                         icon="pi pi-download">
+                            <p:fileDownload value="#{reportBean.getResult}"/>
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+            </div>
+
+            <div class="card">
+
+
+
+
+            </div>
+
+            <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
+                <b:about/>
+            </p:dialog>
+
+            <p:dialog id="diskspace" showEffect="fade" modal="true" widgetVar="diskspace" responsive="true">
+                <b:diskspace directory="#{dataStorageBean.directory}" totalSpace="#{dataStorageBean.totalSpace}" freeSpace="#{dataStorageBean.freeSpace}" usedSpace="#{dataStorageBean.usedSpace}"/>
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+</f:view>
+
+</html>

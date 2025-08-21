@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="com4j-2">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib/com4j-2.1" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/lib/com4j-2.1" recursive="false" />
+  </library>
+</component>

@@ -79,17 +79,9 @@ public class BitServerStudy implements Serializable {
 
 
     public BitServerStudy(String sid, String shortid, String sdescription, Date sdate, String modality, String patientname, Date patientbirthdate, String patientsex, int status,
-                          String Manufacturer, String InstitutionName, String StationName, String AetSource){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
-//        if(sid.length()>59){
-//            this.sid = sid.substring(0,59);
-//        }else{
-            this.sid = sid;
-       // }
-//        if(shortid.length()>63){
-//            this.shortid = shortid.substring(0,63);
-//        }else{
-            this.shortid = shortid;
-        //}
+                          String Manufacturer, String InstitutionName, String StationName, String AetSource){
+        this.sid = sid;
+        this.shortid = shortid;
         this.sdescription = sdescription;
         this.sdate = sdate;
         this.modality = modality;
@@ -105,11 +97,7 @@ public class BitServerStudy implements Serializable {
     }
 
     public BitServerStudy(String sid, Date sdate){
-//        if(sid.length()>59){
-//            this.sid = sid.substring(0,59);
-//        }else{
-            this.sid = sid;
-        //}
+        this.sid = sid;
         this.sdate = sdate;
     }
 

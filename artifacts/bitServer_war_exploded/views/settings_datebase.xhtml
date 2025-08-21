@@ -152,7 +152,34 @@
 
                     </p:outputPanel>
                 </p:tab>
+
+                <p:tab title="Maindicomtags">
+                    <p:outputPanel>
+                        <p:dataTable id="dt-maindicomtags" widgetVar="dtMaindicomtags" var="maindicomtags" value="#{datebaseBean.listMaindicomtags}"
+                                     reflow="true" styleClass="users-table"
+                                     emptyMessage="Нет записей для отображения">
+
+                            <p:column headerText="id" sortBy="#{maindicomtags.id}" style="text-align: center">
+                                <h:outputText value="#{maindicomtags.id}" />
+                            </p:column>
+
+                            <p:column headerText="taggroup" sortBy="#{maindicomtags.taggroup}" filterBy="#{maindicomtags.taggroup}" style="text-align: center">
+                                <h:outputText value="#{maindicomtags.taggroup}" />
+                            </p:column>
+
+                            <p:column headerText="tagelement" sortBy="#{maindicomtags.tagelement}" filterBy="#{maindicomtags.tagelement}" style="text-align: center">
+                                <h:outputText value="#{maindicomtags.tagelement}" />
+                            </p:column>
+
+                            <p:column headerText="value" sortBy="#{maindicomtags.value}" style="text-align: center">
+                                <h:outputText value="#{maindicomtags.value}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:outputPanel>
+                </p:tab>
             </p:accordionPanel>
+
 
             <p:dialog id="about" showEffect="fade" modal="true" widgetVar="about" responsive="true">
                 <b:about/>

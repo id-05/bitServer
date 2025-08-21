@@ -146,9 +146,9 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.0</version>
+            <version>42.7.5</version>
         </dependency>
-
+<!-- 42.7.5-->
         <dependency>
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-core</artifactId>
@@ -168,6 +168,8 @@
         </dependency>
 
 
+
+
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>primeflex</artifactId>
@@ -178,6 +180,12 @@
             <groupId>com.github.stephenc.java-iso-tools</groupId>
             <artifactId>iso9660-writer</artifactId>
             <version>2.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.10</version>
         </dependency>
 
         <!--

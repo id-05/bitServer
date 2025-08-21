@@ -51,7 +51,6 @@ public class SettingBitServerBean implements UserDao {
     String luaScriptPath;
     List<BitServerResources> bitServerResourcesList = new ArrayList<>();
     String networksetpathfile;
-
     String firewallpathfile;
     Date syncdate;
     Date startDate;
@@ -532,7 +531,6 @@ public class SettingBitServerBean implements UserDao {
 
         String[] arrayResource = {"colstatus","colInstitution","colStation", "colSource"};
         for(String bufStr:arrayResource){
-
             if(!getBitServerResource(bufStr).getRname().equals(bufStr)){
                 saveBitServiceResource(new BitServerResources(bufStr,"false"));
                 bitServerResourcesList.add(new BitServerResources(bufStr,"false"));
@@ -545,7 +543,6 @@ public class SettingBitServerBean implements UserDao {
 
         for(BitServerResources buf: bitServerResourcesList){
             switch (buf.getRname()){
-
                 case "orthancaddress": orthancAddress = buf.getRvalue();
                     break;
                 case "httpmode": httpMode = buf.getRvalue();

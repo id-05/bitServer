@@ -1,10 +1,8 @@
 package ru.bitServer.beans;
-import org.primefaces.PrimeFaces;
 import ru.bitServer.dao.UserDao;
 import ru.bitServer.dicom.OrthancJob;
 import ru.bitServer.util.LogTool;
 import ru.bitServer.util.OrthancRestApi;
-
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -19,11 +17,8 @@ import static ru.bitServer.beans.MainBean.mainServer;
 @ViewScoped
 public class JobsBean implements UserDao {
     List<OrthancJob> orthancJobs = new ArrayList<>();
-
     List<OrthancJob> selectedOrthancJobs = new ArrayList<>();
-
     OrthancJob selectedOrthancJob = new OrthancJob();
-
     OrthancRestApi connection;
     StringBuilder stringBuilder;
 
@@ -84,11 +79,13 @@ public class JobsBean implements UserDao {
     public List<OrthancJob> getAllJobs(){
         List<OrthancJob> allJobs = new ArrayList<>();
         stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs");
+
         try {
             if (!stringBuilder.toString().equals("[]") & !stringBuilder.toString().equals("error")) {
                 String[] jobs = stringBuilder.toString().replace("[", "").replace("]", "").split(",");
                 for (String job : jobs) {
                     stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/" + job.replace(" ", "").replace("\"", ""));
+                    System.out.println(stringBuilder);
                     OrthancJob orJob = new OrthancJob(stringBuilder.toString());
                     allJobs.add(orJob);
                 }
