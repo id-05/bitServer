@@ -678,7 +678,6 @@ public class QueueBean implements UserDao, DataAction {
             cFind = new OurCustomFindIdentifierHandler();
 
             //retrieve all studies belonging to patient with name 'Bowen'
-            System.out.println("test 1");
 
             new FindSOPClassSCU("localhost",
                     4242,
@@ -686,7 +685,7 @@ public class QueueBean implements UserDao, DataAction {
                     "ORTHANC",
                     SOPClass.StudyRootQueryRetrieveInformationModelFind, identifier,
                     cFind, 0);
-            System.out.println("test 2");
+
 
         } catch (Exception e) {
             System.out.println(e.getMessage()); // in real life, do something about this exception

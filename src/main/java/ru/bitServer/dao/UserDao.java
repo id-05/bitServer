@@ -968,13 +968,11 @@ public interface UserDao {
             case "targetdate":
                 c = Calendar.getInstance();
                 c.setTime(firstdate);
-                //c.add(Calendar.DATE, 1);
                 seconddate = c.getTime();
                 break;
             case "range":
                 c = Calendar.getInstance();
                 c.setTime(seconddate);
-                //c.add(Calendar.DATE, 1);
                 seconddate = c.getTime();
                 break;
         }
@@ -1004,7 +1002,10 @@ public interface UserDao {
             ResultSet rs = statement.executeQuery(resultSQL);
             while (rs.next()) {
                     buf = rs.getString(7);
-                if(selectedModalitiName.contains(buf)) {
+                    if(buf==null){
+                        buf="";
+                    }
+                if(true) { //selectedModalitiName.contains(buf)
                     BitServerStudy bufStudy = new BitServerStudy(
                             rs.getString(1),
                             rs.getString(3),

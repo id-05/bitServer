@@ -167,9 +167,6 @@
             <version>5.23.3</version>
         </dependency>
 
-
-
-
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>primeflex</artifactId>
@@ -338,4 +335,4 @@
 
     </repositories>
 
-        </project>
+</project>

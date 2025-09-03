@@ -153,15 +153,12 @@ public class ReportBean implements UserDao {
         firstdate = new Date();
         seconddate = new Date();
         devicesList = getDeviceList();
-        FONT = getBitServerResource("FontForPdfFilePath").getRvalue();//"D://font/ArialRegular.ttf";
+        FONT = getBitServerResource("FontForPdfFilePath").getRvalue();
         for(SourceDevice bufDevice:devicesList){
             selectedModalitiName.add(bufDevice.getVisibleName());
             modalityName = selectedModalitiName;
         }
         selectedSourceDevice = new SourceDevice();
-//        for(SourceDevice bufDevice:devicesList){
-//            System.out.println(bufDevice.getStationName()+" "+bufDevice.getModality()+" "+bufDevice.getVisibleName()+" "+bufDevice.getLastActive());
-//        }
         pdfFilePath = getBitServerResource("pdfFilePath").getRvalue();
         if (pdfFilePath.equals("empty")){
             pdfFilePath = "/dataimage/results";

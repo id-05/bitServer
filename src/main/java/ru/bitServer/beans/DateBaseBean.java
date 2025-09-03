@@ -146,6 +146,7 @@ public class DateBaseBean implements UserDao {
         if(!bufResourceName.contains("RF")){saveBitServiceResource(new BitServerResources("RF","RF")); sb.append("RF;").append("\n");}
         if(!bufResourceName.contains("worklistsamplefile")){saveBitServiceResource(new BitServerResources("worklistsamplefile","/dataimage/sampleworklist")); sb.append("worklistsamplefile;").append("\n");}
         if(!bufResourceName.contains("FontForPdfFilePath")){saveBitServiceResource(new BitServerResources("FontForPdfFilePath","/dataimage/font/ArialRegular.ttf")); sb.append("FontForPdfFilePath;").append("\n");}
+        if(!bufResourceName.contains("statUpdateTime")){saveBitServiceResource(new BitServerResources("statUpdateTime","15")); sb.append("statUpdateTime;").append("\n");}
         if(sb.toString().length()>0){
             showMessage("Внимание!","Были добавлены: "+ sb,FacesMessage.SEVERITY_INFO);
             PrimeFaces.current().ajax().update(":form:accord:dt-resources");
