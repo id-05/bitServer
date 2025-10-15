@@ -1,6 +1,5 @@
 package ru.bitServer.beans;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,10 +49,8 @@ public class SettingsNewOrthanc implements UserDao, DataAction{
     JsonSettings json;
     OrthancRestApi connection;
 
-
     @PostConstruct
     public void init() {
-        System.out.println("newSetOrth");
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         HttpSession session = SessionUtils.getSession();
         currentUser = getUserById(session.getAttribute("userid").toString());
@@ -104,7 +101,7 @@ public class SettingsNewOrthanc implements UserDao, DataAction{
                 .build();
     }
 
-    public void applySnapshot() throws IOException {
+    public void applySnapshot() {
         saveJsonSettingtToFile(selectedSnapshot.getSettingJson());
         loadConfig();
         showMessage("Внимание", "Настройки применены!",FacesMessage.SEVERITY_INFO);
@@ -348,16 +345,16 @@ public class SettingsNewOrthanc implements UserDao, DataAction{
                 &(!selectedDicomModality.getDicomProperty().equals(""))&(!selectedDicomModality.getDicomName().contains("_"))&(!selectedDicomModality.getDicomName().contains(" ")))
         {
             if(Integer.parseInt(selectedDicomModality.getDicomPort())<65535) {
-                boolean verifiUnical = true;
+                boolean verifyUnital = true;
                 if(dicomModalities.size()>0) {
                     for (DicomModaliti bufDicomModaliti : dicomModalities) {
                         if (bufDicomModaliti.getDicomName().equals(selectedDicomModality.getDicomName())) {
-                            verifiUnical = false;
+                            verifyUnital = false;
                             break;
                         }
                     }
                 }
-                if (verifiUnical) {
+                if (verifyUnital) {
                     dicomModalities.add(new DicomModaliti(selectedDicomModality.getDicomTitle(), selectedDicomModality.getDicomName(),
                             selectedDicomModality.getIp(), selectedDicomModality.getDicomPort(), selectedDicomModality.getDicomProperty()));
                     PrimeFaces.current().executeScript("PF('manageModalitiDialog').hide()");
@@ -479,7 +476,7 @@ public class SettingsNewOrthanc implements UserDao, DataAction{
         PrimeFaces.current().ajax().update(":form:backupDiaolg");
     }
 
-    public void saveFile(JsonObject newJson) throws IOException {
+    public void saveFile(JsonObject newJson) {
         ArrayList<String> changeList = new ArrayList<>();
         JsonObject oldJson = getJsonFromFile();
         Set<Map.Entry<String, JsonElement>> entrySet = oldJson.entrySet();

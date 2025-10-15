@@ -79,20 +79,31 @@ public class AuthoriseBean implements UserDao {
                 currentUserTheme = "saga";
 
                 switch (currentUser.getRole()){
-                    case "localuser":
-                    case "onlyview":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localuser.xhtml");
+                    case "localuser": {
+                        currentUser.setRole("demo");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;
-                    case "remoteuser":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/remoteuser.xhtml");
+                    }
+                    case "onlyview": {
+                        currentUser.setRole("demo");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;
-                    case "admin":
-                        LogTool.getLogger().info("Admin "+ currentUser.getUname()+" autorise in system");
+                    }
+                    case "remoteuser": {
+                        currentUser.setRole("demo");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
+                        break;
+                    }
+                    case "admin": {
+                        LogTool.getLogger().info("Admin " + currentUser.getUname() + " autorise in system");
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
                         break;
-                    case "client":
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/client.xhtml");
+                    }
+                    case "client": {
+                        currentUser.setRole("demo");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;
+                    }
                     case "demo":
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;

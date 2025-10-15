@@ -122,7 +122,7 @@
       <p:accordionPanel widgetVar="serverSettings" id="accordion" activeIndex="-1">
         <p:tab title="Основные настройки">
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Имя сервера</b>
           </p:divider>
           <p class="p-m-0">
@@ -130,7 +130,7 @@
           </p>
           <div class="p-text-capitalize">Название этого Orthanc сервера. Имя отображается в Orthanc Explorer и в URI /system</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Каталог хранения</b>
           </p:divider>
           <p class="p-m-0">
@@ -138,7 +138,7 @@
           </p>
           <div class="p-text-capitalize">Путь к каталогу, содержащему тяжелые файлы (то есть необработанные экземпляры DICOM). Обратная косая черта должна быть либо удвоена, либо заменена прямой косой чертой "/"</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Каталог указателей</b>
           </p:divider>
           <p class="p-m-0">
@@ -146,14 +146,14 @@
           </p>
           <div class="p-text-capitalize">Путь к каталогу, который содержит индексы SQLite (если не установлен, используется значение StorageDirectory). Содержимое этого каталога, может быть сохранено на RAM-диске или SSD-устройстве из соображений производительности</div>
 
-          <p:divider align="left" type="dashed" rendered="false">
+          <p:divider align="left" type="solid" rendered="false">
             <b>Lua-scripts</b>
           </p:divider>
           <p class="p-m-0">
             <p:inputText  value="#{newSetOrth.luaScriptsFolder}" rendered="false"> </p:inputText>
           </p>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Сжатие хранилища</b>
           </p:divider>
           <p class="p-m-0">
@@ -161,7 +161,7 @@
           </p>
           <div class="p-text-capitalize">Включить сжатие экземпляров DICOM</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Максимальный размер хранилища</b>
           </p:divider>
           <p class="p-m-0">
@@ -171,7 +171,7 @@
           </p>
           <div class="p-text-capitalize">Максимальный размер хранилища в МБ (значение «0» означает отсутствие ограничений на размер хранилища)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Максимальное количество пациентов</b>
           </p:divider>
           <p class="p-m-0">
@@ -181,7 +181,7 @@
           </p>
           <div class="p-text-capitalize">Максимальное количество пациентов, которое может храниться в данное время в хранилище (значение «0» указывает на отсутствие ограничения на количество пациентов)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Одновременные задания</b>
           </p:divider>
           <p class="p-m-0">
@@ -192,7 +192,7 @@
           <div class="p-text-capitalize" style="margin-bottom: 35px">Максимальное количество заданий обработки, которые одновременно выполняются в любой момент времени. Значение "0" указывает на использование всех доступных логических ядер ЦП. Чтобы эмулировать Orthanc младше версии 1.3.2, установите это значение равным "1"</div>
         </p:tab>
         <p:tab title="Конфигурация HTTP сервера">
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP сервер</b>
           </p:divider>
           <p class="p-m-0">
@@ -200,7 +200,7 @@
           </p>
           <div class="p-text-capitalize">Если этот параметр выключен, Orthanc действует как чистый DICOM-сервер. REST API и Orthanc Explorer не доступны. Так же Orthac Manager, тоже не сможет получить доступ к серверу, так как использует REST API</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP порт</b>
           </p:divider>
           <p class="p-m-0">
@@ -210,7 +210,7 @@
           </p>
           <div class="p-text-capitalize">HTTP порт для службы REST и графического интерфейса</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP описание ошибок</b>
           </p:divider>
           <p class="p-m-0">
@@ -218,7 +218,7 @@
           </p>
           <div class="p-text-capitalize">Если включено, и при вызове REST API возникает ошибка, в HTTP ответ, добавляется сообщение JSON с описанием ошибки. Эту функцию можно отключить, если HTTP-клиент неправильно обрабатывает такие ответы</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP сжатие</b>
           </p:divider>
           <p class="p-m-0">
@@ -228,7 +228,7 @@
         </p:tab>
 
         <p:tab title="Конфигурация DICOM сервера">
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM сервер</b>
           </p:divider>
           <p class="p-m-0">
@@ -236,7 +236,7 @@
           </p>
           <div class="p-text-capitalize">Если выключено, Orthanc действует как чистый REST-сервер. Получение файлов, а так же запросы по птороколу DICOM будут невозможны</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM AET</b>
           </p:divider>
           <p class="p-m-0">
@@ -244,7 +244,7 @@
           </p>
           <div class="p-text-capitalize">Уникальное в рамках используеймой DICOM сети, название сервера</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM проверка AET</b>
           </p:divider>
           <p class="p-m-0">
@@ -252,7 +252,7 @@
           </p>
           <div class="p-text-capitalize">Проверка соответствия AET, во время входящего запроса SCU DICOM</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM порт</b>
           </p:divider>
           <p class="p-m-0">
@@ -261,7 +261,7 @@
             </p:inputText>
           </p>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Кодировка по умолачнию</b>
           </p:divider>
           <p class="p-m-0">
@@ -284,7 +284,7 @@
           <div class="p-text-capitalize">Кодировка используемая для файлов DICOM без DICOM-тега «SpecificCharacterSet», который используется при ответе на C-Find запросы (включая рабочие списки)</div>
 
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Синтаксис передачи</b>
           </p:divider>
           <p class="p-m-0">
@@ -304,7 +304,7 @@
           </p>
           <div class="p-text-capitalize">Синтаксисы передачи принятые в Orthanc C-Store SCP</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Разрешить принимать данные из неизвестных источников</b>
           </p:divider>
           <p class="p-m-0">
@@ -312,7 +312,7 @@
           </p>
           <div class="p-text-capitalize">Принимать или нет, роль S-Store SCP для неизвестных источников («Неразборчивый режим»)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM SCP Timeout</b>
           </p:divider>
           <p class="p-m-0">
@@ -325,7 +325,7 @@
 
         <p:tab title="Параметры безопасности HTTP-сервера" id="tab1">
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Разрешение удаленного доступа</b>
           </p:divider>
           <p class="p-m-0">
@@ -333,7 +333,7 @@
           </p>
           <div class="p-text-capitalize">Разрешение подключения удаденных хостов к HTTP серверу</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>SSL protocol</b>
           </p:divider>
           <p class="p-m-0">
@@ -341,7 +341,7 @@
           </p>
           <div class="p-text-capitalize">Включение протокола SSL</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>SSL Certificate</b>
           </p:divider>
           <p class="p-m-0">
@@ -349,7 +349,7 @@
           </p>
           <div class="p-text-capitalize">Путь к SSL-сертификату в формате PEM (значимый только в том случае, если включен SSL)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Включение аутентификации</b>
           </p:divider>
           <p class="p-m-0">
@@ -357,7 +357,7 @@
           </p>
           <div class="p-text-capitalize">Включение доступа по логину и паролю из пункта меню "Регистрация пользователей"</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Регистрация пользователей</b>
           </p:divider>
 
@@ -446,7 +446,7 @@
 
         <p:tab title="Топология сети">
           <div>
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>DICOM Модальности</b>
             </p:divider>
 
@@ -575,7 +575,7 @@
           </div>
           <div class="p-text-capitalize">Список клиентов рабочей группы</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Хранить DICOM модальности в базе данных</b>
           </p:divider>
           <p class="p-m-0">
@@ -583,7 +583,7 @@
           </p>
           <div class="p-text-capitalize">Выбор хранения DICOM модальностей в базе данных Orthanc, а не в этом конфигурационном файле (с версии Orthanc 1.5.0)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Всегда отвечать на специфичные для DICOM протокола Эхо запросы</b>
           </p:divider>
           <p class="p-m-0">
@@ -591,7 +591,7 @@
           </p>
           <div class="p-text-capitalize">Разрешение для Orthanc отвечать на входящие C-Echo запросы, даже от модальностей которых нет в списке "DICOM Модальности". Orthanc 1.3.0 Является единственной версией, которая ведет себя так, как если бы этому аргументу было присвоено значение "false"</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Всегда принимать DICOM данные для хранения</b>
           </p:divider>
           <p class="p-m-0">
@@ -599,7 +599,7 @@
           </p>
           <div class="p-text-capitalize">Разрешение для Orthanc всегда принимать входящие C-Store запросы , даже от модальностей которых нет в списке "DICOM Модальности"</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Проверять DICOM Модальности при подключении</b>
           </p:divider>
           <p class="p-m-0">
@@ -607,7 +607,7 @@
           </p>
           <div class="p-text-capitalize">Определяет, проверяет ли Orthanc IP адрес и имя удаленного хоста, инициирующего соединение DICOM (как указано в списке "DICOM Модальности"). Если для этой опции установлено значение "false", Orthanc проверяет только AET</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>DICOM SCU Timeout</b>
           </p:divider>
           <p class="p-m-0">
@@ -617,13 +617,13 @@
           </p>
           <div class="p-text-capitalize">Установка времени ожидания (в секундах), после которого Orthanc считает DICOM соединение закрытым, если удаленный SCP DICOM (сервер) не отвечает</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Orthanc peers</b>
           </p:divider>
 
           <div class="p-text-capitalize">Список одноранговых серверов, в качестве реквизитов доступа используется URL, логин и пароль, как при доступе по HTTP</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>Хранить информацию об одноранговых узлах (peer) в базе данных</b>
           </p:divider>
           <p class="p-m-0">
@@ -631,7 +631,7 @@
           </p>
           <div class="p-text-capitalize">Определяет хранение информации об одноранговых узлах (peer) в базе данных Orthanc, а не в этом файле конфигурации (с версии Orthanc 1.5.0)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP Proxy</b>
           </p:divider>
           <p class="p-m-0">
@@ -639,7 +639,7 @@
           </p>
           <div class="p-text-capitalize">Параметры прокси-сервера HTTP, используемого Orthanc. Если установлена пустая строка, HTTP-прокси не используется. Например: «HttpProxy»: «192.168.0.1:3128» «HttpProxy»: «proxyUser:proxyPassword@192.168.0.1:3128»</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP Verbose</b>
           </p:divider>
           <p class="p-m-0">
@@ -647,7 +647,7 @@
           </p>
           <div class="p-text-capitalize">Включение означает, что отладочные сообщения из "libcurl", будут выдаваться всякий раз, когда Orthanc делает исходящий HTTP-запрос. Это особенно полезно для отладки проблем, связанных с HTTPS</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTP Timeout</b>
           </p:divider>
           <p class="p-m-0">
@@ -657,7 +657,7 @@
           </p>
           <div class="p-text-capitalize">Установка времени ожидания для HTTP запросов, сделанных Orthanc (в секундах)</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTPS Проверка одноранговых узлов (Verify Peers)</b>
           </p:divider>
           <p class="p-m-0">
@@ -665,7 +665,7 @@
           </p>
           <div class="p-text-capitalize">Включиние проверки одноранговых узлов во время HTTPS-запросов. Выключено, если используются самозаверяющие сертификаты. Обратите внимание, что включение этого параметра приводит к угрозам безопасности! Ссылка: http://curl.haxx.se/docs/sslcerts.html</div>
 
-          <p:divider align="left" type="dashed">
+          <p:divider align="left" type="solid">
             <b>HTTPS CA Certificates</b>
           </p:divider>
           <p class="p-m-0">
@@ -679,7 +679,7 @@
         <p:tab title="Дополнительные параметры">
           <p:outputPanel>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Stable Age</b>
             </p:divider>
             <p class="p-m-0">
@@ -689,7 +689,7 @@
             </p>
             <div class="p-text-capitalize">Количество секунд без получения какого-либо экземпляра, до того как пациент, исследование или серия считаются стабильными</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Сравнение AET с учетом регистра</b>
             </p:divider>
             <p class="p-m-0">
@@ -697,7 +697,7 @@
             </p>
             <div class="p-text-capitalize">По умолчанию Orthanc сравнивает AET без учета регистра. Включение этого параметра, предполагает дальнейшее сопоставление с учетом регистра</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Хранить MD5 сумму для полученных данных</b>
             </p:divider>
             <p class="p-m-0">
@@ -705,7 +705,7 @@
             </p>
             <div class="p-text-capitalize">Если включено, суммы MD5 файлов DICOM будут вычислены и сохранены в базе данных Orthanc. Эта информация может использоваться для обнаружения повреждения диска за счет небольших затрат на производительность</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Limit Find Results</b>
             </p:divider>
             <p class="p-m-0">
@@ -715,7 +715,7 @@
             </p>
             <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне пациента, исследования или серии. Установка этого параметра в "0" означает отсутствие ограничения</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Limit Find Instances</b>
             </p:divider>
             <p class="p-m-0">
@@ -725,7 +725,7 @@
             </p>
             <div class="p-text-capitalize">Максимальное количество результатов для одного запроса C-FIND на уровне экземпляра. Установка этого параметра в "0" означает отсутствие ограничения</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Limit Jobs</b>
             </p:divider>
             <p class="p-m-0">
@@ -735,7 +735,7 @@
             </p>
             <div class="p-text-capitalize">Максимальное число активных заданий в планировщике Orthanc. При достижении этого предела, добавление новых заданий блокируется до завершения выполнения текущих задач</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Log Exported Resources</b>
             </p:divider>
             <p class="p-m-0">
@@ -743,7 +743,7 @@
             </p>
             <div class="p-text-capitalize">Если включено (поведение по умолчанию до Orthanc 1.3.2), Orthanc регистрирует ресурсы, экспортируемые в другие DICOM модальности или одноранговые узлы, внутри URI "/export". Выключение этого параметра, позволяет предотвратить бесконечный рост индекса в задачах автоматической маршрутизации (это поведение по умолчанию с Orthanc 1.4.0)</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Keep Alive</b>
             </p:divider>
             <p class="p-m-0">
@@ -751,7 +751,7 @@
             </p>
             <div class="p-text-capitalize">Включить или отключить режим HTTP Keep Alive "Остаться в живых". Рекомендуется включать только в случае высоких нагрузок HTTP</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Store DICOM</b>
             </p:divider>
             <p class="p-m-0">
@@ -759,7 +759,7 @@
             </p>
             <div class="p-text-capitalize">Если выключено, Orthanc будет работать в режиме хранения только индекса. Файлы DICOM не будут храниться на диске. Обратите внимание, что этот параметр может препятствовать обновлению до более новых версий Orthanc</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>DICOM Association Close Delay</b>
             </p:divider>
             <p class="p-m-0">
@@ -769,7 +769,7 @@
             </p>
             <div class="p-text-capitalize">DICOM соединения, инициированные сценариями Lua, остаются открытыми до тех пор, пока выдаются новые команды DICOM. Этот параметр задает время ожидания в секундах перед автоматическим закрытием DICOM соединения, инициифрованного Lua. Если установлено значение 0, соединение немедленно закрывается</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Query Retrieve Size</b>
             </p:divider>
             <p class="p-m-0">
@@ -779,7 +779,7 @@
             </p>
             <div class="p-text-capitalize">Максимальное число DICOM запросов, поддерживаемых сервером. Редко используемые запросы удаляются по мере выдачи новых запросов</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Case Sensitive PN</b>
             </p:divider>
             <p class="p-m-0">
@@ -787,7 +787,7 @@
             </p>
             <div class="p-text-capitalize">Включение этого параметра означает выполнение поисковых запросов с учетом регистра для представленого значения PN (например, RapidName). По умолчанию поиск выполняется без учета регистра, что не соответствует стандарту DICOM</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Allow Find Sop Classes In Study</b>
             </p:divider>
             <p class="p-m-0">
@@ -795,7 +795,7 @@
             </p>
             <div class="p-text-capitalize">Если включено, сервер будет обрабатывать "классы SOP в исследовании" (0008, 0062) в запросах к серверу, даже если метаданные "SOP Class UID" недоступны в базе данных (что имеет место, если база данных ранее использовалась Orthanc младше 1.1.0). Этот параметр отключен по умолчанию, так как для него требуется интенсивный доступ к жесткому диску</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Load Private Dictionary</b>
             </p:divider>
             <p class="p-m-0">
@@ -803,7 +803,7 @@
             </p>
             <div class="p-text-capitalize">Если включено, сервер не загружает словарь частных тегов по умолчанию. Это может потребоваться, если невозможно импортировать DICOM-файл, закодированный с помощью синтаксиса передачи неявного VR Endian и содержащий частные теги: Такая ошибка импорта может быть вызвана неправильным словарем. Вы можете перечислить ваши частные теги, в опции конфигурации "Словарь" ниже</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Locale</b>
             </p:divider>
             <p class="p-m-0">
@@ -811,7 +811,7 @@
             </p>
             <div class="p-text-capitalize">Язык, используемый Orthanc. В настоящее время используется только при сравнении строк без учета регистра. Рекомендуется не указывать это значение</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Synchronous C Move</b>
             </p:divider>
             <p class="p-m-0">
@@ -819,7 +819,7 @@
             </p>
             <div class="p-text-capitalize">Если включено (по умолчанию), каждый входящий запрос C-Move приводит к созданию нового фонового задания. До Orthanc 1.3.2 неявным поведением было использование синхронного C-Move. Между Orthanc 1.4.0 и 1.4.2 поведение по умолчанию было установлено как асинхронное C-Move. Начиная с Orthanc 1.5.0, поведение по умолчанию - синхронное C-Move (обратная совместимость с Orthanc младше 1.3.2)</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Jobs History Size</b>
             </p:divider>
             <p class="p-m-0">
@@ -829,7 +829,7 @@
             </p>
             <div class="p-text-capitalize">Максимальное число завершенных заданий, хранящихся в памяти. Задание обработки считается выполненным, если оно помечено как "Успешное" или "Неуспешное". Начиная с Orthanc 1.5.0, значение "0" означает, что задания удаляются из истории сразу после их завершения</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Overwrite Instances</b>
             </p:divider>
             <p class="p-m-0">
@@ -837,7 +837,7 @@
             </p>
             <div class="p-text-capitalize">Определяет, как сервер реагирует, когда  получает DICOM-данные, уже сохраненные ранее. Если включено, новый экземпляр заменяет старый. Если выключено, новый экземпляр отбрасывается, а старый сохраняется. До Orthanc 1.4.1 данный параметр по умолчанию был выключен</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Media Archive Size</b>
             </p:divider>
             <p class="p-m-0">
@@ -853,7 +853,7 @@
         <p:tab title="Рабочие списки (WorkList)">
           <p:outputPanel>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Включить сервис рабочих списков</b>
             </p:divider>
             <p class="p-m-0">
@@ -861,7 +861,7 @@
             </p>
             <div class="p-text-capitalize">Если включено, сервер поддерживает сервис рабочих списков</div>
 
-            <p:divider align="left" type="dashed">
+            <p:divider align="left" type="solid">
               <b>Каталог рабочих списков</b>
             </p:divider>
             <p class="p-m-0">

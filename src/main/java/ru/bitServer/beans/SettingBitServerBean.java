@@ -34,6 +34,8 @@ public class SettingBitServerBean implements UserDao {
     BitServerGroup selectedBitServerGroup;
     String httpMode;
     String showStat;
+
+    String queueGetType;
     String luaRead;
     String timerEnable;
     String cdViewerInclude;
@@ -42,7 +44,6 @@ public class SettingBitServerBean implements UserDao {
     String orthancWebPort;
     String hl7port;
     String workListLifeTime;
-
     String statUpdateTime;
     String orthancLogin;
     String orthancPassword;
@@ -86,6 +87,14 @@ public class SettingBitServerBean implements UserDao {
     ArrayList<BitServerUser> usersSource;
 
     String cdviewerpath;
+
+    public String getQueueGetType() {
+        return queueGetType;
+    }
+
+    public void setQueueGetType(String queueGetType) {
+        this.queueGetType = queueGetType;
+    }
 
     public String getCdviewerpath() {
         return cdviewerpath;
@@ -501,7 +510,7 @@ public class SettingBitServerBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        remoteTransStatus = "Статус: не запущено";
+        //remoteTransStatus = "Статус: не запущено";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
         stopDate = new Date();
@@ -608,6 +617,9 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "cdviewerpath": cdviewerpath = buf.getRvalue();
                     break;
+                case "QueueGetType": queueGetType = buf.getRvalue();
+                    break;
+
             }
         }
         selectedBitServerGroup = new BitServerGroup();
@@ -795,6 +807,13 @@ public class SettingBitServerBean implements UserDao {
                     break;
                 case "cdviewerpath": buf.setRvalue(cdviewerpath);
                     break;
+                case "cdviewerpath2": buf.setRvalue(cdviewerpath);
+                    break;
+                case "QueueGetType": buf.setRvalue(queueGetType );
+                    break;
+
+
+
             }
             updateBitServiceResource(buf);
         }

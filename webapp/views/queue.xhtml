@@ -114,22 +114,6 @@
 
                     <p:toolbar>
                         <p:toolbarGroup>
-                            <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false">
-                                <p:graphicImage value="/resources/images/upload.gif" />
-                            </p:dialog>
-                            <p:commandButton id="send-button" value="Отправить на описание в:"
-                                             icon="pi pi-send" action="#{queueBean.sendToAgent}"
-                                             styleClass="ui-button-danger" disabled="#{!queueBean.hasSelectedStudy() or queueBean.currentUser.role == 'onlyview'}"
-                                             onclick="PF('statusDialog').show()"
-                                             update="searchgrowl"
-                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
-                                             style="margin-right: 5px">
-                            </p:commandButton>
-
-                            <p:selectOneMenu id="ugroup" value="#{queueBean.selectedUserGroup}" dynamic="true"
-                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}">
-
-                            </p:selectOneMenu>
 
                         </p:toolbarGroup>
 
@@ -161,13 +145,6 @@
                                              style="margin-right: 10px"
                                              icon="pi pi-upload" styleClass="ui-button-success" />
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="uploaddicom" value="Загрузка DICOM-файлов на сервер"/>
-
-                            <p:commandButton id="test"
-                                             rendered="false"
-                                             update=":seachform:addDialog"
-                                             style="margin-right: 10px"
-                                             actionListener="#{queueBean.testnewdicomqueue}"
-                                             icon="pi pi-upload" styleClass="ui-button-success" />
 
                             <p:dialog modal="true" widgetVar="statusDialog2" draggable="false" closable="false">
                                 <h1 class="p-text-center">
@@ -212,11 +189,11 @@
 
                                  rowExpandMode="single">
 
-                        <p:ajax event="rowSelect" update=":seachform:send-button"/>
-                        <p:ajax event="rowUnselect" update=":seachform:send-button"/>
-                        <p:ajax event="rowSelectCheckbox" update=":seachform:send-button"/>
-                        <p:ajax event="rowUnselectCheckbox" update=":seachform:send-button"/>
-                        <p:ajax event="toggleSelect" update=":seachform:send-button"/>
+                        <p:ajax event="rowSelect" update=":seachform"/>
+                        <p:ajax event="rowUnselect" update=":seachform"/>
+                        <p:ajax event="rowSelectCheckbox" update=":seachform"/>
+                        <p:ajax event="rowUnselectCheckbox" update=":seachform"/>
+                        <p:ajax event="toggleSelect" update=":seachform"/>
                         <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
                         <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
                         <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle(bitServerStudy.shortid)}"/>
@@ -238,15 +215,6 @@
 
                         <p:column style="width:2rem" ariaHeaderText="Row Toggler" rendered="false">
                             <p:rowToggler/>
-                        </p:column>
-
-                        <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
-                            <h:outputText styleClass="product-badge status-#{bitServerStudy.statusStyle.toLowerCase()}"
-                                          value="#{bitServerStudy.rustatus}"/>
-                        </p:column>
-
-                        <p:column headerText="Preview" style="text-align: center" rendered="#{queueBean.colPreview == 'true'}">
-                            <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
                         </p:column>
 
                         <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center"
@@ -276,7 +244,7 @@
                             <h:outputText value="#{bitServerStudy.stringStudyDate}"/>
                         </p:column>
 
-                        <p:column headerText="Description" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
+                        <p:column headerText="Описание" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
                                   filterBy="#{bitServerStudy.sdescription}"
                                   rendered="#{queueBean.colDescription == 'true'}">
                             <h:outputText value="#{bitServerStudy.sdescription}"/>
@@ -306,13 +274,6 @@
                             <h:outputText value="#{bitServerStudy.AETSource}"/>
                         </p:column>
 
-                        <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
-                                  filterBy="#{bitServerStudy.usergroupwhosees}"
-                                  rendered="#{queueBean.colWhereSend == 'true'}">
-                            <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
-                        </p:column>
-
-
                         <p:column exportable="false" style="align-content: center; ">
 
                             <p:commandButton icon="pi pi-id-card"
@@ -335,30 +296,7 @@
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
 
-                            <p:commandButton id="result"
-                                             ajax="false" style="margin-right: 10px"
-                                             styleClass="edit-button rounded-button ui-button-success"
-                                             icon="pi pi-file"
-                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
-                                             disabled="#{!not empty bitServerStudy.result}">
-                                <p:fileDownload value="#{queueBean.getResult(bitServerStudy)}"/>
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-                            </p:commandButton>
-
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="result" value="Результат/Описание"/>
-
-                            <p:commandButton id="gettowork"
-                                             icon="pi pi-pencil"
-                                             style="margin-right: 10px"
-                                             styleClass="rounded-button" process="@this"
-                                             rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
-                                             disabled="#{queueBean.currentUser.hasBlockStudy or not empty bitServerStudy.result
-                                                            or bitServerStudy.status == 1 or bitServerStudy.status == 3
-                                                                or queueBean.currentUser.role == 'onlyview'}"
-                                             oncomplete="PF('confirmtogetstudy').show()">
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-                            </p:commandButton>
-                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="gettowork" value="Взять на описание"/>
 
                             <p:commandButton id="delete"
                                              icon="pi pi-trash"
@@ -387,15 +325,6 @@
                     </p:dataTable>
 
                     <p:contextMenu for="dt-studys" >
-
-                        <p:menuitem value="Отозвать с описания" update="dt-studys"
-                                    rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
-                                    action="#{queueBean.comebackStudy}"
-                                    disabled="#{not empty bitServerStudy.usergroupwhosees or queueBean.currentUser.role == 'onlyview'}"/>
-                        <p:menuitem value="Пометить как описанное" update="dt-studys"
-                                    rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
-                                    action="#{queueBean.markAsHasResult}"
-                                    disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
 
                         <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
@@ -491,30 +420,6 @@
                                 </p:commandButton>
 
                             </f:facet>
-
-                    </p:dialog>
-
-                    <p:dialog id="confirmtogetstudy" showEffect="fade" modal="true"
-                              widgetVar="confirmtogetstudy" responsive="true">
-                        <p:card style="width: 25rem; margin-bottom: 2em">
-                            <f:facet name="title">
-                                Внимание, вы собираетесь взять исследование на описание!
-                            </f:facet>
-
-                            <p align="justify">Оно будет заблокировано и не доступно для анализа другим пользователям.
-                                Вы не сможете приступить к другим исследованиям пока не опишите это.
-                                Срок блокировки исследования ___ часа. После истечения этого срока, исследование будет автоматически разблокировано и станет доступно для просмотра другим пользователям!</p>
-
-                        </p:card>
-                        <div class="p-d-flex p-jc-between">
-                            <div class="p-mr-2">
-                                <p:commandButton value="Отказаться" onclick="PF('confGetStudy').hide()"/>
-                            </div>
-
-                            <div class="p-mr-2">
-                                <p:commandButton value="Согласиться" action="#{queueBean.getStudyToDiag}"/>
-                            </div>
-                        </div>
 
                     </p:dialog>
 

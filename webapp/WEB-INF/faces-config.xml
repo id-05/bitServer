@@ -25,16 +25,6 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>clientorders</from-outcome>
-            <to-view-id>/views/clientorders.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>clientresults</from-outcome>
-            <to-view-id>/views/clientresults.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
             <from-outcome>errorpage</from-outcome>
             <to-view-id>/views/errorpage.xhtml</to-view-id>
         </navigation-case>
@@ -50,13 +40,8 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>luresults</from-outcome>
-            <to-view-id>/views/localuserresults.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>lucurtask</from-outcome>
-            <to-view-id>/views/localusercurrenttask.xhtml</to-view-id>
+            <from-outcome>queuecfind</from-outcome>
+            <to-view-id>/views/queue_cfind.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
@@ -65,33 +50,8 @@
         </navigation-case>
 
         <navigation-case>
-            <from-outcome>queueremote</from-outcome>
-            <to-view-id>/views/queueremote.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>ruresults</from-outcome>
-            <to-view-id>/views/remoteuserresults.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>rucurtask</from-outcome>
-            <to-view-id>/views/remoteusercurrenttask.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>client</from-outcome>
-            <to-view-id>/views/client.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
             <from-outcome>login</from-outcome>
             <to-view-id>/views/login.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>wordeditor</from-outcome>
-            <to-view-id>/views/wordeditor2.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
@@ -102,11 +62,6 @@
         <navigation-case>
             <from-outcome>neworthanc</from-outcome>
             <to-view-id>/views/settings_neworthanc.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>settings_orthanc</from-outcome>
-            <to-view-id>/views/settings_orthanc.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
@@ -127,16 +82,6 @@
         <navigation-case>
             <from-outcome>settings_datebase</from-outcome>
             <to-view-id>/views/settings_datebase.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>localuser</from-outcome>
-            <to-view-id>/views/localuser.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>remoteuser</from-outcome>
-            <to-view-id>/views/remoteuser.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>

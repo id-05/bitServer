@@ -43,7 +43,7 @@
                 <p:tab title="Сеть и доступ">
                     <p:outputPanel>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Адрес orthanc сервера</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -58,7 +58,7 @@
                         <div>Адрес orthanc сервера</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Порт RESTAPI</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -73,7 +73,7 @@
                         <div >Порт для доступа к RESTAPI Orthanc. Этот же порт подставляется к адресу при перенаправлении пользователя в OSIMIS.</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Логин и пароль для доступа к Orthanc</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -92,7 +92,7 @@
                         <div>Логин и пароль которые программа будет использовать для доступа к RESTAPI Orthanc</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Путь к файлу orthanc.json</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -104,7 +104,7 @@
                         <br/>
                         <div >Данный файл используется для настройки сервера Orthanc</div>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Читать файл настроек используя lua-скрипт</b>
                         </p:divider>
 
@@ -118,7 +118,7 @@
                         <div >Если включено, программа будет читать файл "orthanc.json" используя lua-скрипт.</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Путь к файлу c lua-скриптом</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -131,7 +131,7 @@
                         <div >Данный файл используется для настройки маршрутизации dicom-файлов</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Каталог хранения файлов результатов анализа</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -144,7 +144,7 @@
                         <div >В этом каталоге будут размещены файлы с результатами анализов, прикрепляемые пользователями</div>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Путь к файлу сетевых настроек</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -156,7 +156,7 @@
                         <br/>
                         <div >Данный файл используется для настройки сетевых параметров</div>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Путь к файлу настроек IPTABLES</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -169,7 +169,7 @@
                         <div >Данный файл используется для настройки сетевых параметров</div>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Включить HTTPS</b>
                         </p:divider>
 
@@ -260,9 +260,7 @@
                                 <p:outputLabel for="role" style="margin-right: .5rem">Роль</p:outputLabel>
                                 <p:selectOneMenu id="role" value="#{settingBitServerBean.selectedUser.role}">
                                     <f:selectItem itemLabel="Администратор" itemValue="admin"/>
-                                    <f:selectItem itemLabel="Локальный пользователь" itemValue="localuser"/>
-                                    <f:selectItem itemLabel="Локальный только просмотр" itemValue="onlyview"/>
-                                    <f:selectItem itemLabel="demo" itemValue="demo"/>
+                                    <f:selectItem itemLabel="Пользователь" itemValue="demo"/>
                                 </p:selectOneMenu>
 
                             </p:panelGrid>
@@ -310,7 +308,7 @@
                 <p:tab title="Отладка">
                     <p:outputPanel>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Показывать статистику пользователям</b>
                         </p:divider>
 
@@ -324,7 +322,9 @@
                         <div >Если включено, все пользователи видят статистику сервера на своей домашней странице</div>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid"> </p:divider>
+
+                        <p:divider align="left" type="solid">
                             <b>Время обновления статистических данных</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -333,14 +333,35 @@
                                 <p:ajax event="change" listener="#{settingBitServerBean.saveParam}"  />
                             </p:spinner>
 
-
                         </p>
                         <br/>
                         <div >Интервал в минутах, через который будут обновляться данные статистики</div>
 
+                        <p:divider align="left" type="solid"> </p:divider>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
+                            <b>Ускоренный метод формирования списка исследований на форме очередь</b>
+                        </p:divider>
+
+                        <p class="p-m-0">
+                            <p:toggleSwitch value="#{settingBitServerBean.queueGetType}">
+                                <p:ajax listener="#{settingBitServerBean.saveParam}" />
+                            </p:toggleSwitch>
+                        </p>
+
+                        <br/>
+                        <div >Если включено, очередь будет формироваться с помощью cFind запроса. Это так же отразится на внешнем виде таблицы и функицональности формы.</div>
+                        <div >Так же обратите внимание, что для работы cFind запроса,  в модальности сервера, должен быть добавлена модальность c данными: </div>
+                        <div > </div>
+                        <div >IP:127.0.0.1</div>
+                        <div >AETitle: ORTHANC</div>
+                        <div >Port: 4242</div>
+                        <br/>
+                        <p:divider align="left" type="solid"> </p:divider>
+                        <br/>
+
+                        <p:divider align="left" type="solid" >
                             <b>Включить службу заданий по времени</b>
                         </p:divider>
 
@@ -354,7 +375,7 @@
                         <div >Если включено, будут выполняться задания по времени из меню "Задания"</div>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Включать в iso образ DICOM-viewer</b>
                         </p:divider>
 
@@ -369,7 +390,7 @@
                         <br/>
 
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Путь к файлам cdviewer для записи на диск</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -382,7 +403,7 @@
                         <div >Файлы находящиеся по данному пути, буду включены в iso файл при его формировании</div>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Удаление всех DICOM-данных</b>
                         </p:divider>
 
@@ -407,7 +428,7 @@
                         <div >Будьте внимательны при использовании, данная процедура - необратима!</div>
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Удаление DICOM-данных за выбранный период</b>
                         </p:divider>
 
@@ -451,7 +472,7 @@
                         <br/>
                         <div >Не закрываейте эту вкладку, пока процедура не завершится</div>
                         <br/>
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Синхронизация с удаленным DICOM-сервером</b>
                         </p:divider>
 
@@ -521,7 +542,7 @@
                 <p:tab title="WorkList и HL7-служба">
                     <p:outputPanel>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Порт службы HL7</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -537,7 +558,7 @@
 
                         <br/>
 
-                        <p:divider align="left" type="dashed">
+                        <p:divider align="left" type="solid">
                             <b>Время хранения файлов рабочих списков</b>
                         </p:divider>
                         <p class="p-m-0">
@@ -564,14 +585,6 @@
                             <p:panelGrid id="manageTG"  styleClass="ui-panelgrid-blank ui-fluid" style="border:0 none; background-color:transparent;">
 
                                 <p:row>
-
-                                    <p:column>
-                                        <p:outputLabel for="statusTogle" style="margin-right: .5rem">Статус</p:outputLabel>
-                                    </p:column>
-
-                                    <p:column>
-                                        <p:outputLabel for="previewTogle" style="margin-right: .5rem">Preview</p:outputLabel>
-                                    </p:column>
 
                                     <p:column>
                                         <p:outputLabel for="datebthTogle" style="margin-right: .5rem">Дата рождения</p:outputLabel>
@@ -602,14 +615,6 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:outputLabel for="whereSendTogle" style="margin-right: .5rem">Куда отправлено</p:outputLabel>
-                                    </p:column>
-
-                                    <p:column>
-                                        <p:outputLabel for="optionsSendTogle" style="margin-right: .5rem">Функционал отправки</p:outputLabel>
-                                    </p:column>
-
-                                    <p:column>
                                         <p:outputLabel for="optionDownloadTogle" style="margin-right: .5rem">Функционал загрузки</p:outputLabel>
                                     </p:column>
 
@@ -624,18 +629,6 @@
                                 </p:row>
 
                                 <p:row>
-
-                                    <p:column>
-                                        <p:toggleSwitch id="statusTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colStatus}">
-                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
-                                        </p:toggleSwitch>
-                                    </p:column>
-
-                                    <p:column>
-                                        <p:toggleSwitch id="previewTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colPreview}">
-                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
-                                        </p:toggleSwitch>
-                                    </p:column>
 
                                     <p:column>
                                         <p:toggleSwitch id="datebthTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colDateBirth}">
@@ -680,18 +673,6 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:toggleSwitch id="whereSendTogle" style="margin-top: 10pm" value="#{settingBitServerBean.colWhereSend}">
-                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
-                                        </p:toggleSwitch>
-                                    </p:column>
-
-                                    <p:column>
-                                        <p:toggleSwitch id="optionsSendTogle" style="margin-top: 10pm" value="#{settingBitServerBean.optSend}">
-                                            <p:ajax listener="#{settingBitServerBean.saveParam}" />
-                                        </p:toggleSwitch>
-                                    </p:column>
-
-                                    <p:column>
                                         <p:toggleSwitch id="optionDownloadTogle" style="margin-top: 10pm" value="#{settingBitServerBean.optDownload}">
                                             <p:ajax listener="#{settingBitServerBean.saveParam}" />
                                         </p:toggleSwitch>
@@ -716,19 +697,7 @@
                         </p>
 
                         <p:toolbar id="toolbar">
-                            <p:toolbarGroup>
-                                <p:commandButton id="send-button"
-                                                 icon="pi pi-send"
-                                                 styleClass="ui-button-danger"
-                                                 rendered="#{settingBitServerBean.optSend == 'true'}"
-                                                 style="margin-right: 5px">
-                                </p:commandButton>
 
-                                <p:selectOneMenu id="ugroup2"  rendered="#{settingBitServerBean.optSend == 'true'}" dynamic="true">
-
-                                </p:selectOneMenu>
-
-                            </p:toolbarGroup>
                             <p:toolbarGroup align="centr">
                                 <h:outputLabel style="font-weight: bold" id="for_txt_count2" for="txt_count2" value="Всего:  "/>
                                 <h:outputText  style="font-weight: bold" id="txt_count2" />
@@ -804,11 +773,6 @@
                             <p:column headerText="Источник" sortBy="#{bitServerStudy.aetSource}" style="text-align: center"
                                       rendered="#{settingBitServerBean.colSource == 'true'}">
                                 <h:outputText value="#{bitServerStudy.aetSource}"/>
-                            </p:column>
-
-                            <p:column headerText="Куда отправлен" sortBy="#{bitServerStudy.usergroupwhosees}" style="text-align: center"
-                                      rendered="#{settingBitServerBean.colWhereSend == 'true'}">
-                                <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
                             </p:column>
 
                         </p:dataTable>
