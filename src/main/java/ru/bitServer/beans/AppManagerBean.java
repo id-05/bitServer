@@ -20,6 +20,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
+
 @ManagedBean(name = "appManagerBean")
 @ViewScoped
 public class AppManagerBean implements UserDao {
@@ -34,22 +36,38 @@ public class AppManagerBean implements UserDao {
 
     List<BitServerApp> appList;
 
+    BitServerApp selectedBitServerApp;
+
     @PostConstruct
     public void init() {
-        System.out.println("appManagerBean");
         getAppVersion();
     }
 
     void getAppVersion()  {
         try{
-            Path file = Paths.get("/home/tomcat/webapps/bitServer.war");
-            BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-            attrs.creationTime();
+            //Path file = Paths.get("/home/tomcat/webapps/bitServer.war");
+//            BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+//            attrs.creationTime();
             appList = new ArrayList<>();
-            appList.add(new BitServerApp("bitServer",String.valueOf(attrs.creationTime()).substring(0,10)));
+            String pathtowar = "E:\\temp";
+            Files.walk(Paths.get(pathtowar), FOLLOW_LINKS)
+                    .forEach(file -> {
+                        if(file.toFile().isFile() && file.toFile().getPath().endsWith(".war")){
+                            BasicFileAttributes attrs = null;
+                            try {
+                                attrs = Files.readAttributes(file, BasicFileAttributes.class);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            attrs.creationTime();
+                            appList.add(new BitServerApp(file.getFileName().getName(0).toString(), String.valueOf(attrs.creationTime()).substring(0,10)));
+                        }
+                    });
+
+            //appList.add(new BitServerApp("bitServer",String.valueOf(attrs.creationTime()).substring(0,10)));
         }
         catch (Exception e){
-            System.out.println("error read file attribute");
+            //System.out.println("error read file attribute");
         }
     }
 
@@ -89,6 +107,7 @@ public class AppManagerBean implements UserDao {
         public void setName(String name) {
             this.name = name;
         }
+
 
         public String getDate() {
             return date;

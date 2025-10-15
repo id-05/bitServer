@@ -501,7 +501,6 @@ public class SettingBitServerBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("bitserverSetting");
         remoteTransStatus = "Статус: не запущено";
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         startDate = new Date();
@@ -678,7 +677,7 @@ public class SettingBitServerBean implements UserDao {
 
     public void startRemoteSync() {
         PrimeFaces.current().executeScript("PF('startButtonRS').disable()");
-        int i = 0;
+        int i = 1;
         progress2 = 0;
         OrthancRestApi remoteCon = new OrthancRestApi(remoteaddr,remoteport,remotelogin,remotepass);
         OrthancSettings orthancSettings = new OrthancSettings(connection);
@@ -692,9 +691,9 @@ public class SettingBitServerBean implements UserDao {
             while (studiesIterator.hasNext()) {
                 remoteStudyList.add(studiesIterator.next().getAsString());
             }
-            //ArrayList<String> localStudyList = new ArrayList<>();
-
-            //remoteStudyList.removeAll(localStudyList);
+//            ArrayList<String> localStudyList = new ArrayList<>();
+//
+//            remoteStudyList.removeAll(localStudyList);
             if(remoteStudyList.size()>0) {
                 double dProgress = (double) 100 / studies.size();
                 for (String bufId : remoteStudyList) {
@@ -710,8 +709,11 @@ public class SettingBitServerBean implements UserDao {
                     i++;
                     progress2 = (int) (dProgress * i);
                 }
-            }else{
                 showMessage("Сообщение:", "Все данные синхронизированы! ", warning);
+                progress2 = 100;
+                LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start startRemoteSync() - finish");
+            }else{
+                showMessage("Сообщение:", "Нет данных для синхронизации! ", warning);
                 LogTool.getLogger().info("Admin "+ currentUser.getUname()+" start startRemoteSync() - finish");
             }
             PrimeFaces.current().executeScript("PF('startButtonRS').enable()");

@@ -40,7 +40,7 @@ public interface UserDao {
         String studyDate = null;
         String studyDescription = null;
         String patientName = null;
-        String patientBirthDate = null;
+        StringBuilder patientBirthDate = null;
         String patientID = null;
         String patientSex = null;
         String modality = null;
@@ -62,11 +62,18 @@ public interface UserDao {
             if(bufstr.contains("StudyDescription")){studyDescription = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("PatientName")){patientName = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("PatientID")){patientID = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
-            if(bufstr.contains("PatientBirthDate")){patientBirthDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
-            if(bufstr.contains("StudyDate")){patientSex = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
+            if(bufstr.contains("PatientBirthDate")){
+                patientBirthDate = new StringBuilder(bufstr.substring(bufstr.lastIndexOf("<") + 1, bufstr.lastIndexOf(">")));}
+            if (patientBirthDate!=null){
+            if(patientBirthDate.length()<8){
+                patientBirthDate.append("0101");
+                }
+            }
+            if(bufstr.contains("PatientSex")){patientSex = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("Modality")){modality = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
         }
-        return new BitServerStudy(studyDate, studyDescription, patientName, patientBirthDate, patientID, patientSex, modality);
+        assert patientBirthDate != null;
+        return new BitServerStudy(studyDate, studyDescription, patientName, patientBirthDate.toString(), patientID, patientSex, modality);
     }
 
 
@@ -678,6 +685,30 @@ public interface UserDao {
             LogTool.getLogger().info(this.getClass().getSimpleName() + ": " + "Количеcтво найденных записей при поиске: " + resultList.size());
         }
         return resultList;
+    }
+    default String getSidByPatientId(String PatientId){
+        String result ="";
+        try {
+            Connection conn = getConnection();
+            String staticSQL = "SELECT DISTINCT patientid, part1.publicid, tag1.value, tag2.value" +
+                    " FROM patientrecyclingorder" +
+                    " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
+                    " JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'"+
+                    " WHERE tag2.value  LIKE "+"'%" + PatientId.trim() +"%'";
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+
+            while (rs.next()) {
+                result = rs.getString(2);
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return result;
     }
 
     default BitServerStudy getBitServerStudyById(String studyid){

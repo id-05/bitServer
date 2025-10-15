@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jai_imageio-1.0_01">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jai_imageio-1.0_01.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

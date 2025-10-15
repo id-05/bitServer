@@ -49,9 +49,12 @@ public interface DataAction extends UserDao{
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/bitviewer.xhtml?study="+instance);
     }
 
-    default void redirectToViewer(String sid) throws IOException {
+    default void redirectToViewer(String ShortId) throws IOException {
+        System.out.println("'"+ShortId+"'");
+        String sid = getSidByPatientId(ShortId);
         if(Boolean.parseBoolean(getBitServerResource("debug").getRvalue())){
-            redirectToBitViewer(sid);
+            //redirectToBitViewer(sid);
+            redirectToOsimis(sid);
         }else{
             redirectToOsimis(sid);
         }

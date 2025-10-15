@@ -67,6 +67,9 @@ public class QueueBean implements UserDao, DataAction {
     Date seconddate;
     int typeSeach = 5;
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy.MM.dd");
+
+    final SimpleDateFormat FORMAT3 = new SimpleDateFormat("yyyyMMdd");
+    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("ddMMyyyy");
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
@@ -486,38 +489,6 @@ public class QueueBean implements UserDao, DataAction {
         dataoutput();
     }
 
-    public void testnewdicomqueue() {
-        System.out.println("test");
-        try {
-            // use the default character set for VR encoding - override this as necessary
-            SpecificCharacterSet specificCharacterSet = new SpecificCharacterSet((String[])null);
-            AttributeList identifier = new AttributeList();
-            //build the attributes that you would like to retrieve as well as passing in any search criteria
-            identifier.putNewAttribute(TagFromName.QueryRetrieveLevel).addValue("STUDY"); //specific query root
-            identifier.putNewAttribute(TagFromName.PatientName);//,specificCharacterSet).addValue("Bowen*");
-            identifier.putNewAttribute(TagFromName.PatientID);//,specificCharacterSet);
-            identifier.putNewAttribute(TagFromName.PatientBirthDate);
-            identifier.putNewAttribute(TagFromName.PatientSex);
-            identifier.putNewAttribute(TagFromName.StudyInstanceUID);
-            identifier.putNewAttribute(TagFromName.SOPInstanceUID);
-            identifier.putNewAttribute(TagFromName.StudyDescription);
-            identifier.putNewAttribute(TagFromName.StudyDate);
-            OurCustomFindIdentifierHandler cFind =  new OurCustomFindIdentifierHandler();
-
-            //retrieve all studies belonging to patient with name 'Bowen'
-            new FindSOPClassSCU("localhost",
-                    4242,
-                    "DS4TB",
-                    "DS4TB",
-                    SOPClass.StudyRootQueryRetrieveInformationModelFind,identifier,
-                    cFind,0);
-
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage()); // in real life, do something about this exception
-        }
-    }
-
     class OurCustomFindIdentifierHandler extends IdentifierHandler implements UserDao {
         List<BitServerStudy> bitServerStudyList = new ArrayList<>();
 
@@ -538,11 +509,10 @@ public class QueueBean implements UserDao, DataAction {
         }
         @Override
         public void doSomethingWithIdentifier(AttributeList attributeListForFindResult) throws DicomException {
-            //System.out.println("Matched result:" + attributeListForFindResult);
             try {
                 bitServerStudyList.add(parcerStudyFromCFIND(attributeListForFindResult.toString()));
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": error parsing"+ attributeListForFindResult);
             }
         }
     }
@@ -609,12 +579,13 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public List<BitServerStudy> getStudyFromCFINDRequest(String dateSeachType, Date firstdate, Date seconddate) {
-        //List<BitServerStudy> bitServerStudies = new ArrayList<>();
         Calendar c;
+        String datestring = "";
         switch (dateSeachType) {
             case "today":
                 firstdate = new Date();
                 seconddate = firstdate;
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
             case "week":
                 seconddate = new Date();
@@ -622,6 +593,7 @@ public class QueueBean implements UserDao, DataAction {
                 c.setTime(seconddate);
                 c.add(Calendar.DATE, -7);
                 firstdate = c.getTime();
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
             case "mounth":
                 seconddate = new Date();
@@ -629,6 +601,7 @@ public class QueueBean implements UserDao, DataAction {
                 c.setTime(seconddate);
                 c.add(Calendar.MONTH, -1);
                 firstdate = c.getTime();
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
             case "year":
                 seconddate = new Date();
@@ -636,6 +609,7 @@ public class QueueBean implements UserDao, DataAction {
                 c.setTime(seconddate);
                 c.add(Calendar.YEAR, -1);
                 firstdate = c.getTime();
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
             case "yesterday":
                 seconddate = new Date();
@@ -644,20 +618,27 @@ public class QueueBean implements UserDao, DataAction {
                 c.add(Calendar.DATE, -1);
                 firstdate = c.getTime();
                 seconddate = firstdate;
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
             case "targetdate":
                 c = Calendar.getInstance();
                 c.setTime(firstdate);
                 c.add(Calendar.DATE, 1);
                 seconddate = c.getTime();
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(firstdate);
                 break;
             case "range":
                 c = Calendar.getInstance();
                 c.setTime(seconddate);
                 c.add(Calendar.DATE, 1);
                 seconddate = c.getTime();
+                datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(seconddate);
                 break;
+            case "all":
+                datestring = "";
         }
+
+        if(dateSeachType.equals("all")){datestring = "";}
 
         OurCustomFindIdentifierHandler cFind = null;
         try {
@@ -673,11 +654,10 @@ public class QueueBean implements UserDao, DataAction {
             identifier.putNewAttribute(TagFromName.StudyInstanceUID);
             identifier.putNewAttribute(TagFromName.SOPInstanceUID);
             identifier.putNewAttribute(TagFromName.StudyDescription);
-            identifier.putNewAttribute(TagFromName.StudyDate);
+
+            identifier.putNewAttribute(TagFromName.StudyDate).setValue(datestring);
             identifier.putNewAttribute(TagFromName.Modality);
             cFind = new OurCustomFindIdentifierHandler();
-
-            //retrieve all studies belonging to patient with name 'Bowen'
 
             new FindSOPClassSCU("localhost",
                     4242,
@@ -685,7 +665,6 @@ public class QueueBean implements UserDao, DataAction {
                     "ORTHANC",
                     SOPClass.StudyRootQueryRetrieveInformationModelFind, identifier,
                     cFind, 0);
-
 
         } catch (Exception e) {
             System.out.println(e.getMessage()); // in real life, do something about this exception
@@ -719,7 +698,17 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void onRowSelect(SelectEvent event) {
+        System.out.println("onRowSelect");
         selectedVisibleStudy = (BitServerStudy) event.getObject();
+    }
+
+    public void onRowToggle(String shortId) {
+        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
+        selectedVisibleStudy.setSid(getSidByPatientId(shortId));
+
+
+
+        System.out.println(getSidByPatientId(shortId)+"  = "+shortId);
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
@@ -849,6 +838,7 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+        bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
@@ -864,6 +854,7 @@ public class QueueBean implements UserDao, DataAction {
     public StreamedContent downloadIsoStudy() throws Exception {
         String tmpdir = getBitServerResource("isoPath").getRvalue();
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
+        bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection("/tools/create-archive", jsonArray.toString());
@@ -884,7 +875,6 @@ public class QueueBean implements UserDao, DataAction {
         root.addRecursively(new File(tmpdir+"/images"));
 
         if(getBitServerResource("cdViewerInclude").getRvalue().equals("true")) {
-            //String relativeWebPath = FacesContext.getCurrentInstance().getExternalContext().getResource("/resources/cdviewer").getPath();
             String relativeWebPath = getBitServerResource("cdviewerpath").getRvalue();
             root.addContentsRecursively(new File(relativeWebPath));
         }
@@ -949,11 +939,8 @@ public class QueueBean implements UserDao, DataAction {
 
     public void getStudyToDiag() throws IOException {
         selectedVisibleStudy.setStatus(3);
-        //selectedVisibleStudy.setDatablock(new Date());
         selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        //updateStudy(selectedVisibleStudy);
         currentUser.setHasBlockStudy(true);
-        //currentUser.setBlockStudy(selectedVisibleStudy.getId().toString());
         updateUser(currentUser);
         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
     }
@@ -976,7 +963,6 @@ public class QueueBean implements UserDao, DataAction {
         StringBuilder sb = null;
         if(ids.size()!=0) {
             try {
-                //System.out.println("/modalities/" + selectedModaliti.getDicomName() + "/store");
                 sb = connection.makePostConnectionAndStringBuilderWithIOE("/modalities/" + selectedModaliti.getDicomName() + "/store", ids.toString());
             } catch (IOException e) {
                 showMessage("Сообщение:", "Возникла ошибка при отправке, удаленный сервер не отвечает! " + e.getMessage(), error);

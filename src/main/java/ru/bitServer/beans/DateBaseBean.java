@@ -61,7 +61,6 @@ public class DateBaseBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        //System.out.println("init");
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);

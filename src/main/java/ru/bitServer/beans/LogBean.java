@@ -45,7 +45,6 @@ public class LogBean implements UserDao {
 
     @PostConstruct
     public void init() {
-        System.out.println("log page");
         debug = getBitServerResource("debug").getRvalue().equals("true");
         try {
             setLogInfo();
@@ -59,7 +58,6 @@ public class LogBean implements UserDao {
         FileReader fileReader;
         if(logLevel.equals("ORTHANC")){
             fileReader= new FileReader("/var/log/orthanc/Orthanc.log");
-
         }else{
             fileReader= new FileReader(filename);
         }

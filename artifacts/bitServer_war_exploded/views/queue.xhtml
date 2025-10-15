@@ -189,7 +189,7 @@
                                        styleClass="fUpload-content"
                                        dragDropSupport="true"
                                        skinSimple="true"
-                                       sizeLimit="20000000"
+                                       sizeLimit="90000000"
                                        label="Выбрать"
                                        uploadLabel="Зазрузить"
                                        cancelLabel="Отмена"
@@ -207,9 +207,10 @@
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                                  reflow="true" styleClass="products-table" size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения" ajax="false"
-
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
-                                 rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}">
+                                 rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
+
+                                 rowExpandMode="single">
 
                         <p:ajax event="rowSelect" update=":seachform:send-button"/>
                         <p:ajax event="rowUnselect" update=":seachform:send-button"/>
@@ -218,6 +219,8 @@
                         <p:ajax event="toggleSelect" update=":seachform:send-button"/>
                         <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
                         <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
+                        <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle(bitServerStudy.shortid)}"/>
+
 
                         <f:facet name="header">
                             <div class="flex justify-content-end">
@@ -232,6 +235,10 @@
                         </f:facet>
 
                         <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
+
+                        <p:column style="width:2rem" ariaHeaderText="Row Toggler" rendered="false">
+                            <p:rowToggler/>
+                        </p:column>
 
                         <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
                             <h:outputText styleClass="product-badge status-#{bitServerStudy.statusStyle.toLowerCase()}"
@@ -305,6 +312,7 @@
                             <h:outputText value="#{bitServerStudy.usergroupwhosees}"/>
                         </p:column>
 
+
                         <p:column exportable="false" style="align-content: center; ">
 
                             <p:commandButton icon="pi pi-id-card"
@@ -361,6 +369,21 @@
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
                         </p:column>
+
+                        <p:rowExpansion>
+                            <div class="product">
+                                <div class="product-list-item">
+                                    <div class="product-list-detail">
+                                        <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
+                                        <div class="product-name">#{bitServerStudy.patientBirthDateStr}</div>
+                                        <div class="product-description">#{bitServerStudy.patientBirthDateStr}</div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </p:rowExpansion>
+
                     </p:dataTable>
 
                     <p:contextMenu for="dt-studys" >
@@ -373,6 +396,7 @@
                                     rendered="#{queueBean.currentUser.role != 'demo' and queueBean.optSend == 'true'}"
                                     action="#{queueBean.markAsHasResult}"
                                     disabled="#{not empty bitServerStudy.result or queueBean.currentUser.role == 'onlyview'}"/>
+
                         <p:menuitem ajax="false" value="Скачать DICOM-архив" update="dt-studys">
                             <p:fileDownload value="#{queueBean.downloadStudy()}"/>
                         </p:menuitem>

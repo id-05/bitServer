@@ -1,9 +1,17 @@
 package ru.bitServer.dao;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import ru.bitServer.beans.MainBean;
+import ru.bitServer.util.OrthancRestApi;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static ru.bitServer.beans.MainBean.mainServer;
 
 public class BitServerStudy implements Serializable {
     private Long id;
@@ -23,13 +31,10 @@ public class BitServerStudy implements Serializable {
     private int status;
     private String rustatus;
     private String anonimstudyid;
-    //private String userwhosent;
     private Date datesent;
-    //private String userwhodiagnost;
     private Date dateresult;
     private String usergroupwhosees;
     private boolean typeResult;
-    //private Date datablock;
     private int userwhoblock;
     private String statusStyle;
     private String Manufacturer;
@@ -39,41 +44,20 @@ public class BitServerStudy implements Serializable {
 
     SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMdd");
 
-    public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){//, String anonimstudyid, String userwhosent, Date datesent, String userwhodiagnost, Date dateresult, String usergroupwhosees) {
-
-//        if(sid.length()>59){
-//            this.sid = sid.substring(0,59);
-//        }else{
+    public BitServerStudy(String sid, String shortid, String sdescription, String source, Date sdate, String modality, Date DateAddInbase, String patientname, Date patientbirthdate, String patientsex, String anamnes, String result, int status){
             this.sid = sid;
-        //}
-
-//        if(shortid.length()>63){
-//            this.shortid = shortid.substring(0,63);
-//        }else{
             this.shortid = shortid;
-        //}
-
-//        if(sdescription.length()>59){
-//            this.sdescription = sdescription.substring(0,59);
-//        }else{
             this.sdescription = sdescription;
-//        }
-
-//        if(source.length()>59){
-//            this.source = source.substring(0,59);
-//        }else{
             this.source = source;
-       // }
-
-        this.sdate = sdate;
-        this.modality = modality;
-        this.DateAddInbase = DateAddInbase;
-        this.PatientName = patientname;
-        this.PatientBirthDate = patientbirthdate;
-        this.PatientSex = patientsex;
-        this.anamnes = anamnes;
-        this.result = result;
-        this.status = status;
+            this.sdate = sdate;
+            this.modality = modality;
+            this.DateAddInbase = DateAddInbase;
+            this.PatientName = patientname;
+            this.PatientBirthDate = patientbirthdate;
+            this.PatientSex = patientsex;
+            this.anamnes = anamnes;
+            this.result = result;
+            this.status = status;
     }
 
 
@@ -121,15 +105,17 @@ public class BitServerStudy implements Serializable {
     }
 
     public String getPreview() {
-//        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
-//        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
-//        JsonParser parserJsonSerie = new JsonParser();
-//        JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
-//        JsonArray series= bufObj.get("Series").getAsJsonArray();
-//        sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
-//        bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
-//        JsonArray instances= bufObj.get("Instances").getAsJsonArray();
-        return "";//"http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
+        OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
+
+        StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
+        System.out.println(sb.toString());
+        JsonParser parserJsonSerie = new JsonParser();
+        JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+        JsonArray series= bufObj.get("Series").getAsJsonArray();
+        sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
+        bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
+        JsonArray instances= bufObj.get("Instances").getAsJsonArray();
+        return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }
 
     public int getUserwhoblock() {
@@ -368,7 +354,8 @@ public class BitServerStudy implements Serializable {
     }
 
     public String getPatientBirthDateStr() {
-        return patientBirthDateStr;
+        return new SimpleDateFormat("dd.MM.yyyy").format(PatientBirthDate);
+        //return patientBirthDateStr;
     }
 
     public void setPatientBirthDateStr(String patientBirthDateStr) {
