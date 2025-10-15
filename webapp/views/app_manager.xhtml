@@ -42,12 +42,16 @@
 
             <p:card style="width: 65rem; margin-bottom: 4em; alignment: center">
                 <p:dataTable id="dt-apps" widgetVar="dtApps" var="bitServerApp" value="#{appManagerBean.appList}"
-                             reflow="true" styleClass="users-table"
+                             reflow="true" styleClass="apps-table"
                              emptyMessage="Нет записей для отображения"
                              size="small"
+                             stripedRows="true"
                              scrollable="true" scrollHeight="650"
-                             selection="#{settingBitServerBean.selectedUsers}" rowKey="#{BitServerApp.name}"
-                             rowSelectMode="add" >
+                             selection="#{appManagerBean.selectedVisibleApps}" rowKey="#{bitServerApp.name}">
+
+                    <p:ajax event="rowSelect" listener="#{appManagerBean.onRowSelect}"/>
+
+                    <p:column selectionMode="multiple" style="width:20px;" > </p:column>
 
                     <p:column headerText="Название" sortBy="#{bitServerApp.name}" style="text-align: center">
                         <h:outputText value="#{bitServerApp.name}"/>
@@ -63,6 +67,7 @@
                                          styleClass="edit-button rounded-button ui-button-success"
                                          icon="pi pi-download">
                             <p:fileDownload value="#{appManagerBean.getResult}"/>
+                            <f:setPropertyActionListener value="#{bitServerApp}" target="#{appManagerBean.selectedVisibleApp}"/>
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>

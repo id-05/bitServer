@@ -2,9 +2,14 @@ package ru.bitServer.beans;
 
 import com.google.common.net.HttpHeaders;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import ru.bitServer.dao.BitServerStudy;
 import ru.bitServer.dao.UserDao;
+import ru.bitServer.service.BitServerApp;
+import ru.bitServer.util.LogTool;
+
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -14,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -29,31 +33,47 @@ public class AppManagerBean implements UserDao {
     public List<BitServerApp> getAppList() {
         return appList;
     }
+    public List<BitServerApp> selectedVisibleApps = new ArrayList<>();
+
+    public List<BitServerApp> getSelectedVisibleApps() {
+        return selectedVisibleApps;
+    }
+
+    public void setSelectedVisibleApps(List<BitServerApp> selectedVisibleApps) {
+        this.selectedVisibleApps = selectedVisibleApps;
+    }
 
     public void setAppList(List<BitServerApp> appList) {
         this.appList = appList;
     }
 
     List<BitServerApp> appList;
+    BitServerApp selectedVisibleApp;
 
-    BitServerApp selectedBitServerApp;
+    public BitServerApp getSelectedVisibleApp() {
+        return selectedVisibleApp;
+    }
+
+    public void setSelectedVisibleApp(BitServerApp selectedVisibleApp) {
+        this.selectedVisibleApp = selectedVisibleApp;
+    }
 
     @PostConstruct
     public void init() {
+        selectedVisibleApp = new BitServerApp();
+        selectedVisibleApps.clear();
         getAppVersion();
+        selectedVisibleApp = appList.get(0);
     }
 
     void getAppVersion()  {
         try{
-            //Path file = Paths.get("/home/tomcat/webapps/bitServer.war");
-//            BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
-//            attrs.creationTime();
             appList = new ArrayList<>();
-            String pathtowar = "E:\\temp";
+            String pathtowar = "/home/tomcat/webapps/";
             Files.walk(Paths.get(pathtowar), FOLLOW_LINKS)
                     .forEach(file -> {
                         if(file.toFile().isFile() && file.toFile().getPath().endsWith(".war")){
-                            BasicFileAttributes attrs = null;
+                            BasicFileAttributes attrs;
                             try {
                                 attrs = Files.readAttributes(file, BasicFileAttributes.class);
                             } catch (IOException e) {
@@ -63,22 +83,24 @@ public class AppManagerBean implements UserDao {
                             appList.add(new BitServerApp(file.getFileName().getName(0).toString(), String.valueOf(attrs.creationTime()).substring(0,10)));
                         }
                     });
-
-            //appList.add(new BitServerApp("bitServer",String.valueOf(attrs.creationTime()).substring(0,10)));
         }
         catch (Exception e){
-            //System.out.println("error read file attribute");
+            LogTool.getLogger().error(this.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
     public StreamedContent getGetResult() throws IOException {
-        String strpath = "/home/tomcat/webapps/bitServer.war";
+        String strpath = "/home/tomcat/webapps/" + selectedVisibleApp.getName(); // "/home/tomcat/webapps/"
         InputStream inputStream = new FileInputStream(strpath);
         return DefaultStreamedContent.builder()
-                .name("bitServer.war")
+                .name(selectedVisibleApp.getName())
                 .contentType("application/war")
                 .stream(() -> inputStream)
                 .build();
+    }
+
+    public void onRowSelect(SelectEvent event) {
+        selectedVisibleApp = (BitServerApp) event.getObject();
     }
 
     public void openTomcat() {
@@ -96,31 +118,6 @@ public class AppManagerBean implements UserDao {
         }
     }
 
-    public class BitServerApp {
-        String name;
-        String date;
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-
-        public String getDate() {
-            return date;
-        }
-
-        public void setDate(String date) {
-            this.date = date;
-        }
-
-        BitServerApp(String name, String date){
-            this.name = name;
-            this.date = date;
-        }
-    }
 }
 

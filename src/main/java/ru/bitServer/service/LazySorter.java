@@ -2,7 +2,6 @@ package ru.bitServer.service;
 
 import org.primefaces.model.SortOrder;
 import ru.bitServer.dao.BitServerStudy;
-
 import java.util.Comparator;
 
 public class LazySorter implements Comparator<BitServerStudy> {

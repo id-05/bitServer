@@ -330,7 +330,7 @@
                                              style="margin-right: 10px" styleClass="rounded-button ui-button-help"
                                              icon="pi pi-eye" process="@this"
                                              update=":seachform:dt-studys"
-                                             actionListener="#{queueBean.redirectToViewer(bitServerStudy.sid)}">
+                                             actionListener="#{queueBean.redirectToViewer(bitServerStudy)}">
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
