@@ -38,7 +38,8 @@
                     </p:submenu>
 
                     <p:menuitem style="margin-right: 5px" value="Редактор базы данных" rendered="true" outcome="settings_datebase" icon="pi pi-table"/>
-                    <p:menuitem style="margin-right: 5px" value="Очередь" outcome="queue" icon="pi pi-list"/>
+                    <p:menuitem style="margin-right: 5px" value="Очередь" rendered="#{!adminBean.queueGetType}" outcome="queue" icon="pi pi-list"/>
+                    <p:menuitem style="margin-right: 5px" value="Очередь" rendered="#{adminBean.queueGetType}" outcome="queuecfind" icon="pi pi-list"/>
 
                     <p:submenu label="Управление сервером" icon="pi power-off">
                         <p:menuitem style="margin-right: 5px" value="Список задач" rendered="true" outcome="jobslist" ajax="false" icon="pi pi-list" process="@this"/>
@@ -51,7 +52,7 @@
                         <p:menuitem style="margin-right: 5px" value="ORTHANC LOG" outcome="logorthanc" icon="pi pi-info-circle"/>
                     </p:submenu>
 
-                    <p:submenu icon="pi pi-palette" style="margin-right: 5px" label="Theme: #{authoriseBean.currentUserTheme}" rendered="false">
+                    <p:submenu style="margin-right: 5px" label="Цветовая схема: #{authoriseBean.currentUserTheme}" rendered="false">
                         <p:menuitem value="saga" actionListener="#{authoriseBean.setTheme('saga')}" process="@this"/>
                         <p:menuitem value="arya" actionListener="#{authoriseBean.setTheme('arya')}" process="@this"/>
                         <p:menuitem value="vela" actionListener="#{authoriseBean.setTheme('vela')}" process="@this"/>

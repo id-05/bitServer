@@ -96,18 +96,6 @@
             </p:inplace>
             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="modality" value="Модальности"/>
 
-
-            <p:inplace label="Состояние" style="font-weight: bold" effect="slide" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}">
-              <p:selectOneButton id="state" ajax="false" value="#{queueBean.typeSeach}" style="width: 500px;"
-                                 rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
-                <f:selectItem itemLabel="Не описан" itemValue="0" />
-                <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
-                <f:selectItem itemLabel="Описан" itemValue="2"/>
-                <f:selectItem itemLabel="Все" itemValue="5"/>
-                <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
-              </p:selectOneButton>
-            </p:inplace>
-
           </p:toolbarGroup>
 
         </p:toolbar>
@@ -184,20 +172,19 @@
         <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                      reflow="true" styleClass="products-table" size="small" stripedRows="true"
                      emptyMessage="Нет записей для отображения" ajax="false"
-                     selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
-                     rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
+                     selection="#{queueBean.selectedVisibleStudy}" selectionMode="single" rowKey="#{bitServerStudy.sid}" paginator="true"
+                     rows="25" rowSelectMode="new" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
 
                      rowExpandMode="single">
 
-          <p:ajax event="rowSelect" update=":seachform"/>
+          <p:ajax event="rowSelect" listener="#{queueBean.onRowSelect}" update=":seachform:dt-studys:dt-expansion"/>
           <p:ajax event="rowUnselect" update=":seachform"/>
           <p:ajax event="rowSelectCheckbox" update=":seachform"/>
           <p:ajax event="rowUnselectCheckbox" update=":seachform"/>
           <p:ajax event="toggleSelect" update=":seachform"/>
           <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
           <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
-          <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle(bitServerStudy.shortid)}"/>
-
+          <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle}" />
 
           <f:facet name="header">
             <div class="flex justify-content-end">
@@ -211,9 +198,9 @@
             </div>
           </f:facet>
 
-          <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
 
-          <p:column style="width:2rem" ariaHeaderText="Row Toggler" rendered="false">
+
+          <p:column style="width:2rem" ariaHeaderText="Row Toggler" rendered="true">
             <p:rowToggler/>
           </p:column>
 
@@ -308,14 +295,39 @@
             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
           </p:column>
 
-          <p:rowExpansion>
+          <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle">
             <div class="product">
               <div class="product-list-item">
                 <div class="product-list-detail">
-                  <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
+                  <p:graphicImage value="#{bitServerStudy.preview}" rendered="#{queueBean.expansionOpen}" style="width: 60px; height: 60px;"/>
                   <div class="product-name">#{bitServerStudy.patientBirthDateStr}</div>
                   <div class="product-description">#{bitServerStudy.patientBirthDateStr}</div>
 
+
+                  <div class="product-grid-item card border-1">
+                    <div class="product-grid-item-top">
+                      <div>
+                        <i class="pi pi-tag product-category-icon"/>
+                        <span class="product-category">Источник: #{bitServerStudy.manufacturer}</span>
+                      </div>
+                      <span class="product-badge status-Источник: #{bitServerStudy.manufacturer}">Источник: #{bitServerStudy.manufacturer}</span>
+                    </div>
+                    <div class="product-grid-item-content">
+
+                      <div class="product-name">Источник: #{bitServerStudy.manufacturer}</div>
+                      <div class="product-description">Источник: #{bitServerStudy.manufacturer}</div>
+                      <p:rating readonly="true" value="Источник: #{bitServerStudy.manufacturer}"/>
+                    </div>
+                    <div class="product-grid-item-bottom">
+                      <h:outputText value="Источник: #{bitServerStudy.manufacturer}" styleClass="product-price">
+                        <f:convertNumber currencySymbol="$" type="currency"/>
+                      </h:outputText>
+                      <p:commandButton type="button"
+                                       value="Add To Cart"
+                                       icon="pi pi-shopping-cart">
+                      </p:commandButton>
+                    </div>
+                  </div>
                 </div>
 
               </div>

@@ -85,7 +85,7 @@ public class JobsBean implements UserDao {
                 String[] jobs = stringBuilder.toString().replace("[", "").replace("]", "").split(",");
                 for (String job : jobs) {
                     stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/" + job.replace(" ", "").replace("\"", ""));
-                    System.out.println(stringBuilder);
+                    //System.out.println(stringBuilder);
                     OrthancJob orJob = new OrthancJob(stringBuilder.toString());
                     allJobs.add(orJob);
                 }

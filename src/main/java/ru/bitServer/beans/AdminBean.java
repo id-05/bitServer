@@ -23,10 +23,10 @@ public class AdminBean implements UserDao {
     String currentUserId;
     String errorText;
     Integer numTask;
-
     String countTask;
     boolean existTask = false;
     boolean debug;
+    boolean queueGetType;
 
     public String getCountTask() {
         return countTask;
@@ -42,6 +42,14 @@ public class AdminBean implements UserDao {
 
     public void setExistTask(boolean existTask) {
         this.existTask = existTask;
+    }
+
+    public boolean isQueueGetType() {
+        return queueGetType;
+    }
+
+    public void setQueueGetType(boolean queueGetType) {
+        this.queueGetType = queueGetType;
     }
 
     public boolean isDebug() {
@@ -68,6 +76,7 @@ public class AdminBean implements UserDao {
     public void init(){
         connection = new OrthancRestApi(mainServer.getIpaddress(),mainServer.getPort(),mainServer.getLogin(),mainServer.getPassword());
         debug = getBitServerResource("debug").getRvalue().equals("true");
+        queueGetType = getBitServerResource("QueueGetType").getRvalue().equals("true");
         numTask = getCountAllTask();
         countTask = "Активных заданий: "+numTask;
         if(numTask>0){

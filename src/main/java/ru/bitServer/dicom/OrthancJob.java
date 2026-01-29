@@ -111,14 +111,10 @@ public class OrthancJob implements UserDao {
     public String getCreationTime() {
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         ZoneId defaultZone = ZoneId.systemDefault();
-
         //defaultZone.getId();
         LocalDateTime datetime = LocalDateTime.parse(creationTime.replace('T',' '), DateTimeFormatter.ofPattern("yyyyMMdd HHmmss.SSSSSS"));
-
         ZonedDateTime dateReal = datetime.atZone(defaultZone.normalized());
         //Date date = Date.from(dateReal.atZone(ZoneId.systemDefault()).toInstant());
-
-        System.out.println("defaultZone  = " + dateReal.getDayOfMonth()+"-"+dateReal.getMonthValue()+"-"+dateReal.getYear()+" "+dateReal.getHour()+":"+dateReal.getMinute());
         return dateReal.getDayOfMonth()+"-"+dateReal.getMonthValue()+"-"+dateReal.getYear()+" "+dateReal.getHour()+":"+dateReal.getMinute();
     }
 
@@ -259,6 +255,7 @@ public class OrthancJob implements UserDao {
         if (bufJson.has("Description"))              this.description = bufJson.get("Description").getAsString();
 
         this.bitServerSudy = getBitServerStudyById(parentResources);
+        if (bufJson.has("ParentResources"))          this.parentResources = bitServerSudy.getPatientName()+" / "+ bitServerSudy.getShortid();
 
     }
 

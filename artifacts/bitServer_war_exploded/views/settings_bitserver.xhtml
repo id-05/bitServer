@@ -717,16 +717,6 @@
 
                             <p:column selectionMode="multiple" exportable="false" style="width:20px;" > </p:column>
 
-                            <p:column headerText="Статус" sortBy="#{bitServerStudy.rustatus}" style="text-align: center"
-                                      rendered="#{settingBitServerBean.colStatus == 'true'}" >
-                                <h:outputText styleClass="product-badge status-#{bitServerStudy.statusstyle.toLowerCase()}"
-                                              value="#{bitServerStudy.rustatus}"/>
-                            </p:column>
-
-                            <p:column headerText="Preview" style="text-align: center"
-                                      rendered="#{settingBitServerBean.colPreview == 'true'}" >
-                                <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
-                            </p:column>
 
                             <p:column headerText="ID" sortBy="#{bitServerStudy.shortid}" filterBy="#{bitServerStudy.shortid}" style="text-align: center">
                                 <h:outputText value="#{bitServerStudy.shortid}"/>

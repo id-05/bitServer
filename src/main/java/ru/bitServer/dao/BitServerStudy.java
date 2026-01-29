@@ -92,6 +92,12 @@ public class BitServerStudy implements Serializable {
         this.PatientName = patientname;
     }
 
+    public BitServerStudy(String sid, String shortid, String patientname){
+        this.sid = sid;
+        this.shortid = shortid;
+        this.PatientName = patientname;
+    }
+
     public BitServerStudy(String studyDate, String studyDescription, String patientName, String patientBirthDate, String patientID, String patientSex, String modality) throws ParseException {
         this.sdate = FORMAT.parse(studyDate);
         this.sdescription = studyDescription;
@@ -106,9 +112,7 @@ public class BitServerStudy implements Serializable {
 
     public String getPreview() {
         OrthancRestApi connection = new OrthancRestApi(mainServer.getIpaddress(), mainServer.getPort(), mainServer.getLogin(), mainServer.getPassword());
-
         StringBuilder sb = connection.makeGetConnectionAndStringBuilder("/studies/"+sid);
-        System.out.println(sb.toString());
         JsonParser parserJsonSerie = new JsonParser();
         JsonObject bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
         JsonArray series= bufObj.get("Series").getAsJsonArray();

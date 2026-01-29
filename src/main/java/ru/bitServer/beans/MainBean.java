@@ -72,7 +72,7 @@ public class MainBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
-        versionInfo = "2.2";
+        versionInfo = "2.3";
         hasTrouble = false;
         timeOnWork = 24;
         mainServer = new OrthancServer();
@@ -101,8 +101,6 @@ public class MainBean implements UserDao, DataAction {
                     case "pathtoresultfile":
                         pathToSaveResult = buf.getRvalue();
                         break;
-//                    case "PeriodUpdate": periodUpdate = buf.getRvalue();
-//                        break;
                     case "showStat": showStat = buf.getRvalue().equals("true");
                         break;
                 }
@@ -112,12 +110,6 @@ public class MainBean implements UserDao, DataAction {
         }
         themeList = themeListinit();
         selectTheme = themeList.get(1);
-
-//        try {
-//            periodUpdate = getBitServerResource("PeriodUpdate").getRvalue();
-//        }catch (Exception e){
-//            saveBitServiceResource(new BitServerResources("PeriodUpdate","2"));
-//        }
 
         try {
             if(getBitServerResource("deleteBufFileAfter").getRvalue().equals("")){
@@ -143,7 +135,6 @@ public class MainBean implements UserDao, DataAction {
             LogTool.setFileName(getBitServerResource("logpath").getRvalue());
         }
 
-
         //удаление файлов рабочих списков
         try {
             int wlDelHourCount = Integer.parseInt(getBitServerResource("workListLifeTime").getRvalue());
@@ -152,9 +143,8 @@ public class MainBean implements UserDao, DataAction {
                 delWL.scheduleAtFixedRate(new DeleteWorkListFile(), 0, 5, TimeUnit.MINUTES);
             }
         }catch (Exception e){
-            LogTool.getLogger().error("Error during parce Integer.parseInt(getBitServerResource(\"workListLifeTime\").getRvalue()");
+            LogTool.getLogger().error(Class.class.getCanonicalName() +"Error during parce Integer.parseInt(getBitServerResource(\"workListLifeTime\").getRvalue()");
         }
-
 
         //Обработка таймеров
         if(getBitServerResource("timerEnable").getRvalue().equals("true")){
@@ -171,7 +161,7 @@ public class MainBean implements UserDao, DataAction {
         try {
             port = Integer.parseInt(bufRes.getRvalue());
         }catch (Exception e){
-            LogTool.getLogger().error("Error UserDao.getStaticBitServerResource(\"hl7port\")");
+            LogTool.getLogger().error(Class.class.getCanonicalName() +" Error UserDao.getStaticBitServerResource(\"hl7port\")");
         }
         HL7Service ourHl7Server = context.newServer(port, false);
         AppRoutingDataImpl ourRouter = new AppRoutingDataImpl("*", "*", "*", "*");
@@ -180,7 +170,7 @@ public class MainBean implements UserDao, DataAction {
         try {
             ourHl7Server.startAndWait();
         }catch (Exception e){
-            LogTool.getLogger().error("MainBean Error HL7service: "+e.getMessage());
+            LogTool.getLogger().error(Class.class.getCanonicalName() +" MainBean Error HL7service: "+e.getMessage());
         }
     }
 

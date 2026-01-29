@@ -19,6 +19,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.StreamedContent;
@@ -67,9 +68,7 @@ public class QueueBean implements UserDao, DataAction {
     Date seconddate;
     int typeSeach = 5;
     final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy.MM.dd");
-
     final SimpleDateFormat FORMAT3 = new SimpleDateFormat("yyyyMMdd");
-    final SimpleDateFormat FORMAT2 = new SimpleDateFormat("ddMMyyyy");
     List<BitServerStudy> visibleStudiesList;
     List<BitServerStudy> selectedVisibleStudies = new ArrayList<>();
     BitServerStudy selectedVisibleStudy;
@@ -103,7 +102,6 @@ public class QueueBean implements UserDao, DataAction {
     private int number;
     int recordCount;
     List<String> modalityName = new ArrayList<>();
-
     double timeRequest;
     double timeDrawing;
     long timeStart;
@@ -113,6 +111,16 @@ public class QueueBean implements UserDao, DataAction {
     String selectedRecorder = null;
 
     boolean queueGetType = false;
+
+    boolean expansionOpen = false;
+
+    public boolean isExpansionOpen() {
+        return expansionOpen;
+    }
+
+    public void setExpansionOpen(boolean expansionOpen) {
+        this.expansionOpen = expansionOpen;
+    }
 
     public String getSelectedRecorder() {
         return selectedRecorder;
@@ -698,17 +706,18 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void onRowSelect(SelectEvent event) {
-        System.out.println("onRowSelect");
+        //System.out.println("onRowSelect");
         selectedVisibleStudy = (BitServerStudy) event.getObject();
+        //System.out.println(getSidByPatientId(selectedVisibleStudy.getSid())+"  = "+selectedVisibleStudy.getShortid());
+        //PrimeFaces.current().executeScript("PF('expansionTogle').trigger('click');");
     }
 
-    public void onRowToggle(String shortId) {
-        BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
-        selectedVisibleStudy.setSid(getSidByPatientId(shortId));
 
 
-
-        System.out.println(getSidByPatientId(shortId)+"  = "+shortId);
+    public void onRowToggle(ToggleEvent event) {
+        selectedVisibleStudy = (BitServerStudy) event.getData();
+        selectedVisibleStudy.setSid(getSidByPatientId(selectedVisibleStudy.getSid()));
+        expansionOpen = true;
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {

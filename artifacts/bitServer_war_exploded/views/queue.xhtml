@@ -96,18 +96,6 @@
                         </p:inplace>
                         <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="modality" value="Модальности"/>
 
-
-                        <p:inplace label="Состояние" style="font-weight: bold" effect="slide" rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}">
-                            <p:selectOneButton id="state" ajax="false" value="#{queueBean.typeSeach}" style="width: 500px;"
-                                               rendered="#{queueBean.currentUser.role != 'demo' and queueBean.colStatus == 'true'}" >
-                                <f:selectItem itemLabel="Не описан" itemValue="0" />
-                                <f:selectItem itemLabel="Отправлен на описание" itemValue="1" />
-                                <f:selectItem itemLabel="Описан" itemValue="2"/>
-                                <f:selectItem itemLabel="Все" itemValue="5"/>
-                                <p:ajax event="change" listener="#{queueBean.dataoutput}"/>
-                            </p:selectOneButton>
-                        </p:inplace>
-
                     </p:toolbarGroup>
 
                     </p:toolbar>
@@ -186,7 +174,6 @@
                                  emptyMessage="Нет записей для отображения" ajax="false"
                                  selection="#{queueBean.selectedVisibleStudies}" rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
-
                                  rowExpandMode="single">
 
                         <p:ajax event="rowSelect" update=":seachform"/>
@@ -196,7 +183,7 @@
                         <p:ajax event="toggleSelect" update=":seachform"/>
                         <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
                         <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
-                        <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle(bitServerStudy.shortid)}"/>
+
 
 
                         <f:facet name="header">
@@ -296,7 +283,7 @@
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
 
-                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="result" value="Результат/Описание"/>
+
 
                             <p:commandButton id="delete"
                                              icon="pi pi-trash"

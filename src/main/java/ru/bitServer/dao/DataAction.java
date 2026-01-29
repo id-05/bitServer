@@ -92,7 +92,6 @@ public interface DataAction extends UserDao{
 
         }else{
             LogTool.getLogger().error(mainServer.getPathToJson()+"orthanc.json");
-            System.out.println(mainServer.getPathToJson()+"orthanc.json");
             try(FileReader reader = new FileReader(mainServer.getPathToJson()+"orthanc.json")) {
                 int c;
                 while ((c = reader.read()) != -1) {
