@@ -124,6 +124,7 @@
                 </f:facet>
               </p:ajaxStatus>
             </div>
+
           </p:toolbarGroup>
 
           <p:toolbarGroup align="right">
@@ -174,14 +175,10 @@
                      emptyMessage="Нет записей для отображения" ajax="false"
                      selection="#{queueBean.selectedVisibleStudy}" selectionMode="single" rowKey="#{bitServerStudy.sid}" paginator="true"
                      rows="25" rowSelectMode="new" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
-
                      rowExpandMode="single">
 
           <p:ajax event="rowSelect" listener="#{queueBean.onRowSelect}" update=":seachform:dt-studys:dt-expansion"/>
           <p:ajax event="rowUnselect" update=":seachform"/>
-          <p:ajax event="rowSelectCheckbox" update=":seachform"/>
-          <p:ajax event="rowUnselectCheckbox" update=":seachform"/>
-          <p:ajax event="toggleSelect" update=":seachform"/>
           <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
           <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
           <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle}" />
@@ -233,7 +230,7 @@
 
           <p:column headerText="Описание" sortBy="#{bitServerStudy.sdescription}" style="text-align: center"
                     filterBy="#{bitServerStudy.sdescription}"
-                    rendered="#{queueBean.colDescription == 'true'}">
+                    rendered="#{false}">
             <h:outputText value="#{bitServerStudy.sdescription}"/>
           </p:column>
 
@@ -245,34 +242,23 @@
 
           <p:column headerText="Учреждение" sortBy="#{bitServerStudy.institutionName}" style="text-align: center"
                     filterBy="#{bitServerStudy.institutionName}"
-                    rendered="#{queueBean.colInstitution == 'true'}">
+                    rendered="#{false}">
             <h:outputText value="#{bitServerStudy.institutionName}"/>
           </p:column>
 
           <p:column headerText="Аппарат" sortBy="#{bitServerStudy.stationName}" style="text-align: center"
                     filterBy="#{bitServerStudy.stationName}"
-                    rendered="#{queueBean.colStation == 'true'}">
+                    rendered="#{false}">
             <h:outputText value="#{bitServerStudy.stationName}"/>
           </p:column>
 
           <p:column headerText="Источник" sortBy="#{bitServerStudy.AETSource}" style="text-align: center"
                     filterBy="#{bitServerStudy.AETSource}"
-                    rendered="#{queueBean.colSource == 'true'}">
+                    rendered="#{false}">
             <h:outputText value="#{bitServerStudy.AETSource}"/>
           </p:column>
 
           <p:column exportable="false" style="align-content: center; ">
-
-            <p:commandButton icon="pi pi-id-card"
-                             update=":seachform:dialogStudyAnamnes"
-                             oncomplete="PF('manageAnamnes').show()"
-                             id="anamnes"
-                             styleClass="rounded-button ui-button-warning"
-                             process="@this"
-                             style="margin-right: 10px">
-              <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-            </p:commandButton>
-            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="anamnes" value="Анамнез"/>
 
             <p:commandButton id="viewinosimis"
                              style="margin-right: 10px" styleClass="rounded-button ui-button-help"
@@ -289,50 +275,44 @@
                              icon="pi pi-trash"
                              styleClass="rounded-button ui-button-danger" process="@this"
                              rendered="#{queueBean.currentUser.role == 'admin'}"
+                             update=":seachform:dt-studys"
                              oncomplete="PF('confDelStudy').show()">
               <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
             </p:commandButton>
             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
           </p:column>
 
-          <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle">
-            <div class="product">
-              <div class="product-list-item">
-                <div class="product-list-detail">
-                  <p:graphicImage value="#{bitServerStudy.preview}" rendered="#{queueBean.expansionOpen}" style="width: 60px; height: 60px;"/>
-                  <div class="product-name">#{bitServerStudy.patientBirthDateStr}</div>
-                  <div class="product-description">#{bitServerStudy.patientBirthDateStr}</div>
+          <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle" >
+            <div class="p-grid" align="left">
 
-
-                  <div class="product-grid-item card border-1">
-                    <div class="product-grid-item-top">
-                      <div>
-                        <i class="pi pi-tag product-category-icon"/>
-                        <span class="product-category">Источник: #{bitServerStudy.manufacturer}</span>
-                      </div>
-                      <span class="product-badge status-Источник: #{bitServerStudy.manufacturer}">Источник: #{bitServerStudy.manufacturer}</span>
-                    </div>
-                    <div class="product-grid-item-content">
-
-                      <div class="product-name">Источник: #{bitServerStudy.manufacturer}</div>
-                      <div class="product-description">Источник: #{bitServerStudy.manufacturer}</div>
-                      <p:rating readonly="true" value="Источник: #{bitServerStudy.manufacturer}"/>
-                    </div>
-                    <div class="product-grid-item-bottom">
-                      <h:outputText value="Источник: #{bitServerStudy.manufacturer}" styleClass="product-price">
-                        <f:convertNumber currencySymbol="$" type="currency"/>
-                      </h:outputText>
-                      <p:commandButton type="button"
-                                       value="Add To Cart"
-                                       icon="pi pi-shopping-cart">
-                      </p:commandButton>
-                    </div>
-                  </div>
+                <div class="p-field" style="margin-left: 10px; margin-top: 10px">
+                  <p:graphicImage value="#{bitServerStudy.preview}" rendered="#{queueBean.expansionOpen}" clientCache="true" style="width: 80px; height: 80px;"/>
                 </div>
 
+                <div class="p-field" style="margin-left: 10px; margin-top: 10px">
+                  <div style="font-weight: bold">#{bitServerStudy.patientName}</div>
+                  <div>#{bitServerStudy.patientBirthDateStr}</div>
+                  <div>Пол: #{bitServerStudy.patientSex}</div>
+                  <div>id: #{bitServerStudy.shortid}</div>
+                </div>
+
+              <div class="p-field" style="margin-left: 50px; margin-top: 10px">
+                <div style="font-weight: bold">Исследование:</div>
+                <div>Дата: #{bitServerStudy.stringStudyDate}</div>
+                <div>Орган/отдел: #{bitServerStudy.sdescription}</div>
+                <div>Модальность: #{bitServerStudy.modality}</div>
               </div>
+              <div class="p-field" style="margin-left: 50px; margin-top: 10px">
+                <div style="font-weight: bold">Источник данных:</div>
+                <div>Вендор: #{bitServerStudy.manufacturer}</div>
+                <div>AET Источника: #{bitServerStudy.AETSource}</div>
+                <div>Учреждение: #{bitServerStudy.institutionName}</div>
+              </div>
+
             </div>
           </p:rowExpansion>
+
+
 
         </p:dataTable>
 
@@ -398,37 +378,6 @@
             <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('AEchoose').hide()"
                              class="ui-button-secondary" update="dialogAEchoose">
               <p:resetInput target="dialogAEchoose"/>
-            </p:commandButton>
-
-          </f:facet>
-
-        </p:dialog>
-
-        <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
-                  widgetVar="manageAnamnes" responsive="true">
-          <div class="p-d-flex p-flex-column">
-            <div class="p-mb-2">Укажите здесь, например:</div>
-            <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
-            <div class="p-mb-2">- причина обращения за обследованием</div>
-            <div class="p-mb-2">- текущее состояние пациента</div>
-            <div class="p-mb-2">- информация об удаленных у пациента органах</div>
-            <div class="p-mb-2">- другая важная информация</div>
-          </div>
-          <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
-                           autoResize="false"/>
-
-          <f:facet name="footer">
-
-            <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueBean.addAnamnes}"
-                             update=":seachform">
-              <p:resetInput target="dialogStudyAnamnes"/>
-            </p:commandButton>
-
-            <span style="padding: 20px;"> </span>
-
-            <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
-                             class="ui-button-secondary" update="dialogStudyAnamnes">
-              <p:resetInput target="dialogStudyAnamnes"/>
             </p:commandButton>
 
           </f:facet>

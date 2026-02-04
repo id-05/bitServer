@@ -3,9 +3,7 @@ package ru.bitServer.dao;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ru.bitServer.beans.MainBean;
 import ru.bitServer.util.OrthancRestApi;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +11,7 @@ import java.util.Date;
 
 import static ru.bitServer.beans.MainBean.mainServer;
 
-public class BitServerStudy implements Serializable {
+public class BitServerStudy implements Serializable, DataAction {
     private Long id;
     private String sid;
     private String shortid;
@@ -119,6 +117,13 @@ public class BitServerStudy implements Serializable {
         sb = connection.makeGetConnectionAndStringBuilder("/series/"+series.get(0).getAsString());
         bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
         JsonArray instances= bufObj.get("Instances").getAsJsonArray();
+
+        BitServerStudy buf  = getFullStudyInfo(this.sid);
+        this.InstitutionName = buf.getInstitutionName();
+        this.source = buf.getSource();
+        this.AETSource = buf.getAETSource();
+        this.Manufacturer = buf.getManufacturer();
+
         return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }
 
@@ -223,6 +228,12 @@ public class BitServerStudy implements Serializable {
     }
 
     public String getPatientSex() {
+        String buf;
+        if(PatientSex.equals("F")){
+            buf = "Жен";
+        }else{
+            buf = "Муж";
+        }
         return PatientSex;
     }
 
@@ -359,7 +370,6 @@ public class BitServerStudy implements Serializable {
 
     public String getPatientBirthDateStr() {
         return new SimpleDateFormat("dd.MM.yyyy").format(PatientBirthDate);
-        //return patientBirthDateStr;
     }
 
     public void setPatientBirthDateStr(String patientBirthDateStr) {
@@ -370,4 +380,9 @@ public class BitServerStudy implements Serializable {
 
     }
 
+    @Override
+    public String toString() {
+        String buf = sid+" "+shortid+" "+sdescription+" "+sdate+" "+modality+" "+PatientName+" "+PatientBirthDate.toString()+" "+PatientSex;
+        return buf;
+    }
 }

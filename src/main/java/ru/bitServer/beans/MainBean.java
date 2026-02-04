@@ -72,7 +72,7 @@ public class MainBean implements UserDao, DataAction {
 
     @PostConstruct
     public void init() {
-        versionInfo = "2.3";
+        versionInfo = "2.3.1";
         hasTrouble = false;
         timeOnWork = 24;
         mainServer = new OrthancServer();

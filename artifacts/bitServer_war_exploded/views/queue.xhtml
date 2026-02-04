@@ -263,17 +263,6 @@
 
                         <p:column exportable="false" style="align-content: center; ">
 
-                            <p:commandButton icon="pi pi-id-card"
-                                             update=":seachform:dialogStudyAnamnes"
-                                             oncomplete="PF('manageAnamnes').show()"
-                                             id="anamnes"
-                                             styleClass="rounded-button ui-button-warning"
-                                             process="@this"
-                                             style="margin-right: 10px">
-                                <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-                            </p:commandButton>
-                            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="anamnes" value="Анамнез"/>
-
                             <p:commandButton id="viewinosimis"
                                              style="margin-right: 10px" styleClass="rounded-button ui-button-help"
                                              icon="pi pi-eye" process="@this"
@@ -282,8 +271,6 @@
                                 <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
-
-
 
                             <p:commandButton id="delete"
                                              icon="pi pi-trash"
@@ -294,20 +281,6 @@
                             </p:commandButton>
                             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
                         </p:column>
-
-                        <p:rowExpansion>
-                            <div class="product">
-                                <div class="product-list-item">
-                                    <div class="product-list-detail">
-                                        <p:graphicImage value="#{bitServerStudy.preview}" style="width: 60px; height: 60px;"/>
-                                        <div class="product-name">#{bitServerStudy.patientBirthDateStr}</div>
-                                        <div class="product-description">#{bitServerStudy.patientBirthDateStr}</div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </p:rowExpansion>
 
                     </p:dataTable>
 
@@ -379,36 +352,7 @@
 
                     </p:dialog>
 
-                    <p:dialog id="dialogStudyAnamnes" header="Анамнез" showEffect="fade" modal="true"
-                              widgetVar="manageAnamnes" responsive="true">
-                            <div class="p-d-flex p-flex-column">
-                                <div class="p-mb-2">Укажите здесь, например:</div>
-                                <div class="p-mb-2">- анамнез (сведения о болезни, перенесенные травмы и операции, патологии)</div>
-                                <div class="p-mb-2">- причина обращения за обследованием</div>
-                                <div class="p-mb-2">- текущее состояние пациента</div>
-                                <div class="p-mb-2">- информация об удаленных у пациента органах</div>
-                                <div class="p-mb-2">- другая важная информация</div>
-                            </div>
-                            <p:inputTextarea value="#{queueBean.selectedVisibleStudy.anamnes}" rows="10" style="width: 600px; margin-top: 10px" scrollHeight="100"
-                                             autoResize="false"/>
 
-                            <f:facet name="footer">
-
-                                <p:commandButton value="Сохранить" icon="pi pi-check" actionListener="#{queueBean.addAnamnes}"
-                                                 update=":seachform">
-                                    <p:resetInput target="dialogStudyAnamnes"/>
-                                </p:commandButton>
-
-                                <span style="padding: 20px;"> </span>
-
-                                <p:commandButton value="Отмена" icon="pi pi-times" oncomplete="PF('manageAnamnes').hide()"
-                                                 class="ui-button-secondary" update="dialogStudyAnamnes">
-                                    <p:resetInput target="dialogStudyAnamnes"/>
-                                </p:commandButton>
-
-                            </f:facet>
-
-                    </p:dialog>
 
                     <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
                               message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">

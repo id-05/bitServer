@@ -7,6 +7,9 @@
         <element id="directory" name="classes">
           <element id="module-output" name="bitServer" />
         </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="dicom-20120929" />
+        </element>
       </element>
     </root>
   </artifact>

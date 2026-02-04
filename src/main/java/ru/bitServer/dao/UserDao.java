@@ -37,6 +37,7 @@ public interface UserDao {
     }
 
     default BitServerStudy parcerStudyFromCFIND(String buf) throws ParseException {
+       // System.out.println("!!!+ :"+buf);
         String studyDate = null;
         String studyDescription = null;
         String patientName = null;
@@ -56,8 +57,10 @@ public interface UserDao {
 //                (0x0010,0x0030) PatientBirthDate VR=<DA> VL=<0x8> <19970923>
 //                (0x0010,0x0040) PatientSex VR=<CS> VL=<0x2> <F >
 //                (0x0020,0x000d) StudyInstanceUID VR=<UI> VL=<0x3c> <1.2.840.113619.6.408.340175501651765976559840422134033351654>
+
         String[] strings = buf.split("\n");
         for(String bufstr:strings){
+            LogTool.getLogger().debug(this.getClass().getSimpleName()+": "+ bufstr);
             if(bufstr.contains("StudyDate")){studyDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("StudyDescription")){studyDescription = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("PatientName")){patientName = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
@@ -72,8 +75,9 @@ public interface UserDao {
             if(bufstr.contains("PatientSex")){patientSex = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("Modality")){modality = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
         }
-        assert patientBirthDate != null;
-        return new BitServerStudy(studyDate, studyDescription, patientName, patientBirthDate.toString(), patientID, patientSex, modality);
+        //assert patientBirthDate != null;
+        assert patientName != null;
+        return new BitServerStudy(studyDate, studyDescription, patientName.replace("^"," ").replace("_"," "), patientBirthDate.toString(), patientID, patientSex, modality);
     }
 
 
@@ -609,9 +613,6 @@ public interface UserDao {
                 colSourceBuf2 = " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" ;  //Manufacturer
             }
 
-
-
-
             String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value, tag2.value," +
                     "tag3.value, tag4.value, tag5.value, tag6.value " +
                     colInstitutionBuf1 +
@@ -642,7 +643,6 @@ public interface UserDao {
             }
 
             ResultSet rs = statement.executeQuery(resultSQL);
-
 
             while (rs.next()) {
 
@@ -675,7 +675,6 @@ public interface UserDao {
                         bufSource);
                 resultList.add(bufStudy);
             }
-
             conn.close();
 
         } catch (Exception  e) {
@@ -739,6 +738,64 @@ public interface UserDao {
         }
         return resultStudy;
     }
+
+
+
+    default BitServerStudy getFullStudyInfo(String studyid){
+        BitServerStudy resultStudy = new BitServerStudy();
+        try {
+            Connection conn = getConnection();
+
+            String staticSQL = "SELECT DISTINCT part1.publicid, tag1.value, tag2.value," +
+                    "tag3.value, tag4.value, tag5.value, tag6.value ,tag7.value,tag8.value,tag9.value" +
+                    " FROM patientrecyclingorder" +
+                    " JOIN resources AS part1 ON part1.parentid = patientrecyclingorder.patientid" +
+                    " JOIN resources AS part2 ON part2.parentid = part1.internalid" +
+                    " JOIN resources AS part3 ON part3.parentid = part2.internalid" +
+                    " JOIN maindicomtags AS tag1 ON tag1.id = part1.internalid AND tag1.taggroup = '16' AND tag1.tagelement = '16'" +  //FIO
+                    " JOIN maindicomtags AS tag2 ON tag2.id = part1.internalid AND tag2.taggroup = '16' AND tag2.tagelement = '32'" +  //STUDY ID ИЗ АППАРАТА
+                    " JOIN maindicomtags AS tag3 ON tag3.id = part1.internalid AND tag3.taggroup = '16' AND tag3.tagelement = '48'" +  //BIRTH DAY
+                    " JOIN maindicomtags AS tag4 ON tag4.id = part1.internalid AND tag4.taggroup = '8' AND tag4.tagelement = '32'" +   //STUDY DATE
+                    " JOIN maindicomtags AS tag5 ON tag5.id = part2.internalid AND tag5.taggroup = '8' AND tag5.tagelement = '96'" +   //MODALITY
+                    " LEFT JOIN maindicomtags AS tag6 ON tag6.id = part1.internalid AND tag6.taggroup = '8' AND tag6.tagelement = '4144'" +//DESCRIPTION
+                    " LEFT JOIN maindicomtags AS tag7 ON tag7.id = part1.internalid AND tag7.taggroup = '8' AND tag7.tagelement = '128'" +  //InstitutionName
+                    " LEFT JOIN maindicomtags AS tag8 ON tag8.id = part2.internalid AND tag8.taggroup = '8' AND tag8.tagelement = '4112'" +   //StationName;
+                    " JOIN maindicomtags AS tag9 ON tag9.id = part2.internalid AND tag9.taggroup = '8' AND tag9.tagelement = '112'" +  //Manufacturer
+                    " WHERE part1.publicid = '"+studyid+"'";
+
+
+            Statement statement = conn.createStatement();
+            ResultSet rs = statement.executeQuery(staticSQL);
+
+            while (rs.next()) {
+
+                resultStudy = new BitServerStudy(
+                        rs.getString(1),
+                        rs.getString(3),
+                        rs.getString(7),
+                        getDateFromText(rs.getString(5)),
+                        rs.getString(6),
+                        rs.getString(2),
+                        getDateFromText(rs.getString(4)),
+                        "",
+                        0,
+                        rs.getString(10),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(9));
+
+//                resultStudy = new BitServerStudy(rs.getString(1),
+//                        rs.getString(4),
+//                        rs.getString(3)
+//                );
+            }
+            conn.close();
+        } catch (Exception  e) {
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": "+ e.getMessage());
+        }
+        return resultStudy;
+    }
+
 
     default ArrayList<String> getDateFromMaindicomTags(String distinctOrNo,int tagElement){
         ArrayList<String> resultList = new ArrayList<>();

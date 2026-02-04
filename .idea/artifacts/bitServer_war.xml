@@ -3,6 +3,11 @@
     <output-path>$PROJECT_DIR$/artifacts/bitServer</output-path>
     <root id="archive" name="bitServer.war">
       <element id="artifact" artifact-name="bitServer:war exploded" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="dicom-20120929" />
+        </element>
+      </element>
     </root>
   </artifact>
 </component>

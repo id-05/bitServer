@@ -516,11 +516,11 @@ public class QueueBean implements UserDao, DataAction {
             bitServerStudyList.clear();
         }
         @Override
-        public void doSomethingWithIdentifier(AttributeList attributeListForFindResult) throws DicomException {
+        public void doSomethingWithIdentifier(AttributeList attributeListForFindResult)  {
             try {
                 bitServerStudyList.add(parcerStudyFromCFIND(attributeListForFindResult.toString()));
             } catch (ParseException e) {
-                LogTool.getLogger().error(this.getClass().getSimpleName()+": error parsing"+ attributeListForFindResult);
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": error parsing "+ attributeListForFindResult);
             }
         }
     }
@@ -563,6 +563,11 @@ public class QueueBean implements UserDao, DataAction {
         }
         timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
 
+        for(BitServerStudy buf:visibleStudiesList){
+            System.out.println("data: "+ buf.toString());
+            LogTool.getLogger().debug(this.getClass().getSimpleName()+"DATA : "+ buf.toString());
+        }
+
         PrimeFaces.current().ajax().update(":seachform:");
         PrimeFaces.current().ajax().update(":seachform:txt_count2");
         PrimeFaces.current().ajax().update(":seachform:for_txt_count2");
@@ -584,6 +589,7 @@ public class QueueBean implements UserDao, DataAction {
         if( (getBitServerResource("debug").getRvalue().equals("false"))|(getBitServerResource("debug") == null) ){
             sortListener();
         }
+
     }
 
     public List<BitServerStudy> getStudyFromCFINDRequest(String dateSeachType, Date firstdate, Date seconddate) {
@@ -650,24 +656,20 @@ public class QueueBean implements UserDao, DataAction {
 
         OurCustomFindIdentifierHandler cFind = null;
         try {
-            // use the default character set for VR encoding - override this as necessary
-            SpecificCharacterSet specificCharacterSet = new SpecificCharacterSet((String[]) null);
             AttributeList identifier = new AttributeList();
-            //build the attributes that you would like to retrieve as well as passing in any search criteria
-            identifier.putNewAttribute(TagFromName.QueryRetrieveLevel).addValue("STUDY"); //specific query root
-            identifier.putNewAttribute(TagFromName.PatientName);//,specificCharacterSet).addValue("Bowen*");
-            identifier.putNewAttribute(TagFromName.PatientID);//,specificCharacterSet);
+            identifier.putNewAttribute(TagFromName.QueryRetrieveLevel).addValue("STUDY");
+            identifier.putNewAttribute(TagFromName.PatientName);
+            identifier.putNewAttribute(TagFromName.PatientID);
             identifier.putNewAttribute(TagFromName.PatientBirthDate);
             identifier.putNewAttribute(TagFromName.PatientSex);
             identifier.putNewAttribute(TagFromName.StudyInstanceUID);
             identifier.putNewAttribute(TagFromName.SOPInstanceUID);
             identifier.putNewAttribute(TagFromName.StudyDescription);
-
             identifier.putNewAttribute(TagFromName.StudyDate).setValue(datestring);
             identifier.putNewAttribute(TagFromName.Modality);
             cFind = new OurCustomFindIdentifierHandler();
 
-            new FindSOPClassSCU("localhost",
+            new FindSOPClassSCU("127.0.0.1",
                     4242,
                     "ORTHANC",
                     "ORTHANC",
@@ -675,7 +677,8 @@ public class QueueBean implements UserDao, DataAction {
                     cFind, 0);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage()); // in real life, do something about this exception
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": error in getStudyFromCFINDRequest "+e.getMessage());
+            // in real life, do something about this exception
         }
 
         return cFind.getBitServerStudyList();
@@ -694,10 +697,8 @@ public class QueueBean implements UserDao, DataAction {
         boolean result = false;
         String buf = Integer.toString(x);
         StringBuilder reverceString = new StringBuilder();
-        //System.out.println("buf.length() = "+buf.length());
         for(int j=buf.length()-1; j>-1; j--){
             reverceString.append(buf.charAt(j));
-            //System.out.println("buf.length("+j+") = "+buf.charAt(j));
         }
         if(reverceString.toString().equals(buf) | (buf.length()==1)){
             result = true;
@@ -706,8 +707,7 @@ public class QueueBean implements UserDao, DataAction {
     }
 
     public void onRowSelect(SelectEvent event) {
-        //System.out.println("onRowSelect");
-        selectedVisibleStudy = (BitServerStudy) event.getObject();
+       // selectedVisibleStudy = (BitServerStudy) event.getObject();
         //System.out.println(getSidByPatientId(selectedVisibleStudy.getSid())+"  = "+selectedVisibleStudy.getShortid());
         //PrimeFaces.current().executeScript("PF('expansionTogle').trigger('click');");
     }
@@ -715,9 +715,13 @@ public class QueueBean implements UserDao, DataAction {
 
 
     public void onRowToggle(ToggleEvent event) {
-        selectedVisibleStudy = (BitServerStudy) event.getData();
-        selectedVisibleStudy.setSid(getSidByPatientId(selectedVisibleStudy.getSid()));
         expansionOpen = true;
+        selectedVisibleStudy = (BitServerStudy) event.getData();
+        selectedVisibleStudy.setSid(getSidByPatientId(selectedVisibleStudy.getShortid()));
+        selectedVisibleStudy = getFullStudyInfo(selectedVisibleStudy.getSid());
+        System.out.println("onRowToggle selectedVisibleStudy = "+selectedVisibleStudy.getSid());
+        //PrimeFaces.current().ajax().update(":seachform:dt-expansion");
+        //PrimeFaces.current().ajax().update(":seachform:");
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
@@ -946,16 +950,17 @@ public class QueueBean implements UserDao, DataAction {
         resetViewTable();
     }
 
-    public void getStudyToDiag() throws IOException {
-        selectedVisibleStudy.setStatus(3);
-        selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-        currentUser.setHasBlockStudy(true);
-        updateUser(currentUser);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
-    }
+//    public void getStudyToDiag() throws IOException {
+//        selectedVisibleStudy.setStatus(3);
+//        selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
+//        currentUser.setHasBlockStudy(true);
+//        updateUser(currentUser);
+//        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
+//    }
 
     public void DelStudy() throws IOException {
-        //deleteStudy(selectedVisibleStudy);
+        System.out.println("DELETE selectedVisibleStudy.getSid() START");
+        System.out.println("DELETE selectedVisibleStudy.getSid() = "+selectedVisibleStudy.getSid());
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getSid());
         visibleStudiesList.remove(selectedVisibleStudy);
         selectedVisibleStudy = new BitServerStudy();
