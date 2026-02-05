@@ -520,7 +520,7 @@ public class QueueBean implements UserDao, DataAction {
             try {
                 bitServerStudyList.add(parcerStudyFromCFIND(attributeListForFindResult.toString()));
             } catch (ParseException e) {
-                LogTool.getLogger().error(this.getClass().getSimpleName()+": error parsing "+ attributeListForFindResult);
+                LogTool.getLogger().error(this.getClass().getSimpleName()+": Error parsing "+ attributeListForFindResult);
             }
         }
     }
@@ -562,11 +562,6 @@ public class QueueBean implements UserDao, DataAction {
             visibleStudiesList = getStudyFromOrthanc(typeSeach, filtrDate, firstdate, seconddate, colInstitution, colStation, colSource);
         }
         timeRequest = ((new Date()).getTime() - timeStart)/1000.00;
-
-        for(BitServerStudy buf:visibleStudiesList){
-            System.out.println("data: "+ buf.toString());
-            LogTool.getLogger().debug(this.getClass().getSimpleName()+"DATA : "+ buf.toString());
-        }
 
         PrimeFaces.current().ajax().update(":seachform:");
         PrimeFaces.current().ajax().update(":seachform:txt_count2");
@@ -677,7 +672,7 @@ public class QueueBean implements UserDao, DataAction {
                     cFind, 0);
 
         } catch (Exception e) {
-            LogTool.getLogger().error(this.getClass().getSimpleName()+": error in getStudyFromCFINDRequest "+e.getMessage());
+            LogTool.getLogger().error(this.getClass().getSimpleName()+": Error in getStudyFromCFINDRequest "+e.getMessage());
             // in real life, do something about this exception
         }
 
@@ -719,7 +714,7 @@ public class QueueBean implements UserDao, DataAction {
         selectedVisibleStudy = (BitServerStudy) event.getData();
         selectedVisibleStudy.setSid(getSidByPatientId(selectedVisibleStudy.getShortid()));
         selectedVisibleStudy = getFullStudyInfo(selectedVisibleStudy.getSid());
-        System.out.println("onRowToggle selectedVisibleStudy = "+selectedVisibleStudy.getSid());
+        //System.out.println("onRowToggle selectedVisibleStudy = "+selectedVisibleStudy.getSid());
         //PrimeFaces.current().ajax().update(":seachform:dt-expansion");
         //PrimeFaces.current().ajax().update(":seachform:");
     }
@@ -959,8 +954,8 @@ public class QueueBean implements UserDao, DataAction {
 //    }
 
     public void DelStudy() throws IOException {
-        System.out.println("DELETE selectedVisibleStudy.getSid() START");
-        System.out.println("DELETE selectedVisibleStudy.getSid() = "+selectedVisibleStudy.getSid());
+//        System.out.println("DELETE selectedVisibleStudy.getSid() START");
+//        System.out.println("DELETE selectedVisibleStudy.getSid() = "+selectedVisibleStudy.getSid());
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getSid());
         visibleStudiesList.remove(selectedVisibleStudy);
         selectedVisibleStudy = new BitServerStudy();

@@ -171,12 +171,14 @@
 
                     <p:dataTable id="dt-studys" widgetVar="visibleStudy"
                                  var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
-                                 reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                                 reflow="true" styleClass="products-table"
+                                 size="small" stripedRows="true"
                                  emptyMessage="Нет записей для отображения" ajax="false"
                                  selection="#{queueBean.selectedVisibleStudies}"
                                  rowKey="#{bitServerStudy.sid}" paginator="true"
                                  rows="25" rowSelectMode="add"
-                                 paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}">
+                                 paginatorPosition="bottom"
+                                 globalFilterOnly="#{queueBean.globalFilterOnly}">
 
                         <p:ajax event="rowSelect" update=":seachform"/>
                         <p:ajax event="rowUnselect" update=":seachform"/>

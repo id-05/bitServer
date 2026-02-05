@@ -273,8 +273,6 @@
             </p:commandButton>
             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
 
-            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="result" value="Результат/Описание"/>
-
             <p:commandButton id="delete"
                              icon="pi pi-trash"
                              styleClass="rounded-button ui-button-danger" process="@this"
@@ -289,16 +287,16 @@
           <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle" >
             <div class="p-grid" align="left">
 
-                <div class="p-field" style="margin-left: 10px; margin-top: 10px">
-                  <p:graphicImage value="#{bitServerStudy.preview}" rendered="#{queueBean.expansionOpen}" clientCache="true" style="width: 80px; height: 80px;"/>
-                </div>
+              <div class="p-field" style="margin-left: 10px; margin-top: 10px">
+                <p:graphicImage value="#{bitServerStudy.preview}" rendered="#{queueBean.expansionOpen}" clientCache="true" style="width: 80px; height: 80px;"/>
+              </div>
 
-                <div class="p-field" style="margin-left: 10px; margin-top: 10px">
-                  <div style="font-weight: bold">#{bitServerStudy.patientName}</div>
-                  <div>#{bitServerStudy.patientBirthDateStr}</div>
-                  <div>Пол: #{bitServerStudy.patientSex}</div>
-                  <div>id: #{bitServerStudy.shortid}</div>
-                </div>
+              <div class="p-field" style="margin-left: 10px; margin-top: 10px">
+                <div style="font-weight: bold">#{bitServerStudy.patientName}</div>
+                <div>#{bitServerStudy.patientBirthDateStr}</div>
+                <div>Пол: #{bitServerStudy.patientSex}</div>
+                <div>id: #{bitServerStudy.shortid}</div>
+              </div>
 
               <div class="p-field" style="margin-left: 50px; margin-top: 10px">
                 <div style="font-weight: bold">Исследование:</div>
@@ -315,6 +313,8 @@
 
             </div>
           </p:rowExpansion>
+
+
 
         </p:dataTable>
 

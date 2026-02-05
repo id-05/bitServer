@@ -37,7 +37,6 @@ public interface UserDao {
     }
 
     default BitServerStudy parcerStudyFromCFIND(String buf) throws ParseException {
-       // System.out.println("!!!+ :"+buf);
         String studyDate = null;
         String studyDescription = null;
         String patientName = null;
@@ -45,7 +44,6 @@ public interface UserDao {
         String patientID = null;
         String patientSex = null;
         String modality = null;
-
 //        (0x0008,0x0005) SpecificCharacterSet VR=<CS> VL=<0xa> <ISO_IR 100>
 //                (0x0008,0x0018) SOPInstanceUID VR=<UI> VL=<0x3a> <1.2.840.113619.2.408.14196467.855406.15416.1604274827.329 >
 //                (0x0008,0x0020) StudyDate VR=<DA> VL=<0x8> <20230830>
@@ -60,7 +58,6 @@ public interface UserDao {
 
         String[] strings = buf.split("\n");
         for(String bufstr:strings){
-            LogTool.getLogger().debug(this.getClass().getSimpleName()+": "+ bufstr);
             if(bufstr.contains("StudyDate")){studyDate = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("StudyDescription")){studyDescription = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
             if(bufstr.contains("PatientName")){patientName = bufstr.substring(bufstr.lastIndexOf("<")+1,bufstr.lastIndexOf(">"));}
