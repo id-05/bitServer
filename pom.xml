@@ -212,9 +212,6 @@
             <scope>runtime</scope>
         </dependency>
 
-
-
-
         <dependency>
             <groupId>org.jvnet.com4j</groupId>
             <artifactId>com4j</artifactId>
@@ -310,19 +307,7 @@
                 </snapshots>
             </repository>
 
-        <repository>
-            <id>prime-repo</id>
-            <name>PrimeFaces Maven Repository</name>
-            <url>http://repository.primefaces.org</url>
-            <layout>default</layout>
-        </repository>
 
-            <repository>
-                <id>primefaces</id>
-                <name>PrimeFaces Maven Repository</name>
-                <url>http://repository.primefaces.org</url>
-                <layout>default</layout>
-            </repository>
 
         <repository>
             <id>java.net</id>

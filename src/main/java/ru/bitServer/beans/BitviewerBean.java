@@ -120,43 +120,43 @@ public class BitviewerBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":bitviewer:img1");
     }
 
-    public StreamedContent getImgDcm() {
-        System.out.println("getImgDcm "+curInstance);
-        byte[] bufFile = selectedSerie.getInstancesOfByte().get(curInstance);
-        return DefaultStreamedContent.builder()
-                .contentType("image/png")
-                .stream(() -> {
-                    try {
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(bufFile);
-                        ByteArrayOutputStream os = new ByteArrayOutputStream();
-                        ImageIO.write(bufferedImg, "png", os);
-                        int w = bufferedImg.getWidth(null);
-                        int h = bufferedImg.getHeight(null);
-                        int scale = 2;
-                        if(w==512){
-                            scale = 1;
-                        }
-                        BufferedImage bi = new BufferedImage(w * scale, h * scale,
-                                BufferedImage.TYPE_USHORT_GRAY);
-                        Graphics g = bi.getGraphics();
-                        g.drawImage(bufferedImg, 1, 1, w * scale, h * scale, null);
-                        ImageIO.write(bi, "png", bos);
-                        return new ByteArrayInputStream(bos.toByteArray());
-                    }
-                    catch (Exception e) {
-                        System.out.println("error = "+e.getMessage());
-                        LogTool.getLogger().info("here "+e.getMessage());
-                        return null;
-                    }
-                })
-                .build();
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-    }
+//    public StreamedContent getImgDcm() {
+//        System.out.println("getImgDcm "+curInstance);
+//        byte[] bufFile = selectedSerie.getInstancesOfByte().get(curInstance);
+//        return DefaultStreamedContent.builder()
+//                .contentType("image/png")
+//                .stream(() -> {
+//                    try {
+//                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//                        BufferedImage bufferedImg = createBufferedImgdFromDICOMfile(bufFile);
+//                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+//                        ImageIO.write(bufferedImg, "png", os);
+//                        int w = bufferedImg.getWidth(null);
+//                        int h = bufferedImg.getHeight(null);
+//                        int scale = 2;
+//                        if(w==512){
+//                            scale = 1;
+//                        }
+//                        BufferedImage bi = new BufferedImage(w * scale, h * scale,
+//                                BufferedImage.TYPE_USHORT_GRAY);
+//                        Graphics g = bi.getGraphics();
+//                        g.drawImage(bufferedImg, 1, 1, w * scale, h * scale, null);
+//                        ImageIO.write(bi, "png", bos);
+//                        return new ByteArrayInputStream(bos.toByteArray());
+//                    }
+//                    catch (Exception e) {
+//                        System.out.println("error = "+e.getMessage());
+//                        LogTool.getLogger().info("here "+e.getMessage());
+//                        return null;
+//                    }
+//                })
+//                .build();
+////        }
+////        catch (Exception e) {
+////            e.printStackTrace();
+////            return null;
+////        }
+//    }
 
     public BufferedImage createBufferedImgdFromDICOMfile(byte[] dicomf) throws IOException {
         Raster raster = null ;

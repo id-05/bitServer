@@ -170,11 +170,15 @@
           </div>
         </p:dialog>
 
-        <p:dataTable id="dt-studys" widgetVar="visibleStudy" var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
+        <p:dataTable id="dt-studys" widgetVar="visibleStudy"
+                     var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
                      reflow="true" styleClass="products-table" size="small" stripedRows="true"
                      emptyMessage="Нет записей для отображения" ajax="false"
-                     selection="#{queueBean.selectedVisibleStudy}" selectionMode="single" rowKey="#{bitServerStudy.sid}" paginator="true"
-                     rows="25" rowSelectMode="new" paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
+                     selection="#{queueBean.selectedVisibleStudy}"
+                     selectionMode="single"
+                     rowKey="#{bitServerStudy.sid}" paginator="true"
+                     rows="25" rowSelectMode="new"
+                     paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
                      rowExpandMode="single">
 
           <p:ajax event="rowSelect" listener="#{queueBean.onRowSelect}" update=":seachform:dt-studys:dt-expansion"/>
@@ -311,8 +315,6 @@
 
             </div>
           </p:rowExpansion>
-
-
 
         </p:dataTable>
 
