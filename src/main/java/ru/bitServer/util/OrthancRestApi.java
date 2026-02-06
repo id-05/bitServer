@@ -37,7 +37,7 @@ public class OrthancRestApi {
         } catch (Exception e) {
             LogTool.getLogger().error("Error makeGetConnectionAndStringBuilder restApi "+e.getMessage());
             stringBuilder = new StringBuilder();
-            stringBuilder.append("Error: "+e.getMessage());
+            stringBuilder.append("Error: ").append(e.getMessage());
         }
         return stringBuilder;
     }
@@ -88,7 +88,6 @@ public class OrthancRestApi {
             while ((output = br.readLine()) != null) {
                 sb.append(output);
             }
-            //conn.disconnect();
             conn.getResponseMessage();
         } catch (Exception e) {
             LogTool.getLogger().error("Error makePostConnectionAndStringBuilderWithIOE "+e.getMessage());

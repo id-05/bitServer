@@ -118,11 +118,11 @@ public class BitServerStudy implements Serializable, DataAction {
         bufObj = (JsonObject) parserJsonSerie.parse(sb.toString());
         JsonArray instances= bufObj.get("Instances").getAsJsonArray();
 
-        BitServerStudy buf  = getFullStudyInfo(this.sid);
-        this.InstitutionName = buf.getInstitutionName();
-        this.source = buf.getSource();
-        this.AETSource = buf.getAETSource();
-        this.Manufacturer = buf.getManufacturer();
+//        BitServerStudy buf  = getFullStudyInfo(this.sid);
+//        this.InstitutionName = buf.getInstitutionName();
+//        this.source = buf.getSource();
+//        this.AETSource = buf.getAETSource();
+//        this.Manufacturer = buf.getManufacturer();
 
         return "http://"+mainServer.getIpaddress()+":"+mainServer.getPort()+"/instances/"+instances.get(0).getAsString()+"/preview";
     }

@@ -42,6 +42,10 @@
         font-weight: 700;
         font-size: 12px;
         letter-spacing: 1px; }
+
+      .row-expansion-style {
+        background-color: lightblue;
+        }
     </style>
 
     <h:form id="seachform">
@@ -172,11 +176,11 @@
 
         <p:dataTable id="dt-studys" widgetVar="visibleStudy"
                      var="bitServerStudy" value="#{queueBean.visibleStudiesList}"
-                     reflow="true" styleClass="products-table" size="small" stripedRows="true"
+                     reflow="true" rowStyleClass="row-expansion-style" size="small" 
                      emptyMessage="Нет записей для отображения" ajax="false"
                      selection="#{queueBean.selectedVisibleStudy}"
                      rowKey="#{bitServerStudy.sid}" paginator="true"
-                     rows="25"
+                     rows="25" stripedRows="true"
                      paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
                      rowExpandMode="single">
 
@@ -272,7 +276,7 @@
 
           </p:column>
 
-          <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle" >
+          <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle" styleClass="row-expansion-style">
             <div class="p-grid" align="left">
 
               <div class="p-field" style="margin-left: 10px; margin-top: 10px">
@@ -303,14 +307,32 @@
                 <div style="font-weight: bold">Действия:</div>
                 <p:commandButton id="delete"
                                  style="margin-top: 5px"
-                                 icon="pi pi-trash"
-                                 styleClass="ui-button-raised ui-button-secondary ui-button-flat"
+                                 value="Удалить"
+                                 styleClass="ui-button-outlined ui-button-secondary"
                                  process="@this"
-
                                  oncomplete="PF('confDelStudy').show()">
                   <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
                 </p:commandButton>
-                <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
+
+                <p:commandButton id="downloadRAR"
+                                 style="margin-top: 5px; margin-left: 10px"
+                                 value="Скачать RAR"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 rendered="true"
+                                 ajax="false"
+                                 update=":seachform:dt-studys :dt-expansion:downloadRAR">
+                  <f:ajax render="@this" />
+                  <p:fileDownload value="#{queueBean.downloadStudyOne()}"/>
+                </p:commandButton>
+
+                <p:commandButton id="downloadISO"
+                                 style="margin-top: 5px; margin-left: 10px"
+                                 value="Скачать ISO"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 ajax="false">
+                  <p:fileDownload value="#{queueBean.downloadIsoStudyOne()}"/>
+                </p:commandButton>
+
               </div>
 
             </div>

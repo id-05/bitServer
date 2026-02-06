@@ -29,6 +29,8 @@ import ru.bitServer.util.SessionUtils;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
@@ -53,7 +55,7 @@ import com.pixelmed.network.IdentifierHandler;
 import static ru.bitServer.beans.MainBean.*;
 
 @ManagedBean(name = "queueBean")
-@ViewScoped
+@SessionScoped
 public class QueueBean implements UserDao, DataAction {
 
     String filtrDate = "today";
@@ -424,6 +426,9 @@ public class QueueBean implements UserDao, DataAction {
 
     @PostConstruct
     private void init() {
+        System.out.println(
+        "@PostConstruct queue bean    "
+        );
         globalFilterOnly = true;
         selectedModalitiName = modalityName;
         selectedVisibleStudy = new BitServerStudy();
@@ -685,9 +690,9 @@ public class QueueBean implements UserDao, DataAction {
         selectedVisibleStudy = (BitServerStudy) event.getData();
         selectedVisibleStudy.setSid(getSidByPatientId(selectedVisibleStudy.getShortid()));
         selectedVisibleStudy = getFullStudyInfo(selectedVisibleStudy.getSid());
-        //System.out.println("onRowToggle selectedVisibleStudy = "+selectedVisibleStudy.getSid());
+        System.out.println("onRowToggle selectedVisibleStudy = "+selectedVisibleStudy.getSid());
         //PrimeFaces.current().ajax().update(":seachform:dt-expansion");
-        //PrimeFaces.current().ajax().update(":seachform:");
+        PrimeFaces.current().ajax().update("seachform:dt-expansion");
     }
 
     public boolean filterByCustom(Object value, Object filter, Locale locale) {
@@ -764,6 +769,7 @@ public class QueueBean implements UserDao, DataAction {
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
         bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
+        System.out.println("bufStudy.getSid() = "+bufStudy.getSid());
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
@@ -778,15 +784,15 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadStudyOne() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudy;
-        System.out.println(bufStudy.getSid() );
-        bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
+        System.out.println("bufStudy.getSid() = "+bufStudy.getSid());
+        //bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
         InputStream inputStream = conn.getInputStream();
         return DefaultStreamedContent.builder()
-                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"rar")
+                .name(bufStudy.getPatientName()+"-"+FORMAT.format(bufStudy.getSdate())+"."+"rar")
                 .contentType("application/rar")
                 .stream(() -> inputStream)
                 .build();
@@ -796,6 +802,66 @@ public class QueueBean implements UserDao, DataAction {
         String tmpdir = getBitServerResource("isoPath").getRvalue();
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size() - 1);
         bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makePostConnection("/tools/create-archive", jsonArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        File outfile = new File(tmpdir+"/out.iso");
+        File buffile = new File(tmpdir+"/buf.zip");
+        FileUtils.copyInputStreamToFile(inputStream, buffile);
+
+        try {
+            ZipFile zipFile = new ZipFile(buffile);
+            zipFile.extractAll(tmpdir+"/images");
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+        ISO9660RootDirectory.MOVED_DIRECTORIES_STORE_NAME = "rr_moved";
+        ISO9660RootDirectory root = new ISO9660RootDirectory();
+        root.addRecursively(new File(tmpdir+"/images"));
+
+        if(getBitServerResource("cdViewerInclude").getRvalue().equals("true")) {
+            String relativeWebPath = getBitServerResource("cdviewerpath").getRvalue();
+            root.addContentsRecursively(new File(relativeWebPath));
+        }
+        ISO9660Config iso9660Config = new ISO9660Config();
+        iso9660Config.allowASCII(false);
+        iso9660Config.setInterchangeLevel(1);
+        iso9660Config.restrictDirDepthTo8(true);
+        iso9660Config.setPublisher("bitServer");
+        iso9660Config.setVolumeID(bufStudy.getPatientName());
+        iso9660Config.setDataPreparer("bitServer");
+        iso9660Config.forceDotDelimiter(true);
+        RockRidgeConfig rrConfig = null;
+        ElToritoConfig elToritoConfig = null;
+        JolietConfig jolietConfig;
+        jolietConfig = new JolietConfig();
+        jolietConfig.setPublisher("bitServer");
+        String bufName;
+        if(bufStudy.getPatientName().length()>16){
+            bufName = bufStudy.getPatientName().substring(0,15);
+        }else{
+            bufName = bufStudy.getPatientName();
+        }
+        jolietConfig.setVolumeID(bufName);
+        jolietConfig.setDataPreparer("bitServer");
+        ISOImageFileHandler streamHandler = new ISOImageFileHandler(outfile);
+        CreateISO iso = new CreateISO(streamHandler, root);
+        iso.process(iso9660Config, rrConfig, jolietConfig, elToritoConfig);
+        FileUtils.deleteDirectory(new File(tmpdir+"/images"));
+        InputStream inputStreamOut = new FileInputStream(outfile);
+        return DefaultStreamedContent.builder()
+                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"iso")
+                .contentType("application/iso")
+                .stream(() -> inputStreamOut)
+                .build();
+    }
+
+    public StreamedContent downloadIsoStudyOne() throws Exception {
+        String tmpdir = getBitServerResource("isoPath").getRvalue();
+        BitServerStudy bufStudy = selectedVisibleStudy;
+        //bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(bufStudy.getSid());
         HttpURLConnection conn = connection.makePostConnection("/tools/create-archive", jsonArray.toString());
