@@ -65,11 +65,9 @@ public class DateBaseBean implements UserDao {
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
         listResources = getAllBitServerResource();
-        //LogTool.getLogger().info("Получили данные из таблицы bitserver в колличестве: "+listResources.size());
-        //listMaindicomtags = getTableMaindicomtags();
         selectedResource = new BitServerResources();
         selectedStudy = new BitServerStudy();
-        debug = false;//getBitServerResource("debug").getRvalue().equals("true");
+        //debug = false;//getBitServerResource("debug").getRvalue().equals("true");
     }
 
     public void initNewResources(){

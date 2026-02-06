@@ -85,7 +85,6 @@ public class JobsBean implements UserDao {
                 String[] jobs = stringBuilder.toString().replace("[", "").replace("]", "").split(",");
                 for (String job : jobs) {
                     stringBuilder = connection.makeGetConnectionAndStringBuilder("/jobs/" + job.replace(" ", "").replace("\"", ""));
-                    //System.out.println(stringBuilder);
                     OrthancJob orJob = new OrthancJob(stringBuilder.toString());
                     allJobs.add(orJob);
                 }
@@ -95,10 +94,6 @@ public class JobsBean implements UserDao {
             LogTool.getLogger().error("getjobs: allJobs.count = "+allJobs.size()+e.getMessage()+" / "+stringBuilder.toString());
             }
         return allJobs;
-    }
-
-    public void getInfo(){
-        System.out.println("getInfo()");
     }
 
     public void pause(String buf){

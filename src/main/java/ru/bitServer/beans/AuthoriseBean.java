@@ -70,7 +70,7 @@ public class AuthoriseBean implements UserDao {
         PrimeFaces.current().executeScript("location.reload();");
     }
 
-    public void validateUsernamePassword() throws IOException {
+    public void validateUsernamePassword() {
         try {
             currentUser = validateUserAndGetIfExist(inputUserName,inputPassword);
             if (currentUser.getUname()!=null) {
@@ -79,17 +79,10 @@ public class AuthoriseBean implements UserDao {
                 currentUserTheme = "saga";
 
                 switch (currentUser.getRole()){
-                    case "localuser": {
-                        currentUser.setRole("demo");
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
-                        break;
-                    }
-                    case "onlyview": {
-                        currentUser.setRole("demo");
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
-                        break;
-                    }
-                    case "remoteuser": {
+                    case "localuser":
+                    case "onlyview":
+                    case "remoteuser":
+                    case "client": {
                         currentUser.setRole("demo");
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;
@@ -97,11 +90,6 @@ public class AuthoriseBean implements UserDao {
                     case "admin": {
                         LogTool.getLogger().info("Admin " + currentUser.getUname() + " autorise in system");
                         FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/admin.xhtml");
-                        break;
-                    }
-                    case "client": {
-                        currentUser.setRole("demo");
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/queue.xhtml");
                         break;
                     }
                     case "demo":

@@ -360,9 +360,12 @@
 
                     <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
                               message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
+
                         <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
                                          oncomplete="PF('confDelStudy').hide()"/>
+
                         <span style="padding: 20px;">&nbsp;</span>
+
                         <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                                          onclick="PF('confGetStudy').hide()"/>
                     </p:dialog>

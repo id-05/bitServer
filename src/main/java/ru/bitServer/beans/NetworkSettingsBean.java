@@ -31,15 +31,12 @@ public class NetworkSettingsBean implements UserDao {
     String pathToFile;
     String pathToFileFirewall;
     ArrayList<NetworkAdapter> adapters = new ArrayList<>();
-
     ArrayList<FirewallPort> ports = new ArrayList<>();
     NetworkAdapter selectedAdapter;
     FirewallParcer firewallParcer;
-
     FirewallPort selectedPort;
     boolean advancedmode;
     String configFileText;
-
     StringBuilder SettingsFile;
     StringBuilder SettingsFileFirewall;
 
@@ -91,7 +88,6 @@ public class NetworkSettingsBean implements UserDao {
         HttpSession session = SessionUtils.getSession();
         currentUserId = session.getAttribute("userid").toString();
         currentUser = getUserById(currentUserId);
-
         BitServerResources bufResources = getBitServerResource("networksetpathfile");
         pathToFile = bufResources.getRvalue();
         SettingsFile = new StringBuilder();
@@ -106,7 +102,6 @@ public class NetworkSettingsBean implements UserDao {
         configFileText = SettingsFile.toString();
         NetworkSettingsParcer settingsParcer = new NetworkSettingsParcer(SettingsFile);
         adapters = settingsParcer.getAdapterList();
-
         BitServerResources bufResFirewall = getBitServerResource("firewallpathfile");
         pathToFileFirewall = bufResFirewall.getRvalue();
         SettingsFileFirewall = new StringBuilder();
@@ -119,7 +114,6 @@ public class NetworkSettingsBean implements UserDao {
 
             LogTool.getLogger().error(LogTool.getLogger() + " Error of read file init() networkSettingsBean: "+e.getMessage());
         }
-
         firewallParcer = new FirewallParcer(SettingsFileFirewall);
         ports = firewallParcer.getFirewallList();
     }

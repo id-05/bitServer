@@ -31,7 +31,7 @@ public class MainBean implements UserDao, DataAction {
 
     public static OrthancServer mainServer;
     public static String pathToSaveResult;
-    //public String periodUpdate = "2";
+
     public DashboardModel model;
     public String selectTheme;
     public ArrayList<String> themeList;

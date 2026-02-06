@@ -8,20 +8,15 @@ import com.github.stephenc.javaisotools.iso9660.impl.ISOImageFileHandler;
 import com.github.stephenc.javaisotools.joliet.impl.JolietConfig;
 import com.github.stephenc.javaisotools.rockridge.impl.RockRidgeConfig;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.ibm.icu.text.Transliterator;
-import com.pixelmed.dicom.*;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 import org.primefaces.shaded.commons.io.FilenameUtils;
@@ -49,10 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.List;
-
 import com.pixelmed.dicom.AttributeList;
 import com.pixelmed.dicom.SOPClass;
-import com.pixelmed.dicom.SpecificCharacterSet;
 import com.pixelmed.dicom.TagFromName;
 import com.pixelmed.network.FindSOPClassSCU;
 import com.pixelmed.network.IdentifierHandler;
@@ -429,18 +422,6 @@ public class QueueBean implements UserDao, DataAction {
     public static final String CYRILLIC_TO_LATIN = "Cyrillic-Latin";
     public static final String LATIN_TO_CYRILLIC = "Latin-Cyrillic";
 
-    public LazyDataModel<BitServerStudy> getLazyModel() {
-        return lazyModel;
-    }
-
-    private LazyDataModel<BitServerStudy> lazyModel;
-
-    ////Status
-    /// Заблокирован на описание - 3
-    /// Описан - 2
-    /// Отправлен на описание - 1
-    /// Не описан - 0
-
     @PostConstruct
     private void init() {
         globalFilterOnly = true;
@@ -555,7 +536,6 @@ public class QueueBean implements UserDao, DataAction {
 
         selectedVisibleStudies.clear();
         timeStart = (new Date()).getTime();
-        //queueGetType = true;
         if(queueGetType){
             visibleStudiesList = getStudyFromCFINDRequest(filtrDate, firstdate, seconddate);
         }else {
@@ -633,7 +613,6 @@ public class QueueBean implements UserDao, DataAction {
                 c = Calendar.getInstance();
                 c.setTime(firstdate);
                 c.add(Calendar.DATE, 1);
-                seconddate = c.getTime();
                 datestring = FORMAT3.format(firstdate)+"-"+FORMAT3.format(firstdate);
                 break;
             case "range":
@@ -701,14 +680,6 @@ public class QueueBean implements UserDao, DataAction {
         return result;
     }
 
-    public void onRowSelect(SelectEvent event) {
-       // selectedVisibleStudy = (BitServerStudy) event.getObject();
-        //System.out.println(getSidByPatientId(selectedVisibleStudy.getSid())+"  = "+selectedVisibleStudy.getShortid());
-        //PrimeFaces.current().executeScript("PF('expansionTogle').trigger('click');");
-    }
-
-
-
     public void onRowToggle(ToggleEvent event) {
         expansionOpen = true;
         selectedVisibleStudy = (BitServerStudy) event.getData();
@@ -763,64 +734,10 @@ public class QueueBean implements UserDao, DataAction {
         PrimeFaces.current().ajax().update(":addDICOM");
     }
 
-    public void sendToAgent(){
-        JsonObject query = new JsonObject();
-        JsonObject queryDetails = new JsonObject();
-        queryDetails.addProperty("PatientName", "ANONIM");
-        queryDetails.addProperty("0010-1001", "ANONIM");
-        query.add("Replace", queryDetails);
-        JsonArray queryArray = new JsonArray();
-        queryArray.add("StudyDescription");
-        queryArray.add("SeriesDescription");
-        query.add("Keep",queryArray);
-        query.addProperty("KeepPrivateTags",true);
-        query.addProperty("DicomVersion","2017c");
-        int i = 0;
-        for(BitServerStudy bufStudy:selectedVisibleStudies){
-            if((bufStudy.getStatus()!=1)&(bufStudy.getStatus()!=2)) {
-                StringBuilder sb = connection.makePostConnectionAndStringBuilder("/studies/" + bufStudy.getSid() + "/anonymize", query.toString());
-                JsonParser parserJson = new JsonParser();
-                JsonObject studies = (JsonObject) parserJson.parse(sb.toString());
-                bufStudy.setAnonimstudyid(studies.get("ID").getAsString());
-                bufStudy.setStatus(1);
-                bufStudy.setDatesent(new Date());
-                bufStudy.setUsergroupwhosees(getUserGroupId(selectedUserGroup));
-                i++;
-            }else{
-                showMessage("Внимание","Исследование "+bufStudy.getShortid()+" "+bufStudy.getPatientName()+" имеет недопустимый для этого действия статус!",info);
-            }
-        }
-        showMessage("Внимание","Всего отправлено: " + i,info);
-        selectedVisibleStudies.clear();
-        dataoutput();
-        PrimeFaces.current().executeScript("PF('statusDialog').hide()");
-        resetViewTable();
-    }
-
     public void resetViewTable(){
         PrimeFaces.current().executeScript("PF('visibleStudy').unselectAllRows();");
         PrimeFaces.current().ajax().update(":seachform:dt-studys");
         PrimeFaces.current().ajax().update(":seachform:send-button");
-    }
-
-    public String getUserGroupId(String groupName){
-        String buf = "";
-        List<BitServerGroup> bufUserGroupList = getUsergroupList();
-        for(BitServerGroup bufGroup:bufUserGroupList){
-            if(groupName.equals(bufGroup.getRuName())){
-                buf = bufGroup.getId().toString();
-                break;
-            }
-        }
-        return buf;
-    }
-
-    public void addAnamnes(){
-        //updateStudy(selectedVisibleStudy);
-    }
-
-    public boolean hasSelectedStudy() {
-        return this.selectedVisibleStudies != null && !this.selectedVisibleStudies.isEmpty();
     }
 
     public void showMessage(String title, String note, FacesMessage.Severity type) {
@@ -846,6 +763,22 @@ public class QueueBean implements UserDao, DataAction {
 
     public StreamedContent downloadStudy() throws Exception {
         BitServerStudy bufStudy = selectedVisibleStudies.get(selectedVisibleStudies.size()-1);
+        bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
+        String url="/tools/create-archive";
+        JsonArray jsonArray = new JsonArray();
+        jsonArray.add(bufStudy.getSid());
+        HttpURLConnection conn = connection.makePostConnection(url, jsonArray.toString());
+        InputStream inputStream = conn.getInputStream();
+        return DefaultStreamedContent.builder()
+                .name(bufStudy.getPatientName()+"-"+bufStudy.getSdescription()+"_"+FORMAT.format(bufStudy.getSdate())+"."+"rar")
+                .contentType("application/rar")
+                .stream(() -> inputStream)
+                .build();
+    }
+
+    public StreamedContent downloadStudyOne() throws Exception {
+        BitServerStudy bufStudy = selectedVisibleStudy;
+        System.out.println(bufStudy.getSid() );
         bufStudy.setSid(getSidByPatientId(bufStudy.getShortid()));
         String url="/tools/create-archive";
         JsonArray jsonArray = new JsonArray();
@@ -919,43 +852,7 @@ public class QueueBean implements UserDao, DataAction {
                 .build();
     }
 
-    public void comebackStudy() throws IOException {
-        for(BitServerStudy bufStudy:selectedVisibleStudies){
-            if(!bufStudy.getUsergroupwhosees().equals("")){
-                bufStudy.setUsergroupwhosees("");
-                bufStudy.setStatus(0);
-                connection.deleteStudyFromOrthanc(bufStudy.getAnonimstudyid());
-                BitServerUser bufUser = getUserById(String.valueOf(bufStudy.getUserwhoblock()));
-                bufUser.setHasBlockStudy(false);
-                updateUser(bufUser);
-            }
-        }
-        selectedVisibleStudies.clear();
-        dataoutput();
-        resetViewTable();
-    }
-
-    public void markAsHasResult() {
-        for(BitServerStudy bufStudy:selectedVisibleStudies){
-            bufStudy.setUsergroupwhosees("");
-            bufStudy.setStatus(2);
-        }
-        selectedVisibleStudies.clear();
-        dataoutput();
-        resetViewTable();
-    }
-
-//    public void getStudyToDiag() throws IOException {
-//        selectedVisibleStudy.setStatus(3);
-//        selectedVisibleStudy.setUserwhoblock(currentUser.getUid().intValue());
-//        currentUser.setHasBlockStudy(true);
-//        updateUser(currentUser);
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/bitServer/views/localusercurrenttask.xhtml");
-//    }
-
     public void DelStudy() throws IOException {
-//        System.out.println("DELETE selectedVisibleStudy.getSid() START");
-//        System.out.println("DELETE selectedVisibleStudy.getSid() = "+selectedVisibleStudy.getSid());
         connection.deleteStudyFromOrthanc(selectedVisibleStudy.getSid());
         visibleStudiesList.remove(selectedVisibleStudy);
         selectedVisibleStudy = new BitServerStudy();
@@ -990,5 +887,9 @@ public class QueueBean implements UserDao, DataAction {
             showMessage("Сообщение:","Возникла ошибка при отправке!",error);
             LogTool.getLogger().error(this.getClass().getSimpleName()+": "+"Возникла ошибка при отправке, удаленный сервер не отвечает!");
         }
+    }
+
+    public void cancelDelStudy(){
+        PrimeFaces.current().executeScript("PF('confDelStudy').hide()");
     }
 }

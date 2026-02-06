@@ -175,16 +175,12 @@
                      reflow="true" styleClass="products-table" size="small" stripedRows="true"
                      emptyMessage="Нет записей для отображения" ajax="false"
                      selection="#{queueBean.selectedVisibleStudy}"
-                     selectionMode="single"
                      rowKey="#{bitServerStudy.sid}" paginator="true"
-                     rows="25" rowSelectMode="new"
+                     rows="25"
                      paginatorPosition="bottom" globalFilterOnly="#{queueBean.globalFilterOnly}"
                      rowExpandMode="single">
 
-          <p:ajax event="rowSelect" listener="#{queueBean.onRowSelect}" update=":seachform:dt-studys:dt-expansion"/>
-          <p:ajax event="rowUnselect" update=":seachform"/>
           <p:ajax event="sort" listener="#{queueBean.sortListener}"/>
-          <p:ajax event="contextMenu" listener="#{queueBean.onRowSelect}"/>
           <p:ajax event="rowToggle" listener="#{queueBean.onRowToggle}" />
 
           <f:facet name="header">
@@ -273,15 +269,7 @@
             </p:commandButton>
             <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="viewinosimis" value="Открыть в OSIMIS"/>
 
-            <p:commandButton id="delete"
-                             icon="pi pi-trash"
-                             styleClass="rounded-button ui-button-danger" process="@this"
-                             rendered="#{queueBean.currentUser.role == 'admin'}"
-                             update=":seachform:dt-studys"
-                             oncomplete="PF('confDelStudy').show()">
-              <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
-            </p:commandButton>
-            <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
+
           </p:column>
 
           <p:rowExpansion id="dt-expansion" widgetVar="expansionTogle" >
@@ -309,6 +297,20 @@
                 <div>Вендор: #{bitServerStudy.manufacturer}</div>
                 <div>AET Источника: #{bitServerStudy.AETSource}</div>
                 <div>Учреждение: #{bitServerStudy.institutionName}</div>
+              </div>
+
+              <div class="p-field" style="margin-left: 50px; margin-top: 10px">
+                <div style="font-weight: bold">Действия:</div>
+                <p:commandButton id="delete"
+                                 style="margin-top: 5px"
+                                 icon="pi pi-trash"
+                                 styleClass="ui-button-raised ui-button-secondary ui-button-flat"
+                                 process="@this"
+
+                                 oncomplete="PF('confDelStudy').show()">
+                  <f:setPropertyActionListener value="#{bitServerStudy}" target="#{queueBean.selectedVisibleStudy}"/>
+                </p:commandButton>
+                <p:tooltip rendered="#{queueBean.showHelp == 'true'}" for="delete" value="Удалить"/>
               </div>
 
             </div>
@@ -388,11 +390,15 @@
 
         <p:dialog widgetVar="confDelStudy" showEffect="fade" width="350"
                   message="Удалить исследование?" header="Удалить исследование?" severity="warn" responsive="true" modal="true">
+
           <p:commandButton style="margin-left: 25px" value="Да" icon="pi pi-check" actionListener="#{queueBean.DelStudy}"
                            oncomplete="PF('confDelStudy').hide()"/>
+
           <span style="padding: 20px;">&nbsp;</span>
-          <p:commandButton value="Нет" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
-                           onclick="PF('confGetStudy').hide()"/>
+
+          <p:commandButton value="Нет"  styleClass="ui-button-secondary" icon="pi pi-times"
+                           actionListener="#{queueBean.cancelDelStudy}"
+                           />
         </p:dialog>
 
       </div>
